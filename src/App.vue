@@ -1,12 +1,22 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <TheNavigationBar></TheNavigationBar>
+    <div id="content">
+      <router-view />
     </div>
-    <router-view/>
   </div>
 </template>
+
+<script>
+import TheNavigationBar from './components/TheNavigationBar.vue';
+
+export default {
+  name: 'app',
+  components: {
+    TheNavigationBar,
+  },
+};
+</script>
 
 <style lang="scss">
 #app {
@@ -28,5 +38,9 @@
       color: #42b983;
     }
   }
+}
+
+#content {
+  padding-top: 64px;
 }
 </style>
