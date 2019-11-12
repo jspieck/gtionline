@@ -1,12 +1,18 @@
 <template>
   <div class="fp-arithmetic">
-    Floating Point Stuff.
+    <h3>Floating Point Arithmetic</h3>
+    <FloatingPointFormat/>
   </div>
 </template>
 
 <script>
+import FloatingPointFormat from './FloatingPointFormat.vue';
+
 export default {
   name: 'FloatingPointArithmetic',
+  components: {
+    FloatingPointFormat,
+  },
 };
 </script>
 
