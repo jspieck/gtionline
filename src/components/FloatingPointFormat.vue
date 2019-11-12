@@ -1,11 +1,12 @@
 <template>
+  <!--v-on:mouseenter="sliderMouseUp" v-on:mouseleave="sliderMouseUp"
+  v-on:mouseup="sliderMouseUp"-->
   <div class="fp-arithmetic">
-    <div class="formatContainer" v-on:mousemove="sliderMouseMove" v-on:mouseenter="sliderMouseUp"
-            v-on:mouseup="sliderMouseUp" v-on:mouseleave="sliderMouseUp">
+    <div class="formatContainer" v-on:mousemove="sliderMouseMove">
         <div class="sign">VB</div>
         <div class="exponent" :style="{ width:
           (60 + this.exponentBits * (containerWidth/numBits))+ 'px' }">
-          <div v-on:click="expandExponent" class="expandExponent">
+          <div v-on:click="expandFraction" class="expandExponent">
             <div class="arrowLeft">
               <div class='arrowRightMask '></div>
             </div>
@@ -15,7 +16,7 @@
         </div>
         <div class="fraction" :style="{ width: (60 + (numBits - exponentBits) *
           (containerWidth/numBits)) + 'px' }">
-          <div v-on:click="expandFraction" class="expandFraction">
+          <div v-on:click="expandExponent" class="expandFraction">
             <div class="arrowRight">
               <div class="arrowLeftMask"></div>
             </div>
@@ -38,9 +39,30 @@ export default {
     };
   },
   methods: {
+    preventGlobalMouseEvents() {
+      document.body.style['pointer-events'] = 'none';
+    },
+    restoreGlobalMouseEvents() {
+      document.body.style['pointer-events'] = 'auto';
+    },
+    mouseupListener(e) {
+      this.restoreGlobalMouseEvents();
+      document.removeEventListener('mouseup', this.mouseupListener, { capture: true });
+      document.removeEventListener('mousemove', this.sliderMouseMove, { capture: true });
+      e.stopPropagation();
+      this.mouseDown = false;
+    },
+    captureMouseEvents(e) {
+      this.preventGlobalMouseEvents();
+      document.addEventListener('mouseup', this.mouseupListener, { capture: true });
+      document.addEventListener('mousemove', this.sliderMouseMove, { capture: true });
+      e.preventDefault();
+      e.stopPropagation();
+    },
     sliderMouseDown(e) {
       this.mouseDown = true;
       this.xCoord = e.pageX;
+      this.captureMouseEvents(e);
     },
     sliderMouseMove(e) {
       if (this.mouseDown) {
@@ -58,9 +80,6 @@ export default {
           }
         }
       }
-    },
-    sliderMouseUp() {
-      this.mouseDown = false;
     },
     expandFraction() {
       this.exponentBits -= 1;
