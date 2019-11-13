@@ -38,6 +38,10 @@ export default {
 </script>
 
 <style lang="scss">
+h3{
+  font-weight: 100;
+  font-size: 24px;
+}
 .tinytabs .tabs {
   margin-left: 15px;
   display: flex;
@@ -54,10 +58,9 @@ export default {
   margin: 0 3px 2px 0;
   background: #fcfcfc;
   display: block;
-  padding: 6px 15px;
+  padding: 12px 15px;
   text-decoration: none;
   color: #666;
-  font-weight: bold;
   border-radius: 3px 3px 0 0;
 }
 .tinytabs .section {

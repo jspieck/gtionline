@@ -69,7 +69,7 @@ export default {
   width: 100%;
   top: 0;
   display: block;
-  background-color: rgb(0, 0, 128);
+  background-color: $freshBlue;
   color: white;
 }
 
