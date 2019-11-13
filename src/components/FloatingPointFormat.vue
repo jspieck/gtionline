@@ -36,7 +36,7 @@
         <td>
           <table id="fpfTable1" class="floatingPointInput">
             <tr>
-              <td><input id="fpfInput1" placeholder="3,25"/></td>
+              <td><input id="fpfInput1" placeholder="3,25" @input="decToBin"/></td>
               <td>
                 <div class="selectBox">
                   <select id="fpfSelect1" class="fpfSelect">
@@ -78,12 +78,12 @@
         <td>
           <table id="fpfTable2" class="floatingPointInput">
             <tr>
-              <td><input id="fpfInput3" placeholder="3,25"/></td>
+              <td><input id="fpfInput3" placeholder="3,25" @input="binToDec"></td>
               <td>
                 <div class="selectBox">
                   <select id="fpfSelect3" class="fpfSelect">
                     <option>Dezimalzahl (42,14)</option>
-                    <option>Binärzahl (1,0011)</option>
+                    <option selected>Binärzahl (1,0011)</option>
                     <option>IEEE (1 0101 1101)</option>
                   </select>
                   <img class="selectIcon" src="http://cdn.onlinewebfonts.com/svg/img_295694.svg">
@@ -97,7 +97,7 @@
                   <select id="fpfSelect4" class="fpfSelect">
                     <option>Binärzahl (1,0011)</option>
                     <option>IEEE (1 0101 1101)</option>
-                    <option>Dezimalzahl (42,14)</option>
+                    <option selected>Dezimalzahl (42,14)</option>
                   </select>
                   <img class="selectIcon" src="http://cdn.onlinewebfonts.com/svg/img_295694.svg">
                 </div>
@@ -117,6 +117,8 @@
 </template>
 
 <script>
+// import GtiTools from '../scripts/gti-tools';
+
 export default {
   name: 'FloatingPointArithmetic',
   data() {
@@ -128,6 +130,24 @@ export default {
     };
   },
   methods: {
+    decToBin(e) {
+      const fRep = parseFloat(e.target.value.replace(',', '.'));
+      const binString = fRep.toString(2);
+      // const y1 = GtiTools.getIEEEFromString(7, '0 1001000 1001 1011');
+      // console.log(y1);
+      document.getElementById('fpfInput2').value = binString;
+    },
+    binToDec(e) {
+      const fRep = e.target.value.replace(',', '.');
+      const fParts = fRep.split('.');
+      let decimalPart = 0;
+      if (fParts[1] != null && fParts[1].lastIndexOf('1') !== -1) {
+        const stripZeros = fParts[1].substring(0, fParts[1].lastIndexOf('1') + 1);
+        decimalPart = parseInt(stripZeros, 2) / (2 ** stripZeros.length);
+      }
+      const devVal = parseInt(fParts[0], 2) + decimalPart;
+      document.getElementById('fpfInput4').value = devVal;
+    },
     preventGlobalMouseEvents() {
       document.body.style['pointer-events'] = 'none';
     },
