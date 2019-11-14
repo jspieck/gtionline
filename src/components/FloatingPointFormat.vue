@@ -36,72 +36,35 @@
         <td>
           <table id="fpfTable1" class="floatingPointInput">
             <tr>
-              <td><input id="fpfInput1" placeholder="3,25" @input="decToBin"/></td>
               <td>
-                <div class="selectBox">
-                  <select id="fpfSelect1" class="fpfSelect">
-                    <option>Dezimalzahl (42,14)</option>
-                    <option>Binärzahl (1,0011)</option>
-                    <option>IEEE (1 0101 1101)</option>
-                  </select>
-                  <img class="selectIcon" src="http://cdn.onlinewebfonts.com/svg/img_295694.svg">
-                </div>
+                <input id="fpfInput0" placeholder="3" @input="convertFormat(0)"/>
               </td>
+              <td><FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
+                :options="formatOptions"/></td>
             </tr>
             <tr>
-              <td><input id="fpfInput2" disabled placeholder="11,01"></td>
-              <td>
-                <div class="selectBox">
-                  <select id="fpfSelect2" class="fpfSelect">
-                    <option>Binärzahl (1,0011)</option>
-                    <option>IEEE (1 0101 1101)</option>
-                    <option>Dezimalzahl (42,14)</option>
-                  </select>
-                  <img class="selectIcon" src="http://cdn.onlinewebfonts.com/svg/img_295694.svg">
-                </div>
-              </td>
+              <td><input id="fpfInput1" disabled placeholder="0 1000 10000000000"></td>
+              <td><FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal"
+                :options="formatOptions"/></td>
             </tr>
           </table>
         </td>
         <td>
           <div class="operand">
-            <div class="selectBox">
-              <select id="operandSelect" class="operandSelect">
-                <option>Addition (+)</option>
-                <option>Subtraktion (-)</option>
-                <option>Multiplikation (*)</option>
-              </select>
-              <img class="selectIcon" src="http://cdn.onlinewebfonts.com/svg/img_295694.svg">
-            </div>
+            <FSelect :num="2" :sel="selectedFormat[2]" :options="operationOptions"/>
           </div>
         </td>
         <td>
           <table id="fpfTable2" class="floatingPointInput">
             <tr>
-              <td><input id="fpfInput3" placeholder="3,25" @input="binToDec"></td>
-              <td>
-                <div class="selectBox">
-                  <select id="fpfSelect3" class="fpfSelect">
-                    <option>Dezimalzahl (42,14)</option>
-                    <option selected>Binärzahl (1,0011)</option>
-                    <option>IEEE (1 0101 1101)</option>
-                  </select>
-                  <img class="selectIcon" src="http://cdn.onlinewebfonts.com/svg/img_295694.svg">
-                </div>
-              </td>
+              <td><input id="fpfInput2" placeholder="3" @input="convertFormat(1)"></td>
+              <td><FSelect :num="3" :sel="selectedFormat[3]" @input="selectVal"
+                :options="formatOptions"/></td>
             </tr>
             <tr>
-              <td><input id="fpfInput4" disabled placeholder="11,01"></td>
-              <td>
-                <div class="selectBox">
-                  <select id="fpfSelect4" class="fpfSelect">
-                    <option>Binärzahl (1,0011)</option>
-                    <option>IEEE (1 0101 1101)</option>
-                    <option selected>Dezimalzahl (42,14)</option>
-                  </select>
-                  <img class="selectIcon" src="http://cdn.onlinewebfonts.com/svg/img_295694.svg">
-                </div>
-              </td>
+              <td><input id="fpfInput3" disabled placeholder="0 1000 10000000000"></td>
+              <td><FSelect :num="4" :sel="selectedFormat[4]" @input="selectVal"
+                :options="formatOptions"/></td>
             </tr>
           </table>
         </td>
@@ -118,35 +81,141 @@
 
 <script>
 // import GtiTools from '../scripts/gti-tools';
+import FormatSelect from './FormatSelect.vue';
 
 export default {
   name: 'FloatingPointArithmetic',
+  components: {
+    FSelect: FormatSelect,
+  },
   data() {
     return {
+      selectedFormat: ['decimal', 'ieee', 'add', 'decimal', 'ieee'],
+      formatOptions: {
+        decimal: 'Dezimalzahl (42,14)',
+        binary: 'Binärzahl (1,0011)',
+        ieee: 'IEEE (1 0101 1101)',
+      },
+      operationOptions: {
+        add: 'Addition (+)',
+        sub: 'Subtraktion (-)',
+        mul: 'Multiplikation (*)',
+      },
       mouseDown: false,
       exponentBits: 4,
-      numBits: 32,
+      numBits: 16,
       containerWidth: 500,
     };
   },
   methods: {
-    decToBin(e) {
-      const fRep = parseFloat(e.target.value.replace(',', '.'));
-      const binString = fRep.toString(2);
-      // const y1 = GtiTools.getIEEEFromString(7, '0 1001000 1001 1011');
-      // console.log(y1);
-      document.getElementById('fpfInput2').value = binString;
+    selectVal(num, val) {
+      this.selectedFormat[num] = val;
+      const nnum = num > 2 ? 1 : 0;
+      this.convertFormat(nnum);
+      console.log(val);
     },
-    binToDec(e) {
-      const fRep = e.target.value.replace(',', '.');
+    convertFormat(num) {
+      const firstFormat = this.selectedFormat[num * 3];
+      const secondFormat = this.selectedFormat[num * 3 + 1];
+      const toConvert = document.getElementById(`fpfInput${num * 2}`).value;
+      let converted = toConvert;
+      if (firstFormat === 'binary') {
+        if (secondFormat === 'decimal') {
+          converted = this.binToDec(toConvert);
+        } else if (secondFormat === 'ieee') {
+          converted = this.binToIEEE(toConvert);
+        }
+      } else if (firstFormat === 'decimal') {
+        if (secondFormat === 'binary') {
+          converted = this.decToBin(toConvert);
+        } else if (secondFormat === 'ieee') {
+          converted = this.binToIEEE(this.decToBin(toConvert));
+        }
+      } else if (firstFormat === 'ieee') {
+        if (secondFormat === 'binary') {
+          converted = this.ieeeToBin(toConvert);
+        } else if (secondFormat === 'decimal') {
+          converted = this.binToDec(this.ieeeToBin(toConvert));
+        }
+      }
+      document.getElementById(`fpfInput${num * 2 + 1}`).value = converted;
+    },
+    decToBin(num) {
+      const fRep = parseFloat(num.replace(',', '.'));
+      return fRep.toString(2);
+    },
+    binToDec(num) {
+      const fRep = num.replace(',', '.');
       const fParts = fRep.split('.');
-      let decimalPart = 0;
+      let devVal = parseInt(fParts[0], 2);
       if (fParts[1] != null && fParts[1].lastIndexOf('1') !== -1) {
         const stripZeros = fParts[1].substring(0, fParts[1].lastIndexOf('1') + 1);
-        decimalPart = parseInt(stripZeros, 2) / (2 ** stripZeros.length);
+        const decimalPart = parseInt(stripZeros, 2) / (2 ** stripZeros.length);
+        if (devVal < 0) {
+          devVal -= decimalPart;
+        } else {
+          devVal += decimalPart;
+        }
       }
-      const devVal = parseInt(fParts[0], 2) + decimalPart;
-      document.getElementById('fpfInput4').value = devVal;
+      return devVal;
+    },
+    getBias() {
+      return (2 ** (this.exponentBits - 1)) - 1;
+    },
+    binToIEEE(num) {
+      const bias = this.getBias();
+      const fRep = num.replace(',', '.');
+      const fParts = fRep.split('.');
+      // extract sign
+      let sign = 0;
+      if (fParts[0][0] === '-') {
+        sign = 1;
+        fParts[0] = fParts[0].substring(1);
+      }
+      // trim leading zeroes
+      const preDecimal = fParts[0].replace(/^0+/, '');
+      // transform to 1,xxx format
+      let mantisse = preDecimal.substring(1);
+      const shiftNumber = mantisse.length;
+      const numBitsMantisse = this.numBits - this.exponentBits - 1;
+      if (fParts[1] != null) {
+        mantisse += fParts[1];
+      }
+      if (mantisse.length > numBitsMantisse) {
+        mantisse = mantisse.substring(0, numBitsMantisse);
+      }
+      if (mantisse.length < numBitsMantisse) {
+        mantisse += '0'.repeat(numBitsMantisse - mantisse.length);
+      }
+      let exponent = (shiftNumber + bias).toString(2);
+      // fill with leading zeroes
+      exponent = '0'.repeat(this.exponentBits - exponent.length) + exponent;
+      return `${sign} ${exponent} ${mantisse}`;
+    },
+    ieeeToBin(num) {
+      const ieeeWithoutSpace = num.replace(' ', '');
+      if (ieeeWithoutSpace.length !== this.numBits) {
+        return 0;
+      }
+      const sign = ieeeWithoutSpace[0] === 0 ? '' : '-';
+      let exponent = ieeeWithoutSpace.substring(1, 1 + this.exponentBits);
+      const mantisse = ieeeWithoutSpace.substring(1 + this.exponentBits, this.numBits);
+      const bias = this.getBias();
+      exponent -= bias;
+      let preDecimal = 1;
+      let decimal = mantisse;
+      if (exponent < 0) {
+        preDecimal = 0;
+        decimal = `${'0'.repeat(exponent - 1)}1${mantisse}`;
+      } else {
+        preDecimal = `1${mantisse.substring(0, Math.min(exponent, mantisse.length))}
+          ${'0'.repeat(Math.max(0, exponent - mantisse.length))}`;
+        decimal = mantisse.substring(exponent);
+      }
+      if (decimal === '') {
+        return `${sign}${preDecimal}`;
+      }
+      return `${sign}${preDecimal},${decimal}`;
     },
     preventGlobalMouseEvents() {
       document.body.style['pointer-events'] = 'none';
@@ -240,6 +309,10 @@ input{
   &:disabled{
     background: transparent;
   }
+
+  &::placeholder {
+    color: #aaa;
+  }
 }
 
 .divMargin{
@@ -253,24 +326,6 @@ input{
   margin: 10px;
 }
 
-select{
-  -webkit-appearance: button;
-  border: none;
-  font-size: 13px;
-  list-style: none;
-  outline: none;
-  overflow: hidden;
-  text-align: left;
-  text-decoration: none;
-  vertical-align: middle;
-  width: 175px;
-  background-color: transparent;
-  color: #202124!important;
-  height: 36px;
-  padding-left: 8px;
-  background-image: none;
-}
-
 .floatingPointInput{
   margin: 10px;
   display: inline-block;
@@ -278,22 +333,6 @@ select{
   border-radius: 10px;
   border: 1px solid #d8d8d8;
   position: relative;
-}
-
-.selectBox{
-  position: relative;
-  border-radius: 6px;
-  background-color: #fff;
-  border: 1px solid #DFE1E5;
-}
-
-.selectIcon{
-  position:absolute;
-  right: 10px;
-  top: 11px;
-  width: 15px;
-  height: 15px;
-  pointer-events: none;
 }
 
 .formatContainer {
