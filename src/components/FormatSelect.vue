@@ -5,7 +5,6 @@
       <option v-for="(name, option) in options" :value="option"
         v-bind:key="option">{{name}}</option>
     </select>
-    <img class="selectIcon" src="http://cdn.onlinewebfonts.com/svg/img_295694.svg">
   </div>
 </template>
 
@@ -56,14 +55,17 @@ select{
   border-radius: 6px;
   background-color: #fff;
   border: 1px solid #DFE1E5;
-}
 
-.selectIcon{
-  position:absolute;
-  right: 10px;
-  top: 11px;
-  width: 15px;
-  height: 15px;
-  pointer-events: none;
+  &:after {
+    content: "\f3d0";
+    font-family: IonIcons;
+    font-size: 1.2em;
+    position:absolute;
+    right: 10px;
+    top: 7px;
+    transition: .3s all;
+    transform: rotate(0deg);
+    pointer-events: none;
+  }
 }
 </style>

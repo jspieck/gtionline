@@ -6,23 +6,23 @@
     <div class="formatContainer" v-on:mousemove="sliderMouseMove">
       <div class="sign">VB</div>
       <div class="exponent" :style="{ width:
-        (60 + this.exponentBits * (containerWidth/numBits))+ 'px' }">
+        (60 + this.exponentBits * (containerWidth / (numBits - 1)))+ 'px' }">
         <div v-on:click="expandFraction" class="expandExponent">
           <div class="arrowLeft">
-            <div class='arrowRightMask '></div>
+            <div class='arrowMask'></div>
           </div>
         </div>
         E({{exponentBits}})
         <div v-on:mousedown="sliderMouseDown" class="slider"/>
       </div>
-      <div class="fraction" :style="{ width: (60 + (numBits - exponentBits) *
-        (containerWidth/numBits)) + 'px' }">
+      <div class="fraction" :style="{ width: (60 + (numBits - exponentBits - 1) *
+        (containerWidth / (numBits - 1))) + 'px' }">
         <div v-on:click="expandExponent" class="expandFraction">
           <div class="arrowRight">
-            <div class="arrowLeftMask"></div>
+            <div class="arrowMask"></div>
           </div>
         </div>
-        M({{(numBits - exponentBits)}})
+        M({{(numBits - exponentBits - 1)}})
       </div>
     </div>
     <h4>Operationsauswahl</h4>
@@ -37,7 +37,7 @@
           <table id="fpfTable1" class="floatingPointInput">
             <tr>
               <td>
-                <input id="fpfInput0" placeholder="3" @input="convertFormat(0)"/>
+                <input id="fpfInput0" placeholder="3" @input="checkAndConvertFormat(0)"/>
               </td>
               <td><FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
                 :options="formatOptions"/></td>
@@ -57,7 +57,7 @@
         <td>
           <table id="fpfTable2" class="floatingPointInput">
             <tr>
-              <td><input id="fpfInput2" placeholder="3" @input="convertFormat(1)"></td>
+              <td><input id="fpfInput2" placeholder="3" @input="checkAndConvertFormat(1)"></td>
               <td><FSelect :num="3" :sel="selectedFormat[3]" @input="selectVal"
                 :options="formatOptions"/></td>
             </tr>
@@ -70,23 +70,28 @@
         </td>
       </tr>
     </table>
-    <h4>Lösung</h4>
+    <h4>Eigene Lösung</h4>
     <div class="solutionArea">
       <input id="solutionInput">
       <div class="divMargin"/>
       <button id="checkSolution">Check</button>
     </div>
+    <h4>Korrekte Lösung</h4>
+    <label class="attention">Bitte vorher selber versuchen, die Aufgabe zu lösen!</label>
+    <Accordion :solutionDescription="solDescr"/>
   </div>
 </template>
 
 <script>
 // import GtiTools from '../scripts/gti-tools';
 import FormatSelect from './FormatSelect.vue';
+import SolutionAccordion from './SolutionAccordion.vue';
 
 export default {
   name: 'FloatingPointArithmetic',
   components: {
     FSelect: FormatSelect,
+    Accordion: SolutionAccordion,
   },
   data() {
     return {
@@ -105,6 +110,17 @@ export default {
       exponentBits: 4,
       numBits: 16,
       containerWidth: 500,
+      solDescr: [
+        { name: 'Schritt 1', text: 'Die Exponenten beider Zahlen müssen angeglichen werden.' },
+        {
+          name: 'Schritt 2',
+          text: 'Die Mantissen beider Zahlen müssen multipliziert werden.',
+          subpanels: [
+            { name: 'Exponent beachten', text: 'Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden.' },
+            { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
+          ],
+        },
+      ],
     };
   },
   methods: {
@@ -114,10 +130,59 @@ export default {
       this.convertFormat(nnum);
       console.log(val);
     },
+    checkFormat(format, conv) {
+      let commaOccured = false;
+      const convert = conv.replace(/\s/g, '');
+      if (format === 'ieee' && convert.length !== this.numBits) {
+        return false;
+      }
+      for (let i = 0; i < convert.length; i += 1) {
+        if (format === 'binary') {
+          if (!(['0', '1', ',', '-', '+'].includes(convert[i]))) {
+            return false;
+          }
+        }
+        if (format === 'ieee') {
+          if (convert[i] !== '0' && convert[i] !== '1') {
+            return false;
+          }
+        }
+        if (format === 'decimal') {
+          if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+            ',', '-', '+'].includes(convert[i]))) {
+            return false;
+          }
+        }
+        if (format === 'binary' || format === 'decimal') {
+          if ((convert[i] === '+' || convert[i] === '-') && i > 1) {
+            return false;
+          }
+        }
+        if (convert[i] === ',') {
+          if (commaOccured) {
+            return false;
+          }
+          commaOccured = true;
+        }
+      }
+      return true;
+    },
+    checkAndConvertFormat(num) {
+      const firstFormat = this.selectedFormat[num * 3];
+      const toConvert = document.getElementById(`fpfInput${num * 2}`).value;
+      if (!this.checkFormat(firstFormat, toConvert)) {
+        document.getElementById(`fpfInput${num * 2 + 1}`).value = 'Falsches Format';
+        return;
+      }
+      this.convertFormat(num);
+    },
     convertFormat(num) {
       const firstFormat = this.selectedFormat[num * 3];
       const secondFormat = this.selectedFormat[num * 3 + 1];
       const toConvert = document.getElementById(`fpfInput${num * 2}`).value;
+      if (toConvert.length === 0) {
+        return;
+      }
       let converted = toConvert;
       if (firstFormat === 'binary') {
         if (secondFormat === 'decimal') {
@@ -189,11 +254,15 @@ export default {
       }
       let exponent = (shiftNumber + bias).toString(2);
       // fill with leading zeroes
+      if (exponent.length > this.exponentBits) {
+        // TODO Number is too big and cannot be displayed
+        exponent = exponent.substring(exponent.length - this.exponentBits);
+      }
       exponent = '0'.repeat(this.exponentBits - exponent.length) + exponent;
       return `${sign} ${exponent} ${mantisse}`;
     },
     ieeeToBin(num) {
-      const ieeeWithoutSpace = num.replace(' ', '');
+      const ieeeWithoutSpace = num.replace(/\s/g, '');
       if (ieeeWithoutSpace.length !== this.numBits) {
         return 0;
       }
@@ -244,17 +313,21 @@ export default {
     },
     sliderMouseMove(e) {
       if (this.mouseDown) {
-        const blockSize = (this.containerWidth / this.numBits);
+        const blockSize = (this.containerWidth / (this.numBits - 1));
         if (e.pageX - this.xCoord > blockSize) {
           this.xCoord += blockSize;
-          if (this.exponentBits + 1 < this.numBits) {
+          if (this.exponentBits + 1 < this.numBits - 1) {
             this.exponentBits += 1;
+            this.convertFormat(0);
+            this.convertFormat(1);
           }
         }
         if (this.xCoord - e.pageX > blockSize) {
           this.xCoord -= blockSize;
           if (this.exponentBits > 1) {
             this.exponentBits -= 1;
+            this.convertFormat(0);
+            this.convertFormat(1);
           }
         }
       }
@@ -277,41 +350,28 @@ $arrow-size: 12px;
   margin-top: 20px;
 }
 
-button{
-  height: 36px;
-  width: 70px;
-  background: $freshBlue;
-  border-radius: 6px;
-  color: white;
-  border: none;
-  line-height: 28px;
+.attention {
+  background: $lightPurple;
+  border-left: 4px solid $purple;
+  display: block;
+  text-align: left;
+  height: 40px;
+  line-height: 40px;
+  padding-left: 45px;
   position: relative;
-  cursor: pointer;
+  box-sizing: border-box;
+  width: 663px;
+  margin: auto;
 
-  &:hover{
-    background: white;
-    color: $freshBlue;
-    border: 1px solid $freshBlue;
-  }
-}
-
-input{
-  font-size: 16px !important;
-  background: white;
-  border-radius: 6px;
-  border: 1px solid #DFE1E5;
-  color: #70757A!important;
-  font-size: 14px !important;
-  height: 36px;
-  line-height: 28px;
-  padding: 0 0 0 12px;
-
-  &:disabled{
-    background: transparent;
-  }
-
-  &::placeholder {
-    color: #aaa;
+  &::before  {
+    position: absolute;
+    margin: auto;
+    left: 15px;
+    color: $purple;
+    font-family: IonIcons;
+    content: '\f104';
+    font-size: 24px;
+    display: block;
   }
 }
 
@@ -339,7 +399,9 @@ input{
   display: inline-flex;
   flex-direction: row;
   margin: 10px;
+  font-size: 14px;
 }
+
 .slider{
   display: block;
   position: absolute;
@@ -416,17 +478,6 @@ input{
   transform: translate(-50%, -50%) rotate(225deg);
 }
 
-.arrowRightMask {
-  width: 100%;
-  height: 100%;
-  background-color: $freshBlue;
-  position: absolute;
-  left: 15%;
-  top: -15%;
-  right: 0%;
-  bottom: 0%;
-}
-
 .arrowLeft {
   width: $arrow-size;
   height: $arrow-size;
@@ -437,7 +488,7 @@ input{
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-.arrowLeftMask {
+.arrowMask {
   width: 100%;
   height: 100%;
   background-color: $freshBlue;

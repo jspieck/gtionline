@@ -42,6 +42,9 @@ h3{
   font-weight: 100;
   font-size: 24px;
 }
+body{
+  overflow-y: scroll;
+}
 .tinytabs .tabs {
   margin-left: 15px;
   display: flex;

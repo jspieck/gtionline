@@ -1,0 +1,138 @@
+<template>
+  <div class="accordion js-accordion accordionContainer">
+    <div v-for="panel in solutionDescription" v-bind:key="panel.name"
+      class="accordion__item js-accordion-item">
+      <div class="accordion-header js-accordion-header">{{panel.name}}</div>
+      <div class="accordion-body js-accordion-body">
+        <div class="accordion-body__contents">{{panel.text}}</div>
+        <div class="accordion js-accordion">
+          <div v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name"
+            class="accordion__item js-accordion-item">
+            <div class="accordion-header js-accordion-header">{{subpanel.name}}</div>
+            <div class="accordion-body js-accordion-body">
+              <div class="accordion-body__contents">{{subpanel.text}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import $ from 'jquery';
+
+export default {
+  name: 'SolutionAccordion',
+  props: ['solutionDescription'],
+  mounted() {
+    const animationSpeed = 300;
+    const $accordion = $('.js-accordion');
+    const $accordionHeader = $accordion.find('.js-accordion-header');
+    $accordionHeader.on('click', function () {
+      // show/hide the clicked accordion item
+      $(this).closest('.js-accordion-item').toggleClass('active');
+      $(this).next().stop().slideToggle(animationSpeed);
+    });
+    // reveal the active accordion bodies
+    $('.js-accordion-item.active').find('> .js-accordion-body').show();
+  },
+  data() {
+    return {
+      selectedOption: 'binary',
+    };
+  },
+};
+</script>
+
+<style scoped lang="scss">
+.accordion {
+  font-size: 1rem;
+  width: 663px;
+  border-radius: 5px;
+}
+
+.accordionContainer {
+  margin: 15px auto;
+}
+
+.accordion-header, .accordion-body {
+  background: white;
+}
+
+.accordion-header {
+  padding: 1em 1.5em;
+  background: $freshBlue;// #3F51B5;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all .3s;
+  text-transform: uppercase;
+}
+
+.accordion__item {
+  border-bottom: 1px solid #3a4ba4;
+}
+
+.accordion__item .accordion__item {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.accordion-header:hover {
+  background: $brightBlue;
+  position: relative;
+  z-index: 5;
+}
+
+.accordion-body {
+  background: #fcfcfc;
+  color: #353535;
+  display: none;
+}
+
+.accordion-body__contents {
+  padding: 1.5em 1.5em;
+  font-size: .85em;
+}
+
+.accordion__item.active:last-child .accordion-header {
+  border-radius: none;
+}
+
+.accordion:first-child > .accordion__item > .accordion-header {
+  border-bottom: 1px solid transparent;
+}
+
+.accordion__item > .accordion-header:after {
+  content: "\f3d0";
+  font-family: IonIcons;
+  font-size: 1.2em;
+  float: right;
+  position: relative;
+  top: -2px;
+  transition: .3s all;
+  transform: rotate(0deg);
+}
+
+.accordion__item.active > .accordion-header:after {
+  transform: rotate(-180deg);
+}
+
+.accordion__item.active .accordion-header {
+  background: $brightBlue;
+}
+
+.accordion__item .accordion__item .accordion-header {
+  background: #f1f1f1;
+  color: #353535;
+}
+
+@media screen and (max-width: 1000px) {
+  body {
+    padding: 1em;
+  }
+  .accordion {
+    width: 100%;
+  }
+}
+</style>
