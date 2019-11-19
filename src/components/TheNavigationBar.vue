@@ -71,35 +71,52 @@ export default {
   display: block;
   background-color: $freshBlue;
   color: white;
-}
 
-.navbar ul {
-  list-style-type: none;
-}
+  ul {
+    list-style-type: none;
+  }
 
-.navbar li {
-  display: inline-block;
-  margin: 0 0.6em;
-  position: relative;
-  text-align: left;
-}
+  li {
+    display: inline-block;
+    padding: 0.4em 1em;
+    position: relative;
+    text-align: left;
+    border-bottom: 1px solid #0d336f26;
 
-.navbar li a {
-  cursor: pointer;
+    a {
+      cursor: pointer;
+    }
+  }
 }
 
 .navbar-dropdown {
-  padding: 10px 0;
+  padding: 0;
   display: none;
   position: absolute;
   top: 100%;
   box-sizing: border-box;
-  max-height: calc(100vh - 61px);
   overflow-y: auto;
-  right: -15px;
   color: black;
   background-color: white;
-  border: 1px solid black;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-bottom: none;
+  border-bottom: 2px solid $freshBlue;
+  left: 50%;
+  transform: translate(-50%);
+
+  li {
+    padding: 0;
+    a {
+      color: $freshBlue;
+      text-decoration: none;
+      padding: 0.4em 1em;
+      line-height: 30px;
+      display: block;
+    }
+  }
+  li:hover {
+    background-color: #F9F9F9;
+  }
 }
 
 .navbar ul li:hover > .navbar-dropdown {
