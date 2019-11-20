@@ -34,14 +34,9 @@ export default {
     },
   },
 };
-
 </script>
 
 <style lang="scss">
-h3{
-  font-weight: 100;
-  font-size: 24px;
-}
 body{
   overflow-y: scroll;
 }

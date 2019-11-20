@@ -44,14 +44,15 @@
             </tr>
             <tr>
               <td><input id="fpfInput1" disabled placeholder="0 1000 10000000000"></td>
-              <td><FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal"
+              <td><FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal" :isDisabled="true"
                 :options="formatOptions"/></td>
             </tr>
           </table>
         </td>
         <td>
           <div class="operand">
-            <FSelect :num="2" :sel="selectedFormat[2]" :options="operationOptions"/>
+            <FSelect :num="2" :sel="selectedFormat[2]" @input="selectOp"
+              :options="operationOptions"/>
           </div>
         </td>
         <td>
@@ -63,7 +64,7 @@
             </tr>
             <tr>
               <td><input id="fpfInput3" disabled placeholder="0 1000 10000000000"></td>
-              <td><FSelect :num="4" :sel="selectedFormat[4]" @input="selectVal"
+              <td><FSelect :num="4" :sel="selectedFormat[4]" @input="selectVal" :isDisabled="true"
                 :options="formatOptions"/></td>
             </tr>
           </table>
@@ -83,7 +84,8 @@
 </template>
 
 <script>
-// import GtiTools from '../scripts/gti-tools';
+import * as tool from '../scripts/gti-tools';
+// import tool from '../scripts/gti-tools';
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
 
@@ -120,6 +122,7 @@ export default {
             { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
           ],
         },
+        { name: 'Lösung', text: 'Die Lösung lautet <span id="solutionSpan"/>' },
       ],
     };
   },
@@ -129,6 +132,10 @@ export default {
       const nnum = num > 2 ? 1 : 0;
       this.convertFormat(nnum);
       console.log(val);
+    },
+    selectOp(num, val) {
+      this.selectedFormat[num] = val;
+      this.computeSolution();
     },
     checkFormat(format, conv) {
       let commaOccured = false;
@@ -204,6 +211,31 @@ export default {
         }
       }
       document.getElementById(`fpfInput${num * 2 + 1}`).value = converted;
+
+      this.computeSolution();
+    },
+    computeSolution() {
+      const num1 = document.getElementById('fpfInput1').value;
+      const num2 = document.getElementById('fpfInput3').value;
+      const y1 = tool.getIEEEFromString(this.exponentBits, num1);
+      const y2 = tool.getIEEEFromString(this.exponentBits, num2);
+      console.log(y1);
+      console.log(y2);
+      let result = null;
+      switch (this.selectedFormat[2]) {
+        case 'add':
+          result = new tool.AdditionIEEE(y1, y2);
+          break;
+        case 'mul':
+          result = new tool.MultiplicationIEEE(y1, y2);
+          break;
+        case 'sub':
+          result = new tool.SubtractionIEEE(y1, y2);
+          break;
+        default:
+      }
+      console.log(result.getResult());
+      document.getElementById('solutionSpan').innerHTML = result.getResult().bitString;
     },
     decToBin(num) {
       const fRep = parseFloat(num.replace(',', '.'));

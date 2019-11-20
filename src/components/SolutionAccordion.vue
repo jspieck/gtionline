@@ -4,7 +4,7 @@
       class="accordion__item js-accordion-item">
       <div class="accordion-header js-accordion-header">{{panel.name}}</div>
       <div class="accordion-body js-accordion-body">
-        <div class="accordion-body__contents">{{panel.text}}</div>
+        <div class="accordion-body__contents"><span v-html="panel.text"></span></div>
         <div class="accordion js-accordion">
           <div v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name"
             class="accordion__item js-accordion-item">

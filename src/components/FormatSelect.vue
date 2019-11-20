@@ -1,6 +1,6 @@
 <template>
-  <div class="selectBox">
-    <select class="fpfSelect" v-model="selectedOption"
+  <div class="selectBox" :disabled="isDisabled">
+    <select class="fpfSelect" v-model="selectedOption" :disabled="isDisabled"
       @input="event => { $emit('input', num, event.target.value) }">
       <option v-for="(name, option) in options" :value="option"
         v-bind:key="option">{{name}}</option>
@@ -11,7 +11,7 @@
 <script>
 export default {
   name: 'FloatingPointArithmetic',
-  props: ['num', 'sel', 'options'],
+  props: ['num', 'sel', 'options', 'isDisabled'],
   created() {
     this.selectedOption = this.sel;
   },
@@ -66,6 +66,9 @@ select{
     transition: .3s all;
     transform: rotate(0deg);
     pointer-events: none;
+  }
+  &[disabled=disabled]:after{
+    content: "";
   }
 }
 </style>

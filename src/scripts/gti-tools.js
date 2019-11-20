@@ -1,7 +1,6 @@
-/* eslint-disable */ 
+/* eslint-disable */
 
 'use strict';
-(function ($) {
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -847,6 +846,82 @@ function () {
   return NumberBaseNComplement;
 }();
 
+var AdditionBaseNComplement =
+/*#__PURE__*/
+function () {
+  function AdditionBaseNComplement(n1, n2) {
+    _classCallCheck(this, AdditionBaseNComplement);
+
+    if (n1.base != n2.base) {
+      console.log("AdditionBaseNComplement(Number, Number): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") not compatible."));
+      process.exit(1);
+    }
+
+    if (n1.digitNum != n2.digitNum) {
+      console.log("AdditionBaseNComplement(Number, Number): DigitNum of n1(".concat(n1.digitNum, ") and digitNum of n2(").concat(n2.digitNum, ") not compatible."));
+      process.exit(1);
+    }
+
+    this.producedOverflow = false;
+    this.watcher = null;
+    this.result = this._add(n1, n2);
+  }
+
+  _createClass(AdditionBaseNComplement, [{
+    key: "_add",
+    value: function _add(n1, n2) {
+      this.watcher = new Algorithm();
+      var base = n1.base;
+      var digitNum = n1.digitNum;
+
+      var n1Arr = _toConsumableArray(n1.arr);
+
+      var n2Arr = _toConsumableArray(n2.arr);
+
+      var offset = Math.max(n1.offset, n2.offset);
+
+      if (n1.offset < offset) {
+        n1Arr.push.apply(n1Arr, _toConsumableArray(Array(offset - n1.offset).fill(0)));
+      }
+
+      if (n2.offset < offset) {
+        n2Arr.push.apply(n2Arr, _toConsumableArray(Array(offset - n2.offset).fill(0)));
+      }
+
+      var overflow = [];
+      var _final = [];
+      overflow.unshift(0);
+
+      for (var i = n1Arr.length - 1; i >= 0; i--) {
+        var m = n1Arr[i] + n2Arr[i] + overflow[0];
+
+        _final.unshift(m % base);
+
+        overflow.unshift(Math.floor(m / base));
+      }
+
+      if (overflow[0] > 0) {
+        _final.unshift(overflow[0]);
+      }
+
+      var result = new NumberBaseNComplement(base, digitNum, _final, offset);
+      var overflowPossible = n1.isNegative() && n2.isNegative() || !n1.isNegative() && !n2.isNegative();
+      var signChanged = overflowPossible && n1.isNegative() && !result.isNegative() || !n1.isNegative() && result.isNegative();
+      this.producedOverflow = overflow[0] > 0 && signChanged;
+      this.watcher.step("Addition").saveVariable('op1', n1).saveVariable('op2', n2).saveVariable('op1Arr', _toConsumableArray(n1Arr)).saveVariable('op2Arr', _toConsumableArray(n2Arr)).saveVariable('carryArr', [].concat(overflow)).saveVariable('resultArr', [].concat(_final)).saveVariable('result', result).saveVariable('overflow', this.producedOverflow);
+      console.log(overflow, _final);
+      return result;
+    }
+  }, {
+    key: "getResult",
+    value: function getResult() {
+      return this.result;
+    }
+  }]);
+
+  return AdditionBaseNComplement;
+}();
+
 var MultiplicationBaseNComplement =
 /*#__PURE__*/
 function () {
@@ -913,6 +988,477 @@ function () {
   }]);
 
   return MultiplicationBaseNComplement;
+}();
+
+function numToChar$2(num) {
+  if (0 <= num && num <= 9) {
+    return String.fromCharCode(num + '0'.charCodeAt());
+  }
+
+  if (10 <= num && num <= 35) {
+    return String.fromCharCode(num + 'A'.charCodeAt());
+  }
+
+  return '';
+}
+
+function charToNum$1(chr) {
+  if ('0'.charCodeAt() <= chr.charCodeAt() && chr.charCodeAt() <= '9'.charCodeAt()) {
+    return chr.charCodeAt() - '0'.charCodeAt();
+  }
+
+  if ('A'.charCodeAt() <= chr.charCodeAt() && chr.charCodeAt() <= 'Z') {
+    return chr.charCodeAt() - 'A'.charCodeAt() + 10;
+  }
+
+  return -1;
+}
+
+export function getIEEEFromString(expBitNum, str) {
+  if (str.length <= expBitNum + 2) {
+    console.log("getIEEEFromString(expBitNum, str): Given string is not compatible with the given number of expBitNum.");
+    process.exit(1);
+  }
+
+  for (var i = 0; i < str.length; i++) {
+    if (str[i] == ' ') continue;
+    var n = charToNum$1(str[i]);
+
+    if (n < 0 || n >= 2) {
+      console.log("getIEEEFromString(expBitNum, str): Given string is not compatible with base 2.");
+      process.exit(1);
+    }
+  }
+
+  var arr = [];
+
+  for (var _i = 0; _i < str.length; _i++) {
+    if (str[_i] == ' ') continue;
+    arr.push(charToNum$1(str[_i]));
+  }
+
+  return new NumberIEEE(expBitNum, arr.length - expBitNum - 1, arr);
+} // Representation of a number in N's complement (Up to digitNum digits)
+
+var NumberIEEE =
+/*#__PURE__*/
+function () {
+  function NumberIEEE(expBitNum, manBitNum, representation) {
+    _classCallCheck(this, NumberIEEE);
+
+    if (expBitNum <= 0 || manBitNum <= 0) {
+      console.log("IEEENumber(number, number, arr): Invalid number of bits for exponent and mantissa.");
+    }
+
+    this.expBitNum = expBitNum;
+    this.manBitNum = manBitNum;
+    this.bitNum = expBitNum + manBitNum + 1;
+
+    this._checkArray(representation);
+
+    this.arr = _toConsumableArray(representation);
+    this.sign = this.arr[0];
+    this.bias = (1 << expBitNum - 1) - 1;
+    this.E = this._constructE();
+    this.M = this._constructM();
+    this.isNaN = this.E == 1 << expBitNum && this.M != 0;
+    this.isInfinity = this.E == 1 << expBitNum && this.M == 0;
+    this.isSmall = this.E == 0 && this.M != 0;
+    this.isZero = this.E == 0 && this.M == 0;
+    this.exponent = this._constructExponent();
+    this.mantissa = this._constructMantissa();
+    this.exponentBits = this._constructExponentBits();
+    this.mantissaBits = this._constructMantissaBits();
+    this.bitString = this._constructBitString();
+    this.valueString = this._constructValString();
+  }
+
+  _createClass(NumberIEEE, [{
+    key: "_checkArray",
+    value: function _checkArray(arr) {
+      if (arr.length != this.bitNum) {
+        return false;
+      }
+
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] < 0 || 2 <= arr[i]) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+  }, {
+    key: "_constructBitString",
+    value: function _constructBitString() {
+      var result = "";
+      var count = 0;
+
+      for (var i = 0; i < this.arr.length; i++) {
+        result += numToChar$2(this.arr[i]);
+
+        if (i == 0 || i == this.expBitNum) {
+          count = 0;
+          result += " ";
+        }
+
+        if (count % 4 == 0) {
+          result += " ";
+        }
+
+        count++;
+      }
+
+      return result;
+    }
+  }, {
+    key: "_constructValString",
+    value: function _constructValString() {
+      var sign = this.arr[0] == 0 ? '+' : '-';
+
+      if (this.isNan) {
+        return 'NaN';
+      }
+
+      if (this.isInfinity) {
+        return "".concat(sign, "inf");
+      }
+
+      if (this.isZero) {
+        return "".concat(sign, "0");
+      }
+
+      return "".concat(sign).concat(this.mantissa, "e").concat(this.exponent);
+    }
+  }, {
+    key: "_constructE",
+    value: function _constructE() {
+      var result = 0;
+
+      for (var i = 1; i < 1 + this.expBitNum; i++) {
+        result *= 2;
+        result += this.arr[i];
+      }
+
+      return result;
+    }
+  }, {
+    key: "_constructM",
+    value: function _constructM() {
+      var result = 0.0;
+
+      for (var i = this.bitNum - 1; i >= 1 + this.expBitNum; i--) {
+        result /= 2.0;
+        result += this.arr[i];
+      }
+
+      result /= 2.0;
+      return result;
+    }
+  }, {
+    key: "_constructExponent",
+    value: function _constructExponent() {
+      return this.E - this.bias;
+    }
+  }, {
+    key: "_constructMantissa",
+    value: function _constructMantissa() {
+      if (this.isSmall || this.isZero) {
+        return this.M;
+      }
+
+      return 1 + this.M;
+    }
+  }, {
+    key: "_constructExponentBits",
+    value: function _constructExponentBits() {
+      var result = _toConsumableArray(this.arr);
+
+      result.splice(0, 1);
+      result.splice(1 + this.expBitNum, this.manBitNum);
+      return result;
+    }
+  }, {
+    key: "_constructMantissaBits",
+    value: function _constructMantissaBits() {
+      var firstBit = this.isSmall || this.isZero ? 0 : 1;
+
+      var result = _toConsumableArray(this.arr);
+
+      result.splice(0, 1 + this.expBitNum);
+      result.unshift(firstBit);
+      return result;
+    }
+  }]);
+
+  return NumberIEEE;
+}();
+
+export var AdditionIEEE =
+/*#__PURE__*/
+function () {
+  function AdditionIEEE(n1, n2) {
+    _classCallCheck(this, AdditionIEEE);
+
+    if (n1.expBitNum != n2.expBitNum) {
+      console.log("AdditionIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ") and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
+    }
+
+    if (n1.manBitNum != n2.manBitNum) {
+      console.log("AdditionIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ") and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
+    }
+
+    this.producedOverflow = false;
+    this.result = this._add(n1, n2);
+  }
+
+  _createClass(AdditionIEEE, [{
+    key: "_add",
+    value: function _add(n1, n2) {
+      var expBitNum = n1.expBitNum;
+      var manBitNum = n1.manBitNum;
+      var bitNum = n1.bitNum; // Edgecases:
+
+      if (n1.isNaN || n2.isNaN || n1.isInfinity && n2.isInfinity && n1.sign != n2.sign) {
+        // Return NaN
+        return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
+      }
+
+      if (n1.isInfinity || n2.isInfinity) {
+        // Return Infinty
+        var _sign = n1.isInfinity ? n1.sign : n2.sign;
+
+        var infArray = [_sign];
+        infArray.push.apply(infArray, _toConsumableArray(Array(expBitNum).fill(1)));
+        infArray.push.apply(infArray, _toConsumableArray(Array(manBitNum).fill(0)));
+        return new NumberIEEE(expBitNum, manBitNum, infArray);
+      } // Get unnormalized  exponent
+
+
+      var anchorExp = n1.exponent;
+      var difference = n2.exponent - n1.exponent;
+      var digitNum = 3 + Math.max(difference, 0);
+      var op1 = new NumberBaseNComplement(2, digitNum, n1.mantissaBits, n1.manBitNum, n1.sign == 1);
+      var op2 = new NumberBaseNComplement(2, digitNum, n2.mantissaBits, n2.manBitNum - difference, n2.sign == 1);
+      var additionResult = new AdditionBaseNComplement(op1, op2).getResult();
+      var sign = null;
+      var unnormalizedMantissa = null;
+
+      if (additionResult.isNegative()) {
+        sign = 1;
+        unnormalizedMantissa = additionResult.getFlipedArray();
+      } else {
+        sign = 0;
+        unnormalizedMantissa = _toConsumableArray(additionResult.arr);
+      }
+
+      var cDigits = digitNum;
+
+      while (cDigits > 1 && unnormalizedMantissa[0] == 0) {
+        unnormalizedMantissa.splice(0, 1);
+        cDigits--;
+      } // Calculate shift
+      // Positive: Rightshift | Negative: Leftshift
+
+
+      var shift = null;
+
+      if (cDigits > 1) {
+        shift = cDigits - 1;
+      } else {
+        shift = 0;
+
+        for (var i = 1; i < unnormalizedMantissa.length; i++) {
+          shift--;
+
+          if (unnormalizedMantissa[i] == 1) {
+            break;
+          }
+        }
+      }
+
+      if (shift == unnormalizedMantissa.length - 1 && unnormalizedMantissa[unnormalizedMantissa.length - 1] == 0) {
+        // Return zero
+        return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
+      }
+
+      var normalizedMatissa = [];
+
+      for (var _i = 0; _i < manBitNum; _i++) {
+        var access = _i + Math.max(-shift, 0) + 1;
+        var num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
+        normalizedMatissa.push(num);
+      } // Calculate exponent
+
+
+      var finalE = anchorExp + shift + n1.bias;
+      var curE = finalE;
+      var exponentBits = [];
+
+      for (var _i2 = 0; _i2 < expBitNum; _i2++) {
+        exponentBits.unshift(curE % 2);
+        curE = Math.floor(curE / 2);
+      }
+
+      var result = [sign];
+      result.push.apply(result, exponentBits);
+      result.push.apply(result, normalizedMatissa);
+      return new NumberIEEE(expBitNum, manBitNum, result);
+    }
+  }, {
+    key: "getResult",
+    value: function getResult() {
+      return this.result;
+    }
+  }]);
+
+  return AdditionIEEE;
+}();
+
+export var SubtractionIEEE =
+/*#__PURE__*/
+function () {
+  function SubtractionIEEE(n1, n2) {
+    _classCallCheck(this, SubtractionIEEE);
+
+    if (n1.expBitNum != n2.expBitNum) {
+      console.log("SubtractionIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ") and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
+    }
+
+    if (n1.manBitNum != n2.manBitNum) {
+      console.log("SubtractionIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ") and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
+    }
+
+    this.producedOverflow = false;
+    this.result = this._subtract(n1, n2);
+  }
+
+  _createClass(SubtractionIEEE, [{
+    key: "_subtract",
+    value: function _subtract(n1, n2) {
+      var flipedArr2 = _toConsumableArray(n2.arr);
+
+      flipedArr2[0] = flipedArr2[0] == 0 ? 1 : 0;
+      var op1 = new NumberIEEE(n1.expBitNum, n1.manBitNum, n1.arr);
+      var op2 = new NumberIEEE(n2.expBitNum, n2.manBitNum, flipedArr2);
+      return new AdditionIEEE(op1, op2).getResult();
+    }
+  }, {
+    key: "getResult",
+    value: function getResult() {
+      return this.result;
+    }
+  }]);
+
+  return SubtractionIEEE;
+}();
+
+export var MultiplicationIEEE =
+/*#__PURE__*/
+function () {
+  function MultiplicationIEEE(n1, n2) {
+    _classCallCheck(this, MultiplicationIEEE);
+
+    if (n1.expBitNum != n2.expBitNum) {
+      console.log("MultiplicationIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ") and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
+    }
+
+    if (n1.manBitNum != n2.manBitNum) {
+      console.log("MultiplicationIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ") and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
+    }
+
+    this.producedOverflow = false;
+    this.result = this._multiply(n1, n2);
+  }
+
+  _createClass(MultiplicationIEEE, [{
+    key: "_multiply",
+    value: function _multiply(n1, n2) {
+      var expBitNum = n1.expBitNum;
+      var manBitNum = n1.manBitNum;
+      var bitNum = n1.bitNum;
+      var sign = (n1.sign && !n2.sign || !n1.sign && n2.sign) + 0; // Edgecases:
+
+      if (n1.isNaN || n2.isNaN || n1.isInfinity && n2.isZero || n1.isZero && n2.isInfinity) {
+        // Return NaN
+        return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
+      }
+
+      if (n1.isInfinity || n2.isInfinity) {
+        // Return Infinty
+        var infArray = [sign];
+        infArray.push.apply(infArray, _toConsumableArray(Array(expBitNum).fill(1)));
+        infArray.push.apply(infArray, _toConsumableArray(Array(manBitNum).fill(0)));
+        return new NumberIEEE(expBitNum, manBitNum, infArray);
+      }
+
+      var op1 = new NumberBaseNComplement(2, 3, n1.mantissaBits, n1.manBitNum, false);
+      var op2 = new NumberBaseNComplement(2, 3, n2.mantissaBits, n2.manBitNum, false);
+      var multiplicationResult = new MultiplicationBaseNComplement(op1, op2).getResult();
+      var digitNum = multiplicationResult.digitNum;
+
+      var unnormalizedMantissa = _toConsumableArray(multiplicationResult.arr);
+
+      var cDigits = digitNum;
+
+      while (cDigits > 1 && unnormalizedMantissa[0] == 0) {
+        unnormalizedMantissa.splice(0, 1);
+        cDigits--;
+      } // Calculate shift
+      // Positive: Rightshift | Negative: Leftshift
+
+
+      var shift = null;
+
+      if (cDigits > 1) {
+        shift = cDigits - 1;
+      } else {
+        shift = 0;
+
+        for (var i = 1; i < unnormalizedMantissa.length; i++) {
+          shift--;
+
+          if (unnormalizedMantissa[i] == 1) {
+            break;
+          }
+        }
+      }
+
+      if (shift == unnormalizedMantissa.length - 1 && unnormalizedMantissa[unnormalizedMantissa.length - 1] == 0) {
+        // Return zero
+        return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
+      }
+
+      var normalizedMatissa = [];
+
+      for (var _i = 0; _i < manBitNum; _i++) {
+        var access = _i + Math.max(-shift, 0) + 1;
+        var num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
+        normalizedMatissa.push(num);
+      }
+
+      var finalE = n1.E + n2.E - n1.bias + shift;
+      var curE = finalE;
+      var exponentBits = [];
+
+      for (var _i2 = 0; _i2 < expBitNum; _i2++) {
+        exponentBits.unshift(curE % 2);
+        curE = Math.floor(curE / 2);
+      }
+
+      var result = [sign];
+      result.push.apply(result, exponentBits);
+      result.push.apply(result, normalizedMatissa);
+      return new NumberIEEE(expBitNum, manBitNum, result);
+    }
+  }, {
+    key: "getResult",
+    value: function getResult() {
+      return this.result;
+    }
+  }]);
+
+  return MultiplicationIEEE;
 }();
 
 var MultiplicationBaseNSignedToLatex =
@@ -1128,16 +1674,16 @@ console.log(num);
 console.log();
 
 
-
-let x1 = getIEEEFromString(8, "0 10011001 0000 1001 1001 0000 0000 0000");
-let x2 = getIEEEFromString(8, "0 10011001 1111 1111 0000 0000 0000 0000");
-let x3 = getIEEEFromString(8, "1 10010100 0011 0110 0000 0000 0000 0000");
-
-let y1 = getIEEEFromString(7, "0 1001000 1001 1011");
-let y2 = getIEEEFromString(7, "1 1001010 1110 1000");
-
- op = new MultiplicationIEEE(y1, y2);
-
-console.log(op.getResult());
 */
-})();
+
+var x1 = getIEEEFromString(8, "0 10011001 0000 1001 1001 0000 0000 0000");
+var x2 = getIEEEFromString(8, "0 10011001 1111 1111 0000 0000 0000 0000");
+var x3 = getIEEEFromString(8, "1 10010100 0011 0110 0000 0000 0000 0000");
+var y1 = getIEEEFromString(7, "0 1001000 1001 1011");
+var y2 = getIEEEFromString(7, "1 1001010 1110 1000");
+op = new MultiplicationIEEE(y1, y2);
+var op2 = new AdditionIEEE(y1, y2);
+var op3 = new SubtractionIEEE(y1, y2);
+console.log(op.getResult());
+console.log(op2.getResult());
+console.log(op3.getResult());
