@@ -37,13 +37,14 @@
           <table id="fpfTable1" class="floatingPointInput">
             <tr>
               <td>
-                <input id="fpfInput0" placeholder="3" @input="checkAndConvertFormat(0)"/>
+                <input id="fpfInput0" placeholder="Zahl eingeben"
+                  @input="checkAndConvertFormat(0)"/>
               </td>
               <td><FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
                 :options="formatOptions"/></td>
             </tr>
             <tr>
-              <td><input id="fpfInput1" disabled placeholder="0 1000 10000000000"></td>
+              <td><input id="fpfInput1" disabled placeholder="Zahl eingeben"></td>
               <td><FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal" :isDisabled="true"
                 :options="formatOptions"/></td>
             </tr>
@@ -58,12 +59,13 @@
         <td>
           <table id="fpfTable2" class="floatingPointInput">
             <tr>
-              <td><input id="fpfInput2" placeholder="3" @input="checkAndConvertFormat(1)"></td>
+              <td><input id="fpfInput2" placeholder="Zahl eingeben"
+                @input="checkAndConvertFormat(1)"></td>
               <td><FSelect :num="3" :sel="selectedFormat[3]" @input="selectVal"
                 :options="formatOptions"/></td>
             </tr>
             <tr>
-              <td><input id="fpfInput3" disabled placeholder="0 1000 10000000000"></td>
+              <td><input id="fpfInput3" disabled placeholder="Zahl eingeben"></td>
               <td><FSelect :num="4" :sel="selectedFormat[4]" @input="selectVal" :isDisabled="true"
                 :options="formatOptions"/></td>
             </tr>
@@ -71,12 +73,12 @@
         </td>
       </tr>
     </table>
-    <h4>Eigene Lösung</h4>
+    <!--<h4>Eigene Lösung</h4>
     <div class="solutionArea">
       <input id="solutionInput">
       <div class="divMargin"/>
       <button id="checkSolution">Check</button>
-    </div>
+    </div>-->
     <h4>Korrekte Lösung</h4>
     <label class="attention">Bitte vorher selber versuchen, die Aufgabe zu lösen!</label>
     <Accordion :solutionDescription="solDescr"/>
@@ -130,7 +132,7 @@ export default {
     selectVal(num, val) {
       this.selectedFormat[num] = val;
       const nnum = num > 2 ? 1 : 0;
-      this.convertFormat(nnum);
+      this.checkAndConvertFormat(nnum);
       console.log(val);
     },
     selectOp(num, val) {
@@ -182,6 +184,7 @@ export default {
         return;
       }
       this.convertFormat(num);
+      this.computeSolution();
     },
     convertFormat(num) {
       const firstFormat = this.selectedFormat[num * 3];
@@ -211,31 +214,33 @@ export default {
         }
       }
       document.getElementById(`fpfInput${num * 2 + 1}`).value = converted;
-
-      this.computeSolution();
     },
     computeSolution() {
       const num1 = document.getElementById('fpfInput1').value;
       const num2 = document.getElementById('fpfInput3').value;
-      const y1 = tool.getIEEEFromString(this.exponentBits, num1);
-      const y2 = tool.getIEEEFromString(this.exponentBits, num2);
-      console.log(y1);
-      console.log(y2);
-      let result = null;
-      switch (this.selectedFormat[2]) {
-        case 'add':
-          result = new tool.AdditionIEEE(y1, y2);
-          break;
-        case 'mul':
-          result = new tool.MultiplicationIEEE(y1, y2);
-          break;
-        case 'sub':
-          result = new tool.SubtractionIEEE(y1, y2);
-          break;
-        default:
+
+      if (num1 !== '' && num2 !== ''
+        && num1 !== 'Falsches Format' && num2 !== 'Falsches Format') {
+        const y1 = tool.getIEEEFromString(this.exponentBits, num1);
+        const y2 = tool.getIEEEFromString(this.exponentBits, num2);
+        console.log(y1);
+        console.log(y2);
+        let result = null;
+        switch (this.selectedFormat[2]) {
+          case 'add':
+            result = new tool.AdditionIEEE(y1, y2);
+            break;
+          case 'mul':
+            result = new tool.MultiplicationIEEE(y1, y2);
+            break;
+          case 'sub':
+            result = new tool.SubtractionIEEE(y1, y2);
+            break;
+          default:
+        }
+        console.log(result.getResult());
+        document.getElementById('solutionSpan').innerHTML = result.getResult().bitString;
       }
-      console.log(result.getResult());
-      document.getElementById('solutionSpan').innerHTML = result.getResult().bitString;
     },
     decToBin(num) {
       const fRep = parseFloat(num.replace(',', '.'));
@@ -352,6 +357,7 @@ export default {
             this.exponentBits += 1;
             this.convertFormat(0);
             this.convertFormat(1);
+            this.computeSolution();
           }
         }
         if (this.xCoord - e.pageX > blockSize) {
@@ -360,6 +366,7 @@ export default {
             this.exponentBits -= 1;
             this.convertFormat(0);
             this.convertFormat(1);
+            this.computeSolution();
           }
         }
       }
@@ -380,31 +387,6 @@ $arrow-size: 12px;
 .fpOperationTable{
   margin: auto;
   margin-top: 20px;
-}
-
-.attention {
-  background: $lightPurple;
-  border-left: 4px solid $purple;
-  display: block;
-  text-align: left;
-  height: 40px;
-  line-height: 40px;
-  padding-left: 45px;
-  position: relative;
-  box-sizing: border-box;
-  width: 663px;
-  margin: auto;
-
-  &::before  {
-    position: absolute;
-    margin: auto;
-    left: 15px;
-    color: $purple;
-    font-family: IonIcons;
-    content: '\f104';
-    font-size: 24px;
-    display: block;
-  }
 }
 
 .divMargin{

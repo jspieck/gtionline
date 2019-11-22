@@ -1,5 +1,6 @@
 <template>
   <div class="navbar">
+    <img id="logo" src="../assets/logo.svg"/>
     <ul>
       <li v-for="submenu in menu" v-bind:key="submenu.id">
         <a>{{submenu.label}}</a>
@@ -64,6 +65,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+#logo {
+  height: 40px;
+  width: 100px;
+  position: absolute;
+  left: 10px;
+  top: 13px;
+}
 .navbar {
   position: fixed;
   width: 100%;

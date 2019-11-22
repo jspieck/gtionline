@@ -1,6 +1,10 @@
+body {
+  margin: 0;
+}
 button{
   height: 36px;
-  width: 70px;
+  padding: 0 10px;
+  border: 1px solid $freshBlue;
   background: $freshBlue;
   border-radius: 6px;
   color: white;
@@ -12,7 +16,6 @@ button{
   &:hover{
     background: white;
     color: $freshBlue;
-    border: 1px solid $freshBlue;
   }
 }
 
@@ -43,4 +46,29 @@ h3{
   color: #273849;
   margin-top: 10px;
   padding-bottom: 0.7em;
+}
+
+.attention {
+  background: $lightPurple;
+  border-left: 4px solid $purple;
+  display: block;
+  text-align: left;
+  height: 40px;
+  line-height: 40px;
+  padding-left: 45px;
+  position: relative;
+  box-sizing: border-box;
+  width: 663px;
+  margin: auto;
+
+  &::before  {
+    position: absolute;
+    margin: auto;
+    left: 15px;
+    color: $purple;
+    font-family: IonIcons;
+    content: '\f104';
+    font-size: 24px;
+    display: block;
+  }
 }

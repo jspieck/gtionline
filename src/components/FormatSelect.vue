@@ -55,6 +55,7 @@ select{
   border-radius: 6px;
   background-color: #fff;
   border: 1px solid #DFE1E5;
+  display: inline-block;
 
   &:after {
     content: "\f3d0";
