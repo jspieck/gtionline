@@ -1,13 +1,13 @@
 <template>
   <div class="accordion js-accordion accordionContainer">
     <div v-for="panel in solutionDescription" v-bind:key="panel.name"
-      class="accordion__item js-accordion-item">
+      @click="setActive" class="accordion__item js-accordion-item">
       <div class="accordion-header js-accordion-header">{{panel.name}}</div>
       <div class="accordion-body js-accordion-body">
         <div class="accordion-body__contents"><span v-html="panel.text"></span></div>
         <div class="accordion js-accordion">
           <div v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name"
-            class="accordion__item js-accordion-item">
+            @click="setActive" class="accordion__item js-accordion-item">
             <div class="accordion-header js-accordion-header">{{subpanel.name}}</div>
             <div class="accordion-body js-accordion-body">
               <div class="accordion-body__contents">{{subpanel.text}}</div>
@@ -20,27 +20,20 @@
 </template>
 
 <script>
-import $ from 'jquery';
-
 export default {
   name: 'SolutionAccordion',
   props: ['solutionDescription'],
-  mounted() {
-    const animationSpeed = 300;
-    const $accordion = $('.js-accordion');
-    const $accordionHeader = $accordion.find('.js-accordion-header');
-    $accordionHeader.on('click', function () {
-      // show/hide the clicked accordion item
-      $(this).closest('.js-accordion-item').toggleClass('active');
-      $(this).next().stop().slideToggle(animationSpeed);
-    });
-    // reveal the active accordion bodies
-    $('.js-accordion-item.active').find('> .js-accordion-body').show();
-  },
   data() {
-    return {
-      selectedOption: 'binary',
-    };
+    return {};
+  },
+  methods: {
+    setActive(e) {
+      if (e.target.classList.contains('accordion-header')) {
+        if (e.target.parentNode === e.currentTarget) {
+          e.currentTarget.classList.toggle('active');
+        }
+      }
+    },
   },
 };
 </script>
@@ -50,6 +43,10 @@ export default {
   font-size: 1rem;
   width: 663px;
   border-radius: 5px;
+}
+
+.accordion__item.active > .accordion-body{
+  display: block;
 }
 
 .accordionContainer {
