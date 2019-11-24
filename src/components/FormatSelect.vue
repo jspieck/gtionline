@@ -54,7 +54,7 @@ select{
   position: relative;
   border-radius: 6px;
   background-color: #fff;
-  border: 1px solid #DFE1E5;
+  border: none;
   display: inline-block;
 
   &:after {

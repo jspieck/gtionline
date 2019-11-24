@@ -54,7 +54,7 @@ body{
 
     .tab {
       margin: 0 3px 2px 0;
-      background: #fcfcfc;
+      background: #ffffff5e;
       display: block;
       padding: 12px 15px;
       text-decoration: none;
@@ -62,7 +62,7 @@ body{
       border-radius: 3px 3px 0 0;
 
       &.sel {
-        background: #f5f5f5;
+        background: #fff;
         color: #333;
         text-shadow: none;
       }
@@ -72,7 +72,7 @@ body{
     }
   }
   .section {
-    background: #f5f5f5;
+    background: #ffffff5e;
     overflow: hidden;
     padding: 15px;
     clear: both;

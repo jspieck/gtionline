@@ -44,7 +44,7 @@
                 :options="formatOptions"/></td>
             </tr>
             <tr>
-              <td><input id="fpfInput1" disabled placeholder="Zahl eingeben"></td>
+              <td><input id="fpfInput1" disabled></td>
               <td><FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal" :isDisabled="true"
                 :options="formatOptions"/></td>
             </tr>
@@ -65,7 +65,7 @@
                 :options="formatOptions"/></td>
             </tr>
             <tr>
-              <td><input id="fpfInput3" disabled placeholder="Zahl eingeben"></td>
+              <td><input id="fpfInput3" disabled></td>
               <td><FSelect :num="4" :sel="selectedFormat[4]" @input="selectVal" :isDisabled="true"
                 :options="formatOptions"/></td>
             </tr>
@@ -406,6 +406,8 @@ $arrow-size: 12px;
   padding: 10px;
   border-radius: 10px;
   border: 1px solid #d8d8d8;
+  border: none;
+  background: #ffffff8a;
   position: relative;
 }
 
@@ -432,26 +434,26 @@ $arrow-size: 12px;
   width: 40px;
   height: 40px;
   line-height: 40px;
-  color: $freshYellow;
+  color: white;
   background: $freshBlue;
-  border-right: 1px solid $freshYellow;
+  border-right: 1px solid white;
 }
 
 .exponent{
   height: 40px;
   line-height: 40px;
   background: $freshBlue;
-  color: $freshYellow;
+  color: white;
   position: relative;
   user-select: none;
-  border-right: 1px solid $freshYellow;
+  border-right: 1px solid white;
 }
 
 .fraction{
   height: 40px;
   line-height: 40px;
   background: $freshBlue;
-  color: $freshYellow;
+  color: white;
   position: relative;
   user-select: none;
 }
@@ -485,7 +487,7 @@ $arrow-size: 12px;
 .arrowRight {
   width: $arrow-size;
   height: $arrow-size;
-  background-color: $freshYellow;
+  background-color: white;
   position: absolute;
   top: 50%;
   left: 35%;
@@ -495,7 +497,7 @@ $arrow-size: 12px;
 .arrowLeft {
   width: $arrow-size;
   height: $arrow-size;
-  background-color: $freshYellow;
+  background-color: white;
   position: absolute;
   top: 50%;
   left: 65%;

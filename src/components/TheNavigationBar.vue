@@ -91,6 +91,10 @@ export default {
     text-align: left;
     border-bottom: 1px solid #0d336f26;
 
+    &:hover {
+      color: #faaf49;
+    }
+
     a {
       cursor: pointer;
     }

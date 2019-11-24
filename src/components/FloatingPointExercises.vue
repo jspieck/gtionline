@@ -184,26 +184,26 @@ $arrow-size: 12px;
   width: 40px;
   height: 40px;
   line-height: 40px;
-  color: $freshYellow;
+  color: white;
   background: $freshBlue;
-  border-right: 1px solid $freshYellow;
+  border-right: 1px solid white;
 }
 
 .exponent{
   height: 40px;
   line-height: 40px;
   background: $freshBlue;
-  color: $freshYellow;
+  color: white;
   position: relative;
   user-select: none;
-  border-right: 1px solid $freshYellow;
+  border-right: 1px solid white;
 }
 
 .fraction{
   height: 40px;
   line-height: 40px;
   background: $freshBlue;
-  color: $freshYellow;
+  color: white;
   position: relative;
   user-select: none;
 }
@@ -237,7 +237,7 @@ $arrow-size: 12px;
 .arrowRight {
   width: $arrow-size;
   height: $arrow-size;
-  background-color: $freshYellow;
+  background-color: white;
   position: absolute;
   top: 50%;
   left: 35%;
@@ -247,7 +247,7 @@ $arrow-size: 12px;
 .arrowLeft {
   width: $arrow-size;
   height: $arrow-size;
-  background-color: $freshYellow;
+  background-color: white;
   position: absolute;
   top: 50%;
   left: 65%;

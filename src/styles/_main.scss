@@ -1,6 +1,12 @@
+@font-face {
+  font-family: "Avenir";
+  src: url("~@/assets/Avenir-Book.ttf") format("ttf");
+}
+
 body {
   margin: 0;
 }
+
 button{
   height: 36px;
   padding: 0 10px;
@@ -23,7 +29,7 @@ input{
   font-size: 16px !important;
   background: white;
   border-radius: 6px;
-  border: 1px solid #DFE1E5;
+  border: 1px solid #dfe1e59e;
   color: #70757A!important;
   font-size: 14px !important;
   height: 36px;

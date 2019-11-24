@@ -19,12 +19,20 @@ export default {
 </script>
 
 <style lang="scss">
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+}
 #app {
   font-family: 'Source Sans Pro', 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  min-height: 100%;
+  background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
 #nav {
