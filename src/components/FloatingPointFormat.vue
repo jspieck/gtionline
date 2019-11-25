@@ -124,7 +124,7 @@ export default {
             { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
           ],
         },
-        { name: 'Lösung', text: 'Die Lösung lautet <span id="solutionSpan"/>' },
+        { name: 'Lösung', text: 'Die Lösung lautet <span id="solutionSpan"></span>' },
       ],
     };
   },
@@ -405,7 +405,6 @@ $arrow-size: 12px;
   display: inline-block;
   padding: 10px;
   border-radius: 10px;
-  border: 1px solid #d8d8d8;
   border: none;
   background: #ffffff8a;
   position: relative;

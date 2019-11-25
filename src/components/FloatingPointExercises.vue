@@ -53,7 +53,7 @@ export default {
             { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
           ],
         },
-        { name: 'Lösung', text: 'Die Lösung lautet <span id="solutionSpan"/>' },
+        { name: 'Lösung', text: 'Die Lösung lautet <span id="solutionSpanExercise"/>' },
       ],
     };
   },
@@ -119,7 +119,7 @@ export default {
           default:
         }
         console.log(result.getResult());
-        document.getElementById('solutionSpan').innerHTML = result.getResult().bitString;
+        document.getElementById('solutionSpanExercise').innerHTML = result.getResult().bitString;
       }
     },
   },

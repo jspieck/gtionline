@@ -661,60 +661,6 @@ function numToChar$1(num) {
   return '';
 }
 
-function charToNum(chr) {
-  if ('0'.charCodeAt() <= chr.charCodeAt() && chr.charCodeAt() <= '9'.charCodeAt()) {
-    return chr.charCodeAt() - '0'.charCodeAt();
-  }
-
-  if ('A'.charCodeAt() <= chr.charCodeAt() && chr.charCodeAt() <= 'Z') {
-    return chr.charCodeAt() - 'A'.charCodeAt() + 10;
-  }
-
-  return -1;
-}
-
-function getBaseNComplementFromString(base, digitNum, str) {
-  if (base < 2 || base > 36) {
-    console.log("getBaseNComplementFromString(base, str): Base ".concat(base, " is not supported."));
-    process.exit(1);
-  }
-
-  var pointCount = 0;
-
-  for (var i = 0; i < str.length; i++) {
-    if (str[i] == '.') {
-      pointCount++;
-      continue;
-    }
-
-    var n = charToNum(str[i]);
-
-    if (n < 0 || n >= base) {
-      console.log("getBaseNComplementFromString(str): Given string is not compatible with base 2.");
-      process.exit(1);
-    }
-  }
-
-  if (pointCount > 1) {
-    console.log("getBaseNComplementFromString(base, str): Given string contains more than 1 point.");
-    process.exit(1);
-  }
-
-  var arr = [];
-  var offset = 0;
-
-  for (var _i = 0; _i < str.length; _i++) {
-    if (str[_i] == '.') {
-      offset = str.length - _i - 1;
-      continue;
-    }
-
-    arr.push(charToNum(str[_i]));
-  }
-
-  return new NumberBaseNComplement(base, digitNum, arr, offset);
-} // Representation of a number in N's complement (Up to digitNum digits)
-
 var NumberBaseNComplement =
 /*#__PURE__*/
 function () {
@@ -763,7 +709,6 @@ function () {
       while (this.offset < 0) {
         this.arr.push(0);
         this.offset++;
-        this.digitNum++;
       }
     }
   }, {
@@ -909,7 +854,6 @@ function () {
       var signChanged = overflowPossible && n1.isNegative() && !result.isNegative() || !n1.isNegative() && result.isNegative();
       this.producedOverflow = overflow[0] > 0 && signChanged;
       this.watcher.step("Addition").saveVariable('op1', n1).saveVariable('op2', n2).saveVariable('op1Arr', _toConsumableArray(n1Arr)).saveVariable('op2Arr', _toConsumableArray(n2Arr)).saveVariable('carryArr', [].concat(overflow)).saveVariable('resultArr', [].concat(_final)).saveVariable('result', result).saveVariable('overflow', this.producedOverflow);
-      console.log(overflow, _final);
       return result;
     }
   }, {
@@ -1002,7 +946,7 @@ function numToChar$2(num) {
   return '';
 }
 
-function charToNum$1(chr) {
+function charToNum(chr) {
   if ('0'.charCodeAt() <= chr.charCodeAt() && chr.charCodeAt() <= '9'.charCodeAt()) {
     return chr.charCodeAt() - '0'.charCodeAt();
   }
@@ -1022,7 +966,7 @@ export function getIEEEFromString(expBitNum, str) {
 
   for (var i = 0; i < str.length; i++) {
     if (str[i] == ' ') continue;
-    var n = charToNum$1(str[i]);
+    var n = charToNum(str[i]);
 
     if (n < 0 || n >= 2) {
       console.log("getIEEEFromString(expBitNum, str): Given string is not compatible with base 2.");
@@ -1034,7 +978,7 @@ export function getIEEEFromString(expBitNum, str) {
 
   for (var _i = 0; _i < str.length; _i++) {
     if (str[_i] == ' ') continue;
-    arr.push(charToNum$1(str[_i]));
+    arr.push(charToNum(str[_i]));
   }
 
   return new NumberIEEE(expBitNum, arr.length - expBitNum - 1, arr);
@@ -1232,7 +1176,16 @@ function () {
         infArray.push.apply(infArray, _toConsumableArray(Array(expBitNum).fill(1)));
         infArray.push.apply(infArray, _toConsumableArray(Array(manBitNum).fill(0)));
         return new NumberIEEE(expBitNum, manBitNum, infArray);
-      } // Get unnormalized  exponent
+      }
+      /*
+      if(n1.isZero || n2.isZero){
+        // Return other number
+        let sign = n1.isInfinity ? n1.sign : n2.sign;
+        let arr = [...(n1.isZero ? n2.arr : n1.arr)];
+        return new NumberIEEE(expBitNum, manBitNum, arr);
+      }
+      */
+      // Get unnormalized  exponent
 
 
       var anchorExp = n1.exponent;
@@ -1241,12 +1194,18 @@ function () {
       var op1 = new NumberBaseNComplement(2, digitNum, n1.mantissaBits, n1.manBitNum, n1.sign == 1);
       var op2 = new NumberBaseNComplement(2, digitNum, n2.mantissaBits, n2.manBitNum - difference, n2.sign == 1);
       var additionResult = new AdditionBaseNComplement(op1, op2).getResult();
+      console.log(n1.mantissaBits.join(' '));
+      console.log(n2.mantissaBits.join(' '));
+      console.log(op1.stringRepresentation);
+      console.log(op2.stringRepresentation);
+      console.log(additionResult.stringRepresentation);
       var sign = null;
       var unnormalizedMantissa = null;
 
       if (additionResult.isNegative()) {
         sign = 1;
-        unnormalizedMantissa = additionResult.getFlipedArray();
+        var additionResultInverted = new NumberBaseNComplement(2, additionResult.digitNum, additionResult.arr, additionResult.offset, true);
+        unnormalizedMantissa = additionResultInverted.arr;
       } else {
         sign = 0;
         unnormalizedMantissa = _toConsumableArray(additionResult.arr);
@@ -1263,7 +1222,7 @@ function () {
 
       var shift = null;
 
-      if (cDigits > 1) {
+      if (cDigits >= 1) {
         shift = cDigits - 1;
       } else {
         shift = 0;
@@ -1277,7 +1236,7 @@ function () {
         }
       }
 
-      if (shift == unnormalizedMantissa.length - 1 && unnormalizedMantissa[unnormalizedMantissa.length - 1] == 0) {
+      if (shift == unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] == 0) {
         // Return zero
         return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
       }
@@ -1291,7 +1250,11 @@ function () {
       } // Calculate exponent
 
 
+      console.log(unnormalizedMantissa.join(' '));
+      console.log(normalizedMatissa.join(' '));
+      console.log(anchorExp, shift);
       var finalE = anchorExp + shift + n1.bias;
+      console.log(anchorExp + shift);
       var curE = finalE;
       var exponentBits = [];
 
@@ -1410,7 +1373,7 @@ function () {
 
       var shift = null;
 
-      if (cDigits > 1) {
+      if (cDigits >= 1) {
         shift = cDigits - 1;
       } else {
         shift = 0;
@@ -1424,7 +1387,7 @@ function () {
         }
       }
 
-      if (shift == unnormalizedMantissa.length - 1 && unnormalizedMantissa[unnormalizedMantissa.length - 1] == 0) {
+      if (shift == unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] == 0) {
         // Return zero
         return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
       }
@@ -1461,208 +1424,89 @@ function () {
   return MultiplicationIEEE;
 }();
 
-var MultiplicationBaseNSignedToLatex =
-/*#__PURE__*/
-function () {
-  function MultiplicationBaseNSignedToLatex(watcher) {
-    var multiplicationOnly = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-    _classCallCheck(this, MultiplicationBaseNSignedToLatex);
-
-    this.algorithm = watcher;
-    this.result = this._generateLatex(multiplicationOnly);
-  }
-
-  _createClass(MultiplicationBaseNSignedToLatex, [{
-    key: "_generateLatex",
-    value: function _generateLatex() {
-      var multiplicationOnly = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-      var latexSign, latexMultiplication;
-      this.algorithm = this.algorithm.start;
-
-      while (this.algorithm.name != "Result") {
-        if (this.algorithm.name == "GetSign") {
-          latexSign = this._computeGetSign();
-        } else if (this.algorithm.name == "MultInital") {
-          latexMultiplication = this._computeMultiplication();
-        } else {
-          console.log("MultiplicationBaseNSignedToLatex._generateLatex(): Unknown step.");
-          process.exit(0);
-        }
-
-        this.algorithm = this.algorithm.next;
-      }
-
-      if (multiplicationOnly) {
-        return latexMultiplication;
-      }
-
-      var latex = ["\\begin{enumerate}", "\\item Get Final Sign: \\ ".concat(latexSign, " "), "\\item Multiply absolute values: \\\\", "".concat(latexMultiplication), "\\item[] Final Result: \\ $".concat(this.algorithm.data.result.stringRepresentation, "$"), "\\end{enumerate}"].join('\n');
-      return latex;
-    }
-  }, {
-    key: "_computeGetSign",
-    value: function _computeGetSign() {
-      var data = this.algorithm.data;
-      var latex = "$".concat(data.signN1 ? 1 : 0, " \\oplus ").concat(data.signN2 ? 1 : 0, " = ").concat(data.isNegative ? 1 : 0, "$");
-      return latex;
-    }
-  }, {
-    key: "_computeMultiplication",
-    value: function _computeMultiplication() {
-      var _firstline, _secondline, _firstline3;
-
-      var data = this.algorithm.data;
-      var widthNeeded = 0;
-      var step = this.algorithm;
-
-      while (step.name != 'Result') {
-        if (step.name == 'MultInital') {
-          widthNeeded = Math.max(step.data.num1.arr.length, step.data.num2.arr.length + 1);
-        } else if (step.name == 'MultFinal') {
-          widthNeeded = Math.max(widthNeeded, step.data.cur.arr.length + 1);
-        } else {
-          widthNeeded = Math.max(widthNeeded, step.data.cur.arr.length + 1);
-          widthNeeded = Math.max(widthNeeded, step.data.toAdd.arr.length + 1);
-        }
-
-        step = step.next;
-      }
-
-      var firstline, secondline;
-      firstline = _toConsumableArray(this.algorithm.data.num1.arr);
-
-      (_firstline = firstline).unshift.apply(_firstline, _toConsumableArray(Array(Math.max(0, widthNeeded - firstline.length)).fill('')));
-
-      firstline = firstline.map(function (e) {
-        return '' + e;
-      }).join(' & ');
-      secondline = _toConsumableArray(this.algorithm.data.num2.arr);
-
-      (_secondline = secondline).unshift.apply(_secondline, _toConsumableArray(Array(Math.max(0, widthNeeded - 1 - secondline.length)).fill('')));
-
-      secondline.unshift('\\times');
-      secondline = secondline.map(function (e) {
-        return '' + e;
-      }).join(' & ');
-      var latex = ["\\begin{align*}", "\t\\begin{array}{".concat(Array(widthNeeded).fill('c').join(''), "}"), "\t\t ".concat(firstline, " \\\\"), "\t\t ".concat(secondline, " \\\\ \\hline")];
-      this.algorithm = this.algorithm.next;
-
-      while (this.algorithm.name != 'MultFinal') {
-        var _firstline2, _secondline2;
-
-        firstline = _toConsumableArray(this.algorithm.data.cur.arr);
-
-        (_firstline2 = firstline).unshift.apply(_firstline2, _toConsumableArray(Array(Math.max(0, widthNeeded - 1 - firstline.length)).fill('0')));
-
-        firstline.unshift('');
-        firstline = firstline.map(function (e) {
-          return '' + e;
-        }).join(' & ');
-        secondline = _toConsumableArray(this.algorithm.data.toAdd.arr);
-
-        (_secondline2 = secondline).unshift.apply(_secondline2, _toConsumableArray(Array(Math.max(0, widthNeeded - 1 - secondline.length)).fill('0')));
-
-        secondline.unshift('+');
-        secondline = secondline.map(function (e) {
-          return '' + e;
-        }).join(' & ');
-        latex.push("\t\t ".concat(firstline, " \\\\"));
-        latex.push("\t\t ".concat(secondline, " \\\\ \\hline"));
-        this.algorithm = this.algorithm.next;
-      }
-
-      firstline = _toConsumableArray(this.algorithm.data.cur.arr);
-
-      (_firstline3 = firstline).unshift.apply(_firstline3, _toConsumableArray(Array(Math.max(0, widthNeeded - 1 - firstline.length)).fill('0')));
-
-      firstline.unshift('');
-      firstline = firstline.map(function (e) {
-        return '' + e;
-      }).join(' & ');
-      latex.push("\t\t ".concat(firstline, " \\\\"));
-      latex.push("\t\\end{array}\\\\");
-      latex.push("\\end{align*}");
-      return latex.join('\n');
-    }
-  }, {
-    key: "getResult",
-    value: function getResult() {
-      return this.result;
-    }
-  }]);
-
-  return MultiplicationBaseNSignedToLatex;
-}();
-
-var MultiplicationBaseNComplementToLatex =
-/*#__PURE__*/
-function () {
-  function MultiplicationBaseNComplementToLatex(watcher) {
-    _classCallCheck(this, MultiplicationBaseNComplementToLatex);
-
-    this.algorithm = watcher;
-    this.result = this._generateLatex();
-  }
-
-  _createClass(MultiplicationBaseNComplementToLatex, [{
-    key: "_generateLatex",
-    value: function _generateLatex() {
-      var latexSize, latexMultiplication;
-      this.algorithm = this.algorithm.start;
-
-      while (this.algorithm.name != "Result") {
-        if (this.algorithm.name == "DetermineSize") {
-          latexSize = this._computeDetermineSize();
-        } else if (this.algorithm.name == "Multiply") {
-          latexMultiplication = this._computeMultiplication();
-        } else {
-          console.log("MultiplicationBaseNComplementToLatex._generateLatex(): Unknown step.");
-          process.exit(0);
-        }
-
-        this.algorithm = this.algorithm.next;
-      }
-
-      var latex = ["\\begin{enumerate}", "\\item Get needed size: \\ ".concat(latexSize, " "), "\\item Sign extend operands to $S$ and multiply as positive numbers: \\\\", "".concat(latexMultiplication), "\\item[] Take the $S$ last digits.\\\\", "Final Result: \\ $".concat(this.algorithm.data.result.stringRepresentation, "$"), "\\end{enumerate}"].join('\n');
-      return latex;
-    }
-  }, {
-    key: "_computeDetermineSize",
-    value: function _computeDetermineSize() {
-      var data = this.algorithm.data;
-      var latex = "$S = 2 \\cdot \\max(\\text{length}(n1), \\text{length}(n2)) = 2 \\cdot \\max(".concat(data.n1Offset + data.digitNum, ", ").concat(data.n2Offset + data.digitNum, ")$ = ").concat(data.digitsToTake);
-      return latex;
-    }
-  }, {
-    key: "_computeMultiplication",
-    value: function _computeMultiplication() {
-      var data = this.algorithm.data;
-      var latex = new MultiplicationBaseNSignedToLatex(data.multiplication, true).getResult();
-      return latex;
-    }
-  }, {
-    key: "getResult",
-    value: function getResult() {
-      return this.result;
-    }
-  }]);
-
-  return MultiplicationBaseNComplementToLatex;
-}();
-
 //export * from './boolean/index.js';
-var num1 = getBaseNComplementFromString(10, 3, "185");
-var num2 = getBaseNComplementFromString(10, 3, "671");
-var op = new MultiplicationBaseNComplement(num1, num2);
-console.log(new MultiplicationBaseNComplementToLatex(op.watcher).getResult());
 /*
-let num1 = getNumFromString(2, "1110100");
-let num2 = getNumFromString(2, "11100010");
+let num1 = getBaseNComplementFromString(2, 4,"0101");
+let num2 = getBaseNComplementFromString(2, 4,"1011");
 
-let op = new SubtractionBaseN(num1, num2);
+
+
+let op = new AdditionBaseNComplement(num1, num2);
+
+console.log((new AdditionBaseNComplementToLatex(op.watcher)).getResult());
+*/
+
+/*
+// Tests Addition
+let x1 = getIEEEFromString(8, "1  0111 1011 0101 1110 0000 0000 0000 000");
+let x2 = getIEEEFromString(8, "0  1000 0000 1011 0011 1010 1110 0101 000");
+let x3 = getIEEEFromString(8, "0  1010 0101 0000 0101 1100 0100 0000 000");
+let x4 = getIEEEFromString(8, "1  0101 1010 0101 1000 0001 0000 0000 000");
+let x5 = getIEEEFromString(8, "1  0000 0000 0000 0000 0000 0000 0000 000");
+
+//console.log(`x1: ${x1.bitString}|${x1.valueString}`);
+
+let x6 = (new AdditionIEEE(x1, x3)).getResult();
+let x7 = (new AdditionIEEE(x4, x2)).getResult();
+let x8 = (new AdditionIEEE(x1, x4)).getResult();
+let x9 = (new AdditionIEEE(x3, x6)).getResult();
+let x10 = (new AdditionIEEE(x7, x2)).getResult();
+let x11 = (new AdditionIEEE(x5, x1)).getResult();
+
+console.log(`x1: ${x1.bitString}|${x1.valueString}`);
+console.log(`x2: ${x2.bitString}|${x2.valueString}`);
+console.log(`x3: ${x3.bitString}|${x3.valueString}`);
+console.log(`x4: ${x4.bitString}|${x4.valueString}`);
+console.log(`x5: ${x5.bitString}|${x5.valueString}`);
+console.log(`x6(x1+x3): ${x6.bitString}|${x6.valueString}`);
+console.log(`x7(x2+x4): ${x7.bitString}|${x7.valueString}`);
+console.log(`x8(x1+x3): ${x8.bitString}|${x8.valueString}`);
+console.log(`x9(x3+x6): ${x9.bitString}|${x9.valueString}`);
+console.log(`x10(x2+x7): ${x10.bitString}|${x10.valueString}`);
+console.log(`x11(x1+x5): ${x11.bitString}|${x11.valueString}`);
+*/
+// Tests Multiplication
+// Tests Addition
+
+var x1 = getIEEEFromString(8, "0 10000001  01011001100110011001101");
+var y1 = getIEEEFromString(8, "0 10000000  00001100110011001100110");
+var x2 = getIEEEFromString(8, "0 10001111  10101101000011000000000");
+var y2 = getIEEEFromString(8, "0 01111010  00100100111111001010010");
+var x3 = getIEEEFromString(8, "0 10000111  11110101010000000101100");
+var y3 = getIEEEFromString(8, "0 01110110  11010100100101010001100");
+var x4 = getIEEEFromString(8, "1 00000000  00000000000000000000000");
+var y4 = getIEEEFromString(8, "1 10000000  10001000000000000000000");
+var z1 = new MultiplicationIEEE(x1, y1).getResult();
+var z2 = new MultiplicationIEEE(x2, y2).getResult();
+var z3 = new MultiplicationIEEE(x3, y3).getResult();
+var z4 = new MultiplicationIEEE(x4, y4).getResult();
+var z5 = new AdditionIEEE(x4, y4).getResult();
+var z6 = new SubtractionIEEE(x4, y4).getResult();
+console.log("x1: ".concat(x1.bitString, "|").concat(x1.valueString));
+console.log("y1: ".concat(y1.bitString, "|").concat(y1.valueString));
+console.log("z1: ".concat(z1.bitString, "|").concat(z1.valueString));
+console.log("--------------------------");
+console.log("x2: ".concat(x2.bitString, "|").concat(x2.valueString));
+console.log("y2: ".concat(y2.bitString, "|").concat(y2.valueString));
+console.log("z2: ".concat(z2.bitString, "|").concat(z2.valueString));
+console.log("--------------------------");
+console.log("x3: ".concat(x3.bitString, "|").concat(x3.valueString));
+console.log("y3: ".concat(y3.bitString, "|").concat(y3.valueString));
+console.log("z3: ".concat(z3.bitString, "|").concat(z3.valueString));
+console.log("--------------------------");
+console.log("x4: ".concat(x4.bitString, "|").concat(x4.valueString));
+console.log("y4: ".concat(y4.bitString, "|").concat(y4.valueString));
+console.log("z4: ".concat(z4.bitString, "|").concat(z4.valueString));
+console.log("z5: ".concat(z5.bitString, "|").concat(z5.valueString));
+console.log("z6: ".concat(z6.bitString, "|").concat(z6.valueString));
+console.log("--------------------------");
+/*
+let num1 = getNumFromString(2, "1110100.110");
+let num2 = getNumFromString(2, "-11100010.110");
+
+let op = new MultiplicationBaseN(num1, num2);
 //console.log(op);
-console.log((new SubtractionBaseNSignedToLatex(op.watcher)).getResult());
+console.log((new MultiplicationBaseNSignedToLatex(op.watcher)).getResult());
 */
 
 /*
@@ -1674,16 +1518,15 @@ console.log(num);
 console.log();
 
 
-*/
 
-var x1 = getIEEEFromString(8, "0 10011001 0000 1001 1001 0000 0000 0000");
-var x2 = getIEEEFromString(8, "0 10011001 1111 1111 0000 0000 0000 0000");
-var x3 = getIEEEFromString(8, "1 10010100 0011 0110 0000 0000 0000 0000");
-var y1 = getIEEEFromString(7, "0 1001000 1001 1011");
-var y2 = getIEEEFromString(7, "1 1001010 1110 1000");
-op = new MultiplicationIEEE(y1, y2);
-var op2 = new AdditionIEEE(y1, y2);
-var op3 = new SubtractionIEEE(y1, y2);
+let x1 = getIEEEFromString(8, "0 10011001 0000 1001 1001 0000 0000 0000");
+let x2 = getIEEEFromString(8, "0 10011001 1111 1111 0000 0000 0000 0000");
+let x3 = getIEEEFromString(8, "1 10010100 0011 0110 0000 0000 0000 0000");
+
+let y1 = getIEEEFromString(7, "0 1001000 1001 1011");
+let y2 = getIEEEFromString(7, "1 1001010 1110 1000");
+
+ op = new MultiplicationIEEE(y1, y2);
+
 console.log(op.getResult());
-console.log(op2.getResult());
-console.log(op3.getResult());
+*/
