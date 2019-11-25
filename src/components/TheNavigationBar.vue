@@ -1,7 +1,9 @@
 <template>
   <div class="navbar">
     <img id="logo" src="../assets/logo.svg"/>
-    <ul>
+    <input class="menu-btn" type="checkbox" id="menu-btn" />
+    <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
+    <ul class="menu">
       <li v-for="submenu in menu" v-bind:key="submenu.id">
         <a>{{submenu.label}}</a>
         <ul class="navbar-dropdown">
@@ -72,6 +74,7 @@ export default {
   left: 10px;
   top: 13px;
 }
+
 .navbar {
   position: fixed;
   width: 100%;
@@ -82,6 +85,9 @@ export default {
 
   ul {
     list-style-type: none;
+    li:hover > .navbar-dropdown {
+      display: block;
+    }
   }
 
   li {
@@ -98,6 +104,82 @@ export default {
     a {
       cursor: pointer;
     }
+  }
+
+  .menu-btn {
+    display: none;
+  }
+  .menu-btn:checked ~ .menu {
+    max-height: 240px;
+  }
+  .menu-btn:checked ~ .menu-icon .navicon {
+    background: transparent;
+  }
+  .menu-btn:checked ~ .menu-icon .navicon:before {
+    transform: rotate(-45deg);
+  }
+  .menu-btn:checked ~ .menu-icon .navicon:after {
+    transform: rotate(45deg);
+  }
+  .menu-btn:checked ~ .menu-icon:not(.steps) .navicon:before,
+  .menu-btn:checked ~ .menu-icon:not(.steps) .navicon:after {
+    top: 0;
+  }
+
+  .menu-icon {
+    cursor: pointer;
+    display: block;
+    float: right;
+    padding: 28px 20px;
+    position: relative;
+    user-select: none;
+    .navicon {
+      background: white;
+      display: block;
+      height: 2px;
+      position: relative;
+      transition: background .2s ease-out;
+      width: 18px;
+    }
+    .navicon:before, .navicon:after {
+      background: white;
+      content: '';
+      display: block;
+      height: 100%;
+      position: absolute;
+      transition: all .2s ease-out;
+      width: 100%;
+    }
+    .navicon:before {
+      top: 5px;
+    }
+    .navicon:after {
+      top: -5px;
+    }
+  }
+  .menu {
+    clear: both;
+    overflow: hidden;
+    max-height: 0;
+    margin: 4px;
+    transition: max-height .2s ease-out;
+  }
+}
+
+@media (min-width: 768px) {
+  .navbar {
+    .menu {
+      clear: none;
+      max-height: none;
+      overflow: visible;
+      margin: 16px 0;
+    }
+    .menu-icon {
+      display: none;
+    }
+  }
+  #content {
+    padding-top: 102px;
   }
 }
 
@@ -118,6 +200,7 @@ export default {
 
   li {
     padding: 0;
+    display: block;
     a {
       color: $freshBlue;
       text-decoration: none;
@@ -129,13 +212,5 @@ export default {
   li:hover {
     background-color: #F9F9F9;
   }
-}
-
-.navbar ul li:hover > .navbar-dropdown {
-  display: block;
-}
-
-.navbar-dropdown li {
-  display: block;
 }
 </style>

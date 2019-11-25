@@ -42,6 +42,11 @@ export default {
 body{
   overflow-y: scroll;
 }
+@media screen and (max-width: 1400px) {
+  .tinytabs {
+    width: 95% !important;
+  }
+}
 .tinytabs {
   margin: auto;
   width: 1240px;

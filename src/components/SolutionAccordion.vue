@@ -33,6 +33,7 @@ export default {
           e.currentTarget.classList.toggle('active');
         }
       }
+      e.preventDefault();
     },
   },
 };
@@ -125,9 +126,6 @@ export default {
 }
 
 @media screen and (max-width: 1000px) {
-  body {
-    padding: 1em;
-  }
   .accordion {
     width: 100%;
   }
