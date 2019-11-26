@@ -37,14 +37,14 @@
           <table id="fpfTable1" class="floatingPointInput">
             <tr>
               <td>
-                <input id="fpfInput0" placeholder="Zahl eingeben"
+                <input id="fpfInput0" v-model="inputNums[0]" placeholder="Zahl eingeben"
                   @input="checkAndConvertFormat(0)"/>
               </td>
               <td><FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
                 :options="formatOptions"/></td>
             </tr>
             <tr>
-              <td><input id="fpfInput1" disabled></td>
+              <td><input id="fpfInput1" v-model="nums[0]" disabled></td>
               <td><FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal" :isDisabled="true"
                 :options="formatOptions"/></td>
             </tr>
@@ -59,13 +59,13 @@
         <td>
           <table id="fpfTable2" class="floatingPointInput">
             <tr>
-              <td><input id="fpfInput2" placeholder="Zahl eingeben"
+              <td><input id="fpfInput2" v-model="inputNums[1]" placeholder="Zahl eingeben"
                 @input="checkAndConvertFormat(1)"></td>
               <td><FSelect :num="3" :sel="selectedFormat[3]" @input="selectVal"
                 :options="formatOptions"/></td>
             </tr>
             <tr>
-              <td><input id="fpfInput3" disabled></td>
+              <td><input id="fpfInput3" v-model="nums[1]" disabled></td>
               <td><FSelect :num="4" :sel="selectedFormat[4]" @input="selectVal" :isDisabled="true"
                 :options="formatOptions"/></td>
             </tr>
@@ -81,7 +81,12 @@
     </div>-->
     <h4>Korrekte Lösung</h4>
     <label class="attention">Bitte vorher selber versuchen, die Aufgabe zu lösen!</label>
-    <Accordion :solutionDescription="solDescr"/>
+    <Accordion :solutionDescription="solDescr">
+      <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
+        {{panel.text}}
+        <span v-if="index === solDescr.length - 1">{{solution}}</span>
+      </p>
+    </Accordion>
   </div>
 </template>
 
@@ -111,8 +116,12 @@ export default {
         mul: 'Multiplikation (*)',
       },
       mouseDown: false,
+      solution: '',
+      inputNums: { 0: '', 1: '' },
+      nums: { 0: '', 1: '' },
       exponentBits: 4,
       numBits: 16,
+      falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
       solDescr: [
         { name: 'Schritt 1', text: 'Die Exponenten beider Zahlen müssen angeglichen werden.' },
@@ -124,7 +133,7 @@ export default {
             { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
           ],
         },
-        { name: 'Lösung', text: 'Die Lösung lautet <span id="solutionSpan"></span>' },
+        { name: 'Lösung', text: 'Die Lösung lautet: ' },
       ],
     };
   },
@@ -178,9 +187,9 @@ export default {
     },
     checkAndConvertFormat(num) {
       const firstFormat = this.selectedFormat[num * 3];
-      const toConvert = document.getElementById(`fpfInput${num * 2}`).value;
+      const toConvert = this.inputNums[num];
       if (!this.checkFormat(firstFormat, toConvert)) {
-        document.getElementById(`fpfInput${num * 2 + 1}`).value = 'Falsches Format';
+        this.nums[num] = this.falseFormatOutput;
         return;
       }
       this.convertFormat(num);
@@ -189,7 +198,7 @@ export default {
     convertFormat(num) {
       const firstFormat = this.selectedFormat[num * 3];
       const secondFormat = this.selectedFormat[num * 3 + 1];
-      const toConvert = document.getElementById(`fpfInput${num * 2}`).value;
+      const toConvert = this.inputNums[num];
       if (toConvert.length === 0) {
         return;
       }
@@ -213,14 +222,13 @@ export default {
           converted = this.binToDec(this.ieeeToBin(toConvert));
         }
       }
-      document.getElementById(`fpfInput${num * 2 + 1}`).value = converted;
+      this.nums[num] = converted;
     },
     computeSolution() {
-      const num1 = document.getElementById('fpfInput1').value;
-      const num2 = document.getElementById('fpfInput3').value;
-
+      const num1 = this.nums[0];
+      const num2 = this.nums[1];
       if (num1 !== '' && num2 !== ''
-        && num1 !== 'Falsches Format' && num2 !== 'Falsches Format') {
+        && num1 !== this.falseFormatOutput && num2 !== this.falseFormatOutput) {
         const y1 = tool.getIEEEFromString(this.exponentBits, num1);
         const y2 = tool.getIEEEFromString(this.exponentBits, num2);
         console.log(y1);
@@ -239,7 +247,7 @@ export default {
           default:
         }
         console.log(result.getResult());
-        document.getElementById('solutionSpan').innerHTML = result.getResult().bitString;
+        this.solution = result.getResult().bitString;
       }
     },
     decToBin(num) {
@@ -355,8 +363,12 @@ export default {
           this.xCoord += blockSize;
           if (this.exponentBits + 1 < this.numBits - 1) {
             this.exponentBits += 1;
-            this.convertFormat(0);
-            this.convertFormat(1);
+            if (this.nums[0] !== this.falseFormatOutput) {
+              this.convertFormat(0);
+            }
+            if (this.nums[1] !== this.falseFormatOutput) {
+              this.convertFormat(1);
+            }
             this.computeSolution();
           }
         }
@@ -364,8 +376,12 @@ export default {
           this.xCoord -= blockSize;
           if (this.exponentBits > 1) {
             this.exponentBits -= 1;
-            this.convertFormat(0);
-            this.convertFormat(1);
+            if (this.nums[0] !== this.falseFormatOutput) {
+              this.convertFormat(0);
+            }
+            if (this.nums[1] !== this.falseFormatOutput) {
+              this.convertFormat(1);
+            }
             this.computeSolution();
           }
         }
@@ -406,7 +422,7 @@ $arrow-size: 12px;
   padding: 10px;
   border-radius: 10px;
   border: none;
-  background: #ffffff8a;
+  background: $transparentWhite;
   position: relative;
 }
 

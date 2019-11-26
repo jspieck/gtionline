@@ -1,10 +1,11 @@
 <template>
   <div class="accordion js-accordion accordionContainer">
-    <div v-for="panel in solutionDescription" v-bind:key="panel.name"
+    <div v-for="(panel, index) in solutionDescription" v-bind:key="panel.name"
       @click="setActive" class="accordion__item js-accordion-item">
       <div class="accordion-header js-accordion-header">{{panel.name}}</div>
       <div class="accordion-body js-accordion-body">
-        <div class="accordion-body__contents"><span v-html="panel.text"></span></div>
+        <div class="accordion-body__contents"><!--<span v-html="panel.text"></span>-->
+          <slot :name="'slot'+index" scope="props"></slot></div>
         <div class="accordion js-accordion">
           <div v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name"
             @click="setActive" class="accordion__item js-accordion-item">

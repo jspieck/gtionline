@@ -5,9 +5,7 @@
               :options="operationOptions"/>
     <div class="divMargin"/>
     <button v-on:click="generateExercise">Generieren</button>
-    <div id="exerciseField">
-      <span id="exerciseText"></span>
-    </div>
+    <div id="exerciseField">{{exerciseText}}</div>
     <h4>Eigene Lösung</h4>
     <div class="solutionArea">
       <input id="solutionInput">
@@ -16,7 +14,12 @@
     </div>
     <h4>Korrekte Lösung</h4>
     <label class="attention">Bitte vorher selber versuchen, die Aufgabe zu lösen!</label>
-    <Accordion :solutionDescription="solDescr"/>
+    <Accordion :solutionDescription="solDescr">
+      <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
+        {{panel.text}}
+        <span v-if="index === solDescr.length - 1">{{solution}}</span>
+      </p>
+    </Accordion>
   </div>
 </template>
 
@@ -42,6 +45,8 @@ export default {
       mouseDown: false,
       exponentBits: 4,
       numBits: 16,
+      exerciseText: '',
+      solution: '',
       containerWidth: 500,
       solDescr: [
         { name: 'Schritt 1', text: 'Die Exponenten beider Zahlen müssen angeglichen werden.' },
@@ -53,7 +58,7 @@ export default {
             { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
           ],
         },
-        { name: 'Lösung', text: 'Die Lösung lautet <span id="solutionSpanExercise"/>' },
+        { name: 'Lösung', text: 'Die Lösung lautet: ' },
       ],
     };
   },
@@ -72,12 +77,11 @@ export default {
       return `${this.generateRandomBit()} ${this.generateRandomBits(this.exponentBits)} ${this.generateRandomBits(this.numBits - 1 - this.exponentBits)}`;
     },
     generateExercise() {
-      const exerciseText = document.getElementById('exerciseText');
       const operation = this.selectedFormat[0];
       const opNames = { add: ['Addition', '+'], mul: ['Multiplikation', '\\cdot'], sub: ['Subtraktion', '-'] };
       this.fp1 = this.generateRandomIEEE();
       this.fp2 = this.generateRandomIEEE();
-      exerciseText.innerText = `Es seien die Gleitkommazahlen \\( fp_1 \\) und \\( fp_2 \\) im 16 Bit Gleitkommaformat gegeben. Berechnen Sie die ${opNames[operation][0]} \\( fp_1 ${opNames[operation][1]} fp_2 \\) ohne die Binärdarstellung zu verlassen und geben Sie diese wieder als Gleitkommazahl an:
+      this.exerciseText = `Es seien die Gleitkommazahlen \\( fp_1 \\) und \\( fp_2 \\) im 16 Bit Gleitkommaformat gegeben. Berechnen Sie die ${opNames[operation][0]} \\( fp_1 ${opNames[operation][1]} fp_2 \\) ohne die Binärdarstellung zu verlassen und geben Sie diese wieder als Gleitkommazahl an:
           
           \\( fp_1 = \\text{${this.fp1}} \\)\n
           \\( fp_2 = \\text{${this.fp2}} \\)`;
@@ -119,7 +123,7 @@ export default {
           default:
         }
         console.log(result.getResult());
-        document.getElementById('solutionSpanExercise').innerHTML = result.getResult().bitString;
+        this.solution = result.getResult().bitString;
       }
     },
   },
@@ -134,6 +138,10 @@ $arrow-size: 12px;
   display: block;
   margin: 15px auto;
   text-align: justify;
+  background: $transparentWhite;
+  padding: 10px 15px;
+  border-radius: 10px;
+  white-space: pre-line;
 }
 
 .fpOperationTable{
