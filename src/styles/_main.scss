@@ -79,6 +79,12 @@ h3{
   }
 }
 
+@media screen and (max-width: 470px) {
+  .attention {
+    display: none;
+  }
+}
+
 @media screen and (max-width: 1000px) {
   .attention {
     width: 100%;

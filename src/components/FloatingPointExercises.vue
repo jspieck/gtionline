@@ -272,4 +272,10 @@ $arrow-size: 12px;
   right: 0%;
   bottom: 0%;
 }
+
+@media screen and (max-width: 815px) {
+  #exerciseField {
+    width: 90%;
+  }
+}
 </style>

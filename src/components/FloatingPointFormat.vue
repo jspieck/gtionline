@@ -26,7 +26,7 @@
       </div>
     </div>
     <h4>Operationsauswahl</h4>
-    <table id="fpOperationTable" class="fpOperationTable">
+    <!--<table id="fpOperationTable" class="fpOperationTable">
       <tr>
         <td>Erste Gleitkommazahl</td>
         <td>Operand</td>
@@ -72,7 +72,51 @@
           </table>
         </td>
       </tr>
-    </table>
+    </table>-->
+    <div id="fpOperationTable" class="fpOperationTable">
+      <div class="container">
+        <div>Erste Gleitkommazahl</div>
+        <table id="fpfTable1" class="floatingPointInput">
+          <tr>
+            <td>
+              <input id="fpfInput0" v-model="inputNums[0]" placeholder="Zahl eingeben"
+                @input="checkAndConvertFormat(0)"/>
+            </td>
+            <td><FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
+              :options="formatOptions"/></td>
+          </tr>
+          <tr>
+            <td><input id="fpfInput1" v-model="nums[0]" disabled></td>
+            <td><FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal" :isDisabled="true"
+              :options="formatOptions"/></td>
+          </tr>
+        </table>
+      </div>
+      <div class="container">
+        <div>Operand</div>
+        <div class="operand">
+          <FSelect :num="2" :sel="selectedFormat[2]" @input="selectOp"
+            :options="operationOptions"/>
+        </div>
+      </div>
+      <div class="container">
+        <div>Zweite Gleitkommazahl</div>
+        <table id="fpfTable2" class="floatingPointInput">
+          <tr>
+            <td><input id="fpfInput2" v-model="inputNums[1]" placeholder="Zahl eingeben"
+              @input="checkAndConvertFormat(1)"></td>
+            <td><FSelect :num="3" :sel="selectedFormat[3]" @input="selectVal"
+              :options="formatOptions"/></td>
+          </tr>
+          <tr>
+            <td><input id="fpfInput3" v-model="nums[1]" disabled></td>
+            <td><FSelect :num="4" :sel="selectedFormat[4]" @input="selectVal" :isDisabled="true"
+              :options="formatOptions"/></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
     <!--<h4>Eigene Lösung</h4>
     <div class="solutionArea">
       <input id="solutionInput">
@@ -400,9 +444,19 @@ export default {
 <style scoped lang="scss">
 $arrow-size: 12px;
 
+.container {
+  display: flex;
+  vertical-align: top;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
 .fpOperationTable{
   margin: auto;
   margin-top: 20px;
+  display: inline-flex;
+  flex-flow: row wrap;
+  align-items: stretch;
 }
 
 .divMargin{
@@ -412,8 +466,13 @@ $arrow-size: 12px;
 
 .operand{
   position: relative;
-  display: inline-block;
   margin: 10px;
+  justify-content: center;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
 }
 
 .floatingPointInput{
@@ -432,6 +491,12 @@ $arrow-size: 12px;
   margin: 10px;
   font-size: 14px;
 }
+/*
+@media(max-width: 750px){
+  .formatContainer{
+    display: none;
+  }
+}*/
 
 .slider{
   display: block;
@@ -528,5 +593,36 @@ $arrow-size: 12px;
   top: -15%;
   right: 0%;
   bottom: 0%;
+}
+
+@media(max-width: 1000px){
+  tr{
+    display: inline;
+  }
+  td{
+    display: block;
+    margin: 10px 0;
+  }
+  .selectBox{
+    width: 100%;
+  }
+}
+
+@media(max-width: 650px){
+  .fpOperationTable {
+    display: block;
+  }
+  tr{
+    display: inline-block;
+  }
+  td{
+    display: inline-block;
+  }
+  .selectBox{
+    width: 100%;
+  }
+  .container{
+    display: inline-block;
+  }
 }
 </style>

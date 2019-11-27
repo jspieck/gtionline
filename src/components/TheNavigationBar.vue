@@ -98,7 +98,7 @@ export default {
     border-bottom: 1px solid #0d336f26;
 
     &:hover {
-      color: #faaf49;
+      color: $freshYellow;
     }
 
     a {
@@ -111,6 +111,7 @@ export default {
   }
   .menu-btn:checked ~ .menu {
     max-height: 240px;
+    overflow: visible;
   }
   .menu-btn:checked ~ .menu-icon .navicon {
     background: transparent;
@@ -162,6 +163,7 @@ export default {
     overflow: hidden;
     max-height: 0;
     margin: 4px;
+    padding-left: 0;
     transition: max-height .2s ease-out;
   }
 }
@@ -188,6 +190,7 @@ export default {
   display: none;
   position: absolute;
   top: 100%;
+  z-index: 2;
   box-sizing: border-box;
   overflow-y: auto;
   color: black;
@@ -211,6 +214,9 @@ export default {
   }
   li:hover {
     background-color: #F9F9F9;
+    a {
+      color: $darkYellow;
+    }
   }
 }
 </style>
