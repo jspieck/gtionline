@@ -6,7 +6,7 @@
     <div class="formatContainer" v-on:mousemove="sliderMouseMove">
       <div class="sign">VB</div>
       <div class="exponent" :style="{ width:
-        (60 + this.exponentBits * (containerWidth / (numBits - 1)))+ 'px' }">
+        (60 + this.exponentBits * (this.containerWidth / (numBits - 1)))+ 'px' }">
         <div v-on:click="expandFraction" class="expandExponent">
           <div class="arrowLeft">
             <div class='arrowMask'></div>
@@ -26,53 +26,6 @@
       </div>
     </div>
     <h4>Operationsauswahl</h4>
-    <!--<table id="fpOperationTable" class="fpOperationTable">
-      <tr>
-        <td>Erste Gleitkommazahl</td>
-        <td>Operand</td>
-        <td>Zweite Gleitkommazahl</td>
-      </tr>
-      <tr>
-        <td>
-          <table id="fpfTable1" class="floatingPointInput">
-            <tr>
-              <td>
-                <input id="fpfInput0" v-model="inputNums[0]" placeholder="Zahl eingeben"
-                  @input="checkAndConvertFormat(0)"/>
-              </td>
-              <td><FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
-                :options="formatOptions"/></td>
-            </tr>
-            <tr>
-              <td><input id="fpfInput1" v-model="nums[0]" disabled></td>
-              <td><FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal" :isDisabled="true"
-                :options="formatOptions"/></td>
-            </tr>
-          </table>
-        </td>
-        <td>
-          <div class="operand">
-            <FSelect :num="2" :sel="selectedFormat[2]" @input="selectOp"
-              :options="operationOptions"/>
-          </div>
-        </td>
-        <td>
-          <table id="fpfTable2" class="floatingPointInput">
-            <tr>
-              <td><input id="fpfInput2" v-model="inputNums[1]" placeholder="Zahl eingeben"
-                @input="checkAndConvertFormat(1)"></td>
-              <td><FSelect :num="3" :sel="selectedFormat[3]" @input="selectVal"
-                :options="formatOptions"/></td>
-            </tr>
-            <tr>
-              <td><input id="fpfInput3" v-model="nums[1]" disabled></td>
-              <td><FSelect :num="4" :sel="selectedFormat[4]" @input="selectVal" :isDisabled="true"
-                :options="formatOptions"/></td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>-->
     <div id="fpOperationTable" class="fpOperationTable">
       <div class="container">
         <div>Erste Gleitkommazahl</div>
@@ -180,6 +133,13 @@ export default {
         { name: 'Lösung', text: 'Die Lösung lautet: ' },
       ],
     };
+  },
+  mounted() {
+    this.$nextTick(() => {
+      window.addEventListener('resize', () => {
+        this.containerWidth = Math.min(500, window.innerWidth - 250);
+      });
+    });
   },
   methods: {
     selectVal(num, val) {
