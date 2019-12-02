@@ -5,12 +5,26 @@
               :options="operationOptions"/>
     <div class="divMargin"/>
     <button v-on:click="generateExercise">Generieren</button>
-    <div id="exerciseField">{{exerciseText}}</div>
+    <div id="exerciseField" v-html="exerciseText"></div>
     <h4>Eigene Lösung</h4>
+    <label class="attention">Runden nicht vergessen!</label>
     <div class="solutionArea">
-      <input id="solutionInput">
+      <div class="solutionInput">
+        <p>Vorzeichenbit</p>
+        <input id="propVB" :class="backVB" v-model="propVB">
+      </div>
       <div class="divMargin"/>
-      <button id="checkSolution">Check</button>
+      <div class="solutionInput">
+        <p>Exponent</p>
+        <input id="propE" :class="backE" v-model="propE">
+      </div>
+      <div class="divMargin"/>
+      <div class="solutionInput">
+        <p>Mantisse</p>
+        <input id="propM" :class="backM" v-model="propM">
+      </div>
+      <div class="divMargin"/>
+      <button id="checkSolution" @click="checkSolution">Check</button>
     </div>
     <h4>Korrekte Lösung</h4>
     <label class="attention">Bitte vorher selber versuchen, die Aufgabe zu lösen!</label>
@@ -46,7 +60,14 @@ export default {
       exponentBits: 4,
       numBits: 16,
       exerciseText: '',
+      propVB: '',
+      backVB: '',
+      propE: '',
+      backE: '',
+      propM: '',
+      backM: '',
       solution: '',
+      result: { sign: 0, exponentBits: [], mantissaBits: [] },
       containerWidth: 500,
       solDescr: [
         { name: 'Schritt 1', text: 'Die Exponenten beider Zahlen müssen angeglichen werden.' },
@@ -63,6 +84,27 @@ export default {
     };
   },
   methods: {
+    checkSolution() {
+      if (this.propVB.replace(/\s/g, '') === `${this.result.sign}`) {
+        this.backVB = 'correctInput';
+      } else {
+        this.backVB = 'incorrectInput';
+      }
+      const resultString = this.result.bitString.replace(/\s/g, '');
+      const resultE = resultString.substring(1, 1 + this.exponentBits);
+      const resultM = resultString.substring(1 + this.exponentBits);
+      console.log('He', resultE, resultM);
+      if (this.propE.replace(/\s/g, '') === resultE) {
+        this.backE = 'correctInput';
+      } else {
+        this.backE = 'incorrectInput';
+      }
+      if (this.propM.replace(/\s/g, '') === resultM) {
+        this.backM = 'correctInput';
+      } else {
+        this.backM = 'incorrectInput';
+      }
+    },
     generateRandomBit() {
       return Math.round(Math.random());
     },
@@ -85,6 +127,7 @@ export default {
           
           \\( fp_1 = \\text{${this.fp1}} \\)\n
           \\( fp_2 = \\text{${this.fp2}} \\)`;
+      console.log(this.exerciseText);
       this.$nextTick(() => {
         if (window.MathJax) {
           console.log('MathJax known');
@@ -123,6 +166,7 @@ export default {
           default:
         }
         console.log(result.getResult());
+        this.result = result.getResult();
         this.solution = result.getResult().bitString;
       }
     },
@@ -142,6 +186,22 @@ $arrow-size: 12px;
   padding: 10px 15px;
   border-radius: 10px;
   white-space: pre-line;
+}
+
+.solutionInput {
+  display: inline-block;
+}
+
+.correctInput {
+  background: $lightAzure;
+}
+
+.incorrectInput {
+  background: $lightRed;
+}
+
+#solutionInput {
+  width: 200px;
 }
 
 .fpOperationTable{
