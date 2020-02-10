@@ -33,7 +33,7 @@ export default {
 
 <style scoped lang="scss">
 select{
-  -webkit-appearance: button;
+  -webkit-appearance: none;
   border: none;
   font-size: 13px;
   list-style: none;

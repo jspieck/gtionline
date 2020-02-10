@@ -1,9 +1,12 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import PrettyCheckbox from 'pretty-checkbox-vue';
 import Home from '../views/Home.vue';
 import FloatingPointArithmetic from '@/components/FloatingPointArithmetic.vue';
+import KVDiagram from '@/components/KVDiagram.vue';
 
 Vue.use(VueRouter);
+Vue.use(PrettyCheckbox);
 
 const routes = [
   {
@@ -23,6 +26,11 @@ const routes = [
     path: '/fparithmetic',
     name: 'FloatingPointArithmetic',
     component: FloatingPointArithmetic,
+  },
+  {
+    path: '/kvdiagram',
+    name: 'KVDiagram',
+    component: KVDiagram,
   },
 ];
 

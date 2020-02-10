@@ -82,6 +82,7 @@ export default {
   display: block;
   background-color: $freshBlue;
   color: white;
+  z-index: 2;
 
   ul {
     list-style-type: none;

@@ -19,6 +19,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import '~pretty-checkbox/src/pretty-checkbox.scss';
+
 html {
   height: 100%;
 }
