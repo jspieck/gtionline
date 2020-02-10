@@ -13,8 +13,7 @@
       <label>Benennung der Variablen:</label>
       <div class="divMargin"/>
       <p-radio v-for="radio in radios" name="varRadio" class="p-default p-round p-smooth p-pulse"
-      :key="radio.value" color="primary" v-model="varNamingScheme" :value="radio.value"
-      @change="changeFormat">
+      :key="radio.value" color="primary" v-model="varNamingScheme" :value="radio.value">
         <p class="mj" ref="radios">{{radio.name}}</p>
       </p-radio>
     </div>
@@ -30,9 +29,7 @@
       </g>
       <g v-for="bar in literalBars" v-bind:key="bar.id">
         <rect :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height"/>
-        <text ref="literalBars" :x="bar.textX" :y="bar.textY" style="visibility:hidden">
-          {{getId(bar.index)}}
-        </text>
+        <g :transform="`translate(${bar.textX}, ${bar.textY})`" v-html="getSVG(bar.index)"></g>
       </g>
       <rect class="unclickable" fill="transparent" stroke="black" :x="paddingHorizontal"
       :y="paddingVertical" :width="blockWidth * cellsHorizontal"
@@ -52,7 +49,7 @@ export default {
   data() {
     return {
       numVariables: 4,
-      paddingBase: 25,
+      paddingBase: 27,
       blockWidth: 40,
       diagram: [],
       legitStates: ['0', '1', '-'],
@@ -69,27 +66,15 @@ export default {
       ],
       varNamingScheme: 'abc',
       varNames: {
-        abc: ['\\(a\\)', '\\(b\\)', '\\(c\\)', '\\(d\\)', '\\(e\\)', '\\(f\\)', '\\(g\\)'],
-        xyz: ['\\(x\\)', '\\(y\\)', '\\(z\\)', '\\(u\\)', '\\(v\\)', '\\(w\\)', '\\(q\\)'],
-        x: ['\\(x_0\\)', '\\(x_1\\)', '\\(x_2\\)', '\\(x_3\\)', '\\(x_4\\)', '\\(x_5\\)', '\\(x_6\\)'],
+        abc: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+        xyz: ['x', 'y', 'z', 'u', 'v', 'w', 'q'],
+        x: ['x_0', 'x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6'],
       },
-      temporaryElements: [],
     };
   },
   created() {
     for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
       this.diagram.push({ number: 0 });
-    }
-  },
-  mounted() {
-    if (window.MathJax) {
-      window.MathJax.Hub.Config({
-        skipStartupTypeset: true,
-      });
-      for (const radio of this.$refs.radios) {
-        window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub, radio]);
-      }
-      this.renderMathJaxInSvg();
     }
   },
   computed: {
@@ -195,15 +180,18 @@ export default {
             y = c.varIndex % 4 === 0
               ? this.paddingVertical - dist
               : this.paddingVertical + this.blockWidth * this.cellsVertical + dist;
-            textX = x + width / 2;
-            textY = c.varIndex % 4 === 0 ? y - 8 : y + 16;
+            textX = x + width / 2 - 5;
+            textY = c.varIndex % 4 === 0 ? y - 12 : y + 10;
           } else {
             x = (c.varIndex + 1) % 4 === 0
               ? this.paddingHorizontal + this.blockWidth * this.cellsHorizontal + dist
               : this.paddingHorizontal - dist;
             y = this.paddingVertical + interval[0] * this.blockWidth;
-            textX = (c.varIndex + 1) % 4 === 0 ? x + 16 : x - 10;
-            textY = y + height / 2;
+            textX = (c.varIndex + 1) % 4 === 0 ? x + 9 : x - 13;
+            textY = y + height / 2 - 5;
+            if (this.varNamingScheme === 'x' && (c.varIndex + 1) % 4 !== 0) {
+              textX -= 7;
+            }
           }
           bars.push({
             x, y, width, height, textX, textY, index, id,
@@ -214,10 +202,6 @@ export default {
     },
   },
   methods: {
-    getId(i) {
-      console.log(this.varNames[this.varNamingScheme][i]);
-      return this.varNames[this.varNamingScheme][i];
-    },
     selectOp(num, val) {
       this.selectedFormat[num] = val;
     },
@@ -238,103 +222,12 @@ export default {
       for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
         this.diagram.push({ number: 0 });
       }
-      this.$nextTick(() => {
-        this.renderMathJaxInSvg();
-      });
     },
-    changeFormat() {
-      for (const el of this.temporaryElements) {
-        el.parentNode.removeChild(el);
-      }
-      this.temporaryElements = [];
-      this.$nextTick(() => {
-        this.renderMathJaxInSvg();
-      });
-    },
-    renderMathJaxInSvg() {
-      // const scale = 0.0016;
-      const scale = 0.02;
-      const escapeClip = false;
-      const items = [];
-      for (const el of this.temporaryElements) {
-        el.parentNode.removeChild(el);
-      }
-      this.temporaryElements = [];
-      // Move the raw MathJax items to a temporary element
-      const mathbucket = document.createElement('div');
-      mathbucket.setAttribute('id', 'mathjaxSvgBucket');
-      document.body.appendChild(mathbucket);
-      // start (^): first arbitrary number of spaces, then zero or one time: l, r or c
-      // then \( any chars \) or $ any chars $, finally any spaces, end ($)
-      const re = /^\s*([LlRrCc]?)(\\\(.*\\\)|\$.*\$)\s*$/;
-      for (const lit of this.$refs.literalBars) {
-        const m = lit.textContent.match(re);
-        console.log('LIT ', lit, m);
-        if (m) {
-          const d = document.createElement('div');
-          mathbucket.appendChild(d);
-          const mathmarkup = m[2].replace(/^\$(.*)\$$/,'\\($1\\)'); // eslint-disable-line
-          d.appendChild(document.createTextNode(mathmarkup));
-          // lit.textContent = '';
-          items.push([lit, d, m[1]]);
-          window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub, d]);
-        } else {
-          // already rendered
-          items.push([lit, lit, '']);
-        }
-      }
-      window.MathJax.Hub.Queue(() => {
-        for (let i = 0; i < items.length; i += 1) {
-          const svgdest = items[i][0];
-          const mathjaxdiv = items[i][1];
-          // l, r or c
-          const justification = items[i][2];
-          // break if typesetting not yet active (vue dynamic elements)
-          const svgmath = mathjaxdiv.getElementsByClassName('MathJax_SVG')[0]
-            .getElementsByTagName('svg')[0];
-          const svgmathinfo = {
-            width: svgmath.viewBox.baseVal.width,
-            height: svgmath.viewBox.baseVal.height,
-          };
-          // get graphics nodes
-          const gnodes = svgmath.getElementsByTagName('g')[0].cloneNode(true);
-          // const fontsize = svgdest.getAttribute('font-size');
-          // const appliedScale = 0.02; // scale * fontsize;
-          const appliedScale = scale;
-          // single '+' converts to int
-          const x = +svgdest.getAttribute('x');
-          const y = +svgdest.getAttribute('y');
-
-          const x0 = x;
-          const y0 = y;
-          let x1;
-          switch (justification.toUpperCase()) {
-            case 'L':
-              x1 = 0;
-              break;
-            case 'R':
-              x1 = -svgmathinfo.width;
-              break;
-            case 'C': // default to center
-            default:
-              x1 = -svgmathinfo.width * 0.5;
-              break;
-          }
-          const y1 = svgmathinfo.height * 0;
-          gnodes.setAttribute('transform', `translate(${x0} ${y0})
-            scale(${appliedScale}) translate(${x1} ${y1})
-            matrix(1 0 0 -1 0 0)`);
-          if (escapeClip) {
-            svgdest.parentNode.removeAttribute('clip-path');
-          }
-          // svgdest.parentNode.replaceChild(gnodes, svgdest);
-          svgdest.parentNode.appendChild(gnodes);
-          this.temporaryElements.push(gnodes);
-        }
-        const mathb = document.getElementById('mathjaxSvgBucket');
-        mathb.parentNode.removeChild(mathbucket);
-        mathb.style.visibility = 'hidden';
-      });
+    getSVG(id) {
+      const formula = this.varNames[this.varNamingScheme][id];
+      const formulaSVG = window.MathJax.tex2svg(formula);
+      const svgmath = formulaSVG.getElementsByTagName('svg')[0];
+      return svgmath.outerHTML;
     },
   },
 };
