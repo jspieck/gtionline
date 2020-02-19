@@ -2,7 +2,7 @@
   <!--v-on:mouseenter="sliderMouseUp" v-on:mouseleave="sliderMouseUp"
   v-on:mouseup="sliderMouseUp"-->
   <div class="fp-arithmetic">
-    <h4>Floating Point Format</h4>
+    <h4>{{$t('fpformat')}}</h4>
     <div class="formatContainer" v-on:mousemove="sliderMouseMove">
       <div class="sign">VB</div>
       <div class="exponent" :style="{ width:
@@ -25,14 +25,14 @@
         M({{(numBits - exponentBits - 1)}})
       </div>
     </div>
-    <h4>Operationsauswahl</h4>
+    <h4>{{$t('operationSelect')}}</h4>
     <div id="fpOperationTable" class="fpOperationTable">
       <div class="container">
-        <div>Erste Gleitkommazahl</div>
+        <div>{{$t('firstFloatingPoint')}}</div>
         <table id="fpfTable1" class="floatingPointInput">
           <tr>
             <td>
-              <input id="fpfInput0" v-model="inputNums[0]" placeholder="Zahl eingeben"
+              <input id="fpfInput0" v-model="inputNums[0]" :placeholder="this.$t('inputNumber')"
                 @input="checkAndConvertFormat(0)"/>
             </td>
             <td><FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
@@ -46,17 +46,17 @@
         </table>
       </div>
       <div class="container">
-        <div>Operand</div>
+        <div>{{$t('operand')}}</div>
         <div class="operand">
           <FSelect :num="2" :sel="selectedFormat[2]" @input="selectOp"
             :options="operationOptions"/>
         </div>
       </div>
       <div class="container">
-        <div>Zweite Gleitkommazahl</div>
+        <div>{{$t('secondFloatingPoint')}}</div>
         <table id="fpfTable2" class="floatingPointInput">
           <tr>
-            <td><input id="fpfInput2" v-model="inputNums[1]" placeholder="Zahl eingeben"
+            <td><input id="fpfInput2" v-model="inputNums[1]" :placeholder="this.$t('inputNumber')"
               @input="checkAndConvertFormat(1)"></td>
             <td><FSelect :num="3" :sel="selectedFormat[3]" @input="selectVal"
               :options="formatOptions"/></td>
@@ -76,8 +76,8 @@
       <div class="divMargin"/>
       <button id="checkSolution">Check</button>
     </div>-->
-    <h4>Korrekte Lösung</h4>
-    <label class="attention">Bitte vorher selber versuchen, die Aufgabe zu lösen!</label>
+    <h4>{{$t('correctSolution')}}</h4>
+    <label class="attention">{{$t('attSolve')}}</label>
     <Accordion :solutionDescription="solDescr">
       <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
         {{panel.text}}
@@ -102,16 +102,6 @@ export default {
   data() {
     return {
       selectedFormat: ['decimal', 'ieee', 'add', 'decimal', 'ieee'],
-      formatOptions: {
-        decimal: 'Dezimalzahl (42,14)',
-        binary: 'Binärzahl (1,0011)',
-        ieee: 'IEEE (1 0101 1101)',
-      },
-      operationOptions: {
-        add: 'Addition (+)',
-        sub: 'Subtraktion (-)',
-        mul: 'Multiplikation (*)',
-      },
       mouseDown: false,
       solution: '',
       inputNums: { 0: '', 1: '' },
@@ -120,19 +110,37 @@ export default {
       numBits: 16,
       falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
-      solDescr: [
-        { name: 'Schritt 1', text: 'Die Exponenten beider Zahlen müssen angeglichen werden.' },
+    };
+  },
+  computed: {
+    operationOptions() {
+      return {
+        add: `${this.$t('addition')} (+)`,
+        sub: `${this.$t('subtraction')} (-)`,
+        mul: `${this.$t('multiplication')} (*)`,
+      };
+    },
+    formatOptions() {
+      return {
+        decimal: `${this.$t('decimal')} (42,14)`,
+        binary: `${this.$t('binary')}  (1,0011)`,
+        ieee: 'IEEE (1 0101 1101)',
+      };
+    },
+    solDescr() {
+      return [
+        { name: `${this.$t('step')} 1`, text: 'Die Exponenten beider Zahlen müssen angeglichen werden.' },
         {
-          name: 'Schritt 2',
+          name: `${this.$t('step')} 2`,
           text: 'Die Mantissen beider Zahlen müssen multipliziert werden.',
           subpanels: [
             { name: 'Exponent beachten', text: 'Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden.' },
             { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
           ],
         },
-        { name: 'Lösung', text: 'Die Lösung lautet: ' },
-      ],
-    };
+        { name: this.$t('solution'), text: 'Die Lösung lautet: ' },
+      ];
+    },
   },
   mounted() {
     this.$nextTick(() => {

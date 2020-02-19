@@ -1,19 +1,21 @@
 <template>
-<vue-tiny-tabs id="extabs" :anchor="false" :closable="false" :hideTitle="false" @on-close="onClose"
-  @on-before="onBefore" @on-after="onAfter">
-  <div class="section" id="exercises">
-    <h3 class="title">Übungsaufgaben</h3>
+<div class="floatingPoint">
+  <tabs :tabs="tabs" :currentTab="currentTab" @onClick="handleClick" updated="this.$t('exercises')"
+  :wrapper-class="'default-tabs'" :tab-class="'default-tabs__item'"
+  :tab-active-class="'default-tabs__item_active'" :line-class="'default-tabs__active-line'"/>
+  <div class="tab" v-if="currentTab === 'exercises'">
+    <h3 class="title">{{$t('exercises')}}</h3>
     <fpe/>
   </div>
-  <div class="section" id="free">
-    <h3 class="title">Freie Berechnung</h3>
+  <div class="tab" v-if="currentTab === 'free'">
+    <h3 class="title">{{$t('freeCalculation')}}</h3>
     <fpf/>
   </div>
-</vue-tiny-tabs>
+</div>
 </template>
 
 <script>
-import VueTinyTabs from 'vue-tiny-tabs';
+import Tabs from 'vue-tabs-with-active-line';
 import FloatingPointFormat from './FloatingPointFormat.vue';
 import FloatingPointExercises from './FloatingPointExercises.vue';
 
@@ -22,17 +24,30 @@ export default {
   components: {
     fpe: FloatingPointExercises,
     fpf: FloatingPointFormat,
-    'vue-tiny-tabs': VueTinyTabs,
+    tabs: Tabs,
+  },
+  data() {
+    return {
+      currentTab: 'free',
+    };
+  },
+  computed: {
+    tabs() {
+      return [
+        {
+          title: this.$t('exercises'),
+          value: 'exercises',
+        },
+        {
+          title: this.$t('freeCalculation'),
+          value: 'free',
+        },
+      ];
+    },
   },
   methods: {
-    onClose(id) {
-      console.log('Callback function that gets evaluated while closing the tab', id);
-    },
-    onBefore(id, tab) {
-      console.log('Callback function that gets evaluated before a tab is activated', id, tab);
-    },
-    onAfter(id, tab) {
-      console.log('Callback function that gets evaluated after a tab is activated', id, tab);
+    handleClick(newTab) {
+      this.currentTab = newTab;
     },
   },
 };
@@ -42,11 +57,76 @@ export default {
 body{
   overflow-y: scroll;
 }
+
+.default-tabs {
+  position: relative;
+  margin: 10px auto;
+  display: inline-block;
+
+  &__item {
+    display: inline-block;
+    margin: 0 5px;
+    padding: 0 10px;
+    padding-bottom: 8px;
+    font-size: 16px;
+    color: gray;
+    background: none;
+    text-decoration: none;
+    border: none;
+    background-color: transparent;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    border-radius: 0;
+    transition: all 0.25s;
+
+    &_active {
+      color: black;
+      border-bottom: 2px solid gray;
+    }
+
+    &:hover {
+      background: none;
+      border-radius: 0;
+      border-bottom: 2px solid gray;
+      color: black;
+    }
+
+    &:focus {
+      outline: none;
+      border-bottom: 2px solid gray;
+      color: black;
+    }
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  &__active-line {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background-color: black;
+    transition: transform 0.4s ease, width 0.4s ease;
+  }
+}
 @media screen and (max-width: 1400px) {
-  .tinytabs {
+  .tab {
     width: 95% !important;
   }
 }
+.tab {
+  margin: auto;
+  width: 1240px;
+  padding: 8px;
+  background: #ffffff5e;
+}
+
 .tinytabs {
   margin: auto;
   width: 1240px;

@@ -1,20 +1,20 @@
 <template>
   <div class="kvDiagram">
-    <h2>KV Diagramm</h2>
+    <h2>{{$t('kvDiagram')}}</h2>
     <div>
-      <label>Anzahl an Variablen:</label>
+      <label>{{$t('numVarInput')}}:</label>
       <div class="divMargin"/>
       <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0
               :options="operationOptions"/>
       <div class="divMargin"/>
-      <button @click="setNumVar()">Bestätigen</button>
+      <button @click="setNumVar()">{{$t('confirm')}}</button>
     </div>
     <div class="mtop">
-      <label>Benennung der Variablen:</label>
+      <label>{{$t('varNaming')}}:</label>
       <div class="divMargin"/>
       <p-radio v-for="radio in radios" name="varRadio" class="p-default p-round p-smooth p-pulse"
       :key="radio.value" color="primary" v-model="varNamingScheme" :value="radio.value">
-        <p class="mj" ref="radios">{{radio.name}}</p>
+        <p class="mj" ref="radios" v-html="toSvg(radio.name)"/>
       </p-radio>
     </div>
     <svg id="kvContainer" :width="svgWidth" :height="svgHeight">
@@ -60,9 +60,9 @@ export default {
         1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7,
       },
       radios: [
-        { value: 'abc', name: '\\(a, b, \\dots\\)' },
-        { value: 'xyz', name: '\\(x, y, \\dots\\)' },
-        { value: 'x', name: '\\(x_0, x_1, \\dots\\)' },
+        { value: 'abc', name: 'a, b, \\dots' },
+        { value: 'xyz', name: 'x, y, \\dots' },
+        { value: 'x', name: 'x_0, x_1, \\dots' },
       ],
       varNamingScheme: 'abc',
       varNames: {
@@ -76,6 +76,7 @@ export default {
     for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
       this.diagram.push({ number: 0 });
     }
+    window.MathJax.typeset();
   },
   computed: {
     cellsHorizontal() {
@@ -225,6 +226,11 @@ export default {
     },
     getSVG(id) {
       const formula = this.varNames[this.varNamingScheme][id];
+      const formulaSVG = window.MathJax.tex2svg(formula);
+      const svgmath = formulaSVG.getElementsByTagName('svg')[0];
+      return svgmath.outerHTML;
+    },
+    toSvg(formula) {
       const formulaSVG = window.MathJax.tex2svg(formula);
       const svgmath = formulaSVG.getElementsByTagName('svg')[0];
       return svgmath.outerHTML;

@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: 'FloatingPointArithmetic',
+  name: 'FormatSelect',
   props: ['num', 'sel', 'options', 'isDisabled'],
   created() {
     this.selectedOption = this.sel;

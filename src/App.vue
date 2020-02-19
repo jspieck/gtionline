@@ -52,5 +52,9 @@ body {
 
 #content {
   padding-top: 64px;
+
+  & > div {
+    padding: 10px;
+  }
 }
 </style>

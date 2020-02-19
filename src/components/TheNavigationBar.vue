@@ -13,38 +13,49 @@
         </ul>
       </li>
     </ul>
+    <div id="languageDropdown">
+      <LSelect @input="chooseLang"/>
+    </div>
   </div>
 </template>
 
 <script>
+import LanguageSelect from '@/components/LanguageSelect.vue';
+
 export default {
   name: 'TheNavigationBar',
+  components: {
+    LSelect: LanguageSelect,
+  },
   data() {
-    return {
-      menu: [
+    return {};
+  },
+  computed: {
+    menu() {
+      return [
         {
           id: 0,
-          label: 'Zahlensysteme',
+          label: this.$t('numeralSystem'),
           items: [
             {
               id: 0,
-              label: 'Polyadisch',
+              label: this.$t('polyadic'),
               link: '/polyadic',
             },
             {
               id: 1,
-              label: 'Gleitkommazahlen',
+              label: this.$t('floatingPoint'),
               link: '/fparithmetic',
             },
           ],
         },
         {
           id: 1,
-          label: 'Funktionsminimierung',
+          label: this.$t('functionMin'),
           items: [
             {
               id: 2,
-              label: 'KV-Diagramm',
+              label: this.$t('kvDiagram'),
               link: '/kvdiagram',
             },
             {
@@ -59,8 +70,14 @@ export default {
             },
           ],
         },
-      ],
-    };
+      ];
+    },
+  },
+  methods: {
+    chooseLang(lang) {
+      console.log(lang.name);
+      this.$i18n.locale = lang.name;
+    },
   },
 };
 </script>
@@ -73,6 +90,12 @@ export default {
   position: absolute;
   left: 10px;
   top: 13px;
+}
+
+#languageDropdown {
+  position: absolute;
+  right: 14px;
+  top: 14px;
 }
 
 .navbar {
@@ -103,6 +126,7 @@ export default {
     }
 
     a {
+      white-space: nowrap;
       cursor: pointer;
     }
   }

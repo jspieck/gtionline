@@ -1,33 +1,33 @@
 <template>
   <div class="fp-exercise">
-    <h4>Aufgabe Generieren</h4>
+    <h4>{{$t('generateEx')}}</h4>
     <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0
               :options="operationOptions"/>
     <div class="divMargin"/>
-    <button v-on:click="generateExercise">Generieren</button>
+    <button v-on:click="generateExercise">{{$t('generate')}}</button>
     <div id="exerciseField" v-html="exerciseText"></div>
-    <h4>Eigene Lösung</h4>
-    <label class="attention">Runden nicht vergessen!</label>
+    <h4>{{$t('ownSolution')}}</h4>
+    <label class="attention">{{$t('attRound')}}</label>
     <div class="solutionArea">
       <div class="solutionInput">
-        <p>Vorzeichenbit</p>
+        <p>{{$t('signBit')}}</p>
         <input id="propVB" :class="backVB" v-model="propVB">
       </div>
       <div class="divMargin"/>
       <div class="solutionInput">
-        <p>Exponent</p>
+        <p>{{$t('exponentBits')}}</p>
         <input id="propE" :class="backE" v-model="propE">
       </div>
       <div class="divMargin"/>
       <div class="solutionInput">
-        <p>Mantisse</p>
+        <p>{{$t('fractionBits')}}</p>
         <input id="propM" :class="backM" v-model="propM">
       </div>
       <div class="divMargin"/>
-      <button id="checkSolution" @click="checkSolution">Check</button>
+      <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
     </div>
-    <h4>Korrekte Lösung</h4>
-    <label class="attention">Bitte vorher selber versuchen, die Aufgabe zu lösen!</label>
+    <h4>{{$t('correctSolution')}}</h4>
+    <label class="attention">{{$t('attSolve')}}</label>
     <Accordion :solutionDescription="solDescr">
       <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
         {{panel.text}}
@@ -51,11 +51,6 @@ export default {
   data() {
     return {
       selectedFormat: ['add'],
-      operationOptions: {
-        add: 'Addition (+)',
-        sub: 'Subtraktion (-)',
-        mul: 'Multiplikation (*)',
-      },
       mouseDown: false,
       exponentBits: 4,
       numBits: 16,
@@ -69,19 +64,30 @@ export default {
       solution: '',
       result: { sign: 0, exponentBits: [], mantissaBits: [] },
       containerWidth: 500,
-      solDescr: [
-        { name: 'Schritt 1', text: 'Die Exponenten beider Zahlen müssen angeglichen werden.' },
+    };
+  },
+  computed: {
+    operationOptions() {
+      return {
+        add: `${this.$t('addition')} (+)`,
+        sub: `${this.$t('subtraction')} (-)`,
+        mul: `${this.$t('multiplication')} (*)`,
+      };
+    },
+    solDescr() {
+      return [
+        { name: `${this.$t('step')} 1`, text: 'Die Exponenten beider Zahlen müssen angeglichen werden.' },
         {
-          name: 'Schritt 2',
+          name: `${this.$t('step')} 2`,
           text: 'Die Mantissen beider Zahlen müssen multipliziert werden.',
           subpanels: [
             { name: 'Exponent beachten', text: 'Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden.' },
             { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
           ],
         },
-        { name: 'Lösung', text: 'Die Lösung lautet: ' },
-      ],
-    };
+        { name: this.$t('solution'), text: 'Die Lösung lautet: ' },
+      ];
+    },
   },
   methods: {
     checkSolution() {
@@ -120,18 +126,16 @@ export default {
     },
     generateExercise() {
       const operation = this.selectedFormat[0];
-      const opNames = { add: ['Addition', '+'], mul: ['Multiplikation', '\\cdot'], sub: ['Subtraktion', '-'] };
+      const opNames = { add: [this.$t('addition'), '+'], mul: [this.$t('multiplication'), '\\cdot'], sub: [this.$t('subtraction'), '-'] };
       this.fp1 = this.generateRandomIEEE();
       this.fp2 = this.generateRandomIEEE();
       this.exerciseText = `Es seien die Gleitkommazahlen \\( fp_1 \\) und \\( fp_2 \\) im 16 Bit Gleitkommaformat gegeben. Berechnen Sie die ${opNames[operation][0]} \\( fp_1 ${opNames[operation][1]} fp_2 \\) ohne die Binärdarstellung zu verlassen und geben Sie diese wieder als Gleitkommazahl an:
           
           \\( fp_1 = \\text{${this.fp1}} \\)\n
           \\( fp_2 = \\text{${this.fp2}} \\)`;
-      console.log(this.exerciseText);
       this.$nextTick(() => {
         if (window.MathJax) {
-          console.log('MathJax known');
-          window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub]);
+          window.MathJax.typeset();
         }
       });
       this.computeSolution(this.fp1, this.fp2);
