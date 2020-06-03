@@ -15,6 +15,7 @@
 </template>
 
 <script>
+// eslint-disable-next-line
 import Tabs from 'vue-tabs-with-active-line';
 import FloatingPointFormat from './FloatingPointFormat.vue';
 import FloatingPointExercises from './FloatingPointExercises.vue';
