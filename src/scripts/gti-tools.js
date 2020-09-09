@@ -9,8 +9,8 @@ function _classCallCheck(instance, Constructor) {
 }
 
 function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
+  for (let i = 0; i < props.length; i++) {
+    let descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
     descriptor.configurable = true;
     if ("value" in descriptor) descriptor.writable = true;
@@ -30,8 +30,9 @@ function _toConsumableArray(arr) {
 
 function _arrayWithoutHoles(arr) {
   if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
+    let arr2
+    let i
+    for (i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
     return arr2;
   }
 }
@@ -69,7 +70,7 @@ function peg$SyntaxError(message, expected, found, location) {
 peg$subclass(peg$SyntaxError, Error);
 
 peg$SyntaxError.buildMessage = function (expected, found) {
-  var DESCRIBE_EXPECTATION_FNS = {
+  const DESCRIBE_EXPECTATION_FNS = {
     literal: function literal(expectation) {
       return "\"" + literalEscape(expectation.text) + "\"";
     },
@@ -118,8 +119,8 @@ peg$SyntaxError.buildMessage = function (expected, found) {
   }
 
   function describeExpected(expected) {
-    var descriptions = expected.map(describeExpectation);
-    var i, j;
+    const descriptions = expected.map(describeExpectation);
+    let i, j;
     descriptions.sort();
 
     if (descriptions.length > 0) {
@@ -164,189 +165,188 @@ function numToChar(num) {
   return '';
 }
 
-var Number =
-/*#__PURE__*/
-function () {
-  function Number(base, representation) {
-    var off = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    var isNegative = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+const Number =
+  /*#__PURE__*/
+  function () {
+    function Number(base, representation) {
+      var off = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+      var isNegative = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
-    _classCallCheck(this, Number);
+      _classCallCheck(this, Number);
 
-    this.offset = off;
-    this.isNegative = isNegative;
-    this.base = base;
-    this.arr = null;
-    this.stringRepresentation = null;
+      this.offset = off;
+      this.isNegative = isNegative;
+      this.base = base;
+      this.arr = null;
+      this.stringRepresentation = null;
 
-    this._checkArray(representation);
+      this._checkArray(representation);
 
-    this.arr = _toConsumableArray(representation);
+      this.arr = _toConsumableArray(representation);
 
-    this._normalizeOffset();
+      this._normalizeOffset();
 
-    this._optimizeArray();
+      this._optimizeArray();
 
-    this.stringRepresentation = this._constructString(this.arr);
-  }
-
-  _createClass(Number, [{
-    key: "_normalizeOffset",
-    value: function _normalizeOffset() {
-      while (this.offset < 0) {
-        this.arr.push(0);
-        this.offset++;
-      }
+      this.stringRepresentation = this._constructString(this.arr);
     }
-  }, {
-    key: "_optimizeArray",
-    value: function _optimizeArray() {
-      while (this.arr.length > this.offset + 1 && this.arr[0] == 0) {
-        this.arr.splice(0, 1);
-      }
 
-      while (this.offset > 0 && this.arr[this.arr.length - 1] == 0) {
-        this.arr.splice(this.arr.length - 1, 1);
-        this.offset--;
-      }
-    }
-  }, {
-    key: "_checkArray",
-    value: function _checkArray(arr) {
-      for (var i = 0; i < arr.length; i++) {
-        if (arr[i] < 0 || this.base <= arr[i]) {
-          return false;
+    _createClass(Number, [{
+      key: "_normalizeOffset",
+      value: function _normalizeOffset() {
+        while (this.offset < 0) {
+          this.arr.push(0);
+          this.offset++;
         }
       }
-
-      return true;
-    }
-  }, {
-    key: "_constructString",
-    value: function _constructString(arr) {
-      var result = "";
-
-      for (var i = 0; i < arr.length; i++) {
-        result += numToChar(arr[i]);
-
-        if (this.offset != 0 && arr.length - 1 - i == this.offset) {
-          result += '.';
-        }
-      }
-
-      if (this.isNegative) {
-        result = '-' + result;
-      }
-
-      return result;
-    }
-  }]);
-
-  return Number;
-}();
-
-var ComparisonBaseN =
-/*#__PURE__*/
-function () {
-  function ComparisonBaseN(n1, n2) {
-    _classCallCheck(this, ComparisonBaseN);
-
-    if (n1.base != n2.base) {
-      console.log("ComparisonBaseN(Number, Number): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") not compatible."));
-    }
-
-    this.result = this._compare(n1, n2);
-  }
-
-  _createClass(ComparisonBaseN, [{
-    key: "_compare",
-    value: function _compare(n1, n2) {
-      if (n1.arr.length == 1 && n2.arr.length == 1 && n1.arr[0] == 0 && n1.arr[0] == 0) {
-        return 0;
-      }
-
-      if (n1.isNegative && !n2.isNegative) {
-        return -1;
-      }
-
-      if (!n1.isNegative && n2.isNegative) {
-        return 1;
-      }
-
-      var mult = n1.isNegative && n2.isNegative ? -1 : 1;
-
-      if (n1.arr.length - n1.offset > n2.arr.length - n2.offset) {
-        return mult * 1;
-      }
-
-      if (n1.arr.length - n1.offset < n2.arr.length - n2.offset) {
-        return mult * -1;
-      }
-
-      var i = 0;
-
-      while (i < n1.arr.length || i < n2.arr.length) {
-        var a = i < n1.arr.length ? n1.arr[i] : 0;
-        var b = i < n2.arr.length ? n2.arr[i] : 0;
-
-        if (a > b) {
-          return mult * 1;
+    }, {
+      key: "_optimizeArray",
+      value: function _optimizeArray() {
+        while (this.arr.length > this.offset + 1 && this.arr[0] == 0) {
+          this.arr.splice(0, 1);
         }
 
-        if (b > a) {
+        while (this.offset > 0 && this.arr[this.arr.length - 1] == 0) {
+          this.arr.splice(this.arr.length - 1, 1);
+          this.offset--;
+        }
+      }
+    }, {
+      key: "_checkArray",
+      value: function _checkArray(arr) {
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i] < 0 || this.base <= arr[i]) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+    }, {
+      key: "_constructString",
+      value: function _constructString(arr) {
+        let result = "";
+        for (let i = 0; i < arr.length; i++) {
+          result += numToChar(arr[i]);
+
+          if (this.offset != 0 && arr.length - 1 - i == this.offset) {
+            result += '.';
+          }
+        }
+
+        if (this.isNegative) {
+          result = '-' + result;
+        }
+
+        return result;
+      }
+    }]);
+
+    return Number;
+  }();
+
+const ComparisonBaseN =
+  /*#__PURE__*/
+  function () {
+    function ComparisonBaseN(n1, n2) {
+      _classCallCheck(this, ComparisonBaseN);
+
+      if (n1.base != n2.base) {
+        console.log("ComparisonBaseN(Number, Number): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") not compatible."));
+      }
+
+      this.result = this._compare(n1, n2);
+    }
+
+    _createClass(ComparisonBaseN, [{
+      key: "_compare",
+      value: function _compare(n1, n2) {
+        if (n1.arr.length == 1 && n2.arr.length == 1 && n1.arr[0] == 0 && n1.arr[0] == 0) {
+          return 0;
+        }
+
+        if (n1.isNegative && !n2.isNegative) {
+          return -1;
+        }
+
+        if (!n1.isNegative && n2.isNegative) {
+          return 1;
+        }
+
+        const mult = n1.isNegative && n2.isNegative ? -1 : 1;
+
+        if (n1.arr.length - n1.offset > n2.arr.length - n2.offset) {
+          return mult;
+        }
+
+        if (n1.arr.length - n1.offset < n2.arr.length - n2.offset) {
           return mult * -1;
         }
 
-        i++;
+        let i = 0;
+
+        while (i < n1.arr.length || i < n2.arr.length) {
+          const a = i < n1.arr.length ? n1.arr[i] : 0;
+          const b = i < n2.arr.length ? n2.arr[i] : 0;
+
+          if (a > b) {
+            return mult;
+          }
+
+          if (b > a) {
+            return mult * -1;
+          }
+
+          i++;
+        }
+
+        return 0;
       }
+    }, {
+      key: "getResult",
+      value: function getResult() {
+        return this.result;
+      }
+    }]);
 
-      return 0;
+    return ComparisonBaseN;
+  }();
+
+const Algorithm =
+  /*#__PURE__*/
+  function () {
+    function Algorithm() {
+      _classCallCheck(this, Algorithm);
+
+      this.start = null;
+      this.curr = null;
     }
-  }, {
-    key: "getResult",
-    value: function getResult() {
-      return this.result;
-    }
-  }]);
 
-  return ComparisonBaseN;
-}();
+    _createClass(Algorithm, [{
+      key: "step",
+      value: function step(name) {
+        if (this.curr == null) {
+          this.start = new Step(name);
+          this.curr = this.start;
+          return this;
+        }
 
-var Algorithm =
-/*#__PURE__*/
-function () {
-  function Algorithm() {
-    _classCallCheck(this, Algorithm);
-
-    this.start = null;
-    this.curr = null;
-  }
-
-  _createClass(Algorithm, [{
-    key: "step",
-    value: function step(name) {
-      if (this.curr == null) {
-        this.start = new Step(name);
-        this.curr = this.start;
+        this.curr.next = new Step(name);
+        this.curr = this.curr.next;
         return this;
       }
+    }, {
+      key: "saveVariable",
+      value: function saveVariable(name, value) {
+        this.curr.addDataPoint(name, value);
+        return this;
+      }
+    }]);
 
-      this.curr.next = new Step(name);
-      this.curr = this.curr.next;
-      return this;
-    }
-  }, {
-    key: "saveVariable",
-    value: function saveVariable(name, value) {
-      this.curr.addDataPoint(name, value);
-      return this;
-    }
-  }]);
+    return Algorithm;
+  }();
 
-  return Algorithm;
-}();
-
-var Step =
+const Step =
 /*#__PURE__*/
 function () {
   function Step(name) {
@@ -367,7 +367,7 @@ function () {
   return Step;
 }();
 
-var SubtractionBaseN =
+const SubtractionBaseN =
 /*#__PURE__*/
 function () {
   function SubtractionBaseN(n1, n2) {
@@ -388,16 +388,16 @@ function () {
       this.watcher = new Algorithm();
 
       if (!n1.isNegative && n2.isNegative || n1.isNegative && !n2.isNegative) {
-        var addition = new AdditionBaseN(n1, new Number(n2.base, n2.arr, n2.offset, !n2.isNegative));
+        const addition = new AdditionBaseN(n1, Number(n2.base, n2.arr, n2.offset, !n2.isNegative));
         this.watcher = this.watcher.step("OperatorSwitch").saveVariable("addition", addition.watcher);
         return addition.getResult();
       }
 
-      var base = n1.base;
-      var comp = new ComparisonBaseN(new Number(n1.base, n1.arr, n1.offset, false), new Number(n2.base, n2.arr, n2.offset, false)).getResult();
-      var isNegative = null;
-      var op1 = null;
-      var op2 = null;
+      const base = n1.base;
+      const comp = new ComparisonBaseN(Number(n1.base, n1.arr, n1.offset, false), Number(n2.base, n2.arr, n2.offset, false)).getResult();
+      let isNegative;
+      let op1;
+      let op2;
 
       if (comp >= 0) {
         // |n1| >= |n2|
@@ -412,11 +412,11 @@ function () {
 
       this.watcher.step("GetSign").saveVariable('compareValue', comp).saveVariable('signN1', n1.isNegative).saveVariable('signN2', n2.isNegative).saveVariable('isNegative', isNegative);
 
-      var op1Arr = _toConsumableArray(op1.arr);
+      const op1Arr = _toConsumableArray(op1.arr);
 
-      var op2Arr = _toConsumableArray(op2.arr);
+      const op2Arr = _toConsumableArray(op2.arr);
 
-      var offset = Math.max(op1.offset, op2.offset);
+      const offset = Math.max(op1.offset, op2.offset);
 
       if (op1.offset < offset) {
         op1Arr.push.apply(op1Arr, _toConsumableArray(Array(offset - op1.offset).fill(0)));
@@ -426,7 +426,7 @@ function () {
         op2Arr.push.apply(op2Arr, _toConsumableArray(Array(offset - op2.offset).fill(0)));
       }
 
-      var length = Math.max(op1Arr.length, op2Arr.length);
+      const length = Math.max(op1Arr.length, op2Arr.length);
 
       if (op1Arr.length < length) {
         op1Arr.unshift.apply(op1Arr, _toConsumableArray(Array(length - op1Arr.length).fill(0)));
@@ -436,12 +436,12 @@ function () {
         op2Arr.unshift.apply(op2Arr, _toConsumableArray(Array(length - op2Arr.length).fill(0)));
       }
 
-      var overflow = [];
-      var _final = [];
+      let overflow = [];
+      let _final = [];
       overflow.unshift(0);
 
-      for (var i = length - 1; i >= 0; i--) {
-        var m = op1Arr[i] - op2Arr[i] - overflow[0];
+      for (let i = length - 1; i >= 0; i--) {
+        const m = op1Arr[i] - op2Arr[i] - overflow[0];
 
         _final.unshift((m + base) % base);
 
@@ -452,9 +452,9 @@ function () {
         }
       }
 
-      var result = new Number(base, _final, offset, isNegative);
+      const result = Number(base, _final, offset, isNegative);
       this.watcher.step("Subtraction").saveVariable('op1', op1).saveVariable('op2', op2).saveVariable('op1Arr', _toConsumableArray(op1Arr)).saveVariable('op2Arr', _toConsumableArray(op2Arr)).saveVariable('carryArr', [].concat(overflow)).saveVariable('resultArr', [].concat(_final)).saveVariable('result', result);
-      return new Number(base, _final, offset, isNegative);
+      return Number(base, _final, offset, isNegative);
     }
   }, {
     key: "getResult",
@@ -466,7 +466,7 @@ function () {
   return SubtractionBaseN;
 }();
 
-var AdditionBaseN =
+const AdditionBaseN =
 /*#__PURE__*/
 function () {
   function AdditionBaseN(n1, n2) {
@@ -487,29 +487,29 @@ function () {
 
       if (!n1.isNegative && n2.isNegative) {
         // Subtract abs(n2) from n1.
-        var subtraction = new SubtractionBaseN(n1, new Number(n2.base, n2.arr, n2.offset));
+        const subtraction = new SubtractionBaseN(n1, Number(n2.base, n2.arr, n2.offset));
         this.watcher = this.watcher.step("OperatorSwitch").saveVariable("subtraction", subtraction.watcher);
         return subtraction.getResult();
       }
 
       if (n1.isNegative && !n2.isNegative) {
         // Subtract abs(n1) from n2.
-        var _subtraction = new SubtractionBaseN(n2, new Number(n1.base, n1.arr, n1.offset)).getResult();
+        const _subtraction = new SubtractionBaseN(n2, Number(n1.base, n1.arr, n1.offset)).getResult();
 
         this.watcher = this.watcher.step("OperatorSwitch").saveVariable("subtraction", _subtraction.watcher);
         return _subtraction;
       }
 
-      var base = n1.base; // If both n1 and n2 are negative the result must also be negative.
+      const base = n1.base; // If both n1 and n2 are negative the result must also be negative.
 
-      var isNegative = n1.isNegative && n2.isNegative;
+      const isNegative = n1.isNegative && n2.isNegative;
       this.watcher.step("GetSign").saveVariable('signN1', n1.isNegative).saveVariable('signN2', n2.isNegative).saveVariable('isNegative', isNegative);
 
-      var n1Arr = _toConsumableArray(n1.arr);
+      const n1Arr = _toConsumableArray(n1.arr);
 
-      var n2Arr = _toConsumableArray(n2.arr);
+      const n2Arr = _toConsumableArray(n2.arr);
 
-      var offset = Math.max(n1.offset, n2.offset);
+      const offset = Math.max(n1.offset, n2.offset);
 
       if (n1.offset < offset) {
         n1Arr.push.apply(n1Arr, _toConsumableArray(Array(offset - n1.offset).fill(0)));
@@ -519,7 +519,7 @@ function () {
         n2Arr.push.apply(n2Arr, _toConsumableArray(Array(offset - n2.offset).fill(0)));
       }
 
-      var length = Math.max(n1Arr.length, n2Arr.length);
+      const length = Math.max(n1Arr.length, n2Arr.length);
 
       if (n1Arr.length < length) {
         n1Arr.unshift.apply(n1Arr, _toConsumableArray(Array(length - n1Arr.length).fill(0)));
@@ -529,12 +529,12 @@ function () {
         n2Arr.unshift.apply(n2Arr, _toConsumableArray(Array(length - n2Arr.length).fill(0)));
       }
 
-      var overflow = [];
-      var _final = [];
+      let overflow = [];
+      let _final = [];
       overflow.unshift(0);
 
-      for (var i = length - 1; i >= 0; i--) {
-        var m = n1Arr[i] + n2Arr[i] + overflow[0];
+      for (let i = length - 1; i >= 0; i--) {
+        const m = n1Arr[i] + n2Arr[i] + overflow[0];
 
         _final.unshift(m % base);
 
@@ -545,7 +545,7 @@ function () {
         _final.unshift(overflow[0]);
       }
 
-      var result = new Number(base, _final, offset, isNegative);
+      const result = new Number(base, _final, offset, isNegative);
       this.watcher.step("Addition").saveVariable('op1', n1).saveVariable('op2', n2).saveVariable('op1Arr', _toConsumableArray(n1Arr)).saveVariable('op2Arr', _toConsumableArray(n2Arr)).saveVariable('carryArr', [].concat(overflow)).saveVariable('resultArr', [].concat(_final)).saveVariable('result', result);
       return new Number(base, _final, offset, isNegative);
     }
@@ -559,7 +559,7 @@ function () {
   return AdditionBaseN;
 }();
 
-var MultiplicationBaseN =
+const MultiplicationBaseN =
 /*#__PURE__*/
 function () {
   function MultiplicationBaseN(n1, n2) {
@@ -577,22 +577,22 @@ function () {
     key: "_multiply",
     value: function _multiply(n1, n2) {
       this.watcher = new Algorithm();
-      var base = n1.base;
-      var isNegative = n1.isNegative && !n2.isNegative || n2.isNegative && !n1.isNegative;
+      const base = n1.base;
+      const isNegative = n1.isNegative && !n2.isNegative || n2.isNegative && !n1.isNegative;
       this.watcher.step("GetSign").saveVariable('signN1', n1.isNegative).saveVariable('signN2', n2.isNegative).saveVariable('isNegative', isNegative);
-      var cur = new Number(base, [0], 0, false);
-      var initalOffset = n1.offset - (n2.arr.length - 1 - n2.offset);
+      let cur = new Number(base, [0], 0, false);
+      const initalOffset = n1.offset - (n2.arr.length - 1 - n2.offset);
       this.watcher.step("MultInital").saveVariable('num1', n1).saveVariable('num2', n2);
 
-      for (var i = 0; i < n2.arr.length; i++) {
-        var num = new Number(base, n1.arr, i + initalOffset, false);
-        var toAdd = new MultiplicationBaseNSingleDigit(num, n2.arr[i]).getResult();
+      for (let i = 0; i < n2.arr.length; i++) {
+        const num = new Number(base, n1.arr, i + initalOffset, false);
+        const toAdd = new MultiplicationBaseNSingleDigit(num, n2.arr[i]).getResult();
         this.watcher.step("MultStep".concat(i)).saveVariable('cur', cur).saveVariable('toAdd', toAdd);
         cur = new AdditionBaseN(cur, toAdd).getResult();
       }
 
       this.watcher.step("MultFinal").saveVariable('cur', cur);
-      var result = new Number(base, cur.arr, cur.offset, isNegative);
+      const result = new Number(base, cur.arr, cur.offset, isNegative);
       this.watcher.step("Result").saveVariable('result', result);
       return result;
     }
@@ -605,7 +605,8 @@ function () {
 
   return MultiplicationBaseN;
 }();
-var MultiplicationBaseNSingleDigit =
+
+const MultiplicationBaseNSingleDigit =
 /*#__PURE__*/
 function () {
   function MultiplicationBaseNSingleDigit(n, d) {
@@ -621,14 +622,14 @@ function () {
   _createClass(MultiplicationBaseNSingleDigit, [{
     key: "_multiply",
     value: function _multiply(n, d) {
-      var offset = n.offset;
-      var base = n.base;
-      var isNegative = n.isNegative;
-      var overflow = [0];
-      var _final = [];
+      const offset = n.offset;
+      const base = n.base;
+      const isNegative = n.isNegative;
+      let overflow = [0];
+      let _final = [];
 
-      for (var i = n.arr.length - 1; i >= 0; i--) {
-        var m = d * n.arr[i] + overflow[0];
+      for (let i = n.arr.length - 1; i >= 0; i--) {
+        const m = d * n.arr[i] + overflow[0];
 
         _final.unshift(m % base);
 
@@ -661,12 +662,12 @@ function numToChar$1(num) {
   return '';
 }
 
-var NumberBaseNComplement =
+const NumberBaseNComplement =
 /*#__PURE__*/
 function () {
   function NumberBaseNComplement(base, digitNum, representation) {
-    var off = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-    var negate = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+    const off = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+    const negate = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
 
     _classCallCheck(this, NumberBaseNComplement);
 
@@ -686,7 +687,7 @@ function () {
     if (negate) {
       this.arr = this.getFlipedArray(); // Add one
 
-      for (var i = this.arr.length - 1; i >= 0; i--) {
+      for (let i = this.arr.length - 1; i >= 0; i--) {
         if (this.arr[i] != this.base - 1) {
           this.arr[i] += 1;
           break;
@@ -724,7 +725,7 @@ function () {
       if (this.arr.length > this.digitNum + this.offset) {
         this.arr.splice(0, this.arr.length - (this.digitNum + this.offset));
       } else {
-        var _this$arr;
+        let _this$arr;
 
         (_this$arr = this.arr).unshift.apply(_this$arr, _toConsumableArray(Array(this.digitNum + this.offset - this.arr.length).fill(0)));
       }
@@ -732,7 +733,7 @@ function () {
   }, {
     key: "_checkArray",
     value: function _checkArray(arr) {
-      for (var i = 0; i < arr.length; i++) {
+      for (let i = 0; i < arr.length; i++) {
         if (arr[i] < 0 || this.base <= arr[i]) {
           return false;
         }
@@ -743,9 +744,9 @@ function () {
   }, {
     key: "_constructString",
     value: function _constructString(arr) {
-      var result = "";
+      let result = "";
 
-      for (var i = 0; i < arr.length; i++) {
+      for (let i = 0; i < arr.length; i++) {
         result += numToChar$1(arr[i]);
 
         if (i == this.digitNum - 1 && this.offset > 0) {
@@ -758,9 +759,9 @@ function () {
   }, {
     key: "getFlipedArray",
     value: function getFlipedArray() {
-      var result = [];
+      let result = [];
 
-      for (var i = 0; i < this.arr.length; i++) {
+      for (let i = 0; i < this.arr.length; i++) {
         result.push(this.base - 1 - this.arr[i]);
       }
 
@@ -779,9 +780,9 @@ function () {
       } // Sign extend.
 
 
-      var sign = this.isNegative() ? this.base - 1 : 0;
+      const sign = this.isNegative() ? this.base - 1 : 0;
 
-      var arrCopy = _toConsumableArray(this.arr);
+      let arrCopy = _toConsumableArray(this.arr);
 
       arrCopy.unshift.apply(arrCopy, _toConsumableArray(Array(newDigitNum - this.digitNum).fill(sign)));
       return new NumberBaseNComplement(this.base, newDigitNum, arrCopy, this.offset);
@@ -791,7 +792,7 @@ function () {
   return NumberBaseNComplement;
 }();
 
-var AdditionBaseNComplement =
+const AdditionBaseNComplement =
 /*#__PURE__*/
 function () {
   function AdditionBaseNComplement(n1, n2) {
@@ -816,14 +817,14 @@ function () {
     key: "_add",
     value: function _add(n1, n2) {
       this.watcher = new Algorithm();
-      var base = n1.base;
-      var digitNum = n1.digitNum;
+      const base = n1.base;
+      const digitNum = n1.digitNum;
 
-      var n1Arr = _toConsumableArray(n1.arr);
+      let n1Arr = _toConsumableArray(n1.arr);
 
-      var n2Arr = _toConsumableArray(n2.arr);
+      let n2Arr = _toConsumableArray(n2.arr);
 
-      var offset = Math.max(n1.offset, n2.offset);
+      const offset = Math.max(n1.offset, n2.offset);
 
       if (n1.offset < offset) {
         n1Arr.push.apply(n1Arr, _toConsumableArray(Array(offset - n1.offset).fill(0)));
@@ -833,12 +834,12 @@ function () {
         n2Arr.push.apply(n2Arr, _toConsumableArray(Array(offset - n2.offset).fill(0)));
       }
 
-      var overflow = [];
-      var _final = [];
+      let overflow = [];
+      let _final = [];
       overflow.unshift(0);
 
-      for (var i = n1Arr.length - 1; i >= 0; i--) {
-        var m = n1Arr[i] + n2Arr[i] + overflow[0];
+      for (let i = n1Arr.length - 1; i >= 0; i--) {
+        const m = n1Arr[i] + n2Arr[i] + overflow[0];
 
         _final.unshift(m % base);
 
@@ -849,9 +850,9 @@ function () {
         _final.unshift(overflow[0]);
       }
 
-      var result = new NumberBaseNComplement(base, digitNum, _final, offset);
-      var overflowPossible = n1.isNegative() && n2.isNegative() || !n1.isNegative() && !n2.isNegative();
-      var signChanged = overflowPossible && n1.isNegative() && !result.isNegative() || !n1.isNegative() && result.isNegative();
+      const result = new NumberBaseNComplement(base, digitNum, _final, offset);
+      const overflowPossible = n1.isNegative() && n2.isNegative() || !n1.isNegative() && !n2.isNegative();
+      const signChanged = overflowPossible && n1.isNegative() && !result.isNegative() || !n1.isNegative() && result.isNegative();
       this.producedOverflow = overflow[0] > 0 && signChanged;
       this.watcher.step("Addition").saveVariable('op1', n1).saveVariable('op2', n2).saveVariable('op1Arr', _toConsumableArray(n1Arr)).saveVariable('op2Arr', _toConsumableArray(n2Arr)).saveVariable('carryArr', [].concat(overflow)).saveVariable('resultArr', [].concat(_final)).saveVariable('result', result).saveVariable('overflow', this.producedOverflow);
       return result;
@@ -889,26 +890,26 @@ function () {
     key: "_multiply",
     value: function _multiply(n1, n2) {
       this.watcher = new Algorithm();
-      var base = n1.base;
-      var offset = Math.max(n1.offset, n2.offset);
-      var digitsToTake = 2 * (n1.digitNum + offset);
+      const base = n1.base;
+      const offset = Math.max(n1.offset, n2.offset);
+      const digitsToTake = 2 * (n1.digitNum + offset);
       this.watcher.step("DetermineSize").saveVariable('n1Offset', n1.offset).saveVariable('n2Offset', n2.offset).saveVariable('digitNum', n1.digitNum).saveVariable('offset', offset).saveVariable('digitsToTake', digitsToTake);
       n1 = n1.translate(digitsToTake - offset);
       n2 = n2.translate(digitsToTake - offset);
 
-      var op1Arr = _toConsumableArray(n1.arr);
+      let op1Arr = _toConsumableArray(n1.arr);
 
-      var op2Arr = _toConsumableArray(n2.arr);
+      let op2Arr = _toConsumableArray(n2.arr);
 
       op1Arr.push.apply(op1Arr, _toConsumableArray(Array(Math.max(n2.offset - n1.offset, 0)).fill(0)));
       op2Arr.push.apply(op2Arr, _toConsumableArray(Array(Math.max(n1.offset - n2.offset, 0)).fill(0)));
-      var op1 = new Number(n1.base, op1Arr, offset, false);
-      var op2 = new Number(n2.base, op2Arr, offset, false);
-      var operation = new MultiplicationBaseN(op1, op2);
-      var result = operation.getResult();
+      const op1 = new Number(n1.base, op1Arr, offset, false);
+      const op2 = new Number(n2.base, op2Arr, offset, false);
+      const operation = new MultiplicationBaseN(op1, op2);
+      const result = operation.getResult();
       this.watcher.step("Multiply").saveVariable('multiplication', operation.watcher);
 
-      var resultArr = _toConsumableArray(result.arr);
+      let resultArr = _toConsumableArray(result.arr);
 
       resultArr.push.apply(resultArr, _toConsumableArray(Array(Math.max(2 * offset - result.offset, 0)).fill(0)));
 
@@ -920,7 +921,7 @@ function () {
         resultArr.splice(0, resultArr.length - digitsToTake);
       }
 
-      var finalResult = new NumberBaseNComplement(base, digitsToTake - 2 * offset, resultArr, 2 * offset);
+      const finalResult = new NumberBaseNComplement(base, digitsToTake - 2 * offset, resultArr, 2 * offset);
       this.watcher.step("Result").saveVariable('digitsToTake', digitsToTake).saveVariable('result', finalResult);
       return finalResult;
     }
@@ -964,7 +965,7 @@ export function getIEEEFromString(expBitNum, str) {
     process.exit(1);
   }
 
-  for (var i = 0; i < str.length; i++) {
+  for (let i = 0; i < str.length; i++) {
     if (str[i] == ' ') continue;
     var n = charToNum(str[i]);
 
@@ -974,17 +975,17 @@ export function getIEEEFromString(expBitNum, str) {
     }
   }
 
-  var arr = [];
+  let arr = [];
 
-  for (var _i = 0; _i < str.length; _i++) {
-    if (str[_i] == ' ') continue;
-    arr.push(charToNum(str[_i]));
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] == ' ') continue;
+    arr.push(charToNum(str[i]));
   }
 
   return new NumberIEEE(expBitNum, arr.length - expBitNum - 1, arr);
 } // Representation of a number in N's complement (Up to digitNum digits)
 
-var NumberIEEE =
+const NumberIEEE =
 /*#__PURE__*/
 function () {
   function NumberIEEE(expBitNum, manBitNum, representation) {
@@ -1024,7 +1025,7 @@ function () {
         return false;
       }
 
-      for (var i = 0; i < arr.length; i++) {
+      for (let i = 0; i < arr.length; i++) {
         if (arr[i] < 0 || 2 <= arr[i]) {
           return false;
         }
@@ -1035,10 +1036,10 @@ function () {
   }, {
     key: "_constructBitString",
     value: function _constructBitString() {
-      var result = "";
-      var count = 0;
+      let result = "";
+      let count = 0;
 
-      for (var i = 0; i < this.arr.length; i++) {
+      for (let i = 0; i < this.arr.length; i++) {
         result += numToChar$2(this.arr[i]);
 
         if (i == 0 || i == this.expBitNum) {
@@ -1058,7 +1059,7 @@ function () {
   }, {
     key: "_constructValString",
     value: function _constructValString() {
-      var sign = this.arr[0] == 0 ? '+' : '-';
+      const sign = this.arr[0] == 0 ? '+' : '-';
 
       if (this.isNan) {
         return 'NaN';
@@ -1077,9 +1078,9 @@ function () {
   }, {
     key: "_constructE",
     value: function _constructE() {
-      var result = 0;
+      let result = 0;
 
-      for (var i = 1; i < 1 + this.expBitNum; i++) {
+      for (let i = 1; i < 1 + this.expBitNum; i++) {
         result *= 2;
         result += this.arr[i];
       }
@@ -1089,9 +1090,9 @@ function () {
   }, {
     key: "_constructM",
     value: function _constructM() {
-      var result = 0.0;
+      let result = 0.0;
 
-      for (var i = this.bitNum - 1; i >= 1 + this.expBitNum; i--) {
+      for (let i = this.bitNum - 1; i >= 1 + this.expBitNum; i--) {
         result /= 2.0;
         result += this.arr[i];
       }
@@ -1116,7 +1117,7 @@ function () {
   }, {
     key: "_constructExponentBits",
     value: function _constructExponentBits() {
-      var result = _toConsumableArray(this.arr);
+      let result = _toConsumableArray(this.arr);
 
       result.splice(0, 1);
       result.splice(1 + this.expBitNum, this.manBitNum);
@@ -1125,9 +1126,9 @@ function () {
   }, {
     key: "_constructMantissaBits",
     value: function _constructMantissaBits() {
-      var firstBit = this.isSmall || this.isZero ? 0 : 1;
+      const firstBit = this.isSmall || this.isZero ? 0 : 1;
 
-      var result = _toConsumableArray(this.arr);
+      let result = _toConsumableArray(this.arr);
 
       result.splice(0, 1 + this.expBitNum);
       result.unshift(firstBit);
@@ -1159,9 +1160,9 @@ function () {
   _createClass(AdditionIEEE, [{
     key: "_add",
     value: function _add(n1, n2) {
-      var expBitNum = n1.expBitNum;
-      var manBitNum = n1.manBitNum;
-      var bitNum = n1.bitNum; // Edgecases:
+      const expBitNum = n1.expBitNum;
+      const manBitNum = n1.manBitNum;
+      const bitNum = n1.bitNum; // Edgecases:
 
       if (n1.isNaN || n2.isNaN || n1.isInfinity && n2.isInfinity && n1.sign != n2.sign) {
         // Return NaN
@@ -1170,9 +1171,9 @@ function () {
 
       if (n1.isInfinity || n2.isInfinity) {
         // Return Infinty
-        var _sign = n1.isInfinity ? n1.sign : n2.sign;
+        const _sign = n1.isInfinity ? n1.sign : n2.sign;
 
-        var infArray = [_sign];
+        let infArray = [_sign];
         infArray.push.apply(infArray, _toConsumableArray(Array(expBitNum).fill(1)));
         infArray.push.apply(infArray, _toConsumableArray(Array(manBitNum).fill(0)));
         return new NumberIEEE(expBitNum, manBitNum, infArray);
