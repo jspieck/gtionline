@@ -1423,6 +1423,129 @@ function () {
   return MultiplicationIEEE;
 }();
 
+export var DivisionIEEE =
+  /*#__PURE__*/
+  function () {
+    function DivisionIEEE(n1, n2) {
+      _classCallCheck(this, DivisionIEEE);
+
+      if (n1.expBitNum !== n2.expBitNum) {
+        console.log("DivisionIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ") and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
+      }
+
+      if (n1.manBitNum !== n2.manBitNum) {
+        console.log("DivisionIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ") and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
+      }
+
+      this.producedOverflow = false;
+      this.result = this._divide(n1, n2);
+    }
+
+    _createClass(DivisionIEEE, [{
+      key: "_divide",
+      value: function _divide(n1, n2) {
+        if (n1.isNaN || n2.isNaN || n1.isInfinity && n2.isZero || n1.isZero && n2.isInfinity) {
+          // Return NaN
+          return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
+        }
+        const expBitNum = n1.expBitNum;
+        const manBitNum = n1.manBitNum;
+        const bitNum = n1.bitNum;
+        const sign = (n1.sign && !n2.sign || !n1.sign && n2.sign) + 0; // Edgecases:
+
+        if ((n1.isInfinity && !n2.isInfinity) || (!n1.isZero && n2.isZero)){
+          // Return Infinty
+          let infArray = [sign];
+          infArray.push.apply(infArray, _toConsumableArray(Array(expBitNum).fill(1)));
+          infArray.push.apply(infArray, _toConsumableArray(Array(manBitNum).fill(0)));
+          return new NumberIEEE(expBitNum, manBitNum, infArray);
+        }
+
+        if ((n1.isInfinity && n2.isInfinity) || (n1.isZero && n2.isZero)) {
+          // Return NaN
+          let infArray = [0];
+          infArray.push.apply(infArray, _toConsumableArray(Array(expBitNum).fill(1)));
+          infArray.push.apply(infArray, _toConsumableArray(Array(manBitNum).fill(1)));
+          return new NumberIEEE(expBitNum, manBitNum, infArray);
+        }
+
+        if ((!n1.isInfinity && n2.isInfinity) || n1.isZero){
+          // Return Zero
+          let infArray = [sign];
+          infArray.push.apply(infArray, _toConsumableArray(Array(expBitNum).fill(0)));
+          infArray.push.apply(infArray, _toConsumableArray(Array(manBitNum).fill(0)));
+          return new NumberIEEE(expBitNum, manBitNum, infArray);
+        }
+
+        // TODO: Zeus, Add Calculation
+        const op1 = new NumberBaseNComplement(2, 3, n1.mantissaBits, n1.manBitNum, false);
+        const op2 = new NumberBaseNComplement(2, 3, n2.mantissaBits, n2.manBitNum, false);
+        const multiplicationResult = new MultiplicationBaseNComplement(op1, op2).getResult();
+        const digitNum = multiplicationResult.digitNum;
+
+        let unnormalizedMantissa = _toConsumableArray(multiplicationResult.arr);
+
+        let cDigits = digitNum;
+
+        while (cDigits > 1 && unnormalizedMantissa[0] === 0) {
+          unnormalizedMantissa.splice(0, 1);
+          cDigits--;
+        } // Calculate shift
+        // Positive: Rightshift | Negative: Leftshift
+
+
+        let shift;
+
+        if (cDigits >= 1) {
+          shift = cDigits - 1;
+        } else {
+          shift = 0;
+
+          for (let i = 1; i < unnormalizedMantissa.length; i++) {
+            shift--;
+
+            if (unnormalizedMantissa[i] === 1) {
+              break;
+            }
+          }
+        }
+
+        if (shift === unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] === 0) {
+          // Return zero
+          return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
+        }
+
+        let normalizedMatissa = [];
+
+        for (let i = 0; i < manBitNum; i++) {
+          const access = i + Math.max(-shift, 0) + 1;
+          const num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
+          normalizedMatissa.push(num);
+        }
+
+        let curE = n1.E + n2.E - n1.bias + shift;
+        let exponentBits = [];
+
+        for (let i = 0; i < expBitNum; i++) {
+          exponentBits.unshift(curE % 2);
+          curE = Math.floor(curE / 2);
+        }
+
+        let result = [sign];
+        result.push.apply(result, exponentBits);
+        result.push.apply(result, normalizedMatissa);
+        return new NumberIEEE(expBitNum, manBitNum, result);
+      }
+    }, {
+      key: "getResult",
+      value: function getResult() {
+        return this.result;
+      }
+    }]);
+
+    return DivisionIEEE;
+  }();
+
 //export * from './boolean/index.js';
 /*
 let num1 = getBaseNComplementFromString(2, 4,"0101");

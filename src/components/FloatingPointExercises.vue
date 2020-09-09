@@ -72,6 +72,7 @@ export default {
         add: `${this.$t('addition')} (+)`,
         sub: `${this.$t('subtraction')} (-)`,
         mul: `${this.$t('multiplication')} (*)`,
+        div: `${this.$t('division')} (/)`,
       };
     },
     solDescr() {
@@ -126,11 +127,16 @@ export default {
     },
     generateExercise() {
       const operation = this.selectedFormat[0];
-      const opNames = { add: [this.$t('addition'), '+'], mul: [this.$t('multiplication'), '\\cdot'], sub: [this.$t('subtraction'), '-'] };
+      const opNames = {
+        add: [this.$t('addition'), '+'],
+        mul: [this.$t('multiplication'), '\\cdot'],
+        sub: [this.$t('subtraction'), '-'],
+        div: [this.$t('division'), '/'],
+      };
       this.fp1 = this.generateRandomIEEE();
       this.fp2 = this.generateRandomIEEE();
       this.exerciseText = `Es seien die Gleitkommazahlen \\( fp_1 \\) und \\( fp_2 \\) im 16 Bit Gleitkommaformat gegeben. Berechnen Sie die ${opNames[operation][0]} \\( fp_1 ${opNames[operation][1]} fp_2 \\) ohne die Binärdarstellung zu verlassen und geben Sie diese wieder als Gleitkommazahl an:
-          
+
           \\( fp_1 = \\text{${this.fp1}} \\)\n
           \\( fp_2 = \\text{${this.fp2}} \\)`;
       this.$nextTick(() => {
@@ -166,6 +172,9 @@ export default {
             break;
           case 'sub':
             result = new tool.SubtractionIEEE(y1, y2);
+            break;
+          case 'div':
+            result = new tool.DivisionIEEE(y1, y2);
             break;
           default:
         }

@@ -118,6 +118,7 @@ export default {
         add: `${this.$t('addition')} (+)`,
         sub: `${this.$t('subtraction')} (-)`,
         mul: `${this.$t('multiplication')} (*)`,
+        div: `${this.$t('division')} (/)`,
       };
     },
     formatOptions() {
