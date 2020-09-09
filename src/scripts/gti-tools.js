@@ -75,7 +75,7 @@ peg$SyntaxError.buildMessage = function (expected, found) {
       return "\"" + literalEscape(expectation.text) + "\"";
     },
     "class": function _class(expectation) {
-      var escapedParts = expectation.parts.map(function (part) {
+      const escapedParts = expectation.parts.map(function (part) {
         return Array.isArray(part) ? classEscape(part[0]) + "-" + classEscape(part[1]) : classEscape(part);
       });
       return "[" + (expectation.inverted ? "^" : "") + escapedParts + "]";
@@ -155,11 +155,11 @@ peg$SyntaxError.buildMessage = function (expected, found) {
 
 function numToChar(num) {
   if (0 <= num && num <= 9) {
-    return String.fromCharCode(num + '0'.charCodeAt());
+    return String.fromCharCode(num + '0'.charCodeAt(0));
   }
 
   if (10 <= num && num <= 35) {
-    return String.fromCharCode(num + 'A'.charCodeAt());
+    return String.fromCharCode(num + 'A'.charCodeAt(0));
   }
 
   return '';
@@ -169,8 +169,8 @@ const Number =
   /*#__PURE__*/
   function () {
     function Number(base, representation) {
-      var off = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-      var isNegative = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+      const off = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+      const isNegative = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
       _classCallCheck(this, Number);
 
@@ -202,11 +202,11 @@ const Number =
     }, {
       key: "_optimizeArray",
       value: function _optimizeArray() {
-        while (this.arr.length > this.offset + 1 && this.arr[0] == 0) {
+        while (this.arr.length > this.offset + 1 && this.arr[0] === 0) {
           this.arr.splice(0, 1);
         }
 
-        while (this.offset > 0 && this.arr[this.arr.length - 1] == 0) {
+        while (this.offset > 0 && this.arr[this.arr.length - 1] === 0) {
           this.arr.splice(this.arr.length - 1, 1);
           this.offset--;
         }
@@ -229,7 +229,7 @@ const Number =
         for (let i = 0; i < arr.length; i++) {
           result += numToChar(arr[i]);
 
-          if (this.offset != 0 && arr.length - 1 - i == this.offset) {
+          if (this.offset !== 0 && arr.length - 1 - i === this.offset) {
             result += '.';
           }
         }
@@ -251,7 +251,7 @@ const ComparisonBaseN =
     function ComparisonBaseN(n1, n2) {
       _classCallCheck(this, ComparisonBaseN);
 
-      if (n1.base != n2.base) {
+      if (n1.base !== n2.base) {
         console.log("ComparisonBaseN(Number, Number): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") not compatible."));
       }
 
@@ -261,7 +261,7 @@ const ComparisonBaseN =
     _createClass(ComparisonBaseN, [{
       key: "_compare",
       value: function _compare(n1, n2) {
-        if (n1.arr.length == 1 && n2.arr.length == 1 && n1.arr[0] == 0 && n1.arr[0] == 0) {
+        if (n1.arr.length === 1 && n2.arr.length === 1 && n1.arr[0] === 0 && n1.arr[0] === 0) {
           return 0;
         }
 
@@ -373,7 +373,7 @@ function () {
   function SubtractionBaseN(n1, n2) {
     _classCallCheck(this, SubtractionBaseN);
 
-    if (n1.base != n2.base) {
+    if (n1.base !== n2.base) {
       console.log("Subtraction(Number, Number): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") not compatible."));
       process.exit(1);
     }
@@ -472,7 +472,7 @@ function () {
   function AdditionBaseN(n1, n2) {
     _classCallCheck(this, AdditionBaseN);
 
-    if (n1.base != n2.base) {
+    if (n1.base !== n2.base) {
       console.log("Addition(Number, Number): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") not compatible."));
     }
 
@@ -565,7 +565,7 @@ function () {
   function MultiplicationBaseN(n1, n2) {
     _classCallCheck(this, MultiplicationBaseN);
 
-    if (n1.base != n2.base) {
+    if (n1.base !== n2.base) {
       console.log("MultiplicationBaseN(Number, Number): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") are not compatible."));
     }
 
@@ -587,7 +587,7 @@ function () {
       for (let i = 0; i < n2.arr.length; i++) {
         const num = new Number(base, n1.arr, i + initalOffset, false);
         const toAdd = new MultiplicationBaseNSingleDigit(num, n2.arr[i]).getResult();
-        this.watcher.step("MultStep".concat(i)).saveVariable('cur', cur).saveVariable('toAdd', toAdd);
+        this.watcher.step("MultStep".concat(i.toString())).saveVariable('cur', cur).saveVariable('toAdd', toAdd);
         cur = new AdditionBaseN(cur, toAdd).getResult();
       }
 
@@ -688,7 +688,7 @@ function () {
       this.arr = this.getFlipedArray(); // Add one
 
       for (let i = this.arr.length - 1; i >= 0; i--) {
-        if (this.arr[i] != this.base - 1) {
+        if (this.arr[i] !== this.base - 1) {
           this.arr[i] += 1;
           break;
         } else {
@@ -716,7 +716,7 @@ function () {
     key: "_normalizeArray",
     value: function _normalizeArray() {
       // Delete zeros from right.
-      while (this.offset > 0 && this.arr[this.arr.length - 1] == 0) {
+      while (this.offset > 0 && this.arr[this.arr.length - 1] === 0) {
         this.arr.splice(this.arr.length - 1, 1);
         this.offset--;
       } // Bring array to the right size.
@@ -749,7 +749,7 @@ function () {
       for (let i = 0; i < arr.length; i++) {
         result += numToChar$1(arr[i]);
 
-        if (i == this.digitNum - 1 && this.offset > 0) {
+        if (i === this.digitNum - 1 && this.offset > 0) {
           result += '.';
         }
       }
@@ -798,12 +798,12 @@ function () {
   function AdditionBaseNComplement(n1, n2) {
     _classCallCheck(this, AdditionBaseNComplement);
 
-    if (n1.base != n2.base) {
+    if (n1.base !== n2.base) {
       console.log("AdditionBaseNComplement(Number, Number): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") not compatible."));
       process.exit(1);
     }
 
-    if (n1.digitNum != n2.digitNum) {
+    if (n1.digitNum !== n2.digitNum) {
       console.log("AdditionBaseNComplement(Number, Number): DigitNum of n1(".concat(n1.digitNum, ") and digitNum of n2(").concat(n2.digitNum, ") not compatible."));
       process.exit(1);
     }
@@ -873,11 +873,11 @@ function () {
   function MultiplicationBaseNComplement(n1, n2) {
     _classCallCheck(this, MultiplicationBaseNComplement);
 
-    if (n1.base != n2.base) {
+    if (n1.base !== n2.base) {
       console.log("MultiplicationBaseNComplement(Number, Number): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") are not compatible."));
     }
 
-    if (n1.digitNum != n2.digitNum) {
+    if (n1.digitNum !== n2.digitNum) {
       console.log("MultiplicationBaseNComplement(Number, Number): DigitNum of n1(".concat(n1.digitNum, ") and digitNum of n2(").concat(n2.digitNum, ") are not compatible."));
     }
 
@@ -966,8 +966,8 @@ export function getIEEEFromString(expBitNum, str) {
   }
 
   for (let i = 0; i < str.length; i++) {
-    if (str[i] == ' ') continue;
-    var n = charToNum(str[i]);
+    if (str[i] === ' ') continue;
+    const n = charToNum(str[i]);
 
     if (n < 0 || n >= 2) {
       console.log("getIEEEFromString(expBitNum, str): Given string is not compatible with base 2.");
@@ -978,7 +978,7 @@ export function getIEEEFromString(expBitNum, str) {
   let arr = [];
 
   for (let i = 0; i < str.length; i++) {
-    if (str[i] == ' ') continue;
+    if (str[i] === ' ') continue;
     arr.push(charToNum(str[i]));
   }
 
@@ -1006,10 +1006,10 @@ function () {
     this.bias = (1 << expBitNum - 1) - 1;
     this.E = this._constructE();
     this.M = this._constructM();
-    this.isNaN = this.E == 1 << expBitNum && this.M != 0;
-    this.isInfinity = this.E == 1 << expBitNum && this.M == 0;
-    this.isSmall = this.E == 0 && this.M != 0;
-    this.isZero = this.E == 0 && this.M == 0;
+    this.isNaN = this.E === 1 << expBitNum && this.M !== 0;
+    this.isInfinity = this.E === 1 << expBitNum && this.M === 0;
+    this.isSmall = this.E === 0 && this.M !== 0;
+    this.isZero = this.E === 0 && this.M === 0;
     this.exponent = this._constructExponent();
     this.mantissa = this._constructMantissa();
     this.exponentBits = this._constructExponentBits();
@@ -1021,7 +1021,7 @@ function () {
   _createClass(NumberIEEE, [{
     key: "_checkArray",
     value: function _checkArray(arr) {
-      if (arr.length != this.bitNum) {
+      if (arr.length !== this.bitNum) {
         return false;
       }
 
@@ -1042,12 +1042,12 @@ function () {
       for (let i = 0; i < this.arr.length; i++) {
         result += numToChar$2(this.arr[i]);
 
-        if (i == 0 || i == this.expBitNum) {
+        if (i === 0 || i === this.expBitNum) {
           count = 0;
           result += " ";
         }
 
-        if (count % 4 == 0) {
+        if (count % 4 === 0) {
           result += " ";
         }
 
@@ -1059,7 +1059,7 @@ function () {
   }, {
     key: "_constructValString",
     value: function _constructValString() {
-      const sign = this.arr[0] == 0 ? '+' : '-';
+      const sign = this.arr[0] === 0 ? '+' : '-';
 
       if (this.isNan) {
         return 'NaN';
@@ -1145,11 +1145,11 @@ function () {
   function AdditionIEEE(n1, n2) {
     _classCallCheck(this, AdditionIEEE);
 
-    if (n1.expBitNum != n2.expBitNum) {
+    if (n1.expBitNum !== n2.expBitNum) {
       console.log("AdditionIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ") and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
     }
 
-    if (n1.manBitNum != n2.manBitNum) {
+    if (n1.manBitNum !== n2.manBitNum) {
       console.log("AdditionIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ") and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
     }
 
@@ -1164,7 +1164,7 @@ function () {
       const manBitNum = n1.manBitNum;
       const bitNum = n1.bitNum; // Edgecases:
 
-      if (n1.isNaN || n2.isNaN || n1.isInfinity && n2.isInfinity && n1.sign != n2.sign) {
+      if (n1.isNaN || n2.isNaN || n1.isInfinity && n2.isInfinity && n1.sign !== n2.sign) {
         // Return NaN
         return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
       }
@@ -1189,64 +1189,63 @@ function () {
       // Get unnormalized  exponent
 
 
-      var anchorExp = n1.exponent;
-      var difference = n2.exponent - n1.exponent;
-      var digitNum = 3 + Math.max(difference, 0);
-      var op1 = new NumberBaseNComplement(2, digitNum, n1.mantissaBits, n1.manBitNum, n1.sign == 1);
-      var op2 = new NumberBaseNComplement(2, digitNum, n2.mantissaBits, n2.manBitNum - difference, n2.sign == 1);
-      var additionResult = new AdditionBaseNComplement(op1, op2).getResult();
+      const anchorExp = n1.exponent;
+      const difference = n2.exponent - n1.exponent;
+      const digitNum = 3 + Math.max(difference, 0);
+      const op1 = new NumberBaseNComplement(2, digitNum, n1.mantissaBits, n1.manBitNum, n1.sign === 1);
+      const op2 = new NumberBaseNComplement(2, digitNum, n2.mantissaBits, n2.manBitNum - difference, n2.sign === 1);
+      const additionResult = new AdditionBaseNComplement(op1, op2).getResult();
       console.log(n1.mantissaBits.join(' '));
       console.log(n2.mantissaBits.join(' '));
       console.log(op1.stringRepresentation);
       console.log(op2.stringRepresentation);
       console.log(additionResult.stringRepresentation);
-      var sign = null;
-      var unnormalizedMantissa = null;
+      let sign;
+      let unnormalizedMantissa;
 
       if (additionResult.isNegative()) {
         sign = 1;
-        var additionResultInverted = new NumberBaseNComplement(2, additionResult.digitNum, additionResult.arr, additionResult.offset, true);
+        const additionResultInverted = new NumberBaseNComplement(2, additionResult.digitNum, additionResult.arr, additionResult.offset, true);
         unnormalizedMantissa = additionResultInverted.arr;
       } else {
         sign = 0;
         unnormalizedMantissa = _toConsumableArray(additionResult.arr);
       }
 
-      var cDigits = digitNum;
+      let cDigits = digitNum;
 
-      while (cDigits > 1 && unnormalizedMantissa[0] == 0) {
+      while (cDigits > 1 && unnormalizedMantissa[0] === 0) {
         unnormalizedMantissa.splice(0, 1);
         cDigits--;
       } // Calculate shift
       // Positive: Rightshift | Negative: Leftshift
 
-
-      var shift = null;
+      let shift;
 
       if (cDigits >= 1) {
         shift = cDigits - 1;
       } else {
         shift = 0;
 
-        for (var i = 1; i < unnormalizedMantissa.length; i++) {
+        for (let i = 1; i < unnormalizedMantissa.length; i++) {
           shift--;
 
-          if (unnormalizedMantissa[i] == 1) {
+          if (unnormalizedMantissa[i] === 1) {
             break;
           }
         }
       }
 
-      if (shift == unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] == 0) {
+      if (shift === unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] === 0) {
         // Return zero
         return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
       }
 
-      var normalizedMatissa = [];
+      let normalizedMatissa = [];
 
-      for (var _i = 0; _i < manBitNum; _i++) {
-        var access = _i + Math.max(-shift, 0) + 1;
-        var num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
+      for (let i = 0; i < manBitNum; i++) {
+        const access = i + Math.max(-shift, 0) + 1;
+        const num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
         normalizedMatissa.push(num);
       } // Calculate exponent
 
@@ -1254,17 +1253,17 @@ function () {
       console.log(unnormalizedMantissa.join(' '));
       console.log(normalizedMatissa.join(' '));
       console.log(anchorExp, shift);
-      var finalE = anchorExp + shift + n1.bias;
+      const finalE = anchorExp + shift + n1.bias;
       console.log(anchorExp + shift);
-      var curE = finalE;
-      var exponentBits = [];
+      let curE = finalE;
+      let exponentBits = [];
 
-      for (var _i2 = 0; _i2 < expBitNum; _i2++) {
+      for (let i = 0; i < expBitNum; i++) {
         exponentBits.unshift(curE % 2);
         curE = Math.floor(curE / 2);
       }
 
-      var result = [sign];
+      let result = [sign];
       result.push.apply(result, exponentBits);
       result.push.apply(result, normalizedMatissa);
       return new NumberIEEE(expBitNum, manBitNum, result);
@@ -1285,11 +1284,11 @@ function () {
   function SubtractionIEEE(n1, n2) {
     _classCallCheck(this, SubtractionIEEE);
 
-    if (n1.expBitNum != n2.expBitNum) {
+    if (n1.expBitNum !== n2.expBitNum) {
       console.log("SubtractionIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ") and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
     }
 
-    if (n1.manBitNum != n2.manBitNum) {
+    if (n1.manBitNum !== n2.manBitNum) {
       console.log("SubtractionIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ") and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
     }
 
@@ -1300,11 +1299,11 @@ function () {
   _createClass(SubtractionIEEE, [{
     key: "_subtract",
     value: function _subtract(n1, n2) {
-      var flipedArr2 = _toConsumableArray(n2.arr);
+      let flipedArr2 = _toConsumableArray(n2.arr);
 
-      flipedArr2[0] = flipedArr2[0] == 0 ? 1 : 0;
-      var op1 = new NumberIEEE(n1.expBitNum, n1.manBitNum, n1.arr);
-      var op2 = new NumberIEEE(n2.expBitNum, n2.manBitNum, flipedArr2);
+      flipedArr2[0] = flipedArr2[0] === 0 ? 1 : 0;
+      const op1 = new NumberIEEE(n1.expBitNum, n1.manBitNum, n1.arr);
+      const op2 = new NumberIEEE(n2.expBitNum, n2.manBitNum, flipedArr2);
       return new AdditionIEEE(op1, op2).getResult();
     }
   }, {
@@ -1323,11 +1322,11 @@ function () {
   function MultiplicationIEEE(n1, n2) {
     _classCallCheck(this, MultiplicationIEEE);
 
-    if (n1.expBitNum != n2.expBitNum) {
+    if (n1.expBitNum !== n2.expBitNum) {
       console.log("MultiplicationIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ") and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
     }
 
-    if (n1.manBitNum != n2.manBitNum) {
+    if (n1.manBitNum !== n2.manBitNum) {
       console.log("MultiplicationIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ") and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
     }
 
@@ -1338,10 +1337,10 @@ function () {
   _createClass(MultiplicationIEEE, [{
     key: "_multiply",
     value: function _multiply(n1, n2) {
-      var expBitNum = n1.expBitNum;
-      var manBitNum = n1.manBitNum;
-      var bitNum = n1.bitNum;
-      var sign = (n1.sign && !n2.sign || !n1.sign && n2.sign) + 0; // Edgecases:
+      const expBitNum = n1.expBitNum;
+      const manBitNum = n1.manBitNum;
+      const bitNum = n1.bitNum;
+      const sign = (n1.sign && !n2.sign || !n1.sign && n2.sign) + 0; // Edgecases:
 
       if (n1.isNaN || n2.isNaN || n1.isInfinity && n2.isZero || n1.isZero && n2.isInfinity) {
         // Return NaN
@@ -1350,67 +1349,66 @@ function () {
 
       if (n1.isInfinity || n2.isInfinity) {
         // Return Infinty
-        var infArray = [sign];
+        let infArray = [sign];
         infArray.push.apply(infArray, _toConsumableArray(Array(expBitNum).fill(1)));
         infArray.push.apply(infArray, _toConsumableArray(Array(manBitNum).fill(0)));
         return new NumberIEEE(expBitNum, manBitNum, infArray);
       }
 
-      var op1 = new NumberBaseNComplement(2, 3, n1.mantissaBits, n1.manBitNum, false);
-      var op2 = new NumberBaseNComplement(2, 3, n2.mantissaBits, n2.manBitNum, false);
-      var multiplicationResult = new MultiplicationBaseNComplement(op1, op2).getResult();
-      var digitNum = multiplicationResult.digitNum;
+      const op1 = new NumberBaseNComplement(2, 3, n1.mantissaBits, n1.manBitNum, false);
+      const op2 = new NumberBaseNComplement(2, 3, n2.mantissaBits, n2.manBitNum, false);
+      const multiplicationResult = new MultiplicationBaseNComplement(op1, op2).getResult();
+      const digitNum = multiplicationResult.digitNum;
 
-      var unnormalizedMantissa = _toConsumableArray(multiplicationResult.arr);
+      let unnormalizedMantissa = _toConsumableArray(multiplicationResult.arr);
 
-      var cDigits = digitNum;
+      let cDigits = digitNum;
 
-      while (cDigits > 1 && unnormalizedMantissa[0] == 0) {
+      while (cDigits > 1 && unnormalizedMantissa[0] === 0) {
         unnormalizedMantissa.splice(0, 1);
         cDigits--;
       } // Calculate shift
       // Positive: Rightshift | Negative: Leftshift
 
 
-      var shift = null;
+      let shift;
 
       if (cDigits >= 1) {
         shift = cDigits - 1;
       } else {
         shift = 0;
 
-        for (var i = 1; i < unnormalizedMantissa.length; i++) {
+        for (let i = 1; i < unnormalizedMantissa.length; i++) {
           shift--;
 
-          if (unnormalizedMantissa[i] == 1) {
+          if (unnormalizedMantissa[i] === 1) {
             break;
           }
         }
       }
 
-      if (shift == unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] == 0) {
+      if (shift === unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] === 0) {
         // Return zero
         return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
       }
 
-      var normalizedMatissa = [];
+      let normalizedMatissa = [];
 
-      for (var _i = 0; _i < manBitNum; _i++) {
-        var access = _i + Math.max(-shift, 0) + 1;
-        var num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
+      for (let i = 0; i < manBitNum; i++) {
+        const access = i + Math.max(-shift, 0) + 1;
+        const num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
         normalizedMatissa.push(num);
       }
 
-      var finalE = n1.E + n2.E - n1.bias + shift;
-      var curE = finalE;
-      var exponentBits = [];
+      let curE = n1.E + n2.E - n1.bias + shift;
+      let exponentBits = [];
 
-      for (var _i2 = 0; _i2 < expBitNum; _i2++) {
+      for (let i = 0; i < expBitNum; i++) {
         exponentBits.unshift(curE % 2);
         curE = Math.floor(curE / 2);
       }
 
-      var result = [sign];
+      let result = [sign];
       result.push.apply(result, exponentBits);
       result.push.apply(result, normalizedMatissa);
       return new NumberIEEE(expBitNum, manBitNum, result);
@@ -1469,20 +1467,20 @@ console.log(`x11(x1+x5): ${x11.bitString}|${x11.valueString}`);
 // Tests Multiplication
 // Tests Addition
 
-var x1 = getIEEEFromString(8, "0 10000001  01011001100110011001101");
-var y1 = getIEEEFromString(8, "0 10000000  00001100110011001100110");
-var x2 = getIEEEFromString(8, "0 10001111  10101101000011000000000");
-var y2 = getIEEEFromString(8, "0 01111010  00100100111111001010010");
-var x3 = getIEEEFromString(8, "0 10000111  11110101010000000101100");
-var y3 = getIEEEFromString(8, "0 01110110  11010100100101010001100");
-var x4 = getIEEEFromString(8, "1 00000000  00000000000000000000000");
-var y4 = getIEEEFromString(8, "1 10000000  10001000000000000000000");
-var z1 = new MultiplicationIEEE(x1, y1).getResult();
-var z2 = new MultiplicationIEEE(x2, y2).getResult();
-var z3 = new MultiplicationIEEE(x3, y3).getResult();
-var z4 = new MultiplicationIEEE(x4, y4).getResult();
-var z5 = new AdditionIEEE(x4, y4).getResult();
-var z6 = new SubtractionIEEE(x4, y4).getResult();
+const x1 = getIEEEFromString(8, "0 10000001  01011001100110011001101");
+const y1 = getIEEEFromString(8, "0 10000000  00001100110011001100110");
+const x2 = getIEEEFromString(8, "0 10001111  10101101000011000000000");
+const y2 = getIEEEFromString(8, "0 01111010  00100100111111001010010");
+const x3 = getIEEEFromString(8, "0 10000111  11110101010000000101100");
+const y3 = getIEEEFromString(8, "0 01110110  11010100100101010001100");
+const x4 = getIEEEFromString(8, "1 00000000  00000000000000000000000");
+const y4 = getIEEEFromString(8, "1 10000000  10001000000000000000000");
+const z1 = new MultiplicationIEEE(x1, y1).getResult();
+const z2 = new MultiplicationIEEE(x2, y2).getResult();
+const z3 = new MultiplicationIEEE(x3, y3).getResult();
+const z4 = new MultiplicationIEEE(x4, y4).getResult();
+const z5 = new AdditionIEEE(x4, y4).getResult();
+const z6 = new SubtractionIEEE(x4, y4).getResult();
 console.log("x1: ".concat(x1.bitString, "|").concat(x1.valueString));
 console.log("y1: ".concat(y1.bitString, "|").concat(y1.valueString));
 console.log("z1: ".concat(z1.bitString, "|").concat(z1.valueString));
