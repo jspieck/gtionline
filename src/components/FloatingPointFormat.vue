@@ -101,7 +101,7 @@ export default {
   },
   data() {
     return {
-      selectedFormat: ['decimal', 'ieee', 'add', 'decimal', 'ieee'],
+      selectedFormat: ['decimal', 'ieee', 'add', 'decimal', 'ieee'], // 0: input left, 1: converted left, 2: operand, 3: input right, 4: converted right
       mouseDown: false,
       solution: '',
       inputNums: { 0: '', 1: '' },
@@ -217,21 +217,21 @@ export default {
       }
       let converted = toConvert;
       if (firstFormat === 'binary') {
-        if (secondFormat === 'decimal') {
+        if (secondFormat === 'decimal') { // dead code
           converted = this.binToDec(toConvert);
         } else if (secondFormat === 'ieee') {
           converted = this.binToIEEE(toConvert);
         }
       } else if (firstFormat === 'decimal') {
-        if (secondFormat === 'binary') {
+        if (secondFormat === 'binary') { // dead code
           converted = this.decToBin(toConvert);
         } else if (secondFormat === 'ieee') {
           converted = this.binToIEEE(this.decToBin(toConvert));
         }
       } else if (firstFormat === 'ieee') {
-        if (secondFormat === 'binary') {
+        if (secondFormat === 'binary') { // dead code
           converted = this.ieeeToBin(toConvert);
-        } else if (secondFormat === 'decimal') {
+        } else if (secondFormat === 'decimal') { // dead code
           converted = this.binToDec(this.ieeeToBin(toConvert));
         }
       }
@@ -256,6 +256,9 @@ export default {
             break;
           case 'sub':
             result = new tool.SubtractionIEEE(y1, y2);
+            break;
+          case 'div':
+            result = new tool.DivisionIEEE(y1, y2);
             break;
           default:
         }
