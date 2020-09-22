@@ -2,7 +2,7 @@
 
 'use strict';
 import {
-  MultiplicationBaseN
+  MultiplicationBaseN, SubtractionBaseN
 } from '@/scripts/BaseNOperations';
 import {
   _classCallCheck,
@@ -317,16 +317,15 @@ export var DivisonBaseNComplement =
 
         let i = 1;
         let op1arr = _toConsumableArray(n1.arr.slice());
-        op1arr.unshift(1);
+        // op1arr.unshift(1);
         let op2arr = _toConsumableArray(n2.arr.slice());
-        op2arr.unshift(1)
+        // op2arr.unshift(1)
         let arr = [];
         let remain = true
-        n2.arr.unshift(1)
-        const op2 = new NumberBaseNComplement(2, 3, op2arr.slice(), n2.offset, true);
+        const op2 = new Number(n1.base, op2arr, offset, true);
         while ((i < n1.arr.length -1) && remain) {
-          const op1 = new NumberBaseNComplement(2, 3, op1arr, n1.offset, false);
-          const subtractionResult = new AdditionBaseNComplement(op1, op2).getResult();
+          const op1 = new Number(n1.base, op1arr.slice(0, op2arr.length -1), offset, false);
+          const subtractionResult = new SubtractionBaseN(op1, op2).getResult();
           let subarray = subtractionResult.arr.slice(1, subtractionResult.arr.length-2);
           if (!(subarray.every(a => a === 0))) { // subt. not zero
             if (subtractionResult.arr[0] === 0) { // subt. positive result
@@ -334,7 +333,7 @@ export var DivisonBaseNComplement =
               op1arr = subtractionResult.arr;
             } else { // subt. negative result
               arr.push(0);
-              op1arr.push(n1.arr[i])
+              op1arr.push(n1.arr[n1.arr.length - i])
             }
           } else {
             remain = false; // subt. result is zero => no remain

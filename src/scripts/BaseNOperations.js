@@ -99,7 +99,7 @@ export const SubtractionBaseN =
         this.watcher = new Algorithm();
 
         if (!n1.isNegative && n2.isNegative || n1.isNegative && !n2.isNegative) {
-          const addition = new AdditionBaseN(n1, Number(n2.base, n2.arr, n2.offset, !n2.isNegative));
+          const addition = new AdditionBaseN(Number(n1.base, n1.arr, n1.offset, n1.isNegative), Number(n2.base, n2.arr, n2.offset, !n2.isNegative));
           this.watcher = this.watcher.step("OperatorSwitch").saveVariable("addition", addition.watcher);
           return addition.getResult();
         }
