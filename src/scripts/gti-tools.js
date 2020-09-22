@@ -583,7 +583,7 @@ export var DivisionIEEE =
           normalizedMatissa.push(num);
         }
 
-        let curE = n1.E + n2.E - n1.bias + shift;
+        let curE = n1.E - n2.E - n1.bias + shift;
         let exponentBits = [];
 
         for (let i = 0; i < expBitNum; i++) {

@@ -1,8 +1,7 @@
 /* eslint-disable */
 
 import {
-  MultiplicationBaseNSingleDigit,
-  DivisionBaseNSingleDigit
+  MultiplicationBaseNSingleDigit
 } from '@/scripts/SingleDigitOperatorions';
 import {
   _classCallCheck,
@@ -316,51 +315,4 @@ export const MultiplicationBaseN =
     }]);
 
     return MultiplicationBaseN;
-  }();
-
-export const DivisionBaseN = // TODO: Zeus, zu erledigen
-  /*#__PURE__*/
-  function () {
-    function DivisionBaseN(n1, n2) {
-      _classCallCheck(this, DivisionBaseN);
-
-      if (n1.base !== n2.base) {
-        console.log("DivisionBaseN(Number, Number): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") are not compatible."));
-      }
-
-      this.watcher = null;
-      this.result = this._multiply(n1, n2);
-    }
-
-    _createClass(DivisionBaseN, [{
-      key: "_divide",
-      value: function _divide(n1, n2) {
-        this.watcher = new Algorithm();
-        const base = n1.base;
-        const isNegative = n1.isNegative && !n2.isNegative || n2.isNegative && !n1.isNegative;
-        this.watcher.step("GetSign").saveVariable('signN1', n1.isNegative).saveVariable('signN2', n2.isNegative).saveVariable('isNegative', isNegative);
-        let cur = new Number(base, [0], 0, false);
-        const initalOffset = n1.offset - (n2.arr.length - 1 - n2.offset);
-        this.watcher.step("DivInital").saveVariable('num1', n1).saveVariable('num2', n2);
-
-        for (let i = 0; i < n2.arr.length; i++) {
-          const num = new Number(base, n1.arr, i + initalOffset, false);
-          const toAdd = new DivisionBaseNSingleDigit(num, n2.arr[i]).getResult();
-          this.watcher.step("DivStep".concat(i.toString())).saveVariable('cur', cur).saveVariable('toAdd', toAdd);
-          cur = new AdditionBaseN(cur, toAdd).getResult();
-        }
-
-        this.watcher.step("DivFinal").saveVariable('cur', cur);
-        const result = new Number(base, cur.arr, cur.offset, isNegative);
-        this.watcher.step("Result").saveVariable('result', result);
-        return result;
-      }
-    }, {
-      key: "getResult",
-      value: function getResult() {
-        return this.result;
-      }
-    }]);
-
-    return DivisionBaseN;
   }();

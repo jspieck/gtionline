@@ -2,11 +2,7 @@
 
 'use strict';
 import {
-  ComparisonBaseN,
-  SubtractionBaseN,
-  AdditionBaseN,
-  MultiplicationBaseN,
-  DivisionBaseN,
+  MultiplicationBaseN
 } from '@/scripts/BaseNOperations';
 import {
   _classCallCheck,
@@ -289,7 +285,7 @@ export var MultiplicationBaseNComplement =
     return MultiplicationBaseNComplement;
   }();
 
-export var DivisonBaseNComplement = // TODO: Zeus, zu erledigen
+export var DivisonBaseNComplement =
   /*#__PURE__*/
   function () {
     function DivisonBaseNComplement(n1, n2) {
@@ -314,26 +310,43 @@ export var DivisonBaseNComplement = // TODO: Zeus, zu erledigen
         this.watcher = new Algorithm();
         const base = n1.base;
         const offset = Math.max(n1.offset, n2.offset);
-        const digitsToTake = 2 * (n1.digitNum + offset); // min. length, 2x length n2
+        const digitsToTake = n1.digitNum + offset + 1;
         this.watcher.step("DetermineSize").saveVariable('n1Offset', n1.offset).saveVariable('n2Offset', n2.offset).saveVariable('digitNum', n1.digitNum).saveVariable('offset', offset).saveVariable('digitsToTake', digitsToTake);
         n1 = n1.translate(digitsToTake - offset);
         n2 = n2.translate(digitsToTake - offset);
 
-        let op1Arr = _toConsumableArray(n1.arr);
+        let i = 1;
+        let op1arr = _toConsumableArray(n1.arr.slice());
+        op1arr.unshift(1);
+        let op2arr = _toConsumableArray(n2.arr.slice());
+        op2arr.unshift(1)
+        let arr = [];
+        let remain = true
+        n2.arr.unshift(1)
+        const op2 = new NumberBaseNComplement(2, 3, op2arr.slice(), n2.offset, true);
+        while ((i < n1.arr.length -1) && remain) {
+          const op1 = new NumberBaseNComplement(2, 3, op1arr, n1.offset, false);
+          const subtractionResult = new AdditionBaseNComplement(op1, op2).getResult();
+          let subarray = subtractionResult.arr.slice(1, subtractionResult.arr.length-2);
+          if (!(subarray.every(a => a === 0))) { // subt. not zero
+            if (subtractionResult.arr[0] === 0) { // subt. positive result
+              arr.push(1);
+              op1arr = subtractionResult.arr;
+            } else { // subt. negative result
+              arr.push(0);
+              op1arr.push(n1.arr[i])
+            }
+          } else {
+            remain = false; // subt. result is zero => no remain
+          }
+          i = i + 1;
+        }
 
-        let op2Arr = _toConsumableArray(n2.arr);
+        // this.watcher.step("Divide").saveVariable('division', operation.watcher);
 
-        op1Arr.push.apply(op1Arr, _toConsumableArray(Array(Math.max(n2.offset - n1.offset, 0)).fill(0)));
-        op2Arr.push.apply(op2Arr, _toConsumableArray(Array(Math.max(n1.offset - n2.offset, 0)).fill(0)));
-        const op1 = new Number(n1.base, op1Arr, offset, false);
-        const op2 = new Number(n2.base, op2Arr, offset, false);
-        const operation = new DivisionBaseN(op1, op2);
-        const result = operation.getResult();
-        this.watcher.step("Divide").saveVariable('division', operation.watcher);
+        let resultArr = _toConsumableArray(arr);
 
-        let resultArr = _toConsumableArray(result.arr);
-
-        resultArr.push.apply(resultArr, _toConsumableArray(Array(Math.max(2 * offset - result.offset, 0)).fill(0)));
+        resultArr.push.apply(resultArr, _toConsumableArray(Array(Math.max(offset, 0)).fill(0)));
 
         if (resultArr.length < digitsToTake) {
           resultArr.unshift.apply(resultArr, _toConsumableArray(Array(digitsToTake - resultArr.length).fill(0)));

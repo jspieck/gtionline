@@ -5,16 +5,16 @@ module.exports = {
         prependData: `
           @import "@/styles/_variables.scss";
           @import "@/styles/_main.scss";
-        `
-      }
-    }
+        `,
+      },
+    },
   },
   configureWebpack: {
     devServer: {
-        clientLogLevel: 'info',
-        watchOptions: {
-            poll: true
-        }
-    }
-}
+      clientLogLevel: 'info',
+      watchOptions: {
+        poll: true,
+      },
+    },
+  },
 };
