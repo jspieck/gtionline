@@ -9045,7 +9045,7 @@ var DivisionBaseNSigned = /*#__PURE__*/function () {
 
       var pos_op1arr = op2arr.length - 1; // position in left op
 
-      while (i <= this.manBitNum && remain) {
+      while (i <= this.manBitNum * 2 && remain) {
         var op1 = new NumberBaseNSigned(n1.base, op1arr, offset, false);
         var subtractionResult = new AdditionBaseNSigned(op1, op2).getResult();
         var subarray = subtractionResult.arr.slice();
@@ -9059,15 +9059,14 @@ var DivisionBaseNSigned = /*#__PURE__*/function () {
             arr.push(1);
             op1arr = subtractionResult.arr;
           } else {
-            // subt. negative result
             arr.push(0);
+          }
 
-            if (pos_op1arr >= n1_cooy.length) {
-              op1arr.push(0);
-            } else {
-              op1arr.push(n1_cooy[pos_op1arr]);
-              pos_op1arr = pos_op1arr + 1;
-            }
+          if (pos_op1arr >= n1_cooy.length) {
+            op1arr.push(0);
+          } else {
+            op1arr.push(n1_cooy[pos_op1arr]);
+            pos_op1arr = pos_op1arr + 1;
           }
         } else {
           arr.push(1);
@@ -10103,60 +10102,64 @@ var DivisionIEEE = /*#__PURE__*/function () {
 
       var op1 = new NumberBaseNSigned(2, n1.mantissaBits, n1.offset, false);
       var op2 = new NumberBaseNSigned(2, n2.mantissaBits, n2.offset, false);
-      var divisionResult = new DivisionBaseNSigned(op1, op2, n1.manBitNum).getResult();
-      var digitNum = divisionResult.arr.length;
+      var k = 0;
+      var similar = true;
 
-      var unnormalizedMantissa = _toConsumableArray(divisionResult.arr);
-
-      var cDigits = digitNum;
-
-      while (cDigits > 1 && unnormalizedMantissa[0] === 0) {
-        unnormalizedMantissa.splice(0, 1);
-        cDigits--;
-      } // Calculate shift
-      // Positive: Rightshift | Negative: Leftshift
-
-
-      var shift;
-
-      if (cDigits >= 1) {
-        shift = cDigits - 1;
-      } else {
-        shift = 0;
-
-        for (var i = 1; i < unnormalizedMantissa.length; i++) {
-          shift--;
-
-          if (unnormalizedMantissa[i] === 1) {
-            break;
-          }
+      while (k < n1.mantissaBits.length && similar === true) {
+        if (n1.mantissaBits[k] !== n2.mantissaBits[k]) {
+          similar = false;
         }
+
+        k++;
       }
 
-      if (shift === unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] === 0) {
-        // Return zero
-        return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
+      var unnormalizedMantissa = [];
+      var normalizedMantissa = [];
+      var shift = 0;
+
+      if (similar === false) {
+        // case mantissa not similar
+        var divisionResult = new DivisionBaseNSigned(op1, op2, Math.max(n1.manBitNum, n2.manBitNum)).getResult();
+        unnormalizedMantissa = _toConsumableArray(divisionResult.arr);
+        var i = 0;
+        var unnormal = true;
+        var digitNum = n1.mantissaBits.length;
+
+        while (i < digitNum && unnormal) {
+          if (unnormalizedMantissa[i] === 1) {
+            normalizedMantissa = _toConsumableArray(unnormalizedMantissa);
+            normalizedMantissa.splice(0, i + 1);
+            unnormal = false;
+            shift = i + 1;
+          }
+
+          i++;
+        }
+
+        for (var j = 0; j < shift; j++) {
+          normalizedMantissa.push(0);
+        }
+      } else {
+        // similar mantissa
+        normalizedMantissa = [0];
       }
 
-      var normalizedMatissa = [];
-
-      for (var _i = 0; _i < manBitNum; _i++) {
-        var access = _i + Math.max(-shift, 0) + 1;
-        var num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
-        normalizedMatissa.push(num);
+      for (var _j = normalizedMantissa.length - 1; _j < manBitNum; _j++) {
+        normalizedMantissa.push(0);
       }
 
-      var curE = n1.E - n2.E + n1.bias + shift;
+      var curE = n1.E - n2.E + n1.bias - shift;
       var exponentBits = [];
 
-      for (var _i2 = 0; _i2 < expBitNum; _i2++) {
+      for (var _i = 0; _i < expBitNum; _i++) {
         exponentBits.unshift(curE % 2);
         curE = Math.floor(curE / 2);
       }
 
       var result = [sign];
       result.push.apply(result, exponentBits);
-      result.push.apply(result, normalizedMatissa);
+      result.push.apply(result, _toConsumableArray(normalizedMantissa));
+      result.splice(expBitNum + manBitNum, result.length);
       return new NumberIEEE(expBitNum, manBitNum, result);
     }
   }, {
