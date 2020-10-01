@@ -1,8 +1,13 @@
-# gtionline
+ # gtionline
 
 ## Project setup
 ```
 npm install
+```
+
+## Module tests
+```
+npm test
 ```
 
 ### Compiles and hot-reloads for development
