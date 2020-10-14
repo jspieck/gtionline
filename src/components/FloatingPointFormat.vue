@@ -110,9 +110,13 @@ export default {
       numBits: 16,
       falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
+      solutionSteps: [],
     };
   },
   computed: {
+    solDescr() {
+      return this.solutionSteps;
+    },
     operationOptions() {
       return {
         add: `${this.$t('addition')} (+)`,
@@ -127,20 +131,6 @@ export default {
         binary: `${this.$t('binary')}  (1,0011)`,
         ieee: 'IEEE (1 0101 1101)',
       };
-    },
-    solDescr() {
-      return [
-        { name: `${this.$t('step')} 1`, text: 'Die Exponenten beider Zahlen müssen angeglichen werden.' },
-        {
-          name: `${this.$t('step')} 2`,
-          text: 'Die Mantissen beider Zahlen müssen multipliziert werden.',
-          subpanels: [
-            { name: 'Exponent beachten', text: 'Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden.' },
-            { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
-          ],
-        },
-        { name: this.$t('solution'), text: 'Die Lösung lautet: ' },
-      ];
     },
   },
   mounted() {
@@ -160,6 +150,7 @@ export default {
     selectOp(num, val) {
       this.selectedFormat[num] = val;
       this.computeSolution();
+      this.solDescrActive();
     },
     checkFormat(format, conv) {
       let commaOccured = false;
@@ -207,6 +198,7 @@ export default {
       }
       this.convertFormat(num);
       this.computeSolution();
+      this.solDescrActive();
     },
     convertFormat(num) {
       const firstFormat = this.selectedFormat[num * 3];
@@ -266,8 +258,109 @@ export default {
         this.solution = result.getResult().bitString;
       }
     },
+    solDescrActive() {
+      const num1 = this.nums[0];
+      const num2 = this.nums[1];
+      if (num1 !== '' && num2 !== '' && num1 !== 'Falsches Format' && num2 !== 'Falsches Format') {
+        const solution = tool.getIEEEFromString(this.exponentBits, this.solution);
+        const y1 = tool.getIEEEFromString(this.exponentBits, num1);
+        const y2 = tool.getIEEEFromString(this.exponentBits, num2);
+        const mantissaString1 = y1.mantissaBits.join('');
+        const mantissaString2 = y2.mantissaBits.join('');
+        const expString1 = y1.exponentBits.join('');
+        const expString2 = y2.exponentBits.join('');
+        const steps = [];
+        steps.push({
+          name: `${this.$t('values')}`,
+          text: 'Werte der übertragenen Zahlen',
+          subpanels: [
+            {
+              name: 'Zahl links: ',
+              text: [
+                'Wert: ', y1.valueString,
+                ', Vorzeichen: ', (y1.sign === 0 ? '+' : '-'),
+                ', Mantisse: ', mantissaString1,
+                ', Exponent: ', expString1,
+              ].join(''),
+            },
+            {
+              name: 'Zahl rechts: ',
+              text: [
+                'Wert: ', y2.valueString,
+                ', Vorzeichen: ', (y2.sign === 0 ? '+' : '-'),
+                ', Mantisse: ', mantissaString2,
+                ', Exponent: ', expString2,
+              ].join(''),
+            },
+          ],
+        });
+        switch (this.selectedFormat[2]) {
+          case 'add':
+            if (expString1 === expString2) {
+              steps.push({
+                name: `${this.$t('step')} 1`,
+                text: ['Die Exponenten beider Zahlen müssen angeglichen werden. (', expString1, ' == ', expString2, ' => i.O.)'].join(''),
+              });
+            } else {
+              steps.push({
+                name: `${this.$t('step')} 1`,
+                text: ['Die Exponenten beider Zahlen müssen angeglichen werden. (', expString1, ' != ', expString2, ' => nicht i.O.)'].join(''),
+              });
+            }
+            steps.push({
+              name: `${this.$t('step')} 2`,
+              text: [
+                'Die Mantissen beider Zahlen müssen addiert werden.',
+              ].join(''),
+              subpanels: [
+                { name: 'Exponent beachten', text: ['Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden. (Shift: ', this.binToDec(expString1) - this.binToDec(expString2), ')'].join('') },
+                { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
+                { name: 'Neue Mantisse', text: ['Die neue Mantisse ist somit: ', solution.mantissaBits.join('')].join('') },
+              ],
+            });
+            break;
+          case 'mul':
+            steps.push({
+              name: `${this.$t('step')} 1`,
+              text: [
+                'Die Exponenten beider Zahlen müssen addiert werden. (neuer Exponent: ',
+                this.binToDec(expString1) + this.binToDec(expString2),
+                ')',
+              ].join(''),
+            });
+            steps.push({
+              name: `${this.$t('step')} 2`,
+              text: [
+                'Die Mantissen beider Zahlen müssen multipliziert werden.',
+              ].join(''),
+              subpanels: [
+                { name: 'Exponent beachten', text: ['Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden. (Shift: ', this.binToDec(expString1) - this.binToDec(expString2), ')'].join('') },
+                { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
+                { name: 'Neue Mantisse', text: ['Die neue Mantisse ist somit: ', solution.mantissaBits.join('')].join('') },
+              ],
+            });
+            break;
+          case 'sub':
+            this.textStep1 = 'Die Exponenten beider Zahlen müssen angeglichen werden.';
+            this.textStep2 = 'Die Mantissen beider Zahlen müssen subtrahiert werden.';
+            this.textStep21 = 'Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden.';
+            break;
+          case 'div':
+            this.textStep1 = 'Die Exponenten beider Zahlen müssen subtrahiert werden.';
+            this.textStep2 = 'Die Mantissen beider Zahlen müssen dividiert werden.';
+            this.textStep21 = 'Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden.';
+            break;
+          default:
+        }
+        steps.push({
+          name: this.$t('solution'), text: ['Die Lösung lautet: '].join(''),
+        });
+        this.solutionSteps = steps;
+      }
+    },
     decToBin(num) {
-      const fRep = parseFloat(num.replace(',', '.'));
+      // const fRep = parseFloat(num.replace(',', '.'));
+      const fRep = parseFloat(num);
       return fRep.toString(2);
     },
     binToDec(num) {

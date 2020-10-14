@@ -42,6 +42,7 @@ export const i18n = new VueI18n({
       inputNumber: 'Zahl eingeben',
       fpformat: 'Floating Point Format',
       check: 'Check',
+      values: 'Werte',
     },
     en: {
       numVarInput: 'Number of variables',
@@ -78,6 +79,7 @@ export const i18n = new VueI18n({
       inputNumber: 'Input Number',
       fpformat: 'Floating Point Format',
       check: 'Check',
+      values: 'Values',
     },
     fr: {
       numVarInput: 'Nombre de Variables',
@@ -114,6 +116,7 @@ export const i18n = new VueI18n({
       inputNumber: 'Entrez le numéro',
       fpformat: 'Format en virgule flottante',
       check: 'Vérifier',
+      values: 'Valeurs',
     },
     es: {
       numVarInput: 'Número de Variables',
@@ -150,6 +153,7 @@ export const i18n = new VueI18n({
       inputNumber: 'Introduce el número',
       fpformat: 'Formato de punto flotante',
       check: 'Comprobar',
+      values: 'valore',
     },
     lt: {
       numVarInput: 'Numerus variabilium',
@@ -186,6 +190,7 @@ export const i18n = new VueI18n({
       inputNumber: 'Inputa numerum',
       fpformat: 'Forma commae adfluentis',
       check: 'Authentica',
+      values: 'valōrēs',
     },
   },
 });
