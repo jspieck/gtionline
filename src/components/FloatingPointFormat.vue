@@ -341,14 +341,49 @@ export default {
             });
             break;
           case 'sub':
-            this.textStep1 = 'Die Exponenten beider Zahlen müssen angeglichen werden.';
-            this.textStep2 = 'Die Mantissen beider Zahlen müssen subtrahiert werden.';
-            this.textStep21 = 'Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden.';
+            if (expString1 === expString2) {
+              steps.push({
+                name: `${this.$t('step')} 1`,
+                text: ['Die Exponenten beider Zahlen müssen angeglichen werden. (', expString1, ' == ', expString2, ' => i.O.)'].join(''),
+              });
+            } else {
+              steps.push({
+                name: `${this.$t('step')} 1`,
+                text: ['Die Exponenten beider Zahlen müssen angeglichen werden. (', expString1, ' != ', expString2, ' => nicht i.O.)'].join(''),
+              });
+            }
+            steps.push({
+              name: `${this.$t('step')} 2`,
+              text: [
+                'Die Mantissen beider Zahlen müssen subtrahiert werden.',
+              ].join(''),
+              subpanels: [
+                { name: 'Exponent beachten', text: ['Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden. (Shift: ', this.binToDec(expString2) - this.binToDec(expString1), ')'].join('') },
+                { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
+                { name: 'Neue Mantisse', text: ['Die neue Mantisse ist somit: ', solution.mantissaBits.join('')].join('') },
+              ],
+            });
             break;
           case 'div':
-            this.textStep1 = 'Die Exponenten beider Zahlen müssen subtrahiert werden.';
-            this.textStep2 = 'Die Mantissen beider Zahlen müssen dividiert werden.';
-            this.textStep21 = 'Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden.';
+            steps.push({
+              name: `${this.$t('step')} 1`,
+              text: [
+                'Die Exponenten beider Zahlen müssen subtrahiert werden. (neuer Exponent: ',
+                this.binToDec(expString1) - this.binToDec(expString2),
+                ')',
+              ].join(''),
+            });
+            steps.push({
+              name: `${this.$t('step')} 2`,
+              text: [
+                'Die Mantissen beider Zahlen müssen dividiert werden.',
+              ].join(''),
+              subpanels: [
+                { name: 'Exponent beachten', text: ['Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden. (Shift: ', this.binToDec(expString2) - this.binToDec(expString1), ')'].join('') },
+                { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
+                { name: 'Neue Mantisse', text: ['Die neue Mantisse ist somit: ', solution.mantissaBits.join('')].join('') },
+              ],
+            });
             break;
           default:
         }
