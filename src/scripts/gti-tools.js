@@ -9510,13 +9510,14 @@ var MultiplicationBaseNComplement = /*#__PURE__*/function () {
   return MultiplicationBaseNComplement;
 }();
 
+/* eslint-disable no-bitwise */
 function numToChar$1(num) {
-  if (0 <= num && num <= 9) {
-    return String.fromCharCode(num + '0'.charCodeAt());
+  if (num >= 0.0 && num <= 9) {
+    return String.fromCharCode(num + '0'.charCodeAt(0));
   }
 
-  if (10 <= num && num <= 35) {
-    return String.fromCharCode(num + 'A'.charCodeAt());
+  if (num >= 10 && num <= 35) {
+    return String.fromCharCode(num + 'A'.charCodeAt(0));
   }
 
   return '';
@@ -9532,40 +9533,15 @@ function charToNum$1(chr) {
   }
 
   return -1;
-}
-
-function getIEEEFromString(expBitNum, str) {
-  if (str.length <= expBitNum + 2) {
-    console.log("getIEEEFromString(expBitNum, str): Given string is not compatible with the given number of expBitNum.");
-    process.exit(1);
-  }
-
-  for (var i = 0; i < str.length; i++) {
-    if (str[i] == ' ') continue;
-    var n = charToNum$1(str[i]);
-
-    if (n < 0 || n >= 2) {
-      console.log("getIEEEFromString(expBitNum, str): Given string is not compatible with base 2.");
-      process.exit(1);
-    }
-  }
-
-  var arr = [];
-
-  for (var _i = 0; _i < str.length; _i++) {
-    if (str[_i] == ' ') continue;
-    arr.push(charToNum$1(str[_i]));
-  }
-
-  return new NumberIEEE(expBitNum, arr.length - expBitNum - 1, arr);
 } // Representation of a number in N's complement (Up to digitNum digits)
+
 
 var NumberIEEE = /*#__PURE__*/function () {
   function NumberIEEE(expBitNum, manBitNum, representation) {
     _classCallCheck(this, NumberIEEE);
 
     if (expBitNum <= 0 || manBitNum <= 0) {
-      console.log("IEEENumber(number, number, arr): Invalid number of bits for exponent and mantissa.");
+      console.log('IEEENumber(number, number, arr): Invalid number of bits for exponent and mantissa.');
     }
 
     this.expBitNum = expBitNum;
@@ -9579,10 +9555,33 @@ var NumberIEEE = /*#__PURE__*/function () {
     this.bias = (1 << expBitNum - 1) - 1;
     this.E = this._constructE();
     this.M = this._constructM();
-    this.isNaN = this.E == (1 << expBitNum) - 1 && this.M != 0;
-    this.isInfinity = this.E == 1 << expBitNum && this.M == 0;
-    this.isSmall = this.E == 0 && this.M != 0;
-    this.isZero = this.E == 0 && this.M == 0;
+    var isNaN = false;
+    var isInf = true;
+    var isZero = true;
+
+    for (var i = expBitNum + 1; i < this.bitNum; i++) {
+      if (this.arr[i] !== 0) {
+        isZero = false;
+        isNaN = true;
+        isInf = false;
+      }
+    }
+
+    for (var _i = 1; _i <= expBitNum; _i++) {
+      if (this.arr[_i] !== 0) {
+        isZero = false;
+      }
+
+      if (this.arr[_i] !== 1) {
+        isNaN = false;
+        isInf = false;
+      }
+    }
+
+    this.isNaN = isNaN;
+    this.isInfinity = isInf;
+    this.isZero = isZero;
+    this.isSmall = this.E === 0 && this.M !== 0;
     this.exponent = this._constructExponent();
     this.mantissa = this._constructMantissa();
     this.exponentBits = this._constructExponentBits();
@@ -9594,12 +9593,12 @@ var NumberIEEE = /*#__PURE__*/function () {
   _createClass(NumberIEEE, [{
     key: "_checkArray",
     value: function _checkArray(arr) {
-      if (arr.length != this.bitNum) {
+      if (arr.length !== this.bitNum) {
         return false;
       }
 
       for (var i = 0; i < arr.length; i++) {
-        if (arr[i] < 0 || 2 <= arr[i]) {
+        if (arr[i] < 0 || arr[i] >= 2) {
           return false;
         }
       }
@@ -9609,19 +9608,19 @@ var NumberIEEE = /*#__PURE__*/function () {
   }, {
     key: "_constructBitString",
     value: function _constructBitString() {
-      var result = "";
+      var result = '';
       var count = 0;
 
       for (var i = 0; i < this.arr.length; i++) {
         result += numToChar$1(this.arr[i]);
 
-        if (i == 0 || i == this.expBitNum) {
+        if (i === 0 || i === this.expBitNum) {
           count = 0;
-          result += " ";
+          result += ' ';
         }
 
-        if (count % 4 == 0) {
-          result += " ";
+        if (count % 4 === 0) {
+          result += ' ';
         }
 
         count++;
@@ -9632,7 +9631,7 @@ var NumberIEEE = /*#__PURE__*/function () {
   }, {
     key: "_constructValString",
     value: function _constructValString() {
-      var sign = this.arr[0] == 0 ? '+' : '-';
+      var sign = this.arr[0] === 0 ? '+' : '-';
 
       if (this.isNan) {
         return 'NaN';
@@ -9711,17 +9710,43 @@ var NumberIEEE = /*#__PURE__*/function () {
 
   return NumberIEEE;
 }();
+function getIEEEFromString(expBitNum, str) {
+  if (str.length <= expBitNum + 2) {
+    console.log('getIEEEFromString(expBitNum, str): Given string is not compatible with the given number of expBitNum.');
+    process.exit(1);
+  }
+
+  for (var i = 0; i < str.length; i++) {
+    if (str[i] === ' ') continue;
+    var n = charToNum$1(str[i]);
+
+    if (n < 0 || n >= 2) {
+      console.log('getIEEEFromString(expBitNum, str): Given string is not compatible with base 2.');
+      process.exit(1);
+    }
+  }
+
+  var arr = [];
+
+  for (var _i2 = 0; _i2 < str.length; _i2++) {
+    if (str[_i2] === ' ') continue; // delete whitespace
+
+    arr.push(charToNum$1(str[_i2]));
+  }
+
+  return new NumberIEEE(expBitNum, arr.length - expBitNum - 1, arr);
+}
 
 var AdditionIEEE = /*#__PURE__*/function () {
   function AdditionIEEE(n1, n2) {
     _classCallCheck(this, AdditionIEEE);
 
-    if (n1.expBitNum != n2.expBitNum) {
+    if (n1.expBitNum !== n2.expBitNum) {
       console.log("AdditionIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ") and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
       process.exit(1);
     }
 
-    if (n1.manBitNum != n2.manBitNum) {
+    if (n1.manBitNum !== n2.manBitNum) {
       console.log("AdditionIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ") and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
       process.exit(1);
     }
@@ -9735,15 +9760,15 @@ var AdditionIEEE = /*#__PURE__*/function () {
     key: "_add",
     value: function _add(n1, n2) {
       this.watcher = new Algorithm();
-      this.watcher = this.watcher.step("Edgecases");
+      this.watcher = this.watcher.step('Edgecases');
       var expBitNum = n1.expBitNum;
       var manBitNum = n1.manBitNum;
       var bitNum = n1.bitNum; // Edgecases:
 
-      if (n1.isNaN || n2.isNaN || n1.isInfinity && n2.isInfinity && n1.sign != n2.sign) {
+      if (n1.isNaN || n2.isNaN || n1.isInfinity && n2.isInfinity && n1.sign !== n2.sign) {
         // Return NaN
         var toSave = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
-        this.watcher = this.watcher.step("Edgecase_NaN").saveVariable("result", toSave);
+        this.watcher = this.watcher.step('Edgecase_NaN').saveVariable('result', toSave);
         return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
       }
 
@@ -9754,14 +9779,14 @@ var AdditionIEEE = /*#__PURE__*/function () {
         var infArray = [_sign];
         infArray.push.apply(infArray, _toConsumableArray(Array(expBitNum).fill(1)));
         infArray.push.apply(infArray, _toConsumableArray(Array(manBitNum).fill(0)));
-        this.watcher = this.watcher.step("Edgecase_Inf").saveVariable("result", new NumberIEEE(expBitNum, manBitNum, infArray));
+        this.watcher = this.watcher.step('Edgecase_Inf').saveVariable('result', new NumberIEEE(expBitNum, manBitNum, infArray));
         return new NumberIEEE(expBitNum, manBitNum, infArray);
       } // Get unnormalized exponent
 
 
       var deltaE = this._getDeltaExponent(n1.exponent, n2.exponent);
 
-      this.watcher = this.watcher.step("CalculateDeltaE").saveVariable("expN1", n1.exponent).saveVariable("expN2", n2.exponent).saveVariable("expN1Bits", _toConsumableArray(n1.exponentBits)).saveVariable("expN2Bits", _toConsumableArray(n2.exponentBits)).saveVariable("deltaE", deltaE); // Add Mantissa
+      this.watcher = this.watcher.step('CalculateDeltaE').saveVariable('expN1', n1.exponent).saveVariable('expN2', n2.exponent).saveVariable('expN1Bits', _toConsumableArray(n1.exponentBits)).saveVariable('expN2Bits', _toConsumableArray(n2.exponentBits)).saveVariable('deltaE', deltaE); // Add Mantissa
 
       var additionData = this._addMantissa(n1, n2, deltaE);
 
@@ -9773,8 +9798,8 @@ var AdditionIEEE = /*#__PURE__*/function () {
       var shift = this._calculateShift(unnormalizedMantissa, cDigits); // Check if newly calculated mantissa is equal to 0
 
 
-      if (shift == unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] == 0) {
-        this.watcher = this.watcher.step("ResultZero").saveVariable("result", new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0))); // Return zero
+      if (shift === unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] === 0) {
+        this.watcher = this.watcher.step('ResultZero').saveVariable('result', new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0))); // Return zero
 
         return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
       } // Get normalized mantissa
@@ -9787,12 +9812,25 @@ var AdditionIEEE = /*#__PURE__*/function () {
 
       var exponentBits = this._getExponentBits(expBitNum, finalE);
 
-      this.watcher = this.watcher.step("Normalize").saveVariable("normalizedMantissa", _toConsumableArray(normalizedMantissa)).saveVariable("shift", shift).saveVariable("n1ExpBits", _toConsumableArray(n1.exponentBits)).saveVariable("finalExpBits", _toConsumableArray(exponentBits)); // Put everything together
+      this.watcher = this.watcher.step('Normalize').saveVariable('normalizedMantissa', _toConsumableArray(normalizedMantissa)).saveVariable('shift', shift).saveVariable('n1ExpBits', _toConsumableArray(n1.exponentBits)).saveVariable('finalExpBits', _toConsumableArray(exponentBits)); // Check if newly calculated ieee is equal to inf
+
+      if (finalE >= Math.pow(2, expBitNum) - 1) {
+        this.watcher = this.watcher.step('ResultInf').saveVariable('result', new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0))); // Return zero
+
+        var _infArray = [sign];
+
+        _infArray.push.apply(_infArray, _toConsumableArray(Array(expBitNum).fill(1)));
+
+        _infArray.push.apply(_infArray, _toConsumableArray(Array(manBitNum).fill(0)));
+
+        return new NumberIEEE(expBitNum, manBitNum, _infArray);
+      } // Put everything together
+
 
       var result = [sign];
       result.push.apply(result, _toConsumableArray(exponentBits));
       result.push.apply(result, _toConsumableArray(normalizedMantissa));
-      this.watcher = this.watcher.step("Result").saveVariable("result", new NumberIEEE(expBitNum, manBitNum, result));
+      this.watcher = this.watcher.step('Result').saveVariable('result', new NumberIEEE(expBitNum, manBitNum, result));
       return new NumberIEEE(expBitNum, manBitNum, result);
     }
   }, {
@@ -9810,9 +9848,9 @@ var AdditionIEEE = /*#__PURE__*/function () {
       var op2 = new NumberBaseNComplement(2, digitNum, n2.mantissaBits, n2.manBitNum - deltaE, invertOp2);
       var op1Save = new NumberBaseNComplement(2, digitNum, n1.mantissaBits, n1.manBitNum, invertOp1);
       var op2Save = new NumberBaseNComplement(2, digitNum, n2.mantissaBits, n2.manBitNum - deltaE, invertOp2);
-      this.watcher = this.watcher.step("AdjustMantissa").saveVariable("op1", op1Save).saveVariable("op2", op2Save);
+      this.watcher = this.watcher.step('AdjustMantissa').saveVariable('op1', op1Save).saveVariable('op2', op2Save);
       var addition = new AdditionBaseNComplement(op1, op2);
-      this.watcher = this.watcher.step("AddMantissa").saveVariable("addition", addition.watcher);
+      this.watcher = this.watcher.step('AddMantissa').saveVariable('addition', addition.watcher);
       var additionResult = addition.getResult();
       var sign = null;
       var unnormalizedMantissa = null;
@@ -9851,7 +9889,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
       for (var i = 1; i < unnormalizedMantissa.length; i++) {
         shift--;
 
-        if (unnormalizedMantissa[i] == 1) {
+        if (unnormalizedMantissa[i] === 1) {
           break;
         }
       }
@@ -10094,8 +10132,7 @@ var DivisionIEEE = /*#__PURE__*/function () {
         _infArray2.push.apply(_infArray2, _toConsumableArray(Array(expBitNum).fill(0)));
 
         return new NumberIEEE(expBitNum, manBitNum, _infArray2);
-      } // TODO: Zeus, Add Calculation
-      // 1. Mantissen dividieren und neues Vorzeichen
+      } // 1. Mantissen dividieren und neues Vorzeichen
       // 2. Exponenten voneinander Abziehen.
       // 3. Normalisieren
 

@@ -255,7 +255,12 @@ export default {
           default:
         }
         console.log(result.getResult());
-        this.solution = result.getResult().bitString;
+        let solution = '';
+        solution = result.getResult().bitString;
+        if (result.getResult().isNaN) solution += ' is Nan';
+        if (result.getResult().isZero) solution += ' is Zero';
+        if (result.getResult().isInfinity) solution += ' is Inf';
+        this.solution = solution;
       }
     },
     solDescrActive() {
