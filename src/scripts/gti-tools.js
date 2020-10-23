@@ -9815,13 +9815,13 @@ var AdditionIEEE = /*#__PURE__*/function () {
       this.watcher = this.watcher.step('Normalize').saveVariable('normalizedMantissa', _toConsumableArray(normalizedMantissa)).saveVariable('shift', shift).saveVariable('n1ExpBits', _toConsumableArray(n1.exponentBits)).saveVariable('finalExpBits', _toConsumableArray(exponentBits)); // Check if newly calculated ieee is equal to inf
 
       if (finalE >= Math.pow(2, expBitNum) - 1) {
-        this.watcher = this.watcher.step('ResultInf').saveVariable('result', new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0))); // Return zero
-
         var _infArray = [sign];
 
         _infArray.push.apply(_infArray, _toConsumableArray(Array(expBitNum).fill(1)));
 
         _infArray.push.apply(_infArray, _toConsumableArray(Array(manBitNum).fill(0)));
+
+        this.watcher = this.watcher.step('ResultInf').saveVariable('result', new NumberIEEE(expBitNum, manBitNum, _infArray)); // Return inf
 
         return new NumberIEEE(expBitNum, manBitNum, _infArray);
       } // Put everything together
@@ -9972,11 +9972,11 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
   function MultiplicationIEEE(n1, n2) {
     _classCallCheck(this, MultiplicationIEEE);
 
-    if (n1.expBitNum != n2.expBitNum) {
+    if (n1.expBitNum !== n2.expBitNum) {
       console.log("MultiplicationIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ") and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
     }
 
-    if (n1.manBitNum != n2.manBitNum) {
+    if (n1.manBitNum !== n2.manBitNum) {
       console.log("MultiplicationIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ") and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
     }
 
@@ -10015,7 +10015,7 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
 
       var cDigits = digitNum;
 
-      while (cDigits > 1 && unnormalizedMantissa[0] == 0) {
+      while (cDigits > 1 && unnormalizedMantissa[0] === 0) {
         unnormalizedMantissa.splice(0, 1);
         cDigits--;
       } // Calculate shift
@@ -10032,13 +10032,13 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
         for (var i = 1; i < unnormalizedMantissa.length; i++) {
           shift--;
 
-          if (unnormalizedMantissa[i] == 1) {
+          if (unnormalizedMantissa[i] === 1) {
             break;
           }
         }
       }
 
-      if (shift == unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] == 0) {
+      if (shift === unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] === 0) {
         // Return zero
         return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
       }
@@ -10058,6 +10058,19 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
       for (var _i2 = 0; _i2 < expBitNum; _i2++) {
         exponentBits.unshift(curE % 2);
         curE = Math.floor(curE / 2);
+      } // Check if newly calculated ieee is equal to inf
+
+
+      if (finalE >= Math.pow(2, expBitNum) - 1) {
+        var _infArray = [sign];
+
+        _infArray.push.apply(_infArray, _toConsumableArray(Array(expBitNum).fill(1)));
+
+        _infArray.push.apply(_infArray, _toConsumableArray(Array(manBitNum).fill(0)));
+
+        this.watcher = this.watcher.step('ResultInf').saveVariable('result', new NumberIEEE(expBitNum, manBitNum, _infArray)); // Return inf
+
+        return new NumberIEEE(expBitNum, manBitNum, _infArray);
       }
 
       var result = [sign];
@@ -10080,11 +10093,11 @@ var DivisionIEEE = /*#__PURE__*/function () {
     _classCallCheck(this, DivisionIEEE);
 
     if (n1.expBitNum !== n2.expBitNum) {
-      console.log("DivisionIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ") and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
+      console.log('DivisionIEEE(Number, Number): expBitNum of n1('.concat(n1.expBitNum, ') and expBitNum of n2(').concat(n2.expBitNum, ') not compatible.'));
     }
 
     if (n1.manBitNum !== n2.manBitNum) {
-      console.log("DivisionIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ") and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
+      console.log('DivisionIEEE(Number, Number): manBitNum of n1('.concat(n1.manBitNum, ') and manBitNum of n2(').concat(n2.manBitNum, ') not compatible.'));
     }
 
     this.producedOverflow = false;
@@ -10108,17 +10121,17 @@ var DivisionIEEE = /*#__PURE__*/function () {
         // Return Infinty
         var infArray = [sign];
         infArray.push.apply(infArray, _toConsumableArray(Array(expBitNum).fill(1)));
-        infArray.push.apply(infArray, _toConsumableArray(Array(expBitNum).fill(0)));
+        infArray.push.apply(infArray, _toConsumableArray(Array(manBitNum).fill(0)));
         return new NumberIEEE(expBitNum, manBitNum, infArray);
       }
 
       if (n1.isInfinity && n2.isInfinity || n1.isZero && n2.isZero) {
         // Return NaN
-        var _infArray = [0];
+        var _infArray = [1];
 
         _infArray.push.apply(_infArray, _toConsumableArray(Array(expBitNum).fill(1)));
 
-        _infArray.push.apply(_infArray, _toConsumableArray(Array(expBitNum).fill(1)));
+        _infArray.push.apply(_infArray, _toConsumableArray(Array(manBitNum).fill(1)));
 
         return new NumberIEEE(expBitNum, manBitNum, _infArray);
       }
@@ -10129,7 +10142,7 @@ var DivisionIEEE = /*#__PURE__*/function () {
 
         _infArray2.push.apply(_infArray2, _toConsumableArray(Array(expBitNum).fill(0)));
 
-        _infArray2.push.apply(_infArray2, _toConsumableArray(Array(expBitNum).fill(0)));
+        _infArray2.push.apply(_infArray2, _toConsumableArray(Array(manBitNum).fill(0)));
 
         return new NumberIEEE(expBitNum, manBitNum, _infArray2);
       } // 1. Mantissen dividieren und neues Vorzeichen
@@ -10191,11 +10204,24 @@ var DivisionIEEE = /*#__PURE__*/function () {
       for (var _i = 0; _i < expBitNum; _i++) {
         exponentBits.unshift(curE % 2);
         curE = Math.floor(curE / 2);
+      } // Check if newly calculated ieee is equal to inf
+
+
+      if (curE >= Math.pow(2, expBitNum) - 1) {
+        var _infArray3 = [sign];
+
+        _infArray3.push.apply(_infArray3, _toConsumableArray(Array(expBitNum).fill(1)));
+
+        _infArray3.push.apply(_infArray3, _toConsumableArray(Array(manBitNum).fill(0)));
+
+        this.watcher = this.watcher.step('ResultInf').saveVariable('result', new NumberIEEE(expBitNum, manBitNum, _infArray3)); // Return inf
+
+        return new NumberIEEE(expBitNum, manBitNum, _infArray3);
       }
 
       var result = [sign];
-      result.push.apply(result, exponentBits);
-      result.push.apply(result, _toConsumableArray(normalizedMantissa));
+      result.push(result, exponentBits);
+      result.push(result, _toConsumableArray(normalizedMantissa));
       result.splice(expBitNum + manBitNum, result.length);
       return new NumberIEEE(expBitNum, manBitNum, result);
     }
