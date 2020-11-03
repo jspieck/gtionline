@@ -596,12 +596,12 @@ $arrow-size: 12px;
   margin: 10px;
   font-size: 14px;
 }
-/*
+
 @media(max-width: 750px){
   .formatContainer{
     display: none;
   }
-}*/
+}
 
 .slider{
   display: block;
@@ -614,6 +614,11 @@ $arrow-size: 12px;
   background: none;
   cursor: ew-resize;
 }
+@media(max-width: 750px){
+  .slider{
+    display: none;
+  }
+}
 
 .sign {
   width: 40px;
@@ -622,6 +627,11 @@ $arrow-size: 12px;
   color: white;
   background: $freshBlue;
   border-right: 1px solid white;
+}
+@media(max-width: 750px){
+  .sign{
+    display: none;
+  }
 }
 
 .exponent{
@@ -633,6 +643,11 @@ $arrow-size: 12px;
   user-select: none;
   border-right: 1px solid white;
 }
+@media(max-width: 750px){
+  .exponent{
+    display: none;
+  }
+}
 
 .fraction{
   height: 40px;
@@ -641,6 +656,11 @@ $arrow-size: 12px;
   color: white;
   position: relative;
   user-select: none;
+}
+@media(max-width: 750px){
+  .fraction{
+    display: none;
+  }
 }
 
 .expandExponent{
@@ -653,6 +673,11 @@ $arrow-size: 12px;
   line-height: 40px;
   &:hover{
     cursor: pointer;
+  }
+}
+@media(max-width: 750px){
+  .expandExponent{
+    display: none;
   }
 }
 
@@ -668,6 +693,11 @@ $arrow-size: 12px;
     cursor: pointer;
   }
 }
+@media(max-width: 750px){
+  .expandFraction{
+    display: none;
+  }
+}
 
 .arrowRight {
   width: $arrow-size;
@@ -678,6 +708,11 @@ $arrow-size: 12px;
   left: 35%;
   transform: translate(-50%, -50%) rotate(225deg);
 }
+@media(max-width: 750px){
+  .arrowRight{
+    display: none;
+  }
+}
 
 .arrowLeft {
   width: $arrow-size;
@@ -687,6 +722,11 @@ $arrow-size: 12px;
   top: 50%;
   left: 65%;
   transform: translate(-50%, -50%) rotate(45deg);
+}
+@media(max-width: 750px){
+  .arrowLeft{
+    display: none;
+  }
 }
 
 .arrowMask {
