@@ -8,7 +8,7 @@ import {
 describe('Multiplication of two IEEE-Numbers', () => {
   test('MultiplicationIEEE: 5.0 * 2.0 == 10.0', () => {
     const y1 = getIEEEFromString(5, '0 10001 01000000000');
-    const y2 = getIEEEFromString(5, '0 10000 10000000000');
+    const y2 = getIEEEFromString(5, '0 10000 00000000000');
     const result = (new MultiplicationIEEE(y1, y2)).getResult();
     expect(result.manBitNum).toBe(11);
     expect(result.isZero).toBe(false);
@@ -28,7 +28,7 @@ describe('Multiplication of two IEEE-Numbers', () => {
 
   test('MultiplicationIEEE: -5.0 * 2.0 == -10.0', () => {
     const y1 = getIEEEFromString(5, '1 10001 01000000000');
-    const y2 = getIEEEFromString(5, '0 10000 10000000000');
+    const y2 = getIEEEFromString(5, '0 10000 00000000000');
     const result = (new MultiplicationIEEE(y1, y2)).getResult();
     expect(result.manBitNum).toBe(11);
     expect(result.isZero).toBe(false);
@@ -48,7 +48,7 @@ describe('Multiplication of two IEEE-Numbers', () => {
 
   test('MultiplicationIEEE: 5.0 * -2.0 == -10.0', () => {
     const y1 = getIEEEFromString(5, '0 10001 01000000000');
-    const y2 = getIEEEFromString(5, '1 10000 10000000000');
+    const y2 = getIEEEFromString(5, '1 10000 00000000000');
     const result = (new MultiplicationIEEE(y1, y2)).getResult();
     expect(result.manBitNum).toBe(11);
     expect(result.isZero).toBe(false);
@@ -68,7 +68,7 @@ describe('Multiplication of two IEEE-Numbers', () => {
 
   test('MultiplicationIEEE: -5.0 * -2.0 == 10.0', () => {
     const y1 = getIEEEFromString(5, '1 10001 01000000000');
-    const y2 = getIEEEFromString(5, '1 10000 10000000000');
+    const y2 = getIEEEFromString(5, '1 10000 00000000000');
     const result = (new MultiplicationIEEE(y1, y2)).getResult();
     expect(result.manBitNum).toBe(11);
     expect(result.isZero).toBe(false);

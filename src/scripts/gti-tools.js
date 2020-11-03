@@ -9987,6 +9987,7 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
   _createClass(MultiplicationIEEE, [{
     key: "_multiply",
     value: function _multiply(n1, n2) {
+      this.watcher = new Algorithm();
       var expBitNum = n1.expBitNum;
       var manBitNum = n1.manBitNum;
       var bitNum = n1.bitNum;
@@ -10107,6 +10108,7 @@ var DivisionIEEE = /*#__PURE__*/function () {
   _createClass(DivisionIEEE, [{
     key: "_divide",
     value: function _divide(n1, n2) {
+      this.watcher = new Algorithm();
       var expBitNum = n1.expBitNum;
       var manBitNum = n1.manBitNum;
       var bitNum = n1.bitNum;

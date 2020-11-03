@@ -135,8 +135,8 @@ describe('Addition of two IEEE-Numbers', () => {
     expect(result.isZero).toBe(false);
     expect(result.isInfinity).toBe(false);
     expect(result.isNaN).toBe(true);
-    expect(result.arr[0]).toBe(0);
-    expect(result.sign).toBe(0);
+    expect(result.arr[0]).toBe(1);
+    expect(result.sign).toBe(1);
     const expectedArray = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
     for (let i = 0; i < expectedArray.length; i += 1) {
       expect(result.arr[i]).toBe(expectedArray[i]);
@@ -155,8 +155,8 @@ describe('Addition of two IEEE-Numbers', () => {
     expect(result.isZero).toBe(false);
     expect(result.isInfinity).toBe(false);
     expect(result.isNaN).toBe(true);
-    expect(result.arr[0]).toBe(0);
-    expect(result.sign).toBe(0);
+    expect(result.arr[0]).toBe(1);
+    expect(result.sign).toBe(1);
     const expectedArray = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
     for (let i = 0; i < expectedArray.length; i += 1) {
       expect(result.arr[i]).toBe(expectedArray[i]);
@@ -177,7 +177,7 @@ describe('Addition of two IEEE-Numbers', () => {
     expect(result.isNaN).toBe(false);
     expect(result.arr[0]).toBe(0);
     expect(result.sign).toBe(0);
-    const expectedArray = [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const expectedArray = [0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     for (let i = 0; i < expectedArray.length; i += 1) {
       expect(result.arr[i]).toBe(expectedArray[i]);
     }
