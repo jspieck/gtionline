@@ -15,6 +15,11 @@
         E({{exponentBits}})
         <div v-on:mousedown="sliderMouseDown" class="slider"/>
       </div>
+      <div v-on:click="expandFraction" class="mobile_expandExponent">
+        <div class="arrowLeft">
+          <div class='arrowMask'></div>
+        </div>
+      </div>
       <div class="fraction" :style="{ width: (60 + (numBits - exponentBits - 1) *
         (containerWidth / (numBits - 1))) + 'px' }">
         <div v-on:click="expandExponent" class="expandFraction">
@@ -23,6 +28,15 @@
           </div>
         </div>
         M({{(numBits - exponentBits - 1)}})
+      </div>
+    </div>
+    <div class="mobile_formatContainer" v-on:mousemove="sliderMouseMove">
+      <div class="mobile_sign">Sign(1)</div>
+      <div v-on:click="expandExponent" class="mobile_exponent">
+        Exponent({{exponentBits}}) &uarr;
+      </div>
+      <div v-on:click="expandFraction" class="mobile_fraction">
+        Mantisse({{(numBits - exponentBits - 1)}}) &darr;
       </div>
     </div>
     <h4>{{$t('operationSelect')}}</h4>
@@ -597,10 +611,13 @@ $arrow-size: 12px;
   font-size: 14px;
 }
 
-@media(max-width: 750px){
-  .formatContainer{
-    display: none;
-  }
+.mobile_formatContainer {
+  position: relative;
+  right: -10%;
+  width: 100%;
+  display: inline-flex;
+  flex-direction: column;
+  font-size: 14px;
 }
 
 .slider{
@@ -614,11 +631,6 @@ $arrow-size: 12px;
   background: none;
   cursor: ew-resize;
 }
-@media(max-width: 750px){
-  .slider{
-    display: none;
-  }
-}
 
 .sign {
   width: 40px;
@@ -628,10 +640,14 @@ $arrow-size: 12px;
   background: $freshBlue;
   border-right: 1px solid white;
 }
-@media(max-width: 750px){
-  .sign{
-    display: none;
-  }
+
+.mobile_sign {
+  width: 80%;
+  height: 40px;
+  line-height: 40px;
+  color: white;
+  background: $freshBlue;
+  border-right: 1px solid white;
 }
 
 .exponent{
@@ -643,10 +659,16 @@ $arrow-size: 12px;
   user-select: none;
   border-right: 1px solid white;
 }
-@media(max-width: 750px){
-  .exponent{
-    display: none;
-  }
+
+.mobile_exponent{
+  height: 40px;
+  width: 80%;
+  line-height: 40px;
+  background: $freshBlue;
+  color: white;
+  position: relative;
+  user-select: none;
+  border-right: 1px solid white;
 }
 
 .fraction{
@@ -657,10 +679,16 @@ $arrow-size: 12px;
   position: relative;
   user-select: none;
 }
-@media(max-width: 750px){
-  .fraction{
-    display: none;
-  }
+
+.mobile_fraction{
+  height: 40px;
+  width: 80%;
+  line-height: 40px;
+  background: $freshBlue;
+  color: white;
+  position: relative;
+  user-select: none;
+  border-right: 1px solid white;
 }
 
 .expandExponent{
@@ -675,9 +703,18 @@ $arrow-size: 12px;
     cursor: pointer;
   }
 }
-@media(max-width: 750px){
-  .expandExponent{
-    display: none;
+
+.mobile_expandExponent{
+  height: 40px;
+  width: 80%;
+  line-height: 40px;
+  background: $freshBlue;
+  color: white;
+  position: relative;
+  user-select: none;
+  border-right: 1px solid white;
+  &:hover{
+    cursor: pointer;
   }
 }
 
@@ -693,9 +730,18 @@ $arrow-size: 12px;
     cursor: pointer;
   }
 }
-@media(max-width: 750px){
-  .expandFraction{
-    display: none;
+
+.mobile_expandFraction{
+  height: 40px;
+  width: 80%;
+  line-height: 40px;
+  background: $freshBlue;
+  color: white;
+  position: relative;
+  user-select: none;
+  border-right: 1px solid white;
+  &:hover{
+    cursor: pointer;
   }
 }
 
@@ -708,11 +754,6 @@ $arrow-size: 12px;
   left: 35%;
   transform: translate(-50%, -50%) rotate(225deg);
 }
-@media(max-width: 750px){
-  .arrowRight{
-    display: none;
-  }
-}
 
 .arrowLeft {
   width: $arrow-size;
@@ -722,11 +763,6 @@ $arrow-size: 12px;
   top: 50%;
   left: 65%;
   transform: translate(-50%, -50%) rotate(45deg);
-}
-@media(max-width: 750px){
-  .arrowLeft{
-    display: none;
-  }
 }
 
 .arrowMask {
@@ -738,6 +774,56 @@ $arrow-size: 12px;
   top: -15%;
   right: 0%;
   bottom: 0%;
+}
+
+@media(max-width: 750px){
+  .formatContainer{
+    display: none;
+  };
+  .slider{
+    display: none;
+  };
+  .sign{
+    display: none;
+  };
+  .exponent{
+    display: none;
+  };
+  .fraction{
+    display: none;
+  };
+  .expandExponent{
+    display: none;
+  };
+  .expandFraction{
+    display: none;
+  };
+  .arrowMask{
+    display: none;
+  }
+}
+@media(min-width: 751px){
+  .mobile_formatContainer{
+    display: none;
+  };
+  .mobile_slider{
+    display: none;
+  };
+  .mobile_sign{
+    display: none;
+  };
+  .mobile_exponent{
+    display: none;
+  };
+  .mobile_fraction{
+    display: none;
+  };
+  .mobile_expandExponent{
+    display: none;
+  };
+  .mobile_expandFraction{
+    display: none;
+  };
 }
 
 @media(max-width: 1000px){
