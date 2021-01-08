@@ -284,7 +284,7 @@ var BooleanLiteral = /*#__PURE__*/function (_BooleanExpressionBas) {
     }
   }, {
     key: "eval",
-    value: function _eval(variables) {
+    value: function _eval() {
       return this.value;
     }
   }]);
@@ -340,28 +340,28 @@ var BooleanOperation = {
   IMPLIES: 'implies'
 };
 var Execute = {
-  'not': function not(x) {
+  not: function not(x) {
     return !x;
   },
-  'and': function and(x, y) {
+  and: function and(x, y) {
     return x && y;
   },
-  'or': function or(x, y) {
+  or: function or(x, y) {
     return x || y;
   },
-  'xor': function xor(x, y) {
+  xor: function xor(x, y) {
     return x && !y || !x && y;
   },
-  'xnor': function xnor(x, y) {
+  xnor: function xnor(x, y) {
     return !(x && !y || !x && y);
   },
-  'nand': function nand(x, y) {
+  nand: function nand(x, y) {
     return !(x && y);
   },
-  'nor': function nor(x, y) {
+  nor: function nor(x, y) {
     return !(x || y);
   },
-  'implies': function implies(x, y) {
+  implies: function implies(x, y) {
     return x || y;
   }
 };
@@ -489,7 +489,7 @@ var UnaryExpression = /*#__PURE__*/function (_BooleanExpressionBas2) {
   }, {
     key: "toLatex",
     value: function toLatex() {
-      var string = this.operands;
+      return this.operands;
     }
   }, {
     key: "children",
@@ -2176,7 +2176,8 @@ function toLaTeX(expression) {
 /**
  * Represents a connection point of a part BooleanExpression in the CMOS circuit.
  * @constructor
- * @param {string} name The name of the connector: variable name or string representation of the  corresponding boolean expression
+ * @param {string} name The name of the connector: variable name or string
+ * representation of the  corresponding boolean expression
  */
 var CMOSConnector = function CMOSConnector(name) {
   _classCallCheck(this, CMOSConnector);
@@ -2226,19 +2227,6 @@ var CMOSElement = function CMOSElement(unionType) {
   this.children = [];
 };
 
-/**
- * Represents a text label inside a CMOS grid
- * @constructor
- * @param {string} text The text of the label
- * @param {boolean} [rightAligned=false] Specifies whether this label is right aligned or not
- */
-var CMOSLabel = function CMOSLabel(text, rightAligned) {
-  _classCallCheck(this, CMOSLabel);
-
-  this.text = text;
-  this.rightAligned = rightAligned || false;
-};
-
 var CMOSWire = /*#__PURE__*/function () {
   function CMOSWire(posFrom, posTo) {
     _classCallCheck(this, CMOSWire);
@@ -2255,12 +2243,12 @@ var CMOSWire = /*#__PURE__*/function () {
   _createClass(CMOSWire, [{
     key: "isHorizontal",
     value: function isHorizontal() {
-      return this.posFrom.x == this.posTo.x;
+      return this.posFrom.x === this.posTo.x;
     }
   }, {
     key: "isVertical",
     value: function isVertical() {
-      return this.posFrom.y == this.posTo.y;
+      return this.posFrom.y === this.posTo.y;
     }
   }]);
 
@@ -2293,12 +2281,25 @@ var CMOSWirePosition = /*#__PURE__*/function () {
   _createClass(CMOSWirePosition, [{
     key: "equals",
     value: function equals(other) {
-      return other instanceof CMOSWirePosition && this.x == other.x && this.y == other.y && (!this.direction || !other.direction || this.direction == other.direction);
+      return other instanceof CMOSWirePosition && this.x === other.x && this.y === other.y && (!this.direction || !other.direction || this.direction === other.direction);
     }
   }]);
 
   return CMOSWirePosition;
 }();
+
+/**
+ * Represents a text label inside a CMOS grid
+ * @constructor
+ * @param {string} text The text of the label
+ * @param {boolean} [rightAligned=false] Specifies whether this label is right aligned or not
+ */
+var CMOSLabel = function CMOSLabel(text, rightAligned) {
+  _classCallCheck(this, CMOSLabel);
+
+  this.text = text;
+  this.rightAligned = rightAligned || false;
+};
 
 var CMOSGridElement = /*#__PURE__*/function () {
   function CMOSGridElement() {
@@ -2322,23 +2323,23 @@ var CMOSGridElement = /*#__PURE__*/function () {
     value: function contains(content) {
       return this.content.indexOf(content) >= 0;
     }
-  }, {
-    key: "isTransistor",
-
     /**
      * Checks whether this is a transistor element
      * @return {boolean}
      */
+
+  }, {
+    key: "isTransistor",
     value: function isTransistor() {
       return this.content.length >= 1 && this.content[0] instanceof CMOSTransistor;
     }
-  }, {
-    key: "wireCount",
-
     /**
      * Returns the number of wires in this element
      * @return {number}
      */
+
+  }, {
+    key: "wireCount",
     value: function wireCount() {
       var c = 0;
 
@@ -2350,20 +2351,20 @@ var CMOSGridElement = /*#__PURE__*/function () {
 
       return c;
     }
-  }, {
-    key: "wireAt",
-
     /**
      * Returns the nth wire of this element
      * @param {number} n The index of the wire to retrieve
      * @return {CMOSWire}
      */
+
+  }, {
+    key: "wireAt",
     value: function wireAt(n) {
       var c = 0;
 
       for (var i = 0; i < this.content.length; ++i) {
         if (this.content[i] instanceof CMOSWire) {
-          if (c == n) {
+          if (c === n) {
             return this.content[i];
           }
 
@@ -2373,23 +2374,23 @@ var CMOSGridElement = /*#__PURE__*/function () {
 
       return null;
     }
-  }, {
-    key: "isWire",
-
     /**
      * Checks whether this is a wire element
      * @return {boolean}
      */
-    value: function isWire() {
-      return this.wireCount() == this.content.length;
-    }
-  }, {
-    key: "isWireOrConnector",
 
+  }, {
+    key: "isWire",
+    value: function isWire() {
+      return this.wireCount() === this.content.length;
+    }
     /**
      * Checks whether this is a wire and/or connector element
      * @return {boolean}
      */
+
+  }, {
+    key: "isWireOrConnector",
     value: function isWireOrConnector() {
       for (var i = 0; i < this.content.length; ++i) {
         if (!(this.content[i] instanceof CMOSWire || this.content[i] instanceof CMOSConnector)) {
@@ -2403,19 +2404,6 @@ var CMOSGridElement = /*#__PURE__*/function () {
 
   return CMOSGridElement;
 }();
-
-/**
- * Represents the size of a CMOS grid element
- * @constructor
- * @param {number} [width=0] The width of the element
- * @param {number} [height=0] The height of the element
- */
-var CMOSGridElementSize = function CMOSGridElementSize(width, height) {
-  _classCallCheck(this, CMOSGridElementSize);
-
-  this.width = width || 0;
-  this.height = height || 0;
-};
 
 /**
  * Represents a CMOS Grid
@@ -2500,14 +2488,15 @@ var CMOSGrid = /*#__PURE__*/function () {
         this.matrix[0][this.width++].necessary = false;
       }
     }
-  }, {
-    key: "removeColumn",
-
     /**
      * Remove a column from the grid.
-     * NOTE: this function doesn't check if it's save to remove the column, but updates all affected wire coordinates
+     * NOTE: this function doesn't check if it's save to remove the column,
+     * but updates all affected wire coordinates
      * @param {number} col The index of the column to remove
      */
+
+  }, {
+    key: "removeColumn",
     value: function removeColumn(col) {
       var i;
 
@@ -2526,14 +2515,15 @@ var CMOSGrid = /*#__PURE__*/function () {
         }
       }
     }
-  }, {
-    key: "removeRow",
-
     /**
      * Remove a row from the grid.
-     * NOTE: this function doesn't check if it's save to remove the row, but updates all affected wire coordinates
+     * NOTE: this function doesn't check if it's save to remove the row,
+     * but updates all affected wire coordinates
      * @param {number} row The index of the row to remove
      */
+
+  }, {
+    key: "removeRow",
     value: function removeRow(row) {
       this.matrix.splice(row, 1); // Update coordinates in wires
 
@@ -2547,28 +2537,31 @@ var CMOSGrid = /*#__PURE__*/function () {
         }
       }
     }
-  }, {
-    key: "removeRedundantElements",
-
     /**
      * Remove redundant columns and rows from the grid to reduce its size as much as possible
-     * @param {number} [minRedundantX=1] The minimum number of following redundant rows that must be there to delete one row
-     * @param {number} [minRedundantY=1] The minimum number of following redundant columns that must be there to delete one column
+     * @param {number} [minRedundantX=1] The minimum number of following redundant rows
+     * that must be there to delete one row
+     * @param {number} [minRedundantY=1] The minimum number of following redundant columns
+     * that must be there to delete one column
      */
+
+  }, {
+    key: "removeRedundantElements",
     value: function removeRedundantElements(minRedundantX, minRedundantY) {
       this.removeRedundantColumns(minRedundantY);
       this.removeRedundantRows(minRedundantX);
     }
-  }, {
-    key: "removeRedundantColumns",
-
     /**
      * Remove redundant columns from the grid to reduce its size as much as possible
-     * @param {number} [minRedundantY=1] The minimum number of following redundant columns that must be there to delete one column
+     * @param {number} [minRedundantY=1] The minimum number of following redundant columns
+     * that must be there to delete one column
      */
-    value: function removeRedundantColumns(minRedundantY) {
+
+  }, {
+    key: "removeRedundantColumns",
+    value: function removeRedundantColumns(minRedundantYIn) {
       var firstRedundantIndex = -1;
-      minRedundantY = minRedundantY || 1; // Remove redundant columns
+      var minRedundantY = minRedundantYIn || 1; // Remove redundant columns
 
       for (var i = this.matrix[0].length - 1; i >= -1; --i) {
         if (i >= 0 && !this.matrix[0][i].necessary) {
@@ -2590,16 +2583,17 @@ var CMOSGrid = /*#__PURE__*/function () {
         }
       }
     }
-  }, {
-    key: "removeRedundantRows",
-
     /**
      * Remove redundant rows from the grid to reduce its size as much as possible
-     * @param {number} [minRedundantX=1] The minimum number of following redundant rows that must be there to delete one row
+     * @param {number} [minRedundantX=1] The minimum number of following redundant
+     * rows that must be there to delete one row
      */
-    value: function removeRedundantRows(minRedundantX) {
+
+  }, {
+    key: "removeRedundantRows",
+    value: function removeRedundantRows(minRedundantXIn) {
       var firstRedundantIndex = -1;
-      minRedundantX = minRedundantX || 1; // Remove redundant columns
+      var minRedundantX = minRedundantXIn || 1; // Remove redundant columns
 
       for (var i = this.matrix.length - 1; i >= -1; --i) {
         if (i >= 0 && !this.matrix[i].necessary) {
@@ -2621,15 +2615,15 @@ var CMOSGrid = /*#__PURE__*/function () {
         }
       }
     }
-  }, {
-    key: "addTransistor",
-
     /**
      * Adds the specified transistor at pos (x,y)
      * @param {number} x The x coordinate where should place the transistor
      * @param {number} y The y coordinate where should place the transistor
      * @param {CMOSTransistor} transistor The transistor that should be added to the grid
      */
+
+  }, {
+    key: "addTransistor",
     value: function addTransistor(x, y, transistor) {
       transistor.pos = new CMOSWirePosition(x, y, CMOSWireDirection.WEST);
       this.transistors.push(transistor);
@@ -2637,9 +2631,6 @@ var CMOSGrid = /*#__PURE__*/function () {
       this.matrix[x].necessary = true;
       this.matrix[0][y].necessary = true;
     }
-  }, {
-    key: "addLabel",
-
     /**
      * Adds the specified label at pos (x,y)
      * @param {number} x The x coordinate where should place the label
@@ -2647,6 +2638,9 @@ var CMOSGrid = /*#__PURE__*/function () {
      * @param {string} text The text of the label
      * @param {boolean} rightAligned Specifies whether this label should be right or left aligned
      */
+
+  }, {
+    key: "addLabel",
     value: function addLabel(x, y, text, rightAligned) {
       var label = new CMOSLabel(text);
       label.pos = new CMOSWirePosition(x, y, rightAligned ? CMOSWireDirection.EAST : CMOSWireDirection.WEST);
@@ -2655,20 +2649,21 @@ var CMOSGrid = /*#__PURE__*/function () {
       this.matrix[x].necessary = true;
       this.matrix[0][y].necessary = true;
     }
-  }, {
-    key: "addWire",
-
     /**
      * Adds the specified wire to the grid
      * @param {CMOSWire} wire The wire that should be added to the grid
      * @param {CMOSConnector} [connector] The connector this wire is connected to
      */
+
+  }, {
+    key: "addWire",
     value: function addWire(wire, connector) {
       if (wire.posFrom.equals(wire.posTo)) {
         return;
       }
 
-      var x, y;
+      var x;
+      var y;
 
       if (wire.isHorizontal()) {
         x = wire.posFrom.x;
@@ -2688,9 +2683,6 @@ var CMOSGrid = /*#__PURE__*/function () {
 
       this.wires.push(wire);
     }
-  }, {
-    key: "addWireAtGridPosition",
-
     /**
      * Adds the specified wire to the grid position (x,y)
      * @param {CMOSWire} wire The wire that should be added to the grid
@@ -2699,6 +2691,9 @@ var CMOSGrid = /*#__PURE__*/function () {
      * @param {CMOSConnector} [connector] The connector this wire is connected to
      * @private
      */
+
+  }, {
+    key: "addWireAtGridPosition",
     value: function addWireAtGridPosition(wire, x, y, connector) {
       if (x >= 0 && y >= 0 && x < this.height && y < this.width && (this.matrix[x][y].content.length === 0 || !(this.matrix[x][y].content[0] instanceof CMOSTransistor))) {
         this.matrix[x][y].content.push(wire);
@@ -2714,20 +2709,20 @@ var CMOSGrid = /*#__PURE__*/function () {
         }
       }
     }
-  }, {
-    key: "addWirePath",
-
     /**
      * Generates the best path from a to b and adds the wires to the grid
      * @param {CMOSWirePosition} a The position the path starts from
      * @param {CMOSWirePosition|CMOSConnector} b The position the path ends at
      */
+
+  }, {
+    key: "addWirePath",
     value: function addWirePath(a, b) {
       var bestPath = this.getBestPath(a, b);
 
       if (bestPath) {
         for (var i = 0; i < bestPath.length; ++i) {
-          this.addWire(bestPath[i], i + 1 == bestPath.length && b instanceof CMOSConnector ? b : null);
+          this.addWire(bestPath[i], i + 1 === bestPath.length && b instanceof CMOSConnector ? b : null);
         }
 
         return true;
@@ -2735,15 +2730,16 @@ var CMOSGrid = /*#__PURE__*/function () {
 
       return false;
     }
-  }, {
-    key: "getBestPath",
-
     /**
      * Try to find the best path from a to b
      * @param {CMOSWirePosition} a The position the path starts from
      * @param {CMOSWirePosition} b The position the path ends at
-     * @return {CMOSWire[]} An array of wires that represent the best path or null if couldn't find any
+     * @return {CMOSWire[]} An array of wires that represent the best path
+     * or null if couldn't find any
      */
+
+  }, {
+    key: "getBestPath",
     value: function getBestPath(a, b) {
       var i; // Clone matrix
 
@@ -2776,14 +2772,14 @@ var CMOSGrid = /*#__PURE__*/function () {
 
           if (!startPos) {
             startPos = item;
-          } else if (startPos.direction != item.direction) {
+          } else if (startPos.direction !== item.direction) {
             var endPos = matrix.finalPath[i - 1];
             bestPath.push(new CMOSWire(new CMOSWirePosition(startPos.x, startPos.y), new CMOSWirePosition(endPos.x, endPos.y)));
             startPos = endPos;
             startPos.direction = item.direction;
           }
 
-          if (i + 1 == matrix.finalPath.length) {
+          if (i + 1 === matrix.finalPath.length) {
             bestPath.push(new CMOSWire(new CMOSWirePosition(startPos.x, startPos.y), new CMOSWirePosition(item.x, item.y)));
           }
         }
@@ -2793,9 +2789,6 @@ var CMOSGrid = /*#__PURE__*/function () {
 
       return null;
     }
-  }, {
-    key: "getBestPathMarkElement",
-
     /**
      * Single step of getBestPath that marks the position a if possible
      * @param {CMOSGridElement[][]} matrix The matrix being used to find the best path
@@ -2805,16 +2798,19 @@ var CMOSGrid = /*#__PURE__*/function () {
      * @param {number} mark The mark to set at this position
      * @private
      */
+
+  }, {
+    key: "getBestPathMarkElement",
     value: function getBestPathMarkElement(matrix, c, a, b, mark) {
-      var x = c.x,
-          y = c.y;
-      var wouldBeOk = (typeof matrix[x][y].mark == 'undefined' || matrix[x][y].mark > mark) && (!matrix.finalPath || matrix.finalPath.mark > mark); // Checks whether it might be ok to continue the path on this position
+      var x = c.x;
+      var y = c.y;
+      var wouldBeOk = (typeof matrix[x][y].mark === 'undefined' || matrix[x][y].mark > mark) && (!matrix.finalPath || matrix.finalPath.mark > mark); // Checks whether it might be ok to continue the path on this position
 
       if (wouldBeOk) {
         matrix.path.push(c);
         var wireCount = this.matrix[x][y].wireCount();
-        var posIsVertical = false,
-            posIsHorizontal = false;
+        var posIsVertical = false;
+        var posIsHorizontal = false;
 
         for (var i = 0; i < wireCount; ++i) {
           if (this.matrix[x][y].wireAt(i).isVertical()) {
@@ -2824,10 +2820,10 @@ var CMOSGrid = /*#__PURE__*/function () {
           }
         }
 
-        var isVertical = c.direction == CMOSWireDirection.NORTH || c.direction == CMOSWireDirection.SOUTH;
+        var isVertical = c.direction === CMOSWireDirection.NORTH || c.direction === CMOSWireDirection.SOUTH;
         var isHorizontal = !isVertical;
         var isStart = c.equals(a);
-        var isEnd = b instanceof CMOSWirePosition && c.equals(b) || this.matrix[x][y].contains(b) && (wireCount === 0 || posIsVertical != isVertical || posIsHorizontal != isHorizontal);
+        var isEnd = b instanceof CMOSWirePosition && c.equals(b) || this.matrix[x][y].contains(b) && (wireCount === 0 || posIsVertical !== isVertical || posIsHorizontal !== isHorizontal);
 
         if (isEnd) {
           // Now mark this position
@@ -2835,29 +2831,28 @@ var CMOSGrid = /*#__PURE__*/function () {
 
           matrix.finalPath = JSON.parse(JSON.stringify(matrix.path));
           matrix.finalPath.mark = mark;
-        } else if (isStart || this.matrix[x][y].isWireOrConnector() && wireCount < 2 && (wireCount === 0 || this.matrix[x][y].wireAt(0).isVertical() != isVertical)) {
+        } else if (isStart || this.matrix[x][y].isWireOrConnector() && wireCount < 2 && (wireCount === 0 || this.matrix[x][y].wireAt(0).isVertical() !== isVertical)) {
           // If it's the start position we will always mark it.
-          // Else we only mark this position if there are currently 0 or 1 wires. If there is already a wire it must be perpendicular to the path we are currently tracing.
+          // Else we only mark this position if there are currently 0 or 1 wires.
+          // If there is already a wire it must be perpendicular to the path we are currently tracing.
           // Now mark this position
-          matrix[x][y].mark = mark; // Continue in each direction except the one we came from, but only if this is the first wire at this position or it is perpendicular
+          matrix[x][y].mark = mark; // Continue in each direction except the one we came from, but only if
+          // this is the first wire at this position or it is perpendicular
 
-          var canVertical = wireCount === 0 || this.matrix[x][y].wireAt(0).isVertical() != isVertical;
-          var canHorizontal = wireCount === 0 || this.matrix[x][y].wireAt(0).isHorizontal() != isHorizontal;
-
-          if (y + 1 < this.width && (c.direction == CMOSWireDirection.EAST || !isStart && c.direction != CMOSWireDirection.WEST)) {
-            this.getBestPathMarkElement(matrix, new CMOSWirePosition(x, y + 1, CMOSWireDirection.EAST), a, b, mark + (c.direction != CMOSWireDirection.EAST ? 2 : 1) + wireCount);
+          if (y + 1 < this.width && (c.direction === CMOSWireDirection.EAST || !isStart && c.direction !== CMOSWireDirection.WEST)) {
+            this.getBestPathMarkElement(matrix, new CMOSWirePosition(x, y + 1, CMOSWireDirection.EAST), a, b, mark + (c.direction !== CMOSWireDirection.EAST ? 2 : 1) + wireCount);
           }
 
-          if (y - 1 >= 0 && (c.direction == CMOSWireDirection.WEST || !isStart && c.direction != CMOSWireDirection.EAST)) {
-            this.getBestPathMarkElement(matrix, new CMOSWirePosition(x, y - 1, CMOSWireDirection.WEST), a, b, mark + (c.direction != CMOSWireDirection.WEST ? 2 : 1) + wireCount);
+          if (y - 1 >= 0 && (c.direction === CMOSWireDirection.WEST || !isStart && c.direction !== CMOSWireDirection.EAST)) {
+            this.getBestPathMarkElement(matrix, new CMOSWirePosition(x, y - 1, CMOSWireDirection.WEST), a, b, mark + (c.direction !== CMOSWireDirection.WEST ? 2 : 1) + wireCount);
           }
 
-          if (x + 1 < this.height && (c.direction == CMOSWireDirection.SOUTH || !isStart && c.direction != CMOSWireDirection.NORTH)) {
-            this.getBestPathMarkElement(matrix, new CMOSWirePosition(x + 1, y, CMOSWireDirection.SOUTH), a, b, mark + (c.direction != CMOSWireDirection.SOUTH ? 2 : 1) + wireCount);
+          if (x + 1 < this.height && (c.direction === CMOSWireDirection.SOUTH || !isStart && c.direction !== CMOSWireDirection.NORTH)) {
+            this.getBestPathMarkElement(matrix, new CMOSWirePosition(x + 1, y, CMOSWireDirection.SOUTH), a, b, mark + (c.direction !== CMOSWireDirection.SOUTH ? 2 : 1) + wireCount);
           }
 
-          if (x - 1 >= 0 && (c.direction == CMOSWireDirection.NORTH || !isStart && c.direction != CMOSWireDirection.SOUTH)) {
-            this.getBestPathMarkElement(matrix, new CMOSWirePosition(x - 1, y, CMOSWireDirection.NORTH), a, b, mark + (c.direction != CMOSWireDirection.NORTH ? 2 : 1) + wireCount);
+          if (x - 1 >= 0 && (c.direction === CMOSWireDirection.NORTH || !isStart && c.direction !== CMOSWireDirection.SOUTH)) {
+            this.getBestPathMarkElement(matrix, new CMOSWirePosition(x - 1, y, CMOSWireDirection.NORTH), a, b, mark + (c.direction !== CMOSWireDirection.NORTH ? 2 : 1) + wireCount);
           }
         }
 
@@ -2868,6 +2863,19 @@ var CMOSGrid = /*#__PURE__*/function () {
 
   return CMOSGrid;
 }();
+
+/**
+ * Represents the size of a CMOS grid element
+ * @constructor
+ * @param {number} [width=0] The width of the element
+ * @param {number} [height=0] The height of the element
+ */
+var CMOSGridElementSize = function CMOSGridElementSize(width, height) {
+  _classCallCheck(this, CMOSGridElementSize);
+
+  this.width = width || 0;
+  this.height = height || 0;
+};
 
 /**
  * Represents a CMOS circuit.
@@ -2898,7 +2906,7 @@ var CMOS = /*#__PURE__*/function () {
      * Grid
      * @type {CMOSGrid}
      */
-    //this.grid = null;
+    // this.grid = null;
     // Add connectors for all variables
 
     var _iterator = _createForOfIteratorHelper(this.reducedBoolFunc.variables),
@@ -2925,7 +2933,8 @@ var CMOS = /*#__PURE__*/function () {
     this.generateGrid();
   }
   /**
-   * Flat the CMOS structure: there shouldn't be series elements as childs of series elements. Same goes for parallel elements.
+   * Flat the CMOS structure: there shouldn't be series elements as
+   * children of series elements. Same goes for parallel elements.
    * @param {CMOSElement} element The element to flat
    */
 
@@ -2950,7 +2959,7 @@ var CMOS = /*#__PURE__*/function () {
 
         this.flattenCMOSStructure(child);
 
-        if (element.unionType != child.unionType) {
+        if (element.unionType !== child.unionType) {
           continue;
         } // Flat this element
 
@@ -2966,7 +2975,8 @@ var CMOS = /*#__PURE__*/function () {
     }
     /**
      * Search for a connector
-     * @param {string} name The name of the connector: variable name or string representation of the corresponding boolean expression
+     * @param {string} name The name of the connector: variable
+     * name or string representation of the corresponding boolean expression
      * @return {CMOSConnector|null} The searched connector or null if doesn't exist
      */
 
@@ -2974,35 +2984,37 @@ var CMOS = /*#__PURE__*/function () {
     key: "getConnector",
     value: function getConnector(name) {
       var filtered = this.connectors.filter(function (c) {
-        return c.name == name;
+        return c.name === name;
       });
       return filtered.length > 0 ? filtered[0] : null;
     }
     /**
-     * Connects the PMOS and NMOS parts through a new connector and adds them all to a new column in the CMOS circuit
+     * Connects the PMOS and NMOS parts through a new connector and
+     * adds them all to a new column in the CMOS circuit
      * @param {CMOSElement} PMOSElement The PMOS part
-     * @param {string} connector_name The string representation of the boolean expression implemented by PMOSElement and NMOSElement
+     * @param {string} connectorName The string representation of the boolean
+     * expression implemented by PMOSElement and NMOSElement
      * @param {CMOSElement} NMOSElement The NMOS part
      * @return {CMOSConnector} The created connector of this CMOS part
      */
 
   }, {
     key: "addCMOSFromPMOSAndNMOS",
-    value: function addCMOSFromPMOSAndNMOS(PMOSElement, connector_name, NMOSElement) {
+    value: function addCMOSFromPMOSAndNMOS(PMOSElement, connectorName, NMOSElement) {
       var column = new CMOSElement(CMOSElementUnionType.SERIES);
 
-      if (PMOSElement.unionType == CMOSElementUnionType.SERIES) {
+      if (PMOSElement.unionType === CMOSElementUnionType.SERIES) {
         Array.prototype.push.apply(column.children, PMOSElement.children);
       } else {
         column.children.push(PMOSElement);
       }
 
-      var connector = new CMOSConnector(connector_name);
+      var connector = new CMOSConnector(connectorName);
       this.connectors.push(connector); // Remove this line if we don't want to reuse negations
 
       column.children.push(connector);
 
-      if (NMOSElement.unionType == CMOSElementUnionType.SERIES) {
+      if (NMOSElement.unionType === CMOSElementUnionType.SERIES) {
         Array.prototype.push.apply(column.children, NMOSElement.children);
       } else {
         column.children.push(NMOSElement);
@@ -3013,117 +3025,118 @@ var CMOS = /*#__PURE__*/function () {
     }
     /**
      * Places a negator to the CMOS circuit.
-     * @param {CMOSConnector} connector The connector of the BooleanExpression/Variable that should be negated
+     * @param {CMOSConnector} connector The connector of the
+     * BooleanExpression/Variable that should be negated
      * @return {CMOSConnector} The connector to the placed negator
      */
 
   }, {
     key: "placeNegator",
     value: function placeNegator(connector) {
-      var connector_name = connector.name.length > 2 ? '!(' + connector.name + ')' : '!' + connector.name;
-      var negConnector = this.getConnector(connector_name);
+      var connectorName = connector.name.length > 2 ? "!(".concat(connector.name, ")") : "!".concat(connector.name);
+      var negConnector = this.getConnector(connectorName);
 
       if (negConnector) {
         return negConnector;
       }
 
-      return this.addCMOSFromPMOSAndNMOS(new CMOSTransistor(CMOSTransistorType.PMOS, connector), connector_name, new CMOSTransistor(CMOSTransistorType.NMOS, connector));
+      return this.addCMOSFromPMOSAndNMOS(new CMOSTransistor(CMOSTransistorType.PMOS, connector), connectorName, new CMOSTransistor(CMOSTransistorType.NMOS, connector));
     }
-  }, {
-    key: "getPMOSNMOS",
-
     /**
      * Recursively generates the PMOS and NMOS parts for a BooleanExpression with Operators AND / OR
      * @param {BooleanExpression} expr The boolean expression
      * @return {{PMOS: CMOSElement, NMOS: CMOSElement}} An object with the PMOS and NMOS elements
      */
+
+  }, {
+    key: "getPMOSNMOS",
     value: function getPMOSNMOS(expr) {
-      if (!(expr instanceof BooleanExpressionBase) || expr.operator != BooleanOperation.AND && expr.operator != BooleanOperation.OR) {
-        throw Error("Programming Error: should never come here");
+      if (!(expr instanceof BooleanExpressionBase) || expr.operator !== BooleanOperation.AND && expr.operator !== BooleanOperation.OR) {
+        throw Error('Programming Error: should never come here');
       }
 
-      var PmosElement = new CMOSElement(expr.operator == BooleanOperation.AND ? CMOSElementUnionType.SERIES : CMOSElementUnionType.PARALLEL);
-      var NmosElement = new CMOSElement(expr.operator == BooleanOperation.AND ? CMOSElementUnionType.PARALLEL : CMOSElementUnionType.SERIES);
+      var PmosElement = new CMOSElement(expr.operator === BooleanOperation.AND ? CMOSElementUnionType.SERIES : CMOSElementUnionType.PARALLEL);
+      var NmosElement = new CMOSElement(expr.operator === BooleanOperation.AND ? CMOSElementUnionType.PARALLEL : CMOSElementUnionType.SERIES);
 
       for (var i = 0; i < expr.operands.length; ++i) {
         var operand = expr.operands[i];
-        var transistor_connector = null;
+        var transistorConnector = null;
 
         if (operand instanceof NAryExpression || operand instanceof UnaryExpression) {
-          if (operand.operator == BooleanOperation.NOT) {
+          if (operand.operator === BooleanOperation.NOT) {
             if (operand.operands[0] instanceof BooleanVariable) {
               // Negated variable
-              transistor_connector = this.getConnector(operand.operands[0].name);
+              transistorConnector = this.getConnector(operand.operands[0].name);
             } else {
-              transistor_connector = this.placeTransistorsOfExpression(operand.operands[0]);
+              transistorConnector = this.placeTransistorsOfExpression(operand.operands[0]);
             }
-          } else if (operand.operator == BooleanOperation.OR || operand.operator == BooleanOperation.AND) {
+          } else if (operand.operator === BooleanOperation.OR || operand.operator === BooleanOperation.AND) {
             var cmos = this.getPMOSNMOS(operand);
             PmosElement.children.push(cmos.PMOS);
             NmosElement.children.push(cmos.NMOS);
           } else {
-            throw Error("Unsupported operator '" + operand.operator.name + "'");
+            throw Error("Unsupported operator '".concat(operand.operator.name, "'"));
           }
         } else if (operand instanceof BooleanVariable) {
           // Not negated variable (we must add a negator first)
-          transistor_connector = this.placeNegator(this.getConnector(operand.name));
+          transistorConnector = this.placeNegator(this.getConnector(operand.name));
         } else {
-          throw Error("Unsupported operand found");
+          throw Error('Unsupported operand found');
         }
 
-        if (transistor_connector) {
-          PmosElement.children.push(new CMOSTransistor(CMOSTransistorType.PMOS, transistor_connector));
-          NmosElement.children.push(new CMOSTransistor(CMOSTransistorType.NMOS, transistor_connector));
+        if (transistorConnector) {
+          PmosElement.children.push(new CMOSTransistor(CMOSTransistorType.PMOS, transistorConnector));
+          NmosElement.children.push(new CMOSTransistor(CMOSTransistorType.NMOS, transistorConnector));
         }
       }
 
       return {
-        'PMOS': PmosElement,
-        'NMOS': NmosElement
+        PMOS: PmosElement,
+        NMOS: NmosElement
       };
     }
-  }, {
-    key: "placeTransistorsOfExpression",
-
     /**
      * Places all transistors of the specified BooleanExpression to the CMOS circuit
      * @param {BooleanExpression} expr The boolean expression
      * @return {CMOSConnector} The connector of the placed expression
      */
+
+  }, {
+    key: "placeTransistorsOfExpression",
     value: function placeTransistorsOfExpression(expr) {
-      //var connector_name = expr.toStringWithoutParentheses();
-      var connector_name = expr.toString();
-      var connector = this.getConnector(connector_name);
+      // var connectorName = expr.toStringWithoutParentheses();
+      var connectorName = expr.toString();
+      var connector = this.getConnector(connectorName);
 
       if (!connector) {
-        if (expr.operator == BooleanOperation.OR || expr.operator == BooleanOperation.AND) {
+        if (expr.operator === BooleanOperation.OR || expr.operator === BooleanOperation.AND) {
           var cmos = this.getPMOSNMOS(expr);
-          connector = this.addCMOSFromPMOSAndNMOS(cmos.PMOS, connector_name, cmos.NMOS);
-        } else if (expr.operator == BooleanOperation.NOT) {
+          connector = this.addCMOSFromPMOSAndNMOS(cmos.PMOS, connectorName, cmos.NMOS);
+        } else if (expr.operator === BooleanOperation.NOT) {
           if (expr.operands[0] instanceof BooleanVariable) {
             // Negated variable
             connector = this.getConnector(expr.operands[0].name);
 
-            if (expr == this.root) {
+            if (expr === this.root) {
               connector = this.placeNegator(connector);
             }
           } else {
             connector = this.placeNegator(this.placeTransistorsOfExpression(expr.operands[0]));
           }
         } else {
-          throw Error("Unsupported operator '" + expr.operator.name + "' found");
+          throw Error("Unsupported operator '".concat(expr.operator.name, "' found"));
         }
       }
 
       return connector;
     }
-  }, {
-    key: "getOptimalGridSize",
-
     /**
      * Computes the optimal size of the grid so that all transistors and wires fit in
      * @return {CMOSGridElementSize}
      */
+
+  }, {
+    key: "getOptimalGridSize",
     value: function getOptimalGridSize() {
       var size = new CMOSGridElementSize();
 
@@ -3137,22 +3150,25 @@ var CMOS = /*#__PURE__*/function () {
 
       return size;
     }
-  }, {
-    key: "getOptimalGridSizeForElement",
-
     /**
      * Computes the optimal size for the specified element
-     * @param {CMOSElement|CMOSTransistor|CMOSConnector} elem The element of which should compute the optimal size
-     * @param {CMOSElement} [parent] The parent element if exists and is of different union type as elem
+     * @param {CMOSElement|CMOSTransistor|CMOSConnector} elem
+     * The element of which should compute the optimal size
+     * @param {CMOSElement} [parent] The parent element if
+     * exists and is of different union type as elem
      * @return {CMOSGridElementSize}
      */
+
+  }, {
+    key: "getOptimalGridSizeForElement",
     value: function getOptimalGridSizeForElement(elem, column) {
-      var i, childSize;
+      var i;
+      var childSize;
       var size = new CMOSGridElementSize();
 
       if (elem instanceof CMOSElement) {
         // Either a series or a parallel element
-        if (elem.unionType == CMOSElementUnionType.SERIES) {
+        if (elem.unionType === CMOSElementUnionType.SERIES) {
           // SERIES element
           for (i = 0; i < elem.children.length; ++i) {
             childSize = this.getOptimalGridSizeForElement(elem.children[i], column);
@@ -3168,14 +3184,16 @@ var CMOS = /*#__PURE__*/function () {
           } // Check if this is the first / last connected item to VCC / GND
 
 
-          elem.isFirst = elem == column.children[0];
-          elem.isLast = elem == column.children[column.children.length - 1];
-          size.height += 2 - elem.isFirst - elem.isLast; // Always add padding on top and bottom for horizontal wire connections if needed
+          elem.isFirst = elem === column.children[0];
+          elem.isLast = elem === column.children[column.children.length - 1]; // Always add padding on top and bottom for horizontal wire connections if needed
+
+          size.height += 2 - elem.isFirst - elem.isLast;
         }
 
         elem.size = size; // Save minimal size in elem
       } else if (elem instanceof CMOSTransistor) {
-        // Transistors have size 1x1 but we want padding 1 on each size => 3x3 as optimal size even if real size is 1x1
+        // Transistors have size 1x1 but we want padding 1 on each size => 3x3
+        // as optimal size even if real size is 1x1
         size.width = 3;
         size.height = 3;
         elem.size = new CMOSGridElementSize(1, 1);
@@ -3188,12 +3206,12 @@ var CMOS = /*#__PURE__*/function () {
 
       return size;
     }
-  }, {
-    key: "generateGrid",
-
     /**
      * Generate grid of this CMOS circuit
      */
+
+  }, {
+    key: "generateGrid",
     value: function generateGrid() {
       var i; // Create grid of optimal size
 
@@ -3229,21 +3247,22 @@ var CMOS = /*#__PURE__*/function () {
         }
       }
     }
-  }, {
-    key: "generateGridForElement",
-
     /**
      * Places an element into the grid at specified position and with specified size
      * @param {number} x The x coordinate where should place the element
      * @param {number} y The y coordinate where should place the element
      * @param {number} width The expected width of the element
      * @param {number} height The expected height of the element
-     * @param {CMOSElement|CMOSTransistor|CMOSConnector} elem The element that should be placed into the grid
+     * @param {CMOSElement|CMOSTransistor|CMOSConnector} elem
+     * The element that should be placed into the grid
      */
+
+  }, {
+    key: "generateGridForElement",
     value: function generateGridForElement(x, y, width, height, elem) {
       if (elem instanceof CMOSElement) {
         // Another CMOS element either parallel or series
-        if (elem.unionType == CMOSElementUnionType.PARALLEL) {
+        if (elem.unionType === CMOSElementUnionType.PARALLEL) {
           this.generateGridForElementParallel(x, y, width, height, elem);
         } else {
           this.generateGridForElementSeries(x, y, width, height, elem);
@@ -3259,9 +3278,6 @@ var CMOS = /*#__PURE__*/function () {
         throw Error('Invalid grid element type found');
       }
     }
-  }, {
-    key: "generateGridForElementParallel",
-
     /**
      * Places a PARALLEL element into the grid at specified position and specified size
      * @param {number} x The x coordinate where should place the element
@@ -3270,6 +3286,9 @@ var CMOS = /*#__PURE__*/function () {
      * @param {number} height The expected height of the element
      * @param {CMOSElement} elem The (PARALLEL!) cmos element that should be placed into the grid
      */
+
+  }, {
+    key: "generateGridForElementParallel",
     value: function generateGridForElementParallel(x, y, width, height, elem) {
       var y2 = y;
 
@@ -3303,17 +3322,17 @@ var CMOS = /*#__PURE__*/function () {
         this.grid.addWire(new CMOSWire(new CMOSWirePosition(x + height - 1, y + 1), new CMOSWirePosition(x + height - 1, y + width - 2)));
       }
     }
+    /**
+       * Places a SERIES element into the grid at specified position and specified size
+       * @param {number} x The x coordinate where should place the element
+       * @param {number} y The y coordinate where should place the element
+       * @param {number} width The expected width of the element
+       * @param {number} height The expected height of the element
+       * @param {CMOSElement} elem The (SERIES!) cmos element that should be placed into the grid
+       */
+
   }, {
     key: "generateGridForElementSeries",
-
-    /**
-     * Places a SERIES element into the grid at specified position and specified size
-     * @param {number} x The x coordinate where should place the element
-     * @param {number} y The y coordinate where should place the element
-     * @param {number} width The expected width of the element
-     * @param {number} height The expected height of the element
-     * @param {CMOSElement} elem The (SERIES!) cmos element that should be placed into the grid
-     */
     value: function generateGridForElementSeries(x, y, width, height, elem) {
       var x2 = x; // calculate necesary padding between elements to fit height
 
@@ -3323,7 +3342,8 @@ var CMOS = /*#__PURE__*/function () {
       // NOTE: Series connection wires always go into the elements
 
       var lastx = x - 1;
-      var lasty = yMiddle; // Bottom connection wire is not drawn if the last element connected to GND is a PARALLEL element because the wires from the element already go into GND then
+      var lasty = yMiddle; // Bottom connection wire is not drawn if the last element connected to GND
+      // is a PARALLEL element because the wires from the element already go into GND then
 
       var drawBottomWire = true;
 
@@ -3357,7 +3377,7 @@ var CMOS = /*#__PURE__*/function () {
           this.generateGridForElement(x2, y + paddingLeft, child.size.width, child.size.height, child);
 
           if (!child.isFirst) {
-            this.grid.addWire(new CMOSWire(new CMOSWirePosition(lastx, y + paddingLeft), new CMOSWirePosition(x2, y + paddingLeft))); // Verical wire before element
+            this.grid.addWire(new CMOSWire(new CMOSWirePosition(lastx, y + paddingLeft), new CMOSWirePosition(x2, y + paddingLeft))); // Vertical wire before element
           }
 
           lastx = x2;
@@ -3376,6 +3396,75 @@ var CMOS = /*#__PURE__*/function () {
 
   return CMOS;
 }();
+
+/**
+ * Baseclass for SERIES- and PARALLEL-Elements
+ * @constructor
+ * @param {CMOSExpression || CMOSElement} parent The parent of this element.
+ * @param {NetworkType} networkType Determines whether the
+ * element is parent of the PULLUP or PULLDOWN network.
+ */
+var CMOSElement$1 = /*#__PURE__*/function () {
+  function CMOSElement(parent, networkType) {
+    _classCallCheck(this, CMOSElement);
+
+    this.children = [];
+    this.parent = parent;
+    this.networkType = networkType;
+  }
+
+  _createClass(CMOSElement, [{
+    key: "addChild",
+    value: function addChild(cmosElement) {
+      this.children.push(cmosElement);
+    }
+  }]);
+
+  return CMOSElement;
+}();
+/**
+ * Represents an element in the CMOS circuit whose children are in SERIES.
+ * @constructor
+ * @param {CMOSExpression || CMOSElement} parent The parent of this element.
+ * @param {NetworkType} networkType Determines whether the element is
+ * parent of the PULLUP or PULLDOWN network.
+ */
+
+
+var CMOSSeriesElement = /*#__PURE__*/function (_CMOSElement) {
+  _inherits(CMOSSeriesElement, _CMOSElement);
+
+  var _super = _createSuper(CMOSSeriesElement);
+
+  function CMOSSeriesElement(parent, networkType) {
+    _classCallCheck(this, CMOSSeriesElement);
+
+    return _super.call(this, parent, networkType);
+  }
+
+  return CMOSSeriesElement;
+}(CMOSElement$1);
+/**
+ * Represents an element in the CMOS circuit whose children are in PARALLEL.
+ * @constructor
+ * @param {CMOSExpression || CMOSElement} parent The parent of this element.
+ * @param {NetworkType} networkType Determines whether the element
+ * is parent of the PULLUP or PULLDOWN network.
+ */
+
+var CMOSParallelElement = /*#__PURE__*/function (_CMOSElement2) {
+  _inherits(CMOSParallelElement, _CMOSElement2);
+
+  var _super2 = _createSuper(CMOSParallelElement);
+
+  function CMOSParallelElement(parent, networkType) {
+    _classCallCheck(this, CMOSParallelElement);
+
+    return _super2.call(this, parent, networkType);
+  }
+
+  return CMOSParallelElement;
+}(CMOSElement$1);
 
 var NetworkType = {
   PULLUP: 'pullup',
@@ -3412,73 +3501,6 @@ var CMOSExpression = /*#__PURE__*/function () {
   return CMOSExpression;
 }();
 
-/**
- * Baseclass for SERIES- and PARALLEL-Elements
- * @constructor
- * @param {CMOSExpression || CMOSElement} parent The parent of this element.
- * @param {NetworkType} networkType Determines whether the element is parent of the PULLUP or PULLDOWN network.
- */
-
-var CMOSElement$1 = /*#__PURE__*/function () {
-  function CMOSElement(parent, networkType) {
-    _classCallCheck(this, CMOSElement);
-
-    this.children = [];
-    this.parent = parent;
-    this.networkType = networkType;
-  }
-
-  _createClass(CMOSElement, [{
-    key: "addChild",
-    value: function addChild(cmosElement) {
-      this.children.push(cmosElement);
-    }
-  }]);
-
-  return CMOSElement;
-}();
-/**
- * Represents an element in the CMOS circuit whose children are in SERIES.
- * @constructor
- * @param {CMOSExpression || CMOSElement} parent The parent of this element.
- * @param {NetworkType} networkType Determines whether the element is parent of the PULLUP or PULLDOWN network.
- */
-
-
-var CMOSSeriesElement = /*#__PURE__*/function (_CMOSElement) {
-  _inherits(CMOSSeriesElement, _CMOSElement);
-
-  var _super = _createSuper(CMOSSeriesElement);
-
-  function CMOSSeriesElement(parent, networkType) {
-    _classCallCheck(this, CMOSSeriesElement);
-
-    return _super.call(this, parent, networkType);
-  }
-
-  return CMOSSeriesElement;
-}(CMOSElement$1);
-/**
- * Represents an element in the CMOS circuit whose children are in PARALLEL.
- * @constructor
- * @param {CMOSExpression || CMOSElement} parent The parent of this element.
- * @param {NetworkType} networkType Determines whether the element is parent of the PULLUP or PULLDOWN network.
- */
-
-var CMOSParallelElement = /*#__PURE__*/function (_CMOSElement2) {
-  _inherits(CMOSParallelElement, _CMOSElement2);
-
-  var _super2 = _createSuper(CMOSParallelElement);
-
-  function CMOSParallelElement(parent, networkType) {
-    _classCallCheck(this, CMOSParallelElement);
-
-    return _super2.call(this, parent, networkType);
-  }
-
-  return CMOSParallelElement;
-}(CMOSElement$1);
-
 var CMOSTransistorType$1 = {
   PMOS: 'pmos',
   NMOS: 'nmos'
@@ -3486,7 +3508,8 @@ var CMOSTransistorType$1 = {
 /**
  * Represents a transistor in a CMOS circuit
  * @constructor
- * @param {CMOSExpression || CMOSVariable || CMOSLiteral} src The element to which this transistor is connected to.
+ * @param {CMOSExpression || CMOSVariable || CMOSLiteral} src The element
+ * to which this transistor is connected to.
  * @param {CMOSExpression || CMOSElement} parent The parent for this transistor.
  * @param {CMOSTransistorType} type The transistor type.
  */
@@ -3555,7 +3578,7 @@ var CMOS$1 = /*#__PURE__*/function () {
     key: "getExpressionByName",
     value: function getExpressionByName(expressionName) {
       var filtered = this.expressions.filter(function (e) {
-        return e.name == expressionName;
+        return e.name === expressionName;
       });
       return filtered.length > 0 ? filtered[0] : null;
     }
@@ -3563,7 +3586,7 @@ var CMOS$1 = /*#__PURE__*/function () {
     key: "getVariableByName",
     value: function getVariableByName(variableName) {
       var filtered = this.variables.filter(function (e) {
-        return e.name == variableName;
+        return e.name === variableName;
       });
       return filtered.length > 0 ? filtered[0] : null;
     }
@@ -3603,7 +3626,7 @@ var CMOS$1 = /*#__PURE__*/function () {
   }, {
     key: "generateNetwork",
     value: function generateNetwork(parent, type, boolExpr, options) {
-      var transistorType = type == NetworkType.PULLUP ? CMOSTransistorType$1.PMOS : CMOSTransistorType$1.NMOS;
+      var transistorType = type === NetworkType.PULLUP ? CMOSTransistorType$1.PMOS : CMOSTransistorType$1.NMOS;
 
       if (boolExpr instanceof BooleanLiteral) {
         var literal = this.getLiteralByValue(!boolExpr.value);
@@ -3626,8 +3649,8 @@ var CMOS$1 = /*#__PURE__*/function () {
       }
 
       if (boolExpr instanceof NAryExpression) {
-        if (boolExpr.operator == BooleanOperation.AND) {
-          var ret = type == NetworkType.PULLUP ? new CMOSSeriesElement(parent, type) : new CMOSParallelElement(parent, type);
+        if (boolExpr.operator === BooleanOperation.AND) {
+          var ret = type === NetworkType.PULLUP ? new CMOSSeriesElement(parent, type) : new CMOSParallelElement(parent, type);
 
           var _iterator = _createForOfIteratorHelper(boolExpr.operands),
               _step;
@@ -3646,8 +3669,8 @@ var CMOS$1 = /*#__PURE__*/function () {
           return ret;
         }
 
-        if (boolExpr.operator == BooleanOperation.OR) {
-          var _ret = type == NetworkType.PULLUP ? new CMOSParallelElement(parent, type) : new CMOSSeriesElement(parent, type);
+        if (boolExpr.operator === BooleanOperation.OR) {
+          var _ret = type === NetworkType.PULLUP ? new CMOSParallelElement(parent, type) : new CMOSSeriesElement(parent, type);
 
           var _iterator2 = _createForOfIteratorHelper(boolExpr.operands),
               _step2;
@@ -3671,7 +3694,7 @@ var CMOS$1 = /*#__PURE__*/function () {
       }
 
       if (boolExpr instanceof UnaryExpression) {
-        if (boolExpr.operator == BooleanOperation.NOT) {
+        if (boolExpr.operator === BooleanOperation.NOT) {
           var _operand2 = boolExpr.operand;
 
           if (_operand2 instanceof BooleanVariable) {
@@ -3760,9 +3783,8 @@ var CMOSBuilder = /*#__PURE__*/function () {
   }, {
     key: "_generateNetwork",
     value: function _generateNetwork(cmos, parent, type, boolExpr, options) {
-
       if (boolExpr instanceof BooleanLiteral) {
-        return this._handleBooleanLiteral(cmos, parent, type, boolExpr, options);
+        return this._handleBooleanLiteral(cmos, parent, type, boolExpr);
       } else if (boolExpr instanceof BooleanVariable) {
         return this._handleBooleanVariable(cmos, parent, type, boolExpr, options);
       } else if (boolExpr instanceof NAryExpression) {
@@ -3775,8 +3797,8 @@ var CMOSBuilder = /*#__PURE__*/function () {
     }
   }, {
     key: "_handleBooleanLiteral",
-    value: function _handleBooleanLiteral(cmos, parent, type, boolExpr, options) {
-      var transistorType = type == NetworkType.PULLUP ? CMOSTransistorType$1.PMOS : CMOSTransistorType$1.NMOS;
+    value: function _handleBooleanLiteral(cmos, parent, type, boolExpr) {
+      var transistorType = type === NetworkType.PULLUP ? CMOSTransistorType$1.PMOS : CMOSTransistorType$1.NMOS;
       var literal = cmos.getLiteralByValue(!boolExpr.value);
 
       if (literal == null) {
@@ -3791,7 +3813,7 @@ var CMOSBuilder = /*#__PURE__*/function () {
   }, {
     key: "_handleBooleanVariable",
     value: function _handleBooleanVariable(cmos, parent, type, boolExpr, options) {
-      var transistorType = type == NetworkType.PULLUP ? CMOSTransistorType$1.PMOS : CMOSTransistorType$1.NMOS;
+      var transistorType = type === NetworkType.PULLUP ? CMOSTransistorType$1.PMOS : CMOSTransistorType$1.NMOS;
 
       var expression = this._generateExpression(cmos, new UnaryExpression(BooleanOperation.NOT, [boolExpr], false), options);
 
@@ -3804,10 +3826,10 @@ var CMOSBuilder = /*#__PURE__*/function () {
     value: function _handleNAryExpression(cmos, parent, type, boolExpr, options) {
       var element;
 
-      if (boolExpr.operator == BooleanOperation.AND) {
-        element = type == NetworkType.PULLUP ? new CMOSSeriesElement(parent, type) : new CMOSParallelElement(parent, type);
-      } else if (boolExpr.operator == BooleanOperation.OR) {
-        element = type == NetworkType.PULLUP ? new CMOSParallelElement(parent, type) : new CMOSSeriesElement(parent, type);
+      if (boolExpr.operator === BooleanOperation.AND) {
+        element = type === NetworkType.PULLUP ? new CMOSSeriesElement(parent, type) : new CMOSParallelElement(parent, type);
+      } else if (boolExpr.operator === BooleanOperation.OR) {
+        element = type === NetworkType.PULLUP ? new CMOSParallelElement(parent, type) : new CMOSSeriesElement(parent, type);
       } else {
         throw Error('CMOSBuilder._handleNAryExpression(CMOS, CMOSElement, NetworkType, BooleanExpression, options): Unknown NAry-Operation found.');
       }
@@ -3831,9 +3853,9 @@ var CMOSBuilder = /*#__PURE__*/function () {
   }, {
     key: "_handleUnaryExpression",
     value: function _handleUnaryExpression(cmos, parent, type, boolExpr, options) {
-      var transistorType = type == NetworkType.PULLUP ? CMOSTransistorType$1.PMOS : CMOSTransistorType$1.NMOS;
+      var transistorType = type === NetworkType.PULLUP ? CMOSTransistorType$1.PMOS : CMOSTransistorType$1.NMOS;
 
-      if (boolExpr.operator == BooleanOperation.NOT) {
+      if (boolExpr.operator === BooleanOperation.NOT) {
         var operand = boolExpr.operand;
 
         if (operand instanceof BooleanVariable) {
@@ -4233,7 +4255,8 @@ var CMOSVisualParallelElement = /*#__PURE__*/function (_CMOSVisualBase5) {
   }, {
     key: "getEntryPoint",
     value: function getEntryPoint(channelId) {
-      var child = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var childIn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var child = childIn;
 
       if (child == null) {
         child = this.children[0];
@@ -4325,7 +4348,8 @@ var CMOSVisualLiteral = function CMOSVisualLiteral(id, content) {
  * Responsible for generation a CMOSVisual from a given CMOS.
  * @constructor
  * @param {CMOS} [cmosElement] The CMOS from which a CMOSVisual will be generated.
- * @param {CMOSVisualBuilder} [builder] The Object which is responsible for constructing a CMOSVisual.
+ * @param {CMOSVisualBuilder} [builder] The Object which is responsible for
+ * constructing a CMOSVisual.
  * @param {CMOSVisualInfo} [info] The info object that will be attached to the CMOSVisual.
  */
 
@@ -4339,8 +4363,10 @@ var GenerateVisualHull = /*#__PURE__*/function () {
   }
   /**
      * Determines how the given CMOSElement will be handled.
-     * @param {CMOS|CMOSExpression|CMOSSeriesElement|CMOSParallelElement|CMOSTransistor} [visualElement] The CMOSElement to be handled.
-     * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} The resulting VisualElement.
+     * @param {CMOS|CMOSExpression|CMOSSeriesElement|CMOSParallelElement|CMOSTransistor}
+     * [visualElement] The CMOSElement to be handled.
+     * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+     * CMOSVisualParallelElement|CMOSVisualTransistor} The resulting VisualElement.
      */
 
 
@@ -4517,8 +4543,11 @@ var CalculateChannels = /*#__PURE__*/function () {
   }
   /**
      * Determines how the given VisualElement will be handled.
-     * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement] The VisualElement to be handled.
-     * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} The given VisualElement.
+     * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+     * CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement]
+     * The VisualElement to be handled.
+     * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+     * CMOSVisualParallelElement|CMOSVisualTransistor} The given VisualElement.
      */
 
 
@@ -4574,7 +4603,9 @@ var CalculateChannels = /*#__PURE__*/function () {
     value: function _handleCMOSVisualExpression(visualElement) {
       // VisualExpressions always need to account for every existing channel.
       for (var key in this.info.channelTable) {
-        visualElement.addChannel(this.info.channelTable[key]);
+        if (Object.prototype.hasOwnProperty.call(this.info.channelTable, key)) {
+          visualElement.addChannel(this.info.channelTable[key]);
+        }
       }
 
       var _iterator2 = _createForOfIteratorHelper(visualElement.children),
@@ -4632,7 +4663,8 @@ var CalculateChannels = /*#__PURE__*/function () {
     }
     /**
        * Calculates the channels for a CMOSVisualParallelElement Object.
-       * @param {CMOSVisualParallelElement} [visualElement] The CMOSVisualParallelElement to be handled.
+       * @param {CMOSVisualParallelElement} [visualElement]
+       * The CMOSVisualParallelElement to be handled.
        */
 
   }, {
@@ -4660,10 +4692,13 @@ var CalculateChannels = /*#__PURE__*/function () {
 
         if (i > 0) {
           /*
-                  "Needed Channels" are channels which do not connect to the first row of the VisualParallelElement.
-                  If useOnlyNeededChannels is active, they determine the space needed to guide the channels into the inside
-                  of the VisualParallelElement, as channels which connect to the first row can be directly connected.
-                  */
+          "Needed Channels" are channels which do not connect to the first
+          row of the VisualParallelElement.
+          If useOnlyNeededChannels is active, they determine the space needed
+          to guide the channels into the inside
+          of the VisualParallelElement, as channels which connect to the first
+          row can be directly connected.
+          */
           var _iterator6 = _createForOfIteratorHelper(child.channels),
               _step6;
 
@@ -4726,7 +4761,8 @@ var CalculateSize = /*#__PURE__*/function () {
   }
   /**
      * Determines the maximum occuring leftPad in the transistors of the given VisualElement.
-     * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement] The given VisualElement.
+     * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+     * CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement] The given VisualElement.
      * @return {number} The maximum occuring leftPad.
      */
 
@@ -4756,7 +4792,8 @@ var CalculateSize = /*#__PURE__*/function () {
       } else if (visualElement instanceof CMOSVisualParallelElement) {
         maxLeftPad = Math.max(this._getMaximumLeftPad(visualElement.children[0]));
       } else if (visualElement instanceof CMOSVisualTransistor) {
-        // Basecase, takes either the leftPad specified in the Info-Object, or the leftPad required to print the label.
+        // Basecase, takes either the leftPad specified in the Info-Object,
+        // or the leftPad required to print the label.
         maxLeftPad = this.info.transistorPadLeft;
 
         if (this.info.tunnelExpressions && visualElement.content.src instanceof CMOSExpression) {
@@ -4775,10 +4812,13 @@ var CalculateSize = /*#__PURE__*/function () {
     /**
        * Determines how the given VisualElement will be handled.
        * @param {CMOSVisual} [hull] The CMOSVisual visualElement belongs to.
-       * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement] The VisualElement to be handled.
+       * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+       * CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement]
+       * The VisualElement to be handled.
        * @param {number} [maxLeftPad] The maximum leftPad occuring in hull.
        * @param {boolean} [adjustLeftPad] Should the leftPad be adjusted for this element.
-       * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} The given VisualElement.
+       * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+       * CMOSVisualParallelElement|CMOSVisualTransistor} The given VisualElement.
        */
 
   }, {
@@ -4820,7 +4860,7 @@ var CalculateSize = /*#__PURE__*/function () {
 
         this._calculateSize(visualElement, child);
 
-        if (!this.info.singleRows || i == visualElement.children.length - 1) {
+        if (!this.info.singleRows || i === visualElement.children.length - 1) {
           width += child.width;
           height = Math.max(height, child.height);
         } else {
@@ -4916,7 +4956,8 @@ var CalculateSize = /*#__PURE__*/function () {
     /**
        * Calculates the size for a CMOSVisualParallelElement Object.
        * @param {CMOSVisual} [hull] The CMOSVisual this CMOSVisualParallelElement belongs to.
-       * @param {CMOSVisualParallelElement} [visualElement] The CMOSVisualParallelElement to be handled.
+       * @param {CMOSVisualParallelElement} [visualElement] The CMOSVisualParallelElement
+       * to be handled.
        * @param {number} [maxLeftPad] The maximum leftPad occuring in hull.
        * @param {boolean} [adjustLeftPad] Should the leftPad be adjusted for this element.
        */
@@ -4930,7 +4971,7 @@ var CalculateSize = /*#__PURE__*/function () {
       for (var i = 0; i < visualElement.children.length; i++) {
         var child = visualElement.children[i]; // Only for the leftMost element should the leftPad be adjusted.
 
-        if (adjustLeftPad && i == 0) {
+        if (adjustLeftPad && i === 0) {
           this._calculateSize(hull, child, maxLeftPad, true);
         } else {
           this._calculateSize(hull, child, maxLeftPad, false);
@@ -5132,7 +5173,7 @@ var CMOSVisualInfo = /*#__PURE__*/function () {
   _createClass(CMOSVisualInfo, [{
     key: "getChannelId",
     value: function getChannelId(object) {
-      if (this.channelTable.hasOwnProperty(object.name)) {
+      if (Object.prototype.hasOwnProperty.call(this.channelTable, object.name)) {
         return this.channelTable[object.name];
       }
 
@@ -5159,8 +5200,11 @@ var CalculatePositions = /*#__PURE__*/function () {
   }
   /**
      * Determines how the given VisualElement will be handled.
-     * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement] The VisualElement to be handled.
-     * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} The given VisualElement.
+     * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+     * CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement]
+     * The VisualElement to be handled.
+     * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+     * CMOSVisualParallelElement|CMOSVisualTransistor} The given VisualElement.
      */
 
 
@@ -5192,8 +5236,9 @@ var CalculatePositions = /*#__PURE__*/function () {
 
   }, {
     key: "_handleCMOSVisual",
-    value: function _handleCMOSVisual(visualElement, x, y) {
+    value: function _handleCMOSVisual(visualElement, xIn, y) {
       // Position is given by calling function.
+      var x = xIn;
       visualElement.setPosition(x, y); // If singleRows is active, determine the height at which to start.
 
       var yPos = y;
@@ -5206,14 +5251,16 @@ var CalculatePositions = /*#__PURE__*/function () {
           preambleHeight += visualElement.children[i].height;
         }
 
-        if (this.info.alignmentVertical == VERTICALALIGNMENT.TOP || preambleHeight >= visualElement.children[visualElement.children.length - 1].height) {
+        if (this.info.alignmentVertical === VERTICALALIGNMENT.TOP || preambleHeight >= visualElement.children[visualElement.children.length - 1].height) {
           // No adjustments need to be made.
           yPos = y;
-        } else if (this.info.alignmentVertical == VERTICALALIGNMENT.CENTER) {
-          // The height of the last element is greater than the preambleHeight. Place singleRows in the middle.
+        } else if (this.info.alignmentVertical === VERTICALALIGNMENT.CENTER) {
+          // The height of the last element is greater than
+          // the preambleHeight. Place singleRows in the middle.
           yPos = y + (visualElement.children[visualElement.children.length - 1].height - preambleHeight) / 2;
-        } else if (this.info.alignmentVertical == VERTICALALIGNMENT.BOTTOM) {
-          // The height of the last element is greater than the preambleHeight. Place singleRows at the bottom.
+        } else if (this.info.alignmentVertical === VERTICALALIGNMENT.BOTTOM) {
+          // The height of the last element is greater than the preambleHeight.
+          // Place singleRows at the bottom.
           yPos = y + visualElement.children[visualElement.children.length - 1].height - preambleHeight;
         }
       }
@@ -5221,15 +5268,15 @@ var CalculatePositions = /*#__PURE__*/function () {
       for (var _i = 0; _i < visualElement.children.length; _i++) {
         var subElement = visualElement.children[_i];
 
-        if (!this.info.singleRows || _i == visualElement.children.length - 1) {
+        if (!this.info.singleRows || _i === visualElement.children.length - 1) {
           // Determine the appropriate y-component.
-          if (this.info.alignmentVertical == VERTICALALIGNMENT.TOP) {
+          if (this.info.alignmentVertical === VERTICALALIGNMENT.TOP) {
             // Place at the top.
             yPos = y;
-          } else if (this.info.alignmentVertical == VERTICALALIGNMENT.CENTER) {
+          } else if (this.info.alignmentVertical === VERTICALALIGNMENT.CENTER) {
             // Place in the middle.
             yPos = y + (visualElement.height - subElement.height) / 2;
-          } else if (this.info.alignmentVertical == VERTICALALIGNMENT.BOTTOM) {
+          } else if (this.info.alignmentVertical === VERTICALALIGNMENT.BOTTOM) {
             // Place at the bottom.
             yPos = y + visualElement.height - subElement.height;
           }
@@ -5271,15 +5318,15 @@ var CalculatePositions = /*#__PURE__*/function () {
         tunnelLength = visualElement.content.name.length * this.info.charWidth + this.info.expressionTunnelWireLength;
       }
 
-      if (this.info.alignmentHorizontal == HORIZONTALALIGNMENT.LEFT) {
+      if (this.info.alignmentHorizontal === HORIZONTALALIGNMENT.LEFT) {
         // Place children to the left.
         xPosPU = x + channelSize;
         xPosPD = x + channelSize;
-      } else if (this.info.alignmentHorizontal == HORIZONTALALIGNMENT.CENTER) {
+      } else if (this.info.alignmentHorizontal === HORIZONTALALIGNMENT.CENTER) {
         // Place children in the middle.
         xPosPU = x + channelSize + (visualElement.width - channelSize - 2 * this.info.channelWidth - tunnelLength - childPU.width) / 2;
         xPosPD = x + channelSize + (visualElement.width - channelSize - 2 * this.info.channelWidth - tunnelLength - childPD.width) / 2;
-      } else if (this.info.alignmentHorizontal == HORIZONTALALIGNMENT.RIGHT) {
+      } else if (this.info.alignmentHorizontal === HORIZONTALALIGNMENT.RIGHT) {
         // Place children to the right.
         xPosPU = x + visualElement.width - channelSize - 2 * this.info.channelWidth - tunnelLength - childPU.width;
         xPosPD = x + visualElement.width - channelSize - 2 * this.info.channelWidth - tunnelLength - childPD.width;
@@ -5298,16 +5345,16 @@ var CalculatePositions = /*#__PURE__*/function () {
         // The two children will fit perfectly in height.
         yPosPU = y;
         yPosPD = y + visualElement.height - childPD.height;
-      } else if (this.info.alignmentVertical == VERTICALALIGNMENT.TOP) {
+      } else if (this.info.alignmentVertical === VERTICALALIGNMENT.TOP) {
         // Place children at the top.
         yPosPU = y;
         yPosPD = y + childPU.height + channelSize;
-      } else if (this.info.alignmentVertical == VERTICALALIGNMENT.CENTER) {
+      } else if (this.info.alignmentVertical === VERTICALALIGNMENT.CENTER) {
         // Place children in the middle.
         var shellHeight = (visualElement.height - channelSize) / 2;
         yPosPU = y + (shellHeight - childPU.height) / 2;
         yPosPD = y + visualElement.height - childPD.height - (shellHeight - childPD.height) / 2;
-      } else if (this.info.alignmentVertical == VERTICALALIGNMENT.BOTTOM) {
+      } else if (this.info.alignmentVertical === VERTICALALIGNMENT.BOTTOM) {
         // Place children at the bottom.
         yPosPD = y + visualElement.height - childPD.height;
         yPosPU = y + visualElement.height - childPD.height - channelSize - childPU.height;
@@ -5326,8 +5373,10 @@ var CalculatePositions = /*#__PURE__*/function () {
 
   }, {
     key: "_handleCMOSVisualSeriesElement",
-    value: function _handleCMOSVisualSeriesElement(visualElement, x, y) {
+    value: function _handleCMOSVisualSeriesElement(visualElement, xIn, yIn) {
       // Position is given by calling function.
+      var x = xIn;
+      var y = yIn;
       visualElement.setPosition(x, y);
 
       var _iterator = _createForOfIteratorHelper(visualElement.children),
@@ -5339,13 +5388,13 @@ var CalculatePositions = /*#__PURE__*/function () {
           // Determine x-component
           var xPos = 0;
 
-          if (this.info.alignmentHorizontal == HORIZONTALALIGNMENT.LEFT) {
+          if (this.info.alignmentHorizontal === HORIZONTALALIGNMENT.LEFT) {
             // Place child to the left.
             xPos = x;
-          } else if (this.info.alignmentHorizontal == HORIZONTALALIGNMENT.CENTER) {
+          } else if (this.info.alignmentHorizontal === HORIZONTALALIGNMENT.CENTER) {
             // Place child in the middle.
             xPos = x + (visualElement.width - subElement.width) / 2;
-          } else if (this.info.alignmentHorizontal == HORIZONTALALIGNMENT.RIGHT) {
+          } else if (this.info.alignmentHorizontal === HORIZONTALALIGNMENT.RIGHT) {
             // Place child to the right.
             xPos = x + visualElement.width - subElement.width;
           }
@@ -5370,8 +5419,9 @@ var CalculatePositions = /*#__PURE__*/function () {
 
   }, {
     key: "_handleCMOSVisualParallelElement",
-    value: function _handleCMOSVisualParallelElement(visualElement, x, y) {
+    value: function _handleCMOSVisualParallelElement(visualElement, xIn, y) {
       // Position is given by calling function.
+      var x = xIn;
       visualElement.setPosition(x, y); // Determine the space needed to guide channels.
 
       var channelSize = visualElement.neededChannels.length * this.info.channelWidth;
@@ -5389,26 +5439,26 @@ var CalculatePositions = /*#__PURE__*/function () {
           channelSizeSubElement = this.info.channelNum * this.info.channelWidth;
         }
 
-        if (i == 0) {
+        if (i === 0) {
           channelSizeSubElement = 0;
         } // Determine the y-component.
 
 
         var yPos = 0;
 
-        if (this.info.alignmentVertical == VERTICALALIGNMENT.TOP) {
+        if (this.info.alignmentVertical === VERTICALALIGNMENT.TOP) {
           // Place child at the top.
           yPos = y;
-        } else if (this.info.alignmentVertical == VERTICALALIGNMENT.CENTER) {
+        } else if (this.info.alignmentVertical === VERTICALALIGNMENT.CENTER) {
           // Place child in the middle.
           yPos = y + (visualElement.height - channelSize - this.info.parallelElementChannelOffset - subElement.height) / 2;
-        } else if (this.info.alignmentVertical == VERTICALALIGNMENT.BOTTOM) {
+        } else if (this.info.alignmentVertical === VERTICALALIGNMENT.BOTTOM) {
           // Place child at the bottom.
           yPos = y + visualElement.height - channelSize - this.info.parallelElementChannelOffset - subElement.height;
         } // Account for the channelSize and parallelElementChannelOffset.
 
 
-        if (this.info.channelSymmetry && visualElement.content.networkType == NetworkType.PULLDOWN) {
+        if (this.info.channelSymmetry && visualElement.content.networkType === NetworkType.PULLDOWN) {
           yPos += channelSize + this.info.parallelElementChannelOffset;
         }
 
@@ -5450,7 +5500,8 @@ var CalculatePositions = /*#__PURE__*/function () {
  * Responsible for collecting transistors, variables and literals in a given CMOSVisual.
  * @constructor
  * @param {CMOSVisual} [hull] The visual hull for which everything will be collected.
- * @param {CMOSVisualBuilder} [builder] The object currently building the CMOSVisual for which the sizes will be calculated.
+ * @param {CMOSVisualBuilder} [builder] The object currently building the CMOSVisual
+ * for which the sizes will be calculated.
  * @param {CMOSVisualInfo} [info] The info object attached the given visual hull.
  */
 
@@ -5470,7 +5521,8 @@ var Collect = /*#__PURE__*/function () {
 
   _createClass(Collect, [{
     key: "_collectAll",
-    value: function _collectAll(hull) {
+    value: function _collectAll(hullIn) {
+      var hull = hullIn;
       hull = this._collectTransistors(hull, hull);
       hull = this._collectVariables(hull);
       hull = this._collectLiterals(hull);
@@ -5479,8 +5531,10 @@ var Collect = /*#__PURE__*/function () {
     /**
        * Collects transistors recursively for a given CMOSVisual.
        * @param {CMOSVisual} [hull] The CMOSVisual for which the transistors will be collected.
-       * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement] The current VisualElement.
-       * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} The given VisualElement.
+       * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+       * CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement] The current VisualElement.
+       * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+       * CMOSVisualParallelElement|CMOSVisualTransistor} The given VisualElement.
        */
 
   }, {
@@ -5589,7 +5643,8 @@ var Collect = /*#__PURE__*/function () {
 /**
  * Responsible for calculating the connectionPoints for each element.
  * @constructor
- * @param {CMOSVisual} [visualElement] The visual hull for which the connectionPoints will be calculated.
+ * @param {CMOSVisual} [visualElement] The visual hull for which
+ * the connectionPoints will be calculated.
  * @param {CMOSVisualInfo} [info] The info object attached the given visual hull.
  */
 
@@ -5602,8 +5657,11 @@ var CalculateConnectionPoints = /*#__PURE__*/function () {
   }
   /**
      * Determines how the given VisualElement will be handled.
-     * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement] The VisualElement to be handled.
-     * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} The given VisualElement.
+     * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+     * CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement]
+     * The VisualElement to be handled.
+     * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+     * CMOSVisualParallelElement|CMOSVisualTransistor} The given VisualElement.
      */
 
 
@@ -5665,7 +5723,8 @@ var CalculateConnectionPoints = /*#__PURE__*/function () {
           var child = _step2.value;
 
           this._calculateConnectionPoints(child);
-        } // CMOSVisualExpressions take the connectionPoints of their highest and lowest child (by position).
+        } // CMOSVisualExpressions take the connectionPoints of their highest
+        // and lowest child (by position).
 
       } catch (err) {
         _iterator2.e(err);
@@ -5692,7 +5751,8 @@ var CalculateConnectionPoints = /*#__PURE__*/function () {
           var child = _step3.value;
 
           this._calculateConnectionPoints(child);
-        } // CMOSVisualSeriesElements take the connectionPoints of their highest and lowest child (by position).
+        } // CMOSVisualSeriesElements take the connectionPoints of their
+        // highest and lowest child (by position).
 
       } catch (err) {
         _iterator3.e(err);
@@ -5705,7 +5765,8 @@ var CalculateConnectionPoints = /*#__PURE__*/function () {
     }
     /**
        * Calculates the connectionPoints for a CMOSVisualParallelElement Object.
-       * @param {CMOSVisualParallelElement} [visualElement] The CMOSVisualParallelElement to be handled.
+       * @param {CMOSVisualParallelElement} [visualElement]
+       * The CMOSVisualParallelElement to be handled.
        */
 
   }, {
@@ -5731,15 +5792,15 @@ var CalculateConnectionPoints = /*#__PURE__*/function () {
       var upperY = 0;
       var lowerY = 0; // Determine x-values
 
-      if (this.info.connectionPointAlignment == HORIZONTALALIGNMENT.LEFT) {
+      if (this.info.connectionPointAlignment === HORIZONTALALIGNMENT.LEFT) {
         // Take the connectionPoints of your leftmost child as reference.
         upperX = visualElement.children[0].upperConnectionPoint.x;
         lowerX = visualElement.children[0].lowerConnectionPoint.x;
-      } else if (this.info.connectionPointAlignment == HORIZONTALALIGNMENT.CENTER) {
+      } else if (this.info.connectionPointAlignment === HORIZONTALALIGNMENT.CENTER) {
         // Take the average of connectionPoints from your leftmost and rightmost child as reference.
         upperX = (visualElement.children[0].upperConnectionPoint.x + visualElement.children[visualElement.children.length - 1].upperConnectionPoint.x) / 2;
         lowerX = (visualElement.children[0].lowerConnectionPoint.x + visualElement.children[visualElement.children.length - 1].lowerConnectionPoint.x) / 2;
-      } else if (this.info.connectionPointAlignment == HORIZONTALALIGNMENT.RIGHT) {
+      } else if (this.info.connectionPointAlignment === HORIZONTALALIGNMENT.RIGHT) {
         // Take the connectionPoints of your rightmost child as reference.
         upperX = visualElement.children[visualElement.children.length - 1].upperConnectionPoint.x;
         lowerX = visualElement.children[visualElement.children.length - 1].lowerConnectionPoint.x;
@@ -5772,7 +5833,7 @@ var CalculateConnectionPoints = /*#__PURE__*/function () {
         _iterator5.f();
       }
 
-      if (visualElement.content.networkType == NetworkType.PULLDOWN && this.info.channelSymmetry) {
+      if (visualElement.content.networkType === NetworkType.PULLDOWN && this.info.channelSymmetry) {
         if (this.info.useOnlyNeededChannels) {
           upperY -= visualElement.neededChannels.length * this.info.channelWidth + this.info.parallelElementChannelOffset;
         } else {
@@ -5842,10 +5903,13 @@ var CalculateEntryPoints = /*#__PURE__*/function () {
     this.result = this._calculateEntryPoints(hull);
   }
   /**
-     * Determines how the given VisualElement will be handled.
-     * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement] The VisualElement to be handled.
-     * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} The given VisualElement.
-     */
+   * Determines how the given VisualElement will be handled.
+   * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+   * CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement]
+   * The VisualElement to be handled.
+   * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+   * CMOSVisualParallelElement|CMOSVisualTransistor} The given VisualElement.
+   */
 
 
   _createClass(CalculateEntryPoints, [{
@@ -5900,10 +5964,8 @@ var CalculateEntryPoints = /*#__PURE__*/function () {
     value: function _handleCMOSVisualExpression(visualElement) {
       // The entryPoints of a CMOSVisualExpression are arranged in a diagonal shape.
       for (var i = 0; i < visualElement.channels.length; i++) {
-        var xCoor = void 0;
         var yCoor = void 0;
-        var entryPoint = void 0;
-        xCoor = visualElement.x + i * this.info.channelWidth + this.info.channelWidth / 2;
+        var xCoor = visualElement.x + i * this.info.channelWidth + this.info.channelWidth / 2;
 
         if (this.info.equalizePullUpPullDown) {
           yCoor = visualElement.y + Math.max(visualElement.children[0].height, visualElement.children[1].height) + this.info.channelWidth * i + this.info.channelWidth / 2;
@@ -5911,7 +5973,7 @@ var CalculateEntryPoints = /*#__PURE__*/function () {
           yCoor = visualElement.y + visualElement.children[0].height + this.info.channelWidth * i + this.info.channelWidth / 2;
         }
 
-        entryPoint = {
+        var entryPoint = {
           x: xCoor,
           y: yCoor
         };
@@ -5943,24 +6005,26 @@ var CalculateEntryPoints = /*#__PURE__*/function () {
     value: function _handleCMOSVisualSeriesElement(visualElement) {
       for (var i = 0; i < visualElement.channels.length; i++) {
         var xCoor = void 0;
-        var yCoor = void 0;
-        var entryPoint = void 0; // Determine the coordinates
+        var yCoor = void 0; // Determine the coordinates
 
         if (visualElement.parent instanceof CMOSVisualExpression) {
-          // A direct connection can be established. Copy the entryPoint of the parent to accomplish this.
+          // A direct connection can be established.
+          // Copy the entryPoint of the parent to accomplish this.
           xCoor = visualElement.parent.getEntryPoint(visualElement.channels[i]).x;
           yCoor = visualElement.parent.getEntryPoint(visualElement.channels[i]).y;
-        } else if (visualElement.content.networkType == NetworkType.PULLDOWN && this.info.channelSymmetry) {
-          // The element must have a CMOSVisualParallelElement as parent. Take the same entryPoint as its parent.
+        } else if (visualElement.content.networkType === NetworkType.PULLDOWN && this.info.channelSymmetry) {
+          // The element must have a CMOSVisualParallelElement as parent.
+          // Take the same entryPoint as its parent.
           xCoor = visualElement.x - visualElement.channels.length * this.info.channelWidth + i * this.info.channelWidth + this.info.channelWidth / 2;
           yCoor = visualElement.y - visualElement.channels.length * this.info.channelWidth + i * this.info.channelWidth + this.info.channelWidth / 2;
         } else {
-          // The element must have a CMOSVisualParallelElement as parent. Take the same entryPoint as its parent.
+          // The element must have a CMOSVisualParallelElement as parent.
+          // Take the same entryPoint as its parent.
           xCoor = visualElement.x - visualElement.channels.length * this.info.channelWidth + i * this.info.channelWidth + this.info.channelWidth / 2;
           yCoor = visualElement.y + visualElement.height + i * this.info.channelWidth + this.info.channelWidth / 2;
         }
 
-        entryPoint = {
+        var entryPoint = {
           x: xCoor,
           y: yCoor
         };
@@ -5993,9 +6057,10 @@ var CalculateEntryPoints = /*#__PURE__*/function () {
       }
     }
     /**
-       * Calculates the entryPoints for a CMOSVisualParallelElement Object.
-       * @param {CMOSVisualParallelElement} [visualElement] The CMOSVisualParallelElement to be handled.
-       */
+     * Calculates the entryPoints for a CMOSVisualParallelElement Object.
+     * @param {CMOSVisualParallelElement} [visualElement]
+     * The CMOSVisualParallelElement to be handled.
+     */
 
   }, {
     key: "_handleCMOSVisualParallelElement",
@@ -6006,7 +6071,7 @@ var CalculateEntryPoints = /*#__PURE__*/function () {
       for (var i = 0; i < visualElement.children.length; i++) {
         var child = visualElement.children[i];
 
-        if (i == 0 && visualElement.parent instanceof CMOSVisualExpression) {
+        if (i === 0 && visualElement.parent instanceof CMOSVisualExpression) {
           // Let the child know that a direct connection can be established.
           child.parent = visualElement.parent;
 
@@ -6021,7 +6086,7 @@ var CalculateEntryPoints = /*#__PURE__*/function () {
 
       for (var _i = 0; _i < visualElement.neededChannels.length; _i++) {
         // Determine the y-value for the needed channel
-        if (visualElement.content.networkType == NetworkType.PULLDOWN && this.info.channelSymmetry) {
+        if (visualElement.content.networkType === NetworkType.PULLDOWN && this.info.channelSymmetry) {
           yCoor = visualElement.y + _i * this.info.channelWidth + this.info.channelWidth / 2 + this.info.parallelElementChannelOffset;
         } else {
           yCoor = visualElement.y + visualElement.height - visualElement.neededChannels.length * this.info.channelWidth - this.info.parallelElementChannelOffset + _i * this.info.channelWidth + this.info.channelWidth / 2;
@@ -6043,16 +6108,11 @@ var CalculateEntryPoints = /*#__PURE__*/function () {
 
       for (var _i2 = 0; _i2 < firstChild.channels.length; _i2++) {
         var channel = firstChild.channels[_i2];
-
-        var _yCoor = void 0;
-
-        var _xCoor = void 0;
-
-        _xCoor = firstChild.getEntryPoint(channel).x;
-        _yCoor = firstChild.getEntryPoint(channel).y;
+        var xCoord = firstChild.getEntryPoint(channel).x;
+        var yCoord = firstChild.getEntryPoint(channel).y;
         visualElement.entryPointTable[[channel, firstChild.id]] = {
-          x: _xCoor,
-          y: _yCoor
+          x: xCoord,
+          y: yCoord
         };
       }
     }
@@ -6065,10 +6125,8 @@ var CalculateEntryPoints = /*#__PURE__*/function () {
     key: "_handleCMOSVisualTransistor",
     value: function _handleCMOSVisualTransistor(visualElement) {
       // CMOSVisualTransistor have defined entryPoints.
-      var xCoor;
-      var yCoor;
-      xCoor = visualElement.x;
-      yCoor = visualElement.y + this.info.transistorPadTop + this.info.transistorHeight / 2;
+      var xCoor = visualElement.x;
+      var yCoor = visualElement.y + this.info.transistorPadTop + this.info.transistorHeight / 2;
       visualElement.entryPointTable[visualElement.channels[0]] = {
         x: xCoor,
         y: yCoor
@@ -6104,10 +6162,10 @@ var CalculateExitPoints = /*#__PURE__*/function () {
     this.result = this._calculateExitPoints(hull);
   }
   /**
-     * Determines how the given VisualElement will be handled.
-     * @param {CMOSVisual|CMOSVisualExpression} [visualElement] The VisualElement to be handled.
-     * @return {CMOSVisual|CMOSVisualExpression} The given VisualElement.
-     */
+   * Determines how the given VisualElement will be handled.
+   * @param {CMOSVisual|CMOSVisualExpression} [visualElement] The VisualElement to be handled.
+   * @return {CMOSVisual|CMOSVisualExpression} The given VisualElement.
+   */
 
 
   _createClass(CalculateExitPoints, [{
@@ -6183,11 +6241,11 @@ var CalculateExitPoints = /*#__PURE__*/function () {
       var xCoor;
       var yCoor; // Determine the x-component
 
-      if (this.info.connectionPointAlignment == HORIZONTALALIGNMENT.LEFT) {
+      if (this.info.connectionPointAlignment === HORIZONTALALIGNMENT.LEFT) {
         xCoor = Math.min(point1.x, point2.x);
-      } else if (this.info.connectionPointAlignment == HORIZONTALALIGNMENT.CENTER) {
+      } else if (this.info.connectionPointAlignment === HORIZONTALALIGNMENT.CENTER) {
         xCoor = (point1.x + point2.x) / 2;
-      } else if (this.info.connectionPointAlignment == HORIZONTALALIGNMENT.RIGHT) {
+      } else if (this.info.connectionPointAlignment === HORIZONTALALIGNMENT.RIGHT) {
         xCoor = Math.max(point1.x, point2.x);
       } // Determine the y-component
 
@@ -6206,13 +6264,11 @@ var CalculateExitPoints = /*#__PURE__*/function () {
         } else {
           yCoor = visualElement.y + visualElement.children[0].height + this.info.channelNum * this.info.channelWidth + this.info.channelWidth / 2;
         }
-      } else {
+      } else if (this.info.equalizePullUpPullDown) {
         // Treat the exitPoint to be calculated as an entryPoint.
-        if (this.info.equalizePullUpPullDown) {
-          yCoor = visualElement.y + Math.max(visualElement.children[0].height, visualElement.children[1].height) + this.info.channelWidth * this.info.getChannelId(visualElement.content) + this.info.channelWidth / 2;
-        } else {
-          yCoor = visualElement.y + visualElement.children[0].height + this.info.channelWidth * this.info.getChannelId(visualElement.content) + this.info.channelWidth / 2;
-        }
+        yCoor = visualElement.y + Math.max(visualElement.children[0].height, visualElement.children[1].height) + this.info.channelWidth * this.info.getChannelId(visualElement.content) + this.info.channelWidth / 2;
+      } else {
+        yCoor = visualElement.y + visualElement.children[0].height + this.info.channelWidth * this.info.getChannelId(visualElement.content) + this.info.channelWidth / 2;
       }
 
       visualElement.exitPoint = {
@@ -6266,7 +6322,7 @@ var WireNodeBase = /*#__PURE__*/function () {
     key: "removeChild",
     value: function removeChild(child) {
       for (var i = 0; i < this.children.length; i++) {
-        if (this.children[i] == child) {
+        if (this.children[i] === child) {
           this.children.splice(i, 1);
           return true;
         }
@@ -6284,7 +6340,7 @@ var WireNodeBase = /*#__PURE__*/function () {
         for (_iterator.s(); !(_step = _iterator.n()).done;) {
           var child = _step.value;
 
-          if (child.x == x && child.y == y) {
+          if (child.x === x && child.y === y) {
             return child;
           }
         }
@@ -6558,10 +6614,13 @@ var GenerateConnectionWires = /*#__PURE__*/function () {
   /**
      * Determines how the given VisualElement will be handled.
      * @param {CMOSVisual} [hull] The CMOSVisual visualElement belongs to.
-     * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement] The VisualElement to be handled.
+     * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+     * CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement]
+     * The VisualElement to be handled.
      * @param {WireBendNode} [upperNode] The upper wireNode connecting to this element.
      * @param {WireBendNode} [lowerNode] The lower wireNode connecting to this element.
-     * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} The given VisualElement.
+     * @return {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+     * CMOSVisualParallelElement|CMOSVisualTransistor} The given VisualElement.
      */
 
 
@@ -6569,7 +6628,7 @@ var GenerateConnectionWires = /*#__PURE__*/function () {
     key: "_generateConnectionWires",
     value: function _generateConnectionWires(hull, visualElement, upperNode, lowerNode) {
       if (visualElement instanceof CMOSVisual) {
-        this._handleCMOSVisual(hull, visualElement, upperNode, lowerNode);
+        this._handleCMOSVisual(hull, visualElement);
       } else if (visualElement instanceof CMOSVisualExpression) {
         this._handleCMOSVisualExpression(hull, visualElement, upperNode, lowerNode);
       } else if (visualElement instanceof CMOSVisualSeriesElement) {
@@ -6588,13 +6647,11 @@ var GenerateConnectionWires = /*#__PURE__*/function () {
        * Generates the connectionWires for a CMOSVisual.
        * @param {CMOSVisual} [hull] The CMOSVisual visualElement belongs to.
        * @param {CMOSVisual} [visualElement] The given CMOSVisual.
-       * @param {WireBendNode} [upperNode] The upper wireNode connecting to this element.
-       * @param {WireBendNode} [lowerNode] The lower wireNode connecting to this element.
        */
 
   }, {
     key: "_handleCMOSVisual",
-    value: function _handleCMOSVisual(hull, visualElement, upperNode, lowerNode) {
+    value: function _handleCMOSVisual(hull, visualElement) {
       // Establish supplyWires.
       var vcc = new Wire(new WireBendNode(0, 0, null, false));
       var gnd = new Wire(new WireBendNode(0, visualElement.height, null, false)); // Create builders for the supplyWires.
@@ -6666,7 +6723,7 @@ var GenerateConnectionWires = /*#__PURE__*/function () {
 
       if (this.info.tunnelExpressions && visualElement.content.id < hull.children.length - 1) {
         builderMiddle.advanceX(visualElement.x + visualElement.width - visualElement.content.name.length * this.info.charWidth, this.info.enableConnectionLineJoints);
-      } else if (visualElement.content.id == hull.children.length - 1) {
+      } else if (visualElement.content.id === hull.children.length - 1) {
         builderMiddle.advanceX(hull.width, this.info.enableConnectionLineJoints);
       }
 
@@ -6692,8 +6749,8 @@ var GenerateConnectionWires = /*#__PURE__*/function () {
 
         if (child instanceof CMOSVisualTransistor) {
           // Connect the transistor and create a new wire if necessary.
-          var connectionUp = child.content.type == CMOSTransistorType$1.PMOS ? TRANSISTOR_CONNECTION_TYPES.SOURCE : TRANSISTOR_CONNECTION_TYPES.DRAIN;
-          var connectionDown = child.content.type == CMOSTransistorType$1.PMOS ? TRANSISTOR_CONNECTION_TYPES.DRAIN : TRANSISTOR_CONNECTION_TYPES.SOURCE;
+          var connectionUp = child.content.type === CMOSTransistorType$1.PMOS ? TRANSISTOR_CONNECTION_TYPES.SOURCE : TRANSISTOR_CONNECTION_TYPES.DRAIN;
+          var connectionDown = child.content.type === CMOSTransistorType$1.PMOS ? TRANSISTOR_CONNECTION_TYPES.DRAIN : TRANSISTOR_CONNECTION_TYPES.SOURCE;
           builderTop.advanceX(child.upperConnectionPoint.x, this.info.enableConnectionLineJoints);
           builderTop.connectTransistor(child, connectionUp, this.info);
 
@@ -6776,16 +6833,16 @@ var GenerateConnectionWires = /*#__PURE__*/function () {
       // Create builders for existing wires.
       var builderTop = new WireBuilder(upperNode);
       var builderBottom = new WireBuilder(lowerNode);
-      var connectionUp = visualElement.content.type == CMOSTransistorType$1.PMOS ? TRANSISTOR_CONNECTION_TYPES.SOURCE : TRANSISTOR_CONNECTION_TYPES.DRAIN;
-      var connectionDown = visualElement.content.type == CMOSTransistorType$1.PMOS ? TRANSISTOR_CONNECTION_TYPES.DRAIN : TRANSISTOR_CONNECTION_TYPES.SOURCE; // Connect the transistor.
+      var connectionUp = visualElement.content.type === CMOSTransistorType$1.PMOS ? TRANSISTOR_CONNECTION_TYPES.SOURCE : TRANSISTOR_CONNECTION_TYPES.DRAIN;
+      var connectionDown = visualElement.content.type === CMOSTransistorType$1.PMOS ? TRANSISTOR_CONNECTION_TYPES.DRAIN : TRANSISTOR_CONNECTION_TYPES.SOURCE; // Connect the transistor.
 
       builderTop.connectTransistor(visualElement, connectionUp, this.info);
       builderBottom.connectTransistor(visualElement, connectionDown, this.info);
     }
     /**
-       * Used to retrieve the visual hull after generating the connectionWires.
-       * @return {CMOSVisual} The resulting CMOSVisual.
-       */
+     * Used to retrieve the visual hull after generating the connectionWires.
+     * @return {CMOSVisual} The resulting CMOSVisual.
+     */
 
   }, {
     key: "getResult",
@@ -6856,9 +6913,12 @@ var GenerateExpressionWires = /*#__PURE__*/function () {
        * Connects a given expressionWire to a given transistor.
        * @param {CMOSVisual} [hull] The CMOSVisual for which the expressionWires will be generated.
        * @param {WireBuilder} [wireBuilder] The wireBuilder for the expressionWire.
-       * @param {CMOSVisualExpression} [visualExpression] The CMOSVisualExpression this expressionWire belongs to.
-       * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement] The current VisualElement.
-       * @param {CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} [caller] The visualElement of the calling function.
+       * @param {CMOSVisualExpression} [visualExpression] The CMOSVisualExpression
+       * this expressionWire belongs to.
+       * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement
+       * |CMOSVisualTransistor} [visualElement] The current VisualElement.
+       * @param {CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement
+       * |CMOSVisualTransistor} [caller] The visualElement of the calling function.
        */
 
   }, {
@@ -6871,12 +6931,11 @@ var GenerateExpressionWires = /*#__PURE__*/function () {
       if (visualElement instanceof CMOSVisualExpression) {
         if (this.info.singleRows) {
           // Advance directly to the CMOSVisualExpression of the transistor to be connected.
-          var _point;
+          var _point = visualElement.getEntryPoint(channelId);
 
           var leftMove;
-          _point = visualElement.getEntryPoint(channelId);
 
-          if (visualElement.content.id == 0) {
+          if (visualElement.content.id === 0) {
             leftMove = 0;
           } else if (wireBuilder.current.y > _point.y) {
             leftMove = (this.info.channelNum + 1) * this.info.channelWidth;
@@ -6890,13 +6949,11 @@ var GenerateExpressionWires = /*#__PURE__*/function () {
         } else {
           // Advance to the CMOSVisualExpression of the transistor to be connected.
           for (var i = visualExpression.content.id + 1; i < visualElement.content.id + 1; i++) {
-            var _point2 = void 0;
+            var _point2 = hull.children[i].getEntryPoint(channelId);
 
             var _leftMove = void 0;
 
-            _point2 = hull.children[i].getEntryPoint(channelId);
-
-            if (i == 0) {
+            if (i === 0) {
               _leftMove = 0;
             } else if (wireBuilder.current.y > _point2.y) {
               _leftMove = (this.info.channelNum + 1) * this.info.channelWidth;
@@ -7008,8 +7065,11 @@ var GenerateVariableWires = /*#__PURE__*/function () {
        * @param {CMOSVisual} [hull] The CMOSVisual for which the variableWire will be generated.
        * @param {WireBuilder} [wireBuilder] The wireBuilder for the variableWire.
        * @param {CMOSVisualExpression} [variable] The CMOSVisualVariable this variableWire belongs to.
-       * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement] The current VisualElement.
-       * @param {CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} [caller] The visualElement of the calling function.
+       * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|
+       * CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement] The current VisualElement.
+       * @param {CMOSVisualExpression|CMOSVisualSeriesElement|
+       * CMOSVisualParallelElement|CMOSVisualTransistor} [caller]
+       * The visualElement of the calling function.
        */
 
   }, {
@@ -7022,12 +7082,11 @@ var GenerateVariableWires = /*#__PURE__*/function () {
       if (visualElement instanceof CMOSVisualExpression) {
         if (this.info.singleRows) {
           // Advance directly to the CMOSVisualExpression of the transistor to be connected.
-          var _point;
+          var _point = visualElement.getEntryPoint(channelId);
 
           var leftMove;
-          _point = visualElement.getEntryPoint(channelId);
 
-          if (visualElement.content.id == 0) {
+          if (visualElement.content.id === 0) {
             leftMove = 0;
           } else if (wireBuilder.current.y > _point.y) {
             leftMove = (this.info.channelNum + 1) * this.info.channelWidth;
@@ -7041,13 +7100,11 @@ var GenerateVariableWires = /*#__PURE__*/function () {
         } else {
           // Advance to the CMOSVisualExpression of the transistor to be connected.
           for (var i = 0; i < visualElement.content.id + 1; i++) {
-            var _point2 = void 0;
+            var _point2 = hull.children[i].getEntryPoint(channelId);
 
             var _leftMove = void 0;
 
-            _point2 = hull.children[i].getEntryPoint(channelId);
-
-            if (i == 0) {
+            if (i === 0) {
               _leftMove = 0;
             } else if (wireBuilder.current.y > _point2.y) {
               _leftMove = (this.info.channelNum + 1) * this.info.channelWidth;
@@ -7154,8 +7211,10 @@ var GenerateLiteralWires = /*#__PURE__*/function () {
        * Connects a given literalWire to a given transistor.
        * @param {CMOSVisual} [hull] The CMOSVisual for which the literalWire will be generated.
        * @param {CMOSVisualLiteral} [literal] The literal for which the literalWire will be generated.
-       * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} [visualElement] The current VisualElement.
-       * @param {CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|CMOSVisualTransistor} [caller] The visualElement of the calling function.
+       * @param {CMOSVisual|CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|
+       * CMOSVisualTransistor} [visualElement] The current VisualElement.
+       * @param {CMOSVisualExpression|CMOSVisualSeriesElement|CMOSVisualParallelElement|
+       * CMOSVisualTransistor} [caller] The visualElement of the calling function.
        * @return {WireBuilder} The wireBuilder for the literalWire.
        */
 
@@ -7265,7 +7324,8 @@ var CMOSVisualBuilder = /*#__PURE__*/function () {
      * Generate the visual hull from the given cmos object.
      * @param {CMOS} [cmos] The CMOS-Object for which a visual hull shall be generated.
      * @param {JSObject} [options] Passed options.
-     * @param {Boolean} [resetId] Determines if the internal idCounter will be reset after the function call.
+     * @param {Boolean} [resetId] Determines if the internal idCounter
+     * will be reset after the function call.
      * @return {CMOSVisual}
      */
 
@@ -7709,7 +7769,7 @@ var SVGGenerator = /*#__PURE__*/function () {
       var transistorToper = ["<path fill=\"none\" stroke=\"black\" d=\"M ".concat((transistor.x + hull.info.transistorPadLeft) * scale, " ").concat((transistorBaseBegin.y + transistor.height / 2) * scale), "H ".concat((transistorBaseBegin.x - hull.info.transistorWidth * 0.6) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.3) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.7) * scale), '"/>'].join(' ');
       var finalString;
 
-      if (transistor.content.type == CMOSTransistorType$1.PMOS) {
+      if (transistor.content.type === CMOSTransistorType$1.PMOS) {
         var emptyCircle = ['<circle fill="white" stroke="black"', "cx=\"".concat((transistorBaseBegin.x - hull.info.transistorWidth * 0.7) * scale, "\""), "cy=\"".concat((transistorBaseBegin.y + transistor.height / 2) * scale, "\""), "r=\"".concat(hull.info.transistorWidth * 0.1 * scale, "\""), '/>'].join(' ');
         finalString = [transistorBase, transistorToper, emptyCircle].join('\n');
       } else {
@@ -7768,7 +7828,7 @@ var SVGGenerator = /*#__PURE__*/function () {
         } else {
           svgStrings.push("L ".concat(wireNode.x * scale, " ").concat(wireNode.y * scale));
 
-          if (wireNode.children.length == 1) {
+          if (wireNode.children.length === 1) {
             svgStrings.push(this.getWireSVG(hull, wireNode.children[0], scale));
           } else {
             svgStrings.push("L ".concat(wireNode.x * scale, " ").concat(wireNode.y * scale, " \"/>"));
@@ -8104,21 +8164,21 @@ var TextCMOS = /*#__PURE__*/function () {
 
     this.grid.removeRedundantElements(1, 5);
   }
+  /**
+   * Draw transistors to internal resized grid
+   * @private
+   */
+
 
   _createClass(TextCMOS, [{
     key: "drawTransistors",
-
-    /**
-     * Draw transistors to internal resized grid
-     * @private
-     */
     value: function drawTransistors() {
       var i;
 
       for (var x = 0; x < this.cmos.grid.matrix.length; ++x) {
         for (var y = 0; y < this.cmos.grid.matrix[x].length; ++y) {
-          var rx = x * 5,
-              ry = y * 7;
+          var rx = x * 5;
+          var ry = y * 7;
           var item = this.cmos.grid.matrix[x][y];
 
           if (item.content.length > 0) {
@@ -8131,7 +8191,7 @@ var TextCMOS = /*#__PURE__*/function () {
               this.grid.matrix[rx + 1][ry + 3].c = '╷';
               this.grid.matrix[rx + 2][ry + 4].c = '│';
 
-              if (item.content[0].type == CMOSTransistorType.PMOS) {
+              if (item.content[0].type === CMOSTransistorType.PMOS) {
                 this.grid.matrix[rx + 2][ry + 3].c = '│';
                 this.grid.matrix[rx + 2][ry + 2].c = '○';
               } else {
@@ -8158,7 +8218,7 @@ var TextCMOS = /*#__PURE__*/function () {
                 for (var j = ry; j < ry + 7; ++j) {
                   this.grid.matrix[i][j].content.push(item.content[0]);
 
-                  if (typeof this.grid.matrix[i][j].c == 'undefined') {
+                  if (typeof this.grid.matrix[i][j].c === 'undefined') {
                     this.grid.matrix[i][j].c = ' ';
                   }
                 }
@@ -8176,14 +8236,14 @@ var TextCMOS = /*#__PURE__*/function () {
         var text = label.text.length > 5 ? 'f' : label.text; // Add padding
 
         while (text.length < 5) {
-          if (label.pos.direction == CMOSWireDirection.EAST) {
-            text = ' ' + text;
+          if (label.pos.direction === CMOSWireDirection.EAST) {
+            text = " ".concat(text);
           } else {
             text += ' ';
           }
         }
 
-        text = ' ' + text + ' '; // Add characters to grid and make row and columns necessary
+        text = " ".concat(text, " "); // Add characters to grid and make row and columns necessary
 
         var x = label.pos.x * 5 + 2;
 
@@ -8197,38 +8257,38 @@ var TextCMOS = /*#__PURE__*/function () {
         this.grid.matrix[x + 1].necessary = true;
       }
     }
-  }, {
-    key: "transferWiresToGrid",
-
     /**
      * Add scaled wires from the original grid to our internal grid
      * @private
      */
+
+  }, {
+    key: "transferWiresToGrid",
     value: function transferWiresToGrid() {
       for (var i = 0; i < this.cmos.grid.wires.length; ++i) {
         var wire = this.cmos.grid.wires[i];
         this.grid.addWire(new CMOSWire(new CMOSWirePosition(wire.posFrom.x * 5 + 2, wire.posFrom.y * 7 + 6), new CMOSWirePosition(wire.posTo.x * 5 + 2, wire.posTo.y * 7 + 6)));
       }
     }
-  }, {
-    key: "drawUnicodeWireItem",
-
     /**
      * Draws the unicode character for the specified wires at the position (x,y)
      * @private
      */
+
+  }, {
+    key: "drawUnicodeWireItem",
     value: function drawUnicodeWireItem(x, y, wires) {
       var isFull = false;
       var directions = 0;
-      var N = 1,
-          E = 2,
-          S = 4,
-          W = 8;
+      var N = 1;
+      var E = 2;
+      var S = 4;
+      var W = 8;
 
       for (var i = 0; i < wires.length; ++i) {
         var wire = wires[i];
-        var starts = wire.posFrom.x == x && wire.posFrom.y == y;
-        var ends = wire.posTo.x == x && wire.posTo.y == y;
+        var starts = wire.posFrom.x === x && wire.posFrom.y === y;
+        var ends = wire.posTo.x === x && wire.posTo.y === y;
 
         if (starts || ends) {
           // Wire starts or ends at this point
@@ -8245,29 +8305,27 @@ var TextCMOS = /*#__PURE__*/function () {
           // First wire that just pases through this point
           directions |= wire.isVertical() ? N | S : E | W;
           isFull = true;
-        } else {
+        } else if (wire.isHorizontal()) {
           // Second wire that pases through this point => cross of independent wires
-          if (wire.isHorizontal()) {
-            this.drawWireCrossHorizontal(x, y);
-          } else {
-            this.drawWireCrossVertical(x, y);
-          }
+          this.drawWireCrossHorizontal(x, y);
+        } else {
+          this.drawWireCrossVertical(x, y);
         }
       }
 
-      if (typeof this.grid.matrix[x][y].c == 'undefined') {
+      if (typeof this.grid.matrix[x][y].c === 'undefined') {
         this.grid.matrix[x][y].c = this.getUnicodeCharForWireDirections(directions);
       }
     }
-  }, {
-    key: "drawWireCrossHorizontal",
-
     /**
      * Draw horizontal wire cross at position (x,y)
      * @param {number} x The x coordinate where should draw the wire cross
      * @param {number} y The y coordinate where should draw the wire cross
      * @private
      */
+
+  }, {
+    key: "drawWireCrossHorizontal",
     value: function drawWireCrossHorizontal(x, y) {
       this.grid.matrix[x][y - 1].c = '╯';
       this.grid.matrix[x][y + 1].c = '╰';
@@ -8279,15 +8337,15 @@ var TextCMOS = /*#__PURE__*/function () {
       this.grid.matrix[0][y + 1].necessary = true;
       this.grid.matrix[x - 1].necessary = true;
     }
-  }, {
-    key: "drawWireCrossVertical",
-
     /**
      * Draw vertical wire cross at position (x,y)
      * @param {number} x The x coordinate where should draw the wire cross
      * @param {number} y The y coordinate where should draw the wire cross
      * @private
      */
+
+  }, {
+    key: "drawWireCrossVertical",
     value: function drawWireCrossVertical(x, y) {
       this.grid.matrix[x - 1][y].c = '╯';
       this.grid.matrix[x - 1][y - 1].c = '╭';
@@ -8299,20 +8357,21 @@ var TextCMOS = /*#__PURE__*/function () {
       this.grid.matrix[x + 1].necessary = true;
       this.grid.matrix[0][y - 1].necessary = true;
     }
-  }, {
-    key: "getUnicodeCharForWireDirections",
-
     /**
      * Returns the unicode character for position where all marked directions are wires
-     * @param {number} directions The direction bit mask: the 4 least significant bits represent WSEN (little endian representation)
+     * @param {number} directions The direction bit mask: the 4 least significant bits
+     * represent WSEN (little endian representation)
      * @return {string}
      * @private
      */
+
+  }, {
+    key: "getUnicodeCharForWireDirections",
     value: function getUnicodeCharForWireDirections(directions) {
-      var N = 1,
-          E = 2,
-          S = 4,
-          W = 8;
+      var N = 1;
+      var E = 2;
+      var S = 4;
+      var W = 8;
       var c = ' ';
 
       switch (directions) {
@@ -8379,13 +8438,13 @@ var TextCMOS = /*#__PURE__*/function () {
 
       return c;
     }
-  }, {
-    key: "drawWires",
-
     /**
      * Draw the wires to the internal grid
      * @private
      */
+
+  }, {
+    key: "drawWires",
     value: function drawWires() {
       for (var x = 0; x < this.grid.height; ++x) {
         for (var y = 0; y < this.grid.width; ++y) {
@@ -8395,24 +8454,24 @@ var TextCMOS = /*#__PURE__*/function () {
         }
       }
     }
-  }, {
-    key: "toString",
-
     /**
      * Returns the unicode string representation of the CMOS circuit
      * @return {string}
      */
+
+  }, {
+    key: "toString",
     value: function toString() {
       return this.CMOSGridToString(this.grid);
     }
-  }, {
-    key: "CMOSGridToString",
-
     /**
      * Returns a string representation of the specified CMOS grid
      * @param {CMOSGrid} grid The CMOS grid
      * @return {string}
      */
+
+  }, {
+    key: "CMOSGridToString",
     value: function CMOSGridToString(grid) {
       var parts = [];
 
@@ -8420,15 +8479,24 @@ var TextCMOS = /*#__PURE__*/function () {
         var line = '';
 
         for (var j = 0; j < grid.matrix[i].length; ++j) {
-          //line += grid.matrix[i][j].c ? grid.matrix[i][j].c : grid.matrix[i][j].content.length > 0 ? 'T' : ' ';
-          line += grid.matrix[i][j].c ? grid.matrix[i][j].c : grid.matrix[i][j].content.length > 0 ? grid.matrix[i][j].content[0] instanceof CMOSTransistor ? 'T' : 'W' : ' ';
+          if (grid.matrix[i][j].c) {
+            line += grid.matrix[i][j].c;
+          } else if (grid.matrix[i][j].content.length > 0) {
+            if (grid.matrix[i][j].content[0] instanceof CMOSTransistor) {
+              line += 'T';
+            } else {
+              line += 'W';
+            }
+          } else {
+            line += ' ';
+          }
         }
 
         parts.push(line);
       }
 
-      parts[0] = parts[0].trim() + ' VCC';
-      parts[parts.length - 1] = parts[parts.length - 1].trim() + ' GND';
+      parts[0] = "".concat(parts[0].trim(), " VCC");
+      parts[parts.length - 1] = "".concat(parts[parts.length - 1].trim(), " GND");
       return parts.join('\n');
     }
   }]);
@@ -8594,7 +8662,7 @@ var ComparisonBaseNSigned = /*#__PURE__*/function () {
     _classCallCheck(this, ComparisonBaseNSigned);
 
     if (n1.base !== n2.base) {
-      throw new Error("ComparisonBaseNSigned.constructor(n1, n2): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") must be qual."));
+      throw new Error("ComparisonBaseNSigned.constructor(n1, n2): Base of n1(".concat(n1.base, ")\n        and base of n2(").concat(n2.base, ") must be qual."));
     }
 
     this.result = this._compare(n1, n2);
@@ -8618,7 +8686,7 @@ var ComparisonBaseNSigned = /*#__PURE__*/function () {
       var mult = n1.isNegative && n2.isNegative ? -1 : 1;
 
       if (n1.arr.length - n1.offset > n2.arr.length - n2.offset) {
-        return mult * 1;
+        return mult;
       }
 
       if (n1.arr.length - n1.offset < n2.arr.length - n2.offset) {
@@ -8632,7 +8700,7 @@ var ComparisonBaseNSigned = /*#__PURE__*/function () {
         var b = i < n2.arr.length ? n2.arr[i] : 0;
 
         if (a > b) {
-          return mult * 1;
+          return mult;
         }
 
         if (b > a) {
@@ -8660,7 +8728,6 @@ var Step = /*#__PURE__*/function () {
 
     this.name = name;
     this.data = {};
-    this.next = null;
   }
 
   _createClass(Step, [{
@@ -8672,26 +8739,30 @@ var Step = /*#__PURE__*/function () {
 
   return Step;
 }();
+/**
+ * The Algorithm class saves the steps while the calculation,
+ * so it is used for testing the intermediate steps and also
+ * to display them at the gui.
+ */
+
 
 var Algorithm = /*#__PURE__*/function () {
   function Algorithm() {
     _classCallCheck(this, Algorithm);
 
-    this.start = null;
-    this.curr = null;
+    this.steps = {};
   }
 
   _createClass(Algorithm, [{
     key: "step",
     value: function step(name) {
-      if (this.curr == null) {
-        this.start = new Step(name);
-        this.curr = this.start;
-        return this;
+      var act = this.steps[name];
+
+      if (!act) {
+        this.steps[name] = new Step(name);
       }
 
-      this.curr.next = new Step(name);
-      this.curr = this.curr.next;
+      this.curr = this.steps[name];
       return this;
     }
   }, {
@@ -8810,7 +8881,7 @@ var AdditionBaseNSigned = /*#__PURE__*/function () {
     _classCallCheck(this, AdditionBaseNSigned);
 
     if (n1.base !== n2.base) {
-      throw new Error("AdditionBaseNSigned.constructor(n1, n2): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") must be qual."));
+      throw new Error("AdditionBaseNSigned.constructor(n1, n2): Base of n1(".concat(n1.base, ")\n        and base of n2(").concat(n2.base, ") must be qual."));
     }
 
     this.watcher = null;
@@ -8857,7 +8928,8 @@ var AdditionBaseNSigned = /*#__PURE__*/function () {
 
       if (n2.offset < offset) {
         n2Arr.push.apply(n2Arr, _toConsumableArray(Array(offset - n2.offset).fill(0)));
-      }
+      } // make arrays with the same length
+
 
       var length = Math.max(n1Arr.length, n2Arr.length);
 
@@ -8870,7 +8942,8 @@ var AdditionBaseNSigned = /*#__PURE__*/function () {
       }
 
       var overflow = [];
-      var _final = [];
+      var _final = []; // binary addition
+
       overflow.unshift(0);
 
       for (var i = length - 1; i >= 0; i--) {
@@ -8961,20 +9034,41 @@ var MultiplicationBaseNSigned = /*#__PURE__*/function () {
       var isNegative = n1.isNegative && !n2.isNegative || n2.isNegative && !n1.isNegative;
       this.watcher.step('GetSign').saveVariable('signN1', n1.isNegative).saveVariable('signN2', n2.isNegative).saveVariable('isNegative', isNegative);
       var cur = new NumberBaseNSigned(base, [0], 0, false);
-      var initalOffset = n1.offset - (n2.arr.length - 1 - n2.offset);
-      this.watcher.step('Multiplication').saveVariable('num1', n1).saveVariable('num2', n2);
+      this.watcher.step('Multiplication').saveVariable('num1', n1).saveVariable('num2', n2); // remove right zeros, fastenating the multiplication
+
+      var arr1 = n1.arr;
+      var arr2 = n2.arr;
+
+      while (arr1[arr1.length - 1] === 0 && arr2[arr2.length - 1] === 0 && Math.min(n1.arr.length, n2.arr.length) > 0) {
+        arr1.pop();
+        arr2.pop();
+      } // multiplication with 0
+
+
+      if (Math.min(n1.arr.length, n2.arr.length) === 0) {
+        var _result = new NumberBaseNSigned(base, [0]);
+
+        this.watcher.step('Final').saveVariable('result', _result);
+        return _result;
+      } // main multiplication
+
 
       for (var i = 0; i < n2.arr.length; i++) {
-        var num = new NumberBaseNSigned(base, n1.arr, i + initalOffset, false);
-        var toAdd = new MultiplicationBaseNSingleDigit(num, n2.arr[i]).getResult();
+        var num = new NumberBaseNSigned(base, n1.arr, i, false);
+        var toAdd = new MultiplicationBaseNSingleDigit(num, arr2[i]).getResult();
         this.watcher.step("MultStep".concat(i)).saveVariable('cur', cur).saveVariable('toAdd', toAdd);
+
+        for (var j = 0; j < i; j++) {
+          toAdd.arr.unshift(0);
+        }
+
         cur = new AdditionBaseNSigned(cur, toAdd).getResult();
       }
 
       this.watcher.step('MultFinal').saveVariable('cur', cur);
       var result = new NumberBaseNSigned(base, cur.arr, cur.offset, isNegative);
       this.watcher.step('Final').saveVariable('result', result);
-      return new NumberBaseNSigned(base, cur.arr, cur.offset, isNegative);
+      return result;
     }
   }, {
     key: "getResult",
@@ -8984,121 +9078,6 @@ var MultiplicationBaseNSigned = /*#__PURE__*/function () {
   }]);
 
   return MultiplicationBaseNSigned;
-}();
-
-var DivisionBaseNSigned = /*#__PURE__*/function () {
-  /*#__PURE__*/
-  function DivisionBaseNSigned(n1, n2, manBitNum) {
-    _classCallCheck(this, DivisionBaseNSigned);
-
-    if (manBitNum !== undefined) {
-      this.manBitNum = manBitNum;
-    } else {
-      this.manBitNum = null;
-    }
-
-    if (n1.base !== n2.base) {
-      console.log("DivisonBaseNComplement(Number, Number): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") are not compatible."));
-    }
-
-    if (n1.digitNum !== n2.digitNum) {
-      console.log("DivisonBaseNComplement(Number, Number): DigitNum of n1(".concat(n1.digitNum, ") and digitNum of n2(").concat(n2.digitNum, ") are not compatible."));
-    }
-
-    this.watcher = null;
-    this.producedOverflow = false;
-    this.result = this._divide(n1, n2);
-  }
-
-  _createClass(DivisionBaseNSigned, [{
-    key: "_divide",
-    value: function _divide(n1, n2) {
-      this.watcher = new Algorithm();
-      var base = n1.base;
-      var offset = Math.max(n1.offset, n2.offset);
-      var digitsToTake = n1.arr.length + offset + 1;
-      this.watcher.step("DetermineSize").saveVariable('n1Offset', n1.offset).saveVariable('n2Offset', n2.offset).saveVariable('digitNum', n1.digitNum).saveVariable('offset', offset).saveVariable('digitsToTake', digitsToTake); //const n1Translated = n1.translate(digitsToTake - offset);
-      //const n2Translated = n2.translate(digitsToTake - offset);
-
-      var n1_cooy = _toConsumableArray(n1.arr).slice();
-
-      var op2arr = _toConsumableArray(n2.arr).slice(); // fill left op with 0 if smaller than right op
-
-
-      for (var k = 0; k < n2.arr.length - n1.arr.length; k++) {
-        n1_cooy.push(0);
-      } // drop if both ops have 0 on the right
-
-
-      while (n1_cooy[n1_cooy.length - 1] === 0 && op2arr[op2arr.length - 1] === 0) {
-        n1_cooy.splice(-1, 1);
-        op2arr.splice(-1, 1);
-      }
-
-      var op1arr = _toConsumableArray(n1_cooy).slice();
-
-      var arr = []; // unnormalised result
-
-      var remain = true;
-      var op2 = new NumberBaseNSigned(n1.base, op2arr, offset, true);
-      var i = op2arr.length - 1; // iterator while loop, until mantice length
-
-      var pos_op1arr = op2arr.length - 1; // position in left op
-
-      while (i <= this.manBitNum * 2 && remain) {
-        var op1 = new NumberBaseNSigned(n1.base, op1arr, offset, false);
-        var subtractionResult = new AdditionBaseNSigned(op1, op2).getResult();
-        var subarray = subtractionResult.arr.slice();
-
-        if (!subarray.every(function (a) {
-          return a === 0;
-        })) {
-          // subt. not zero
-          if (subtractionResult.isNegative === false) {
-            // subt. positive result
-            arr.push(1);
-            op1arr = subtractionResult.arr;
-          } else {
-            arr.push(0);
-          }
-
-          if (pos_op1arr >= n1_cooy.length) {
-            op1arr.push(0);
-          } else {
-            op1arr.push(n1_cooy[pos_op1arr]);
-            pos_op1arr = pos_op1arr + 1;
-          }
-        } else {
-          arr.push(1);
-          remain = false; // subt. result is zero => no remain
-        }
-
-        i = i + 1;
-      } //this.watcher.step("Divide").saveVariable('division', operation.watcher);
-
-      /**let resultArr = [...arr];
-       resultArr.push.apply(resultArr, [...Array(Math.max(offset, 0)).fill(0)]);
-       if (resultArr.length < digitsToTake) {
-        resultArr.unshift.apply(resultArr, [...Array(digitsToTake - resultArr.length).fill(0)]);
-      }
-       if (resultArr.length > digitsToTake) {
-        resultArr.splice(0, resultArr.length - digitsToTake);
-      }**/
-      //const finalResult = new NumberBaseNComplement(base, digitsToTake - 2 * offset, resultArr, 2 * offset);
-
-
-      var finalResult = new NumberBaseNSigned(n1.base, [].concat(arr), offset, n1.isNegative !== n2.isNegative);
-      this.watcher.step("Result").saveVariable('digitsToTake', digitsToTake).saveVariable('result', finalResult);
-      return finalResult;
-    }
-  }, {
-    key: "getResult",
-    value: function getResult() {
-      return this.result;
-    }
-  }]);
-
-  return DivisionBaseNSigned;
 }();
 
 function _numToChar(num) {
@@ -9172,8 +9151,15 @@ var NumberBaseNComplement = /*#__PURE__*/function () {
       this._normalizeOffset();
 
       this._normalizeArray();
+    } // delete right digits if the array is to long
+
+
+    while (this.arr.length > digitNum) {
+      this.arr.pop();
     }
 
+    this.negative = negate;
+    this.signBit = negate ? 1 : 0;
     this.stringRepresentation = this._constructString(this.arr);
   }
 
@@ -9196,11 +9182,11 @@ var NumberBaseNComplement = /*#__PURE__*/function () {
 
 
       if (this.arr.length > this.digitNum + this.offset) {
-        this.arr.splice(0, this.arr.length - (this.digitNum + this.offset));
+        this.arr.splice(this.digitNum + this.offset, this.arr.length - (this.digitNum + this.offset));
       } else {
         var _this$arr;
 
-        (_this$arr = this.arr).unshift.apply(_this$arr, _toConsumableArray(Array(this.digitNum + this.offset - this.arr.length).fill(0)));
+        (_this$arr = this.arr).push.apply(_this$arr, _toConsumableArray(Array(this.digitNum + this.offset - this.arr.length).fill(0)));
       }
     }
   }, {
@@ -9302,6 +9288,8 @@ function getBaseNComplementFromString(base, digitNum, str) {
   return new NumberBaseNComplement(base, digitNum, arr, offset);
 }
 
+// maybe make a new file that dedicates itself to the BASENCOMPLEMENT Addition separately
+
 var AdditionBaseNComplement = /*#__PURE__*/function () {
   function AdditionBaseNComplement(n1, n2) {
     _classCallCheck(this, AdditionBaseNComplement);
@@ -9315,6 +9303,7 @@ var AdditionBaseNComplement = /*#__PURE__*/function () {
     }
 
     this.producedOverflow = false;
+    this.carryOutSet = false;
     this.watcher = null;
     this.result = this._add(n1, n2);
   }
@@ -9323,44 +9312,67 @@ var AdditionBaseNComplement = /*#__PURE__*/function () {
     key: "_add",
     value: function _add(n1, n2) {
       this.watcher = new Algorithm();
+      var isEqual = n1.arr.length === n2.arr.length && n1.arr.every(function (value, index) {
+        return value === n2.arr[index];
+      });
+
+      if (isEqual && n1.signBit !== n2.signBit) {
+        // edgecase x - x == zero
+        var _final = [];
+
+        for (var i = 0; i < n1.arr.length; i++) {
+          _final.shift(0);
+        }
+
+        var _result = new NumberBaseNComplement(n1.base, n1.digitNum, _final, 0, false);
+
+        this.watcher.step('Addition').saveVariable('op1', n1).saveVariable('op2', n2).saveVariable('op1Arr', _toConsumableArray(n1.arr)).saveVariable('op2Arr', _toConsumableArray(n2.arr)).saveVariable('carryArr', []).saveVariable('resultArr', [].concat(_final)).saveVariable('result', _result).saveVariable('overflow', this.producedOverflow).saveVariable('equal', isEqual);
+        return _result;
+      }
+
       var base = n1.base;
-      var digitNum = n1.digitNum;
 
       var n1Arr = _toConsumableArray(n1.arr);
 
       var n2Arr = _toConsumableArray(n2.arr);
 
-      var offset = Math.max(n1.offset, n2.offset);
+      var carryBits = [];
+      var _final2 = []; // binary addition
 
-      if (n1.offset < offset) {
-        n1Arr.push.apply(n1Arr, _toConsumableArray(Array(offset - n1.offset).fill(0)));
+      carryBits.unshift(0);
+
+      for (var _i = n1Arr.length - 1; _i >= 0; _i--) {
+        var m = n1Arr[_i] + n2Arr[_i] + carryBits[0];
+
+        _final2.unshift(m % base);
+
+        carryBits.unshift(Math.floor(m / base));
       }
 
-      if (n2.offset < offset) {
-        n2Arr.push.apply(n2Arr, _toConsumableArray(Array(offset - n2.offset).fill(0)));
+      console.log('Actual Add', n1Arr, n2Arr, _final2); // We have an overflow if the XOR of the first two carry out bits are 1
+
+      this.producedOverflow = carryBits[0] !== carryBits[1]; // TODO this negative value is IEEE specific, since an overflow does not change the sign
+
+      var isNegative = n1.signBit === 1 && n2.signBit === 1 || !(n1.signBit === 0 && n2.signBit === 0) && _final2[0] === 1 && !this.producedOverflow;
+
+      if (isNegative) {
+        // cut throuth overflow for negative values
+        while (_final2.length > n1.digitNum) {
+          _final2.shift();
+        }
       }
 
-      var overflow = [];
-      var _final = [];
-      overflow.unshift(0);
+      var digitNum = n1.digitNum; // add overflow for positive or neg/neg addition
 
-      for (var i = n1Arr.length - 1; i >= 0; i--) {
-        var m = n1Arr[i] + n2Arr[i] + overflow[0];
+      if (n1.signBit === n2.signBit && carryBits.length > digitNum) {
+        digitNum++;
 
-        _final.unshift(m % base);
-
-        overflow.unshift(Math.floor(m / base));
+        _final2.unshift(carryBits[0]);
       }
 
-      if (overflow[0] > 0) {
-        _final.unshift(overflow[0]);
-      }
-
-      var result = new NumberBaseNComplement(base, digitNum, _final, offset);
-      var overflowPossible = n1.isNegative() && n2.isNegative() || !n1.isNegative() && !n2.isNegative();
-      var signChanged = overflowPossible && (n1.isNegative() && !result.isNegative() || !n1.isNegative() && result.isNegative());
-      this.producedOverflow = overflow[0] > 0 && signChanged;
-      this.watcher.step('Addition').saveVariable('op1', n1).saveVariable('op2', n2).saveVariable('op1Arr', _toConsumableArray(n1Arr)).saveVariable('op2Arr', _toConsumableArray(n2Arr)).saveVariable('carryArr', [].concat(overflow)).saveVariable('resultArr', [].concat(_final)).saveVariable('result', result).saveVariable('overflow', this.producedOverflow);
+      var result = new NumberBaseNComplement(base, digitNum, _final2, 0, isNegative);
+      console.log('Actual Add Compl', n1Arr, n2Arr, result.arr);
+      this.watcher.step('Addition').saveVariable('op1', n1).saveVariable('op2', n2).saveVariable('op1Arr', _toConsumableArray(n1Arr)).saveVariable('op2Arr', _toConsumableArray(n2Arr)).saveVariable('carryArr', [].concat(carryBits)).saveVariable('resultArr', [].concat(_final2)).saveVariable('result', result).saveVariable('overflow', this.producedOverflow).saveVariable('equal', isEqual);
       return result;
     }
   }, {
@@ -9373,16 +9385,128 @@ var AdditionBaseNComplement = /*#__PURE__*/function () {
   return AdditionBaseNComplement;
 }();
 
+var DivisionBaseNSigned = /*#__PURE__*/function () {
+  function DivisionBaseNSigned(n1, n2, manBitNum) {
+    _classCallCheck(this, DivisionBaseNSigned);
+
+    if (manBitNum !== undefined) {
+      this.manBitNum = manBitNum;
+    } else {
+      this.manBitNum = null;
+    }
+
+    if (n1.base !== n2.base) {
+      console.log('DivisonBaseNComplement(Number, Number): Base of n1('.concat(n1.base, ') and base of n2(').concat(n2.base, ') are not compatible.'));
+    }
+
+    if (n1.digitNum !== n2.digitNum) {
+      console.log('DivisonBaseNComplement(Number, Number): DigitNum of n1('.concat(n1.digitNum, ') and digitNum of n2(').concat(n2.digitNum, ') are not compatible.'));
+    }
+
+    this.watcher = null;
+    this.producedOverflow = false;
+    this.result = this._divide(n1, n2);
+  }
+
+  _createClass(DivisionBaseNSigned, [{
+    key: "_divide",
+    value: function _divide(n1, n2) {
+      this.watcher = new Algorithm();
+      var offset = Math.max(n1.offset, n2.offset);
+      var digitsToTake = n1.arr.length + offset + 1;
+      this.watcher.step('DetermineSize').saveVariable('n1Offset', n1.offset).saveVariable('n2Offset', n2.offset).saveVariable('digitNum', n1.digitNum).saveVariable('offset', offset).saveVariable('digitsToTake', digitsToTake);
+
+      var n1copy = _toConsumableArray(n1.arr);
+
+      var op2arr = _toConsumableArray(n2.arr); // fill left op with 0 if smaller than right op
+
+
+      for (var k = 0; k < n2.arr.length - n1.arr.length; k++) {
+        n1copy.push(0);
+      } // drop if both ops have 0 on the right
+
+
+      while (n1copy[n1copy.length - 1] === 0 && op2arr[op2arr.length - 1] === 0) {
+        n1copy.splice(-1, 1);
+        op2arr.splice(-1, 1);
+      }
+
+      var op1arr = _toConsumableArray(n1copy);
+
+      var arr = []; // unnormalised result
+
+      var remain = true;
+      var i = op2arr.length - 1; // iterator while loop, until mantice length
+
+      var posOp1arr = op2arr.length; // position in left op
+      // binary division related to long division in binary
+
+      while (i <= this.manBitNum * 2 && remain) {
+        var op1 = new NumberBaseNComplement(n1.base, op1arr.length, op1arr, offset, false);
+        var op2 = new NumberBaseNComplement(n2.base, op2arr.length, op2arr, offset, true);
+        var operation = new AdditionBaseNComplement(op1, op2);
+        var subtractionResult = operation.getResult();
+        this.watcher.step('SubtractionInDivision').saveVariable('Subtraction', operation.watcher);
+
+        var subarray = _toConsumableArray(subtractionResult.arr);
+
+        if (!subarray.every(function (a) {
+          return a === 0;
+        })) {
+          // subt. not zero
+          if (subtractionResult.negative === false) {
+            // subt. positive result
+            arr.push(1);
+            op1arr = _toConsumableArray(subtractionResult.arr);
+          } else {
+            arr.push(0);
+          }
+
+          if (posOp1arr >= n1copy.length) {
+            // add 0 to op1arr
+            op1arr.push(0);
+          } else {
+            // add the value at the actual position of the dividend
+            op1arr.push(n1copy[posOp1arr - 1]);
+            posOp1arr += 1;
+          }
+
+          if (op1arr.length > op2arr.length) {
+            // corrects array length
+            op2arr.unshift(0);
+          }
+        } else {
+          arr.push(1);
+          remain = false; // subt. result is zero => no remain
+        }
+
+        i += 1;
+      }
+
+      var finalResult = new NumberBaseNSigned(n1.base, [].concat(arr), offset, n1.isNegative !== n2.isNegative);
+      this.watcher.step('Result').saveVariable('digitsToTake', digitsToTake).saveVariable('result', finalResult);
+      return finalResult;
+    }
+  }, {
+    key: "getResult",
+    value: function getResult() {
+      return this.result;
+    }
+  }]);
+
+  return DivisionBaseNSigned;
+}();
+
 var SubtractionBaseNComplement = /*#__PURE__*/function () {
   function SubtractionBaseNComplement(n1, n2) {
     _classCallCheck(this, SubtractionBaseNComplement);
 
     if (n1.base !== n2.base) {
-      throw new Error("SubtractionBaseNComplement.constructor(n1, n2): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") must be qual."));
+      throw new Error("SubtractionBaseNComplement.constructor(n1, n2):\n        Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") must be qual."));
     }
 
     if (n1.digitNum !== n2.digitNum) {
-      throw new Error("SubtractionBaseNComplement.constructor(n1, n2): DigitNum of n1(".concat(n1.digitNum, ") and digitNum of n2(").concat(n2.digitNum, ") must be qual."));
+      throw new Error("SubtractionBaseNComplement.constructor(n1, n2):\n        DigitNum of n1(".concat(n1.digitNum, ") and digitNum of n2(").concat(n2.digitNum, ") must be qual."));
     }
 
     this.watcher = null;
@@ -9399,7 +9523,8 @@ var SubtractionBaseNComplement = /*#__PURE__*/function () {
 
       var n1Arr = _toConsumableArray(n1.arr);
 
-      var n2Arr = _toConsumableArray(n2.getFlipedArray());
+      var n2Arr = _toConsumableArray(n2.getFlipedArray()); // twos complement
+
 
       var offset = Math.max(n1.offset, n2.offset);
 
@@ -9411,9 +9536,8 @@ var SubtractionBaseNComplement = /*#__PURE__*/function () {
         n2Arr.push.apply(n2Arr, _toConsumableArray(Array(offset - n2.offset).fill(0)));
       }
 
-      var overflow = [];
-      var _final = [];
-      overflow.unshift(1);
+      var overflow = [1];
+      var _final = []; // subtraction by addition with twos complement
 
       for (var i = n1Arr.length - 1; i >= 0; i--) {
         var m = n1Arr[i] + n2Arr[i] + overflow[0];
@@ -9447,11 +9571,11 @@ var MultiplicationBaseNComplement = /*#__PURE__*/function () {
     _classCallCheck(this, MultiplicationBaseNComplement);
 
     if (n1.base !== n2.base) {
-      throw new Error("MultiplicationBaseNComplement.constructor(n1, n2): Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") must be qual."));
+      throw new Error("MultiplicationBaseNComplement.constructor(n1, n2):\n        Base of n1(".concat(n1.base, ") and base of n2(").concat(n2.base, ") must be qual."));
     }
 
     if (n1.digitNum !== n2.digitNum) {
-      throw new Error("MultiplicationBaseNComplement.constructor(n1, n2): DigitNum of n1(".concat(n1.digitNum, ") and digitNum of n2(").concat(n2.digitNum, ") must be qual."));
+      throw new Error("MultiplicationBaseNComplement.constructor(n1, n2):\n        DigitNum of n1(".concat(n1.digitNum, ") and digitNum of n2(").concat(n2.digitNum, ") must be qual."));
     }
 
     this.watcher = null;
@@ -9742,12 +9866,12 @@ var AdditionIEEE = /*#__PURE__*/function () {
     _classCallCheck(this, AdditionIEEE);
 
     if (n1.expBitNum !== n2.expBitNum) {
-      console.log("AdditionIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ") and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
+      console.log("AdditionIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ")\n        and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
       process.exit(1);
     }
 
     if (n1.manBitNum !== n2.manBitNum) {
-      console.log("AdditionIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ") and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
+      console.log("AdditionIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ")\n        and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
       process.exit(1);
     }
 
@@ -9765,11 +9889,28 @@ var AdditionIEEE = /*#__PURE__*/function () {
       var manBitNum = n1.manBitNum;
       var bitNum = n1.bitNum; // Edgecases:
 
+      if (n1.isZero) {
+        // Return n2
+        var _result = new NumberIEEE(expBitNum, manBitNum, _toConsumableArray(n2.arr));
+
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'n2zero').saveVariable('result', _result);
+        return _result;
+      }
+
+      if (n2.isZero) {
+        // Return n1
+        var _result2 = new NumberIEEE(expBitNum, manBitNum, _toConsumableArray(n1.arr));
+
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'n2zero').saveVariable('result', _result2);
+        return _result2;
+      }
+
       if (n1.isNaN || n2.isNaN || n1.isInfinity && n2.isInfinity && n1.sign !== n2.sign) {
         // Return NaN
-        var toSave = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
-        this.watcher = this.watcher.step('Edgecase_NaN').saveVariable('result', toSave);
-        return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
+        var _result3 = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
+
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'nan').saveVariable('result', _result3);
+        return _result3;
       }
 
       if (n1.isInfinity || n2.isInfinity) {
@@ -9779,36 +9920,65 @@ var AdditionIEEE = /*#__PURE__*/function () {
         var infArray = [_sign];
         infArray.push.apply(infArray, _toConsumableArray(Array(expBitNum).fill(1)));
         infArray.push.apply(infArray, _toConsumableArray(Array(manBitNum).fill(0)));
-        this.watcher = this.watcher.step('Edgecase_Inf').saveVariable('result', new NumberIEEE(expBitNum, manBitNum, infArray));
-        return new NumberIEEE(expBitNum, manBitNum, infArray);
+
+        var _result4 = new NumberIEEE(expBitNum, manBitNum, infArray);
+
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf').saveVariable('result', _result4);
+        return _result4;
       } // Get unnormalized exponent
 
 
-      var deltaE = this._getDeltaExponent(n1.exponent, n2.exponent);
+      var exponent1;
+      var exponent2;
+      var mantissa1;
+      var mantissa2;
+      var sign1;
+      var sign2;
 
-      this.watcher = this.watcher.step('CalculateDeltaE').saveVariable('expN1', n1.exponent).saveVariable('expN2', n2.exponent).saveVariable('expN1Bits', _toConsumableArray(n1.exponentBits)).saveVariable('expN2Bits', _toConsumableArray(n2.exponentBits)).saveVariable('deltaE', deltaE); // Add Mantissa
-
-      var additionData = this._addMantissa(n1, n2, deltaE);
-
-      var sign = additionData.sign;
-      var unnormalizedMantissa = additionData.unnormalizedMantissa;
-      var cDigits = additionData.cDigits; // Calculate shift
-      // Positive: Rightshift | Negative: Leftshift
-
-      var shift = this._calculateShift(unnormalizedMantissa, cDigits); // Check if newly calculated mantissa is equal to 0
-
-
-      if (shift === unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] === 0) {
-        this.watcher = this.watcher.step('ResultZero').saveVariable('result', new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0))); // Return zero
-
-        return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
-      } // Get normalized mantissa
+      if (n1.exponent >= n2.exponent) {
+        exponent1 = n1.exponent;
+        exponent2 = n2.exponent;
+        mantissa1 = _toConsumableArray(n1.mantissaBits);
+        mantissa2 = _toConsumableArray(n2.mantissaBits);
+        sign1 = n1.sign;
+        sign2 = n2.sign;
+      } else {
+        exponent1 = n2.exponent;
+        exponent2 = n1.exponent;
+        mantissa1 = _toConsumableArray(n2.mantissaBits);
+        mantissa2 = _toConsumableArray(n1.mantissaBits);
+        sign1 = n2.sign;
+        sign2 = n1.sign;
+      } // difference between both exponents
 
 
-      var normalizedMantissa = this._getNormalizedMantissa(manBitNum, unnormalizedMantissa, shift); // Calculate bits of the final Exponent
+      var deltaE = this._getDeltaExponent(exponent1, exponent2);
+
+      this.watcher = this.watcher.step('CalculateDeltaE').saveVariable('expN1', n1.exponent).saveVariable('expN2', n2.exponent).saveVariable('expN1Bits', _toConsumableArray(n1.exponentBits)).saveVariable('expN2Bits', _toConsumableArray(n2.exponentBits)).saveVariable('deltaE', deltaE); // Shift smaller mantissa (mantissa2) to bigger mantissa (add 0s at start, remove last bits)
+
+      if (deltaE > 0) {
+        for (var i = 0; i < Math.abs(deltaE); i++) {
+          mantissa2.unshift(0);
+          mantissa2.pop();
+        }
+      }
+
+      var additionData = this._addMantissa(mantissa1, mantissa2, sign1, sign2, mantissa2.length);
+
+      console.log('Add M', mantissa1, mantissa2, sign1, sign2, additionData.normalizedMantissa, additionData.shift);
+      var sign = additionData.sign ? 1 : 0;
+      var normalizedMantissa = additionData.normalizedMantissa;
+      var shift = additionData.shift; // Check if newly calculated mantissa is equal to 0
+
+      if (additionData.isZero || shift === normalizedMantissa.length - 1 && normalizedMantissa[0] === 0) {
+        var _result5 = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
+
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero').saveVariable('result', _result5);
+        return _result5;
+      } // Calculate bits of the final Exponent
 
 
-      var finalE = n1.exponent + n1.bias + shift;
+      var finalE = exponent1 + n1.bias + shift;
 
       var exponentBits = this._getExponentBits(expBitNum, finalE);
 
@@ -9821,60 +9991,128 @@ var AdditionIEEE = /*#__PURE__*/function () {
 
         _infArray.push.apply(_infArray, _toConsumableArray(Array(manBitNum).fill(0)));
 
-        this.watcher = this.watcher.step('ResultInf').saveVariable('result', new NumberIEEE(expBitNum, manBitNum, _infArray)); // Return inf
+        var _result6 = new NumberIEEE(expBitNum, manBitNum, _infArray);
 
-        return new NumberIEEE(expBitNum, manBitNum, _infArray);
-      } // Put everything together
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf').saveVariable('result', _result6);
+        return _result6;
+      } // normal case result
 
 
-      var result = [sign];
-      result.push.apply(result, _toConsumableArray(exponentBits));
-      result.push.apply(result, _toConsumableArray(normalizedMantissa));
-      this.watcher = this.watcher.step('Result').saveVariable('result', new NumberIEEE(expBitNum, manBitNum, result));
-      return new NumberIEEE(expBitNum, manBitNum, result);
+      this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'none').saveVariable('result', 'none');
+      var resultArray = [sign];
+      resultArray.push.apply(resultArray, _toConsumableArray(exponentBits));
+      resultArray.push.apply(resultArray, _toConsumableArray(normalizedMantissa));
+      var result = new NumberIEEE(expBitNum, manBitNum, resultArray);
+      this.watcher = this.watcher.step('Result').saveVariable('result', result);
+      return result;
     }
   }, {
     key: "_getDeltaExponent",
     value: function _getDeltaExponent(exp1, exp2) {
-      return exp2 - exp1;
+      return exp1 - exp2;
     }
   }, {
     key: "_addMantissa",
-    value: function _addMantissa(n1, n2, deltaE) {
-      var digitNum = 3 + Math.max(deltaE, 0);
-      var invertOp1 = n1.sign === 1;
-      var invertOp2 = n2.sign === 1;
-      var op1 = new NumberBaseNComplement(2, digitNum, n1.mantissaBits, n1.manBitNum, invertOp1);
-      var op2 = new NumberBaseNComplement(2, digitNum, n2.mantissaBits, n2.manBitNum - deltaE, invertOp2);
-      var op1Save = new NumberBaseNComplement(2, digitNum, n1.mantissaBits, n1.manBitNum, invertOp1);
-      var op2Save = new NumberBaseNComplement(2, digitNum, n2.mantissaBits, n2.manBitNum - deltaE, invertOp2);
-      this.watcher = this.watcher.step('AdjustMantissa').saveVariable('op1', op1Save).saveVariable('op2', op2Save);
+    value: function _addMantissa(mantissa1, mantissa2, sign1, sign2, binNum) {
+      this.watcher = this.watcher.step('AddMantissa').saveVariable('mantissa1', mantissa1).saveVariable('mantissa2', mantissa2).saveVariable('sign1', sign1).saveVariable('sign2', sign2).saveVariable('binNum', binNum);
+      var isEqual = mantissa1.length === mantissa2.length && mantissa1.every(function (value, index) {
+        return value === mantissa2[index];
+      }); // x + x = 2x
+
+      if (isEqual && sign1 === sign2) {
+        var _normalizedMantissa = _toConsumableArray(mantissa1);
+
+        _normalizedMantissa.shift();
+
+        _normalizedMantissa.push(0);
+
+        var _shift = 1;
+        var _sign2 = sign1;
+        this.watcher = this.watcher.step('AddMantissa').saveVariable('addition', 'none').saveVariable('shift', 0).saveVariable('sign', _sign2).saveVariable('unnormalizedMantissa', _toConsumableArray(mantissa1)).saveVariable('normalizedMantissa', _toConsumableArray(_normalizedMantissa));
+        return {
+          sign: _sign2,
+          normalizedMantissa: _normalizedMantissa,
+          shift: _shift
+        };
+      } // x + (-x) = 0
+
+
+      if (isEqual && sign1 !== sign2) {
+        var _normalizedMantissa2 = [];
+
+        for (var i = 0; i < mantissa1.length; i++) {
+          _normalizedMantissa2.shift(0);
+        }
+
+        var _shift2 = 0;
+        var _sign3 = sign1;
+        this.watcher = this.watcher.step('AddMantissa').saveVariable('addition', 'none').saveVariable('shift', 0).saveVariable('sign', _sign3).saveVariable('unnormalizedMantissa', [].concat(_normalizedMantissa2)).saveVariable('normalizedMantissa', [].concat(_normalizedMantissa2));
+        return {
+          sign: _sign3,
+          normalizedMantissa: _normalizedMantissa2,
+          shift: _shift2,
+          isZero: true
+        };
+      }
+
+      var op1 = new NumberBaseNComplement(2, binNum, mantissa1, binNum, sign1 === 1);
+      var op2 = new NumberBaseNComplement(2, binNum, mantissa2, binNum, sign2 === 1);
       var addition = new AdditionBaseNComplement(op1, op2);
       this.watcher = this.watcher.step('AddMantissa').saveVariable('addition', addition.watcher);
       var additionResult = addition.getResult();
-      var sign = null;
-      var unnormalizedMantissa = null;
+      var sign = additionResult.negative;
 
-      if (additionResult.isNegative()) {
-        sign = 1;
-        var additionResultInverted = new NumberBaseNComplement(2, additionResult.digitNum, additionResult.arr, additionResult.offset, true);
-        unnormalizedMantissa = _toConsumableArray(additionResultInverted.arr);
+      var unnormalizedMantissa = _toConsumableArray(additionResult.arr);
+
+      this.watcher = this.watcher.step('AddMantissa').saveVariable('unnormalizedMantissa', _toConsumableArray(unnormalizedMantissa));
+      console.log(unnormalizedMantissa);
+      var shift = 0; // shift for overflowed addition
+
+      if (unnormalizedMantissa.length > mantissa1.length) {
+        shift = unnormalizedMantissa.length - mantissa1.length;
+      }
+
+      if (addition.carryOutSet) {
+        shift = 1;
       } else {
-        sign = 0;
-        unnormalizedMantissa = _toConsumableArray(additionResult.arr);
+        // shift right until a leading 1 is found
+        while (Math.abs(shift) <= unnormalizedMantissa.length && unnormalizedMantissa[0] === 0) {
+          unnormalizedMantissa.shift();
+          unnormalizedMantissa.push(0);
+          shift--;
+        }
+      } // shift is bigger than mantissa length => 0
+
+
+      if (shift === -unnormalizedMantissa.length) {
+        var _normalizedMantissa3 = _toConsumableArray(unnormalizedMantissa);
+
+        this.watcher = this.watcher.step('AddMantissa').saveVariable('shift', shift).saveVariable('sign', sign).saveVariable('unnormalizedMantissa', _toConsumableArray(_normalizedMantissa3));
+        return {
+          sign: sign,
+          normalizedMantissa: _normalizedMantissa3,
+          shift: shift,
+          isZero: true
+        };
+      } // remove leading 1
+
+
+      unnormalizedMantissa.shift();
+      unnormalizedMantissa.push(0);
+      unnormalizedMantissa.splice(binNum, unnormalizedMantissa.length - binNum); // normal case result
+
+      while (unnormalizedMantissa.length > mantissa1.length - 1) {
+        unnormalizedMantissa.splice(-1, 1);
       }
 
-      var cDigits = digitNum;
+      var normalizedMantissa = _toConsumableArray(unnormalizedMantissa);
 
-      while (cDigits > 1 && unnormalizedMantissa[0] === 0) {
-        unnormalizedMantissa.splice(0, 1);
-        cDigits--;
-      }
-
+      this.watcher = this.watcher.step('AddMantissa').saveVariable('shift', shift).saveVariable('sign', sign).saveVariable('normalizedMantissa', _toConsumableArray(normalizedMantissa));
       return {
         sign: sign,
-        unnormalizedMantissa: unnormalizedMantissa,
-        cDigits: cDigits
+        normalizedMantissa: normalizedMantissa,
+        shift: shift,
+        isZero: false
       };
     }
   }, {
@@ -9936,11 +10174,11 @@ var SubtractionIEEE = /*#__PURE__*/function () {
   function SubtractionIEEE(n1, n2) {
     _classCallCheck(this, SubtractionIEEE);
 
-    if (n1.expBitNum != n2.expBitNum) {
+    if (n1.expBitNum !== n2.expBitNum) {
       console.log("SubtractionIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ") and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
     }
 
-    if (n1.manBitNum != n2.manBitNum) {
+    if (n1.manBitNum !== n2.manBitNum) {
       console.log("SubtractionIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ") and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
     }
 
@@ -9951,12 +10189,17 @@ var SubtractionIEEE = /*#__PURE__*/function () {
   _createClass(SubtractionIEEE, [{
     key: "_subtract",
     value: function _subtract(n1, n2) {
+      this.watcher = new Algorithm();
+
       var flipedArr2 = _toConsumableArray(n2.arr);
 
-      flipedArr2[0] = flipedArr2[0] == 0 ? 1 : 0;
+      flipedArr2[0] = flipedArr2[0] === 0 ? 1 : 0;
       var op1 = new NumberIEEE(n1.expBitNum, n1.manBitNum, n1.arr);
-      var op2 = new NumberIEEE(n2.expBitNum, n2.manBitNum, flipedArr2);
-      return new AdditionIEEE(op1, op2).getResult();
+      var op2 = new NumberIEEE(n2.expBitNum, n2.manBitNum, flipedArr2); // a - b = a + (-b)
+
+      var addition = new AdditionIEEE(op1, op2);
+      this.watcher = this.watcher.step('Addition').saveVariable('addition', addition.watcher);
+      return addition.getResult();
     }
   }, {
     key: "getResult",
@@ -9968,16 +10211,67 @@ var SubtractionIEEE = /*#__PURE__*/function () {
   return SubtractionIEEE;
 }();
 
+/**
+ * roundArray rounds an array to a given length
+ * @param arr: Array to round
+ * @param count: necassary length
+ * @param roundup: true if the array has to be up rounded
+ * @param base: base of given array
+ * @returns {[]|*}: rounded arraay in the given base
+ */
+function roundArray(arr, count) {
+  var roundup = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var base = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 2;
+
+  if (arr.length < count) {
+    return arr;
+  }
+
+  var toRound = roundup;
+
+  if (!toRound) {
+    toRound = arr[count] >= base / 2;
+  }
+
+  while (arr.length > count) {
+    arr.pop();
+  }
+
+  if (toRound) {
+    var carryBits = [];
+    var _final = [];
+    carryBits.unshift(1);
+
+    for (var i = arr.length - 1; i >= 0; i--) {
+      var m = arr[i] + carryBits[0];
+
+      _final.unshift(m % base);
+
+      carryBits.unshift(Math.floor(m / base));
+    }
+
+    if (carryBits[0] !== carryBits[1]) {
+      _final.unshift(1);
+
+      _final.pop();
+    }
+
+    return _final;
+  } else {
+    return arr;
+  }
+}
+
 var MultiplicationIEEE = /*#__PURE__*/function () {
   function MultiplicationIEEE(n1, n2) {
     _classCallCheck(this, MultiplicationIEEE);
 
     if (n1.expBitNum !== n2.expBitNum) {
-      console.log("MultiplicationIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ") and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
+      console.log("MultiplicationIEEE(Number, Number): expBitNum of n1(".concat(n1.expBitNum, ")\n        and expBitNum of n2(").concat(n2.expBitNum, ") not compatible."));
     }
 
     if (n1.manBitNum !== n2.manBitNum) {
-      console.log("MultiplicationIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ") and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
+      console.log("MultiplicationIEEE(Number, Number): manBitNum of n1(".concat(n1.manBitNum, ")\n        and manBitNum of n2(").concat(n2.manBitNum, ") not compatible."));
     }
 
     this.producedOverflow = false;
@@ -9991,11 +10285,15 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
       var expBitNum = n1.expBitNum;
       var manBitNum = n1.manBitNum;
       var bitNum = n1.bitNum;
-      var sign = (n1.sign && !n2.sign || !n1.sign && n2.sign) + 0; // Edgecases:
+      var sign = (n1.sign && !n2.sign || !n1.sign && n2.sign) + 0;
+      this.watcher = this.watcher.step('MulMantissa').saveVariable('sign', sign); // Edgecases:
 
       if (n1.isNaN || n2.isNaN || n1.isInfinity && n2.isZero || n1.isZero && n2.isInfinity) {
         // Return NaN
-        return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
+        var _result = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
+
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'nan').saveVariable('result', _result);
+        return _result;
       }
 
       if (n1.isInfinity || n2.isInfinity) {
@@ -10003,16 +10301,43 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
         var infArray = [sign];
         infArray.push.apply(infArray, _toConsumableArray(Array(expBitNum).fill(1)));
         infArray.push.apply(infArray, _toConsumableArray(Array(manBitNum).fill(0)));
-        return new NumberIEEE(expBitNum, manBitNum, infArray);
+
+        var _result2 = new NumberIEEE(expBitNum, manBitNum, infArray);
+
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf').saveVariable('result', _result2);
+        return _result2;
       }
 
-      var op1 = new NumberBaseNComplement(2, 3, n1.mantissaBits, n1.manBitNum, false);
-      var op2 = new NumberBaseNComplement(2, 3, n2.mantissaBits, n2.manBitNum, false);
-      var multiplicationResult = new MultiplicationBaseNComplement(op1, op2).getResult();
+      if (n1.isZero || n2.isZero) {
+        // Return Zero
+        var _infArray = [sign];
+
+        _infArray.push.apply(_infArray, _toConsumableArray(Array(expBitNum).fill(0)));
+
+        _infArray.push.apply(_infArray, _toConsumableArray(Array(manBitNum).fill(0)));
+
+        var _result3 = new NumberIEEE(expBitNum, manBitNum, _infArray);
+
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero').saveVariable('result', _result3);
+        return _result3;
+      }
+
+      var op1 = new NumberBaseNSigned(2, n1.mantissaBits);
+      var op2 = new NumberBaseNSigned(2, n2.mantissaBits);
+      var multiplication = new MultiplicationBaseNSigned(op1, op2);
+      this.watcher = this.watcher.step('Multiplication').saveVariable('multiplication', multiplication.watcher);
+      var multiplicationResult = multiplication.getResult();
       console.log(multiplicationResult);
-      var digitNum = multiplicationResult.digitNum;
+      var digitNum = multiplicationResult.digitNum; // Adds zeros if unnormalized mantissa is to short
 
       var unnormalizedMantissa = _toConsumableArray(multiplicationResult.arr);
+
+      this.watcher = this.watcher.step('MulMantissa').saveVariable('unnormalizedMantissa', unnormalizedMantissa);
+
+      for (var i = unnormalizedMantissa.length; i < Math.max(n1.mantissaBits.length, n2.mantissaBits.length); i++) {
+        unnormalizedMantissa.push(0);
+      } // deletes zeros at the front of the mantissa
+
 
       var cDigits = digitNum;
 
@@ -10023,61 +10348,77 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
       // Positive: Rightshift | Negative: Leftshift
 
 
-      var shift = null;
+      var shift = multiplicationResult.arr.length - multiplicationResult.offset - op1.arr.length;
 
       if (cDigits >= 1) {
         shift = cDigits - 1;
       } else {
-        shift = 0;
-
-        for (var i = 1; i < unnormalizedMantissa.length; i++) {
-          shift--;
-
-          if (unnormalizedMantissa[i] === 1) {
+        for (var _i = 0; _i < unnormalizedMantissa.length; _i++) {
+          if (unnormalizedMantissa[_i] === 1) {
             break;
           }
+
+          shift--;
         }
       }
 
+      this.watcher = this.watcher.step('MulMantissa').saveVariable('shift', shift); // Check if newly calculated ieee is equal to zero
+
       if (shift === unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] === 0) {
-        // Return zero
-        return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
-      }
+        var _result4 = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
+
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero').saveVariable('result', _result4);
+        return _result4;
+      } // normalizes the mantissa
+
 
       var normalizedMatissa = [];
+      var toRound = unnormalizedMantissa[manBitNum] === 1;
 
-      for (var _i = 0; _i < manBitNum; _i++) {
-        var access = _i + Math.max(-shift, 0) + 1;
+      for (var _i2 = 0; _i2 < manBitNum; _i2++) {
+        var access = _i2 + Math.max(-shift, 0) + 1;
         var num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
         normalizedMatissa.push(num);
       }
 
-      var finalE = n1.E + n2.E - n1.bias + shift;
+      if (toRound) {
+        normalizedMatissa = roundArray(normalizedMatissa, manBitNum, toRound, n1.base);
+      }
+
+      this.watcher = this.watcher.step('CalculateExp').saveVariable('notShifted', n1.E + n2.E - n1.bias);
+      this.watcher = this.watcher.step('MulMantissa').saveVariable('normalizedMantissa', normalizedMatissa);
+      var finalE = n1.E + n2.E - n1.bias + shift; // caluclates the exponent bits
+
       var curE = finalE;
       var exponentBits = [];
 
-      for (var _i2 = 0; _i2 < expBitNum; _i2++) {
+      for (var _i3 = 0; _i3 < expBitNum; _i3++) {
         exponentBits.unshift(curE % 2);
         curE = Math.floor(curE / 2);
       } // Check if newly calculated ieee is equal to inf
 
 
       if (finalE >= Math.pow(2, expBitNum) - 1) {
-        var _infArray = [sign];
+        var _infArray2 = [sign];
 
-        _infArray.push.apply(_infArray, _toConsumableArray(Array(expBitNum).fill(1)));
+        _infArray2.push.apply(_infArray2, _toConsumableArray(Array(expBitNum).fill(1)));
 
-        _infArray.push.apply(_infArray, _toConsumableArray(Array(manBitNum).fill(0)));
+        _infArray2.push.apply(_infArray2, _toConsumableArray(Array(manBitNum).fill(0)));
 
-        this.watcher = this.watcher.step('ResultInf').saveVariable('result', new NumberIEEE(expBitNum, manBitNum, _infArray)); // Return inf
+        var _result5 = new NumberIEEE(expBitNum, manBitNum, _infArray2);
 
-        return new NumberIEEE(expBitNum, manBitNum, _infArray);
-      }
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf').saveVariable('result', _result5);
+        return _result5;
+      } // normal case result
 
-      var result = [sign];
-      result.push.apply(result, exponentBits);
-      result.push.apply(result, normalizedMatissa);
-      return new NumberIEEE(expBitNum, manBitNum, result);
+
+      this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'none').saveVariable('result', 'none');
+      var resultArr = [sign];
+      resultArr.push.apply(resultArr, exponentBits);
+      resultArr.push.apply(resultArr, _toConsumableArray(normalizedMatissa));
+      var result = new NumberIEEE(expBitNum, manBitNum, resultArr);
+      this.watcher = this.watcher.step('Result').saveVariable('result', result);
+      return result;
     }
   }, {
     key: "getResult",
@@ -10116,7 +10457,18 @@ var DivisionIEEE = /*#__PURE__*/function () {
 
       if (n1.isNaN || n2.isNaN || n1.isInfinity && n2.isZero || n1.isZero && n2.isInfinity) {
         // Return NaN
-        return new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
+        var _result = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
+
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'nan').saveVariable('result', _result);
+        return _result;
+      }
+
+      if (n1.isInfinity && n2.isInfinity || n1.isZero && n2.isZero) {
+        // Return NaN, the second
+        var _result2 = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
+
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'nan').saveVariable('result', _result2);
+        return _result2;
       }
 
       if (n1.isInfinity && !n2.isInfinity || !n1.isZero && n2.isZero) {
@@ -10124,36 +10476,28 @@ var DivisionIEEE = /*#__PURE__*/function () {
         var infArray = [sign];
         infArray.push.apply(infArray, _toConsumableArray(Array(expBitNum).fill(1)));
         infArray.push.apply(infArray, _toConsumableArray(Array(manBitNum).fill(0)));
-        return new NumberIEEE(expBitNum, manBitNum, infArray);
-      }
 
-      if (n1.isInfinity && n2.isInfinity || n1.isZero && n2.isZero) {
-        // Return NaN
-        var _infArray = [1];
+        var _result3 = new NumberIEEE(expBitNum, manBitNum, infArray);
 
-        _infArray.push.apply(_infArray, _toConsumableArray(Array(expBitNum).fill(1)));
-
-        _infArray.push.apply(_infArray, _toConsumableArray(Array(manBitNum).fill(1)));
-
-        return new NumberIEEE(expBitNum, manBitNum, _infArray);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf').saveVariable('result', _result3);
+        return _result3;
       }
 
       if (!n1.isInfinity && n2.isInfinity || n1.isZero) {
         // Return Zero
-        var _infArray2 = [sign];
+        var _infArray = [sign];
 
-        _infArray2.push.apply(_infArray2, _toConsumableArray(Array(expBitNum).fill(0)));
+        _infArray.push.apply(_infArray, _toConsumableArray(Array(expBitNum).fill(0)));
 
-        _infArray2.push.apply(_infArray2, _toConsumableArray(Array(manBitNum).fill(0)));
+        _infArray.push.apply(_infArray, _toConsumableArray(Array(manBitNum).fill(0)));
 
-        return new NumberIEEE(expBitNum, manBitNum, _infArray2);
-      } // 1. Mantissen dividieren und neues Vorzeichen
-      // 2. Exponenten voneinander Abziehen.
-      // 3. Normalisieren
+        var _result4 = new NumberIEEE(expBitNum, manBitNum, _infArray);
+
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero').saveVariable('result', _result4);
+        return _result4;
+      } // check if mantissas are equal
 
 
-      var op1 = new NumberBaseNSigned(2, n1.mantissaBits, n1.offset, false);
-      var op2 = new NumberBaseNSigned(2, n2.mantissaBits, n2.offset, false);
       var k = 0;
       var similar = true;
 
@@ -10170,62 +10514,93 @@ var DivisionIEEE = /*#__PURE__*/function () {
       var shift = 0;
 
       if (similar === false) {
-        // case mantissa not similar
-        var divisionResult = new DivisionBaseNSigned(op1, op2, Math.max(n1.manBitNum, n2.manBitNum)).getResult();
-        unnormalizedMantissa = _toConsumableArray(divisionResult.arr);
-        var i = 0;
-        var unnormal = true;
-        var digitNum = n1.mantissaBits.length;
+        // case mantissa not equal
+        var op1 = new NumberBaseNSigned(2, n1.mantissaBits, n1.offset, false);
+        var op2 = new NumberBaseNSigned(2, n2.mantissaBits, n2.offset, false);
+        var operation = new DivisionBaseNSigned(op1, op2, Math.max(n1.manBitNum + 1, n2.manBitNum + 1));
+        this.watcher = this.watcher.step('Division').saveVariable('division', operation.watcher);
+        var divisionResult = operation.getResult();
+        unnormalizedMantissa = _toConsumableArray(divisionResult.arr); // cut unnormalized matissa if to long
 
-        while (i < digitNum && unnormal) {
-          if (unnormalizedMantissa[i] === 1) {
-            normalizedMantissa = _toConsumableArray(unnormalizedMantissa);
-            normalizedMantissa.splice(0, i + 1);
-            unnormal = false;
-            shift = i + 1;
-          }
+        var digitNum = divisionResult.digitNum;
 
-          i++;
+        for (var i = unnormalizedMantissa.length; i < Math.max(n1.mantissaBits.length, n2.mantissaBits.length); i++) {
+          unnormalizedMantissa.push(0);
         }
 
-        for (var j = 0; j < shift; j++) {
-          normalizedMantissa.push(0);
+        var cDigits = digitNum;
+
+        while (cDigits > 1 && unnormalizedMantissa[0] === 0) {
+          unnormalizedMantissa.splice(0, 1);
+          cDigits--;
+        } // Calculate shift
+        // Positive: Rightshift | Negative: Leftshift
+
+
+        if (cDigits >= 1) {
+          shift = cDigits - 1;
+        } else {
+          var _i = 0;
+
+          while (_i < unnormalizedMantissa.length) {
+            if (unnormalizedMantissa[_i] === 1) {
+              break;
+            }
+
+            _i++;
+            shift--;
+          }
+        }
+
+        if (shift === unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] === 0) {
+          // Return zero
+          var _result5 = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
+
+          this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero').saveVariable('result', _result5);
+          return _result5;
         }
       } else {
-        // similar mantissa
+        // equal mantissas
         normalizedMantissa = [0];
       }
 
-      for (var _j = normalizedMantissa.length - 1; _j < manBitNum; _j++) {
-        normalizedMantissa.push(0);
+      for (var _i2 = 0; _i2 < manBitNum; _i2++) {
+        var access = _i2 + Math.max(-shift, 0) + 1;
+        var num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
+        normalizedMantissa.push(num);
       }
 
-      var curE = n1.E - n2.E + n1.bias - shift;
+      var finalE = n1.E - n2.E + n1.bias + shift;
+      var curE = finalE;
       var exponentBits = [];
 
-      for (var _i = 0; _i < expBitNum; _i++) {
+      for (var _i3 = 0; _i3 < expBitNum; _i3++) {
         exponentBits.unshift(curE % 2);
         curE = Math.floor(curE / 2);
       } // Check if newly calculated ieee is equal to inf
 
 
-      if (curE >= Math.pow(2, expBitNum) - 1) {
-        var _infArray3 = [sign];
+      if (finalE >= Math.pow(2, expBitNum) - 1) {
+        var _infArray2 = [sign];
 
-        _infArray3.push.apply(_infArray3, _toConsumableArray(Array(expBitNum).fill(1)));
+        _infArray2.push.apply(_infArray2, _toConsumableArray(Array(expBitNum).fill(1)));
 
-        _infArray3.push.apply(_infArray3, _toConsumableArray(Array(manBitNum).fill(0)));
+        _infArray2.push.apply(_infArray2, _toConsumableArray(Array(manBitNum).fill(0)));
 
-        this.watcher = this.watcher.step('ResultInf').saveVariable('result', new NumberIEEE(expBitNum, manBitNum, _infArray3)); // Return inf
+        var _result6 = new NumberIEEE(expBitNum, manBitNum, _infArray2);
 
-        return new NumberIEEE(expBitNum, manBitNum, _infArray3);
-      }
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf').saveVariable('result', _result6);
+        return _result6;
+      } // normal case result
 
-      var result = [sign];
-      result.push(result, exponentBits);
-      result.push(result, _toConsumableArray(normalizedMantissa));
-      result.splice(expBitNum + manBitNum, result.length);
-      return new NumberIEEE(expBitNum, manBitNum, result);
+
+      this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'none').saveVariable('result', 'none');
+      var resultArray = [sign];
+      resultArray.push.apply(resultArray, exponentBits);
+      resultArray.push.apply(resultArray, _toConsumableArray(normalizedMantissa));
+      var result = new NumberIEEE(expBitNum, manBitNum, resultArray);
+      this.watcher = this.watcher.step('Result').saveVariable('edgecase', 'none').saveVariable('result', result);
+      return result;
     }
   }, {
     key: "getResult",
@@ -10250,7 +10625,7 @@ var AdditionBaseNComplementToLatex = /*#__PURE__*/function () {
     value: function _generateLatex() {
       var _firstline;
 
-      if (this.watcher.start.name != 'Addition') {
+      if (this.watcher.start.name !== 'Addition') {
         console.log("AdditionToLatex._generateLatex(): Watcher does not have a step titled 'Addition.'");
         process.exit(1);
       }
@@ -10282,7 +10657,7 @@ var AdditionBaseNComplementToLatex = /*#__PURE__*/function () {
       var secondline = [];
 
       for (var i = 0; i < op2Arr.length; i++) {
-        if (carryArr[i] != 0) {
+        if (carryArr[i] !== 0) {
           secondline.push([op2Arr[i], carryArr[i]]);
         } else {
           secondline.push([op2Arr[i], '']);
@@ -10301,7 +10676,7 @@ var AdditionBaseNComplementToLatex = /*#__PURE__*/function () {
 
       thirdline.unshift('=');
       thirdline = thirdline.join(' & ');
-      var latex = ["\\begin{align*}", "\t&\\begin{array}{".concat(arrayCs, "}"), "\t\t ".concat(firstline, " \\\\"), "\t\t ".concat(secondline, " \\\\ \\hline"), "\t\t ".concat(thirdline, " \\\\"), "\t\\end{array}\\\\", "\t&\\implies\\begin{aligned}", "\t\t&\\text{Ergebnis:}\\ ".concat(data.result.stringRepresentation, " \\\\"), "\t\t&\\text{Es ist ".concat(data.overflow ? '' : 'k', "ein Overflow aufgetreten.}"), "\t\\end{aligned}\\\\", "\\end{align*}"].join('\n');
+      var latex = ['\\begin{align*}', "\t&\\begin{array}{".concat(arrayCs, "}"), "\t\t ".concat(firstline, " \\\\"), "\t\t ".concat(secondline, " \\\\ \\hline"), "\t\t ".concat(thirdline, " \\\\"), '\t\\end{array}\\\\', '\t&\\implies\\begin{aligned}', "\t\t&\\text{Ergebnis:}\\ ".concat(data.result.stringRepresentation, " \\\\"), "\t\t&\\text{Es ist ".concat(data.overflow ? '' : 'k', "ein Overflow aufgetreten.}"), '\t\\end{aligned}\\\\', '\\end{align*}'].join('\n');
       return latex;
     }
   }, {
@@ -10327,7 +10702,7 @@ var SubtractionBaseNComplementToLatex = /*#__PURE__*/function () {
     value: function _generateLatex() {
       var _firstline;
 
-      if (this.watcher.start.name != 'Subtraction') {
+      if (this.watcher.start.name !== 'Subtraction') {
         console.log("SubtractionToLatex._generateLatex(): Watcher does not have a step titled 'Subtraction.'");
         process.exit(1);
       }
@@ -10359,7 +10734,7 @@ var SubtractionBaseNComplementToLatex = /*#__PURE__*/function () {
       var secondline = [];
 
       for (var i = 0; i < op2Arr.length; i++) {
-        if (carryArr[i] != 0) {
+        if (carryArr[i] !== 0) {
           secondline.push([op2Arr[i], carryArr[i]]);
         } else {
           secondline.push([op2Arr[i], '']);
@@ -10378,7 +10753,7 @@ var SubtractionBaseNComplementToLatex = /*#__PURE__*/function () {
 
       thirdline.unshift('=');
       thirdline = thirdline.join(' & ');
-      var latex = ["\\begin{align*}", "\t&\\begin{array}{".concat(arrayCs, "}"), "\t\t ".concat(firstline, " \\\\"), "\t\t ".concat(secondline, " \\\\ \\hline"), "\t\t ".concat(thirdline, " \\\\"), "\t\\end{array}\\\\", "\t&\\implies\\begin{aligned}", "\t\t&\\text{Ergebnis:}\\ ".concat(data.result.stringRepresentation, " \\\\"), "\t\t&\\text{Es ist ".concat(data.overflow ? '' : 'k', "ein Overflow aufgetreten.}"), "\t\\end{aligned}\\\\", "\\end{align*}"].join('\n');
+      var latex = ['\\begin{align*}', "\t&\\begin{array}{".concat(arrayCs, "}"), "\t\t ".concat(firstline, " \\\\"), "\t\t ".concat(secondline, " \\\\ \\hline"), "\t\t ".concat(thirdline, " \\\\"), '\t\\end{array}\\\\', '\t&\\implies\\begin{aligned}', "\t\t&\\text{Ergebnis:}\\ ".concat(data.result.stringRepresentation, " \\\\"), "\t\t&\\text{Es ist ".concat(data.overflow ? '' : 'k', "ein Overflow aufgetreten.}"), '\t\\end{aligned}\\\\', '\\end{align*}'].join('\n');
       return latex;
     }
   }, {
@@ -10441,23 +10816,24 @@ var MultiplicationBaseNComplementToLatex = /*#__PURE__*/function () {
   _createClass(MultiplicationBaseNComplementToLatex, [{
     key: "_generateLatex",
     value: function _generateLatex() {
-      var latexSize, latexMultiplication;
+      var latexSize;
+      var latexMultiplication;
       this.algorithm = this.algorithm.start;
 
-      while (this.algorithm.name != "Result") {
-        if (this.algorithm.name == "DetermineSize") {
+      while (this.algorithm.name !== 'Result') {
+        if (this.algorithm.name === 'DetermineSize') {
           latexSize = this._computeDetermineSize();
-        } else if (this.algorithm.name == "Multiply") {
+        } else if (this.algorithm.name === 'Multiply') {
           latexMultiplication = this._computeMultiplication();
         } else {
-          console.log("MultiplicationBaseNComplementToLatex._generateLatex(): Unknown step.");
+          console.log('MultiplicationBaseNComplementToLatex._generateLatex(): Unknown step.');
           process.exit(0);
         }
 
         this.algorithm = this.algorithm.next;
       }
 
-      var latex = ["\\begin{enumerate}", "\\item Get needed size: \\ ".concat(latexSize, " "), "\\item Sign extend operands to $S$ and multiply as positive numbers: \\\\", "".concat(latexMultiplication), "\\item[] Take the $S$ last digits.\\\\", "Final Result: \\ $".concat(this.algorithm.data.result.stringRepresentation, "$"), "\\end{enumerate}"].join('\n');
+      var latex = ['\\begin{enumerate}', "\\item Get needed size: \\ ".concat(latexSize, " "), '\\item Sign extend operands to $S$ and multiply as positive numbers: \\\\', "".concat(latexMultiplication), '\\item[] Take the $S$ last digits.\\\\', "Final Result: \\ $".concat(this.algorithm.data.result.stringRepresentation, "$"), '\\end{enumerate}'].join('\n');
       return latex;
     }
   }, {
@@ -10956,31 +11332,31 @@ var AdditionIEEEToObject = /*#__PURE__*/function () {
 
       while (curStep != null) {
         if (curStep.name === 'Edgecases') {
-          retObject['Edgecases'] = this._workEdgecases(curStep);
+          retObject.Edgecases = this._workEdgecases(curStep);
         }
 
         if (curStep.name === 'CalculateDeltaE') {
-          retObject['CalculateDeltaE'] = this._workCalculateDeltaE(curStep);
+          retObject.CalculateDeltaE = this._workCalculateDeltaE(curStep);
         }
 
         if (curStep.name === 'AdjustMantissa') {
-          retObject['AdjustMantissa'] = this._workAdjustMantissa(curStep);
+          retObject.AdjustMantissa = this._workAdjustMantissa(curStep);
         }
 
         if (curStep.name === 'ResultZero') {
-          retObject['Result_Zero'] = this._workResult_Zero(curStep);
+          retObject.Result_Zero = this._workResult_Zero(curStep);
         }
 
         if (curStep.name === 'AddMantissa') {
-          retObject['AddMantissa'] = this._workAddMantissa(curStep);
+          retObject.AddMantissa = this._workAddMantissa(curStep);
         }
 
         if (curStep.name === 'Normalize') {
-          retObject['Normalize'] = this._workNormalize(curStep);
+          retObject.Normalize = this._workNormalize(curStep);
         }
 
         if (curStep.name === 'Result') {
-          retObject['Result'] = this._workResult(curStep);
+          retObject.Result = this._workResult(curStep);
         }
 
         curStep = curStep.next;
@@ -10998,11 +11374,11 @@ var AdditionIEEEToObject = /*#__PURE__*/function () {
       }
 
       if (possibleCase.name === 'Edgecase_NaN') {
-        return "Edgecase NaN: $R = ".concat(possibleCase.data.result.bitString.replace(/ /g, "\\ "), "$");
+        return "Edgecase NaN: $R = ".concat(possibleCase.data.result.bitString.replace(/ /g, '\\ '), "$");
       }
 
       if (possibleCase.name === 'Edgecase_Inf') {
-        return "Edgecase Infinity: $R = ".concat(possibleCase.data.result.bitString.replace(/ /g, "\\ "), "$");
+        return "Edgecase Infinity: $R = ".concat(possibleCase.data.result.bitString.replace(/ /g, '\\ '), "$");
       }
 
       return null;
@@ -11017,7 +11393,7 @@ var AdditionIEEEToObject = /*#__PURE__*/function () {
     key: "_workAdjustMantissa",
     value: function _workAdjustMantissa(curStep) {
       var data = curStep.data;
-      return ["\\begin{align*}", "\t&m_{1}' = ".concat(data.op1.stringRepresentation), "\t&m_{2}' = ".concat(data.op2.stringRepresentation), "\\end{align*}"].join('\n');
+      return ['\\begin{align*}', "\t&m_{1}' = ".concat(data.op1.stringRepresentation), "\t&m_{2}' = ".concat(data.op2.stringRepresentation), '\\end{align*}'].join('\n');
     }
   }, {
     key: "_workAddMantissa",
@@ -11029,19 +11405,19 @@ var AdditionIEEEToObject = /*#__PURE__*/function () {
     key: "_workResultZero",
     value: function _workResultZero(curStep) {
       var data = curStep.data;
-      return "Mantissa is zero: $R = ".concat(data.result.bitString.replace(/ /g, "\\ "), "$");
+      return "Mantissa is zero: $R = ".concat(data.result.bitString.replace(/ /g, '\\ '), "$");
     }
   }, {
     key: "_workNormalize",
     value: function _workNormalize(curStep) {
       var data = curStep.data;
-      return ["\\begin{align*}", "\t&\\rightarrow m_{R} = 1.".concat(data.normalizedMantissa.join(''), "\\cdot 2^{").concat(data.shift, "}"), "\t&\\rightarrow E_{R} = ".concat(data.n1ExpBits.join('')).concat(data.shift >= 0 ? '+' : '-').concat(Math.abs(data.shift), " = ").concat(data.finalExpBits.join('')), "\\end{align*}"].join('\n');
+      return ['\\begin{align*}', "\t&\\rightarrow m_{R} = 1.".concat(data.normalizedMantissa.join(''), "\\cdot 2^{").concat(data.shift, "}"), "\t&\\rightarrow E_{R} = ".concat(data.n1ExpBits.join('')).concat(data.shift >= 0 ? '+' : '-').concat(Math.abs(data.shift), " = ").concat(data.finalExpBits.join('')), '\\end{align*}'].join('\n');
     }
   }, {
     key: "_workResult",
     value: function _workResult(curStep) {
       var data = curStep.data;
-      return "$R = ".concat(data.result.bitString.replace(/ /g, "\\ "), "$");
+      return "$R = ".concat(data.result.bitString.replace(/ /g, '\\ '), "$");
     }
   }, {
     key: "getResult",
@@ -11065,43 +11441,43 @@ var AdditionIEEEToLatex = /*#__PURE__*/function () {
     value: function _generateLatex() {
       var additionInfo = new AdditionIEEEToObject(this.watcher).getResult();
 
-      if (additionInfo.Edgecases != undefined && additionInfo.Edgecases != null) {
+      if (additionInfo.Edgecases !== undefined && additionInfo.Edgecases != null) {
         return additionInfo.Edgecases;
       }
 
-      var latex = ["\\begin{enumerate}"];
+      var latex = ['\\begin{enumerate}'];
 
-      if (additionInfo.CalculateDeltaE != undefined && additionInfo.CalculateDeltaE != null) {
-        latex.push("\t\\item  Calculate $\\Delta E$:");
+      if (additionInfo.CalculateDeltaE !== undefined && additionInfo.CalculateDeltaE != null) {
+        latex.push('\t\\item  Calculate $\\Delta E$:');
         latex.push("\t".concat(additionInfo.CalculateDeltaE));
       }
 
-      if (additionInfo.AdjustMantissa != undefined && additionInfo.AdjustMantissa != null) {
-        latex.push("\t\\item  Adjust Mantissa:");
+      if (additionInfo.AdjustMantissa !== undefined && additionInfo.AdjustMantissa != null) {
+        latex.push('\t\\item  Adjust Mantissa:');
         latex.push("\t".concat(additionInfo.AdjustMantissa));
       }
 
-      if (additionInfo.AddMantissa != undefined && additionInfo.AddMantissa != null) {
-        latex.push("\t\\item  Add Adjusted Mantissa:");
+      if (additionInfo.AddMantissa !== undefined && additionInfo.AddMantissa != null) {
+        latex.push('\t\\item  Add Adjusted Mantissa:');
         latex.push("\t".concat(additionInfo.AddMantissa));
       }
 
-      if (additionInfo.ResultZero != undefined && additionInfo.ResultZero != null) {
-        latex.push("\t\\item  Mantissa is zero:");
+      if (additionInfo.ResultZero !== undefined && additionInfo.ResultZero != null) {
+        latex.push('\t\\item  Mantissa is zero:');
         latex.push("\t".concat(additionInfo.ResultZero));
       }
 
-      if (additionInfo.Normalize != undefined && additionInfo.Normalize != null) {
-        latex.push("\t\\item  Normalize:");
+      if (additionInfo.Normalize !== undefined && additionInfo.Normalize != null) {
+        latex.push('\t\\item  Normalize:');
         latex.push("\t".concat(additionInfo.Normalize));
       }
 
-      if (additionInfo.Result != undefined && additionInfo.Result != null) {
-        latex.push("\t\\item  Result:");
+      if (additionInfo.Result !== undefined && additionInfo.Result != null) {
+        latex.push('\t\\item  Result:');
         latex.push("\t".concat(additionInfo.Result));
       }
 
-      latex.push("\\end{enumerate}");
+      latex.push('\\end{enumerate}');
       return latex.join('\n');
     }
   }, {
