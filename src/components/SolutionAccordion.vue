@@ -12,6 +12,13 @@
             <div class="accordion-header js-accordion-header">{{subpanel.name}}</div>
             <div class="accordion-body js-accordion-body">
               <div class="accordion-body__contents">{{subpanel.text}}</div>
+              <div v-for="subsubpanel in subpanel.subsubpanels" v-bind:key="subsubpanel.name"
+                   @click="setActive" class="accordion__item js-accordion-item">
+                <div class="accordion-header js-accordion-header">{{subsubpanel.name}}</div>
+                <div class="accordion-body js-accordion-body">
+                  <div class="accordion-body__contents">{{subsubpanel.text}}</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -77,6 +84,10 @@ export default {
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
+.accordion__item .accordion__item .accordion__item {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
 .accordion-header:hover {
   background: $brightBlue;
   position: relative;
@@ -122,8 +133,14 @@ export default {
 }
 
 .accordion__item .accordion__item .accordion-header {
+  background: #B0B0FF;
+  color: #353535;
+}
+
+.accordion__item .accordion__item  .accordion__item .accordion-header {
   background: #f1f1f1;
   color: #353535;
+  border: 2px #70757a;
 }
 
 @media screen and (max-width: 1000px) {

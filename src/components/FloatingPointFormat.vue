@@ -103,7 +103,6 @@
 
 <script>
 import * as tool from '../scripts/gti-tools';
-// import tool from '../scripts/gti-tools';
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
 
@@ -269,6 +268,7 @@ export default {
           default:
         }
         console.log(result.getResult());
+        this.watcher = result.watcher;
         let solution = '';
         solution = result.getResult().bitString;
         if (result.getResult().isNaN) solution += ' is Nan';
@@ -315,7 +315,7 @@ export default {
         });
         switch (this.selectedFormat[2]) {
           case 'add':
-            if (expString1 === expString2) {
+            if (this.watcher.steps.CalculateDeltaE.data.deltaE === 0) {
               steps.push({
                 name: `${this.$t('step')} 1`,
                 text: ['Die Exponenten beider Zahlen müssen angeglichen werden. (', expString1, ' == ', expString2, ' => i.O.)'].join(''),
@@ -324,6 +324,9 @@ export default {
               steps.push({
                 name: `${this.$t('step')} 1`,
                 text: ['Die Exponenten beider Zahlen müssen angeglichen werden. (', expString1, ' != ', expString2, ' => nicht i.O.)'].join(''),
+                subpanels: [
+                  { name: 'Differenz Exponent', text: ['Die aktuellen Exponenten haben eine Differenz von', this.watcher.steps.CalculateDeltaE.data.deltaE].join('') },
+                ],
               });
             }
             steps.push({
@@ -332,7 +335,14 @@ export default {
                 'Die Mantissen beider Zahlen müssen addiert werden.',
               ].join(''),
               subpanels: [
-                { name: 'Exponent beachten', text: ['Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden. (Shift: ', this.binToDec(expString1) - this.binToDec(expString2), ')'].join('') },
+                { name: 'Hinweis', text: 'Die größere Zahl mit dem größeren Exponenten wird links angezeigt' },
+                {
+                  name: 'Exponent beachten',
+                  text: ['Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden. (Shift: ', this.binToDec(expString1) - this.binToDec(expString2), ')'].join(''),
+                  subsubpanels: [
+                    { name: 'Hinweis', text: 'Die größere Zahl mit dem größeren Exponenten wird links angezeigt' },
+                  ],
+                },
                 { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
                 { name: 'Neue Mantisse', text: ['Die neue Mantisse ist somit: ', solution.mantissaBits.join('')].join('') },
               ],
