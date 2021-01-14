@@ -338,13 +338,38 @@ export default {
                 { name: 'Hinweis', text: 'Die größere Zahl mit dem größeren Exponenten wird links angezeigt' },
                 {
                   name: 'Exponent beachten',
-                  text: ['Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden. (Shift: ', this.binToDec(expString1) - this.binToDec(expString2), ')'].join(''),
+                  text: ['Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden. (Shift: ', this.watcher.steps.CalculateDeltaE.data.deltaE, ')'].join(''),
                   subsubpanels: [
-                    { name: 'Hinweis', text: 'Die größere Zahl mit dem größeren Exponenten wird links angezeigt' },
+                    {
+                      name: 'Anpassen der rechten Mantisse',
+                      text: [
+                        ' Bits Mantisse rechts, vor dem Shift: ', this.watcher.steps.CalculateDeltaE.data.preShift.join(''),
+                        ' und danach: ', this.watcher.steps.AddMantissa.data.mantissa2.join(''),
+                      ].join(''),
+                    },
                   ],
                 },
-                { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
-                { name: 'Neue Mantisse', text: ['Die neue Mantisse ist somit: ', solution.mantissaBits.join('')].join('') },
+                {
+                  name: 'Neue Mantisse',
+                  text: [
+                    'Die neue Mantisse ist somit: ',
+                    this.watcher.steps.AddMantissa.data.mantissa1.join(''),
+                    ' + ',
+                    this.watcher.steps.AddMantissa.data.mantissa2.join(''),
+                    ' = ',
+                    solution.mantissaBits.join(''),
+                  ].join(''),
+                },
+                {
+                  name: 'Darstellung beachten',
+                  text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
+                  subsubpanels: [
+                    {
+                      name: 'Mantisse im Float',
+                      text: ['Im Float wird die führende 1 nicht angezeigt: ', this.watcher.steps.AddMantissa.data.normalizedMantissa.join('')].join(''),
+                    },
+                  ],
+                },
               ],
             });
             break;
@@ -417,7 +442,22 @@ export default {
           default:
         }
         steps.push({
-          name: this.$t('solution'), text: ['Die Lösung lautet: '].join(''),
+          name: this.$t('solution'),
+          text: ['Die Lösung lautet: '].join(''),
+          subpanels: [
+            {
+              name: 'Vorzeichen: ',
+              text: this.watcher.steps.Result.data.result.sign,
+            },
+            {
+              name: 'Exponent: ',
+              text: this.watcher.steps.Result.data.result.exponentBits.join(''),
+            },
+            {
+              name: 'Mantisse: ',
+              text: this.watcher.steps.Result.data.result.mantissaBits.join(''),
+            },
+          ],
         });
         this.solutionSteps = steps;
       }
