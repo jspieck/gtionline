@@ -463,8 +463,7 @@ export default {
       }
     },
     decToBin(num) {
-      // const fRep = parseFloat(num.replace(',', '.'));
-      const fRep = parseFloat(num);
+      const fRep = parseFloat(num.replace(',', '.'));
       return fRep.toString(2);
     },
     binToDec(num) {
