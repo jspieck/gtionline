@@ -9934,6 +9934,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
       var mantissa2;
       var sign1;
       var sign2;
+      var switched;
 
       if (n1.exponent >= n2.exponent) {
         exponent1 = n1.exponent;
@@ -9943,6 +9944,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
         sign1 = n1.sign;
         sign2 = n2.sign;
       } else {
+        switched = true;
         exponent1 = n2.exponent;
         exponent2 = n1.exponent;
         mantissa1 = _toConsumableArray(n2.mantissaBits);
@@ -9954,7 +9956,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
 
       var deltaE = this._getDeltaExponent(exponent1, exponent2);
 
-      this.watcher = this.watcher.step('CalculateDeltaE').saveVariable('expN1', n1.exponent).saveVariable('expN2', n2.exponent).saveVariable('expN1Bits', _toConsumableArray(n1.exponentBits)).saveVariable('expN2Bits', _toConsumableArray(n2.exponentBits)).saveVariable('deltaE', deltaE).saveVariable('preShift', _toConsumableArray(mantissa2)); // Shift smaller mantissa (mantissa2) to bigger mantissa (add 0s at start, remove last bits)
+      this.watcher = this.watcher.step('CalculateDeltaE').saveVariable('switched', switched).saveVariable('expN1', n1.exponent).saveVariable('expN2', n2.exponent).saveVariable('expN1Bits', _toConsumableArray(n1.exponentBits)).saveVariable('expN2Bits', _toConsumableArray(n2.exponentBits)).saveVariable('deltaE', deltaE).saveVariable('preShift', _toConsumableArray(mantissa2)); // Shift smaller mantissa (mantissa2) to bigger mantissa (add 0s at start, remove last bits)
 
       if (deltaE > 0) {
         for (var i = 0; i < Math.abs(deltaE); i++) {

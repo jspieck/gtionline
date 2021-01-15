@@ -102,6 +102,7 @@
 </template>
 
 <script>
+/* eslint no-useless-escape: 0  no-case-declarations: 0 */
 import * as tool from '../scripts/gti-tools';
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
@@ -294,46 +295,117 @@ export default {
         const expString1 = y1.exponentBits.join('');
         const expString2 = y2.exponentBits.join('');
         const steps = [];
-        steps.push({
-          name: `${this.$t('values')}`,
-          text: 'Werte der übertragenen Zahlen',
-          subpanels: [
-            {
-              name: 'Zahl links: ',
-              text: [
-                'Wert: ', y1.valueString,
-                ', Vorzeichen: ', (y1.sign === 0 ? '+' : '-'),
-                ', Mantisse: ', mantissaString1,
-                ', Exponent: ', expString1,
-              ].join(''),
-            },
-            {
-              name: 'Zahl rechts: ',
-              text: [
-                'Wert: ', y2.valueString,
-                ', Vorzeichen: ', (y2.sign === 0 ? '+' : '-'),
-                ', Mantisse: ', mantissaString2,
-                ', Exponent: ', expString2,
-              ].join(''),
-            },
-          ],
-        });
         switch (this.selectedFormat[2]) {
           case 'add':
+            steps.push({
+              name: `${this.$t('values')}`,
+              text: 'Werte der übertragenen Zahlen',
+              subpanels: [
+                {
+                  name: '1. Summand: ',
+                  text: [
+                    'Wert: ', y1.valueString,
+                    ', Vorzeichen: ', (y1.sign === 0 ? '+' : '-'),
+                    ', Mantisse: ', mantissaString1,
+                    ', Exponent: ', expString1,
+                  ].join(''),
+                },
+                {
+                  name: '2. Summand: ',
+                  text: [
+                    'Wert: ', y2.valueString,
+                    ', Vorzeichen: ', (y2.sign === 0 ? '+' : '-'),
+                    ', Mantisse: ', mantissaString2,
+                    ', Exponent: ', expString2,
+                  ].join(''),
+                },
+              ],
+            });
             if (this.watcher.steps.CalculateDeltaE.data.deltaE === 0) {
               steps.push({
                 name: `${this.$t('step')} 1`,
-                text: ['Die Exponenten beider Zahlen müssen angeglichen werden. \\( (', expString1, ' \\eq ', expString2, ' \\Rightarrow i.O.) \\)'].join(''),
+                text: ['Die Exponenten beider Zahlen müssen angeglichen werden. \\( (', expString1, ' = ', expString2, ' \\Rightarrow i.O.) \\)'].join(''),
               });
             } else {
+              const left = this.watcher.steps.CalculateDeltaE.data.switched ? '<' : '>';
               steps.push({
                 name: `${this.$t('step')} 1`,
                 text: ['Die Exponenten beider Zahlen müssen angeglichen werden. \\( (', expString1, ' \\neq ', expString2, ') \\)'].join(''),
                 subpanels: [
-                  { name: 'Differenz Exponent', text: ['Die aktuellen Exponenten haben eine Differenz von', this.watcher.steps.CalculateDeltaE.data.deltaE].join('') },
+                  {
+                    name: 'Differenz Exponent',
+                    text: [
+                      'Es wird immer der kleinere vom größeren Exponenten subtrahiert ',
+                      `\\( ( [ ${this.watcher.steps.CalculateDeltaE.data.expN1Bits.join('')} ] :=  ${this.watcher.steps.CalculateDeltaE.data.expN1} ${left}
+                      [ ${this.watcher.steps.CalculateDeltaE.data.expN2Bits.join('')} ] :=  ${this.watcher.steps.CalculateDeltaE.data.expN2}) \\) `,
+                      'daher ergibt sich eine Differenz von: ',
+                      this.watcher.steps.CalculateDeltaE.data.deltaE,
+                    ].join(''),
+                    subsubpanels: [
+                      {
+                        name: 'Anpassen der kleineren Mantisse',
+                        text: [
+                          ' Shiften der kleineren Mantisse: \\( ',
+                          this.watcher.steps.CalculateDeltaE.data.preShift.join(''),
+                          `\\overset{\\text{Shift: ${this.watcher.steps.CalculateDeltaE.data.deltaE} }}{\\rightarrow}`,
+                          this.watcher.steps.AddMantissa.data.mantissa2.join(''),
+                          '\\)',
+                        ].join(''),
+                      },
+                    ],
+                  },
                 ],
               });
             }
+            // TODO: Version if the mantissas are equal
+            // set up tabular for visual the addition
+            const mantissa1 = this.watcher.steps.AddMantissa.data.addition.steps.Addition.data
+              .op1Arr;
+            const mantissa2 = this.watcher.steps.AddMantissa.data.addition.steps.Addition.data
+              .op2Arr;
+            const carryBits = this.watcher.steps.AddMantissa.data.addition.steps.Addition.data
+              .carryArr;
+            const result = this.watcher.steps.AddMantissa.data.addition.steps.Addition.data
+              .resultArr;
+            const cols = this.watcher.steps.AddMantissa.data.binNum;
+            const row1 = [];
+            const row2 = [];
+            const row3 = [];
+            const tabdef = ['{'];
+            for (let i = mantissa1.length; i <= cols; i += 1) {
+              mantissa1.unshift(0);
+            }
+            for (let i = mantissa2.length; i <= cols; i += 1) {
+              mantissa2.unshift(0);
+            }
+            for (let i = carryBits.length; i <= cols; i += 1) {
+              carryBits.unshift(0);
+            }
+            for (let i = 0; i < cols; i += 1) {
+              tabdef.push('c');
+              row1.push(` ${mantissa1[i]}`);
+              row1.push('&');
+              row2.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
+              row2.push('&');
+              row3.push(` ${result[i]}`);
+              row3.push('&');
+            }
+            tabdef.push('}');
+            row1.pop();
+            row1.push('\\\\ ');
+            row2.pop();
+            row2.push('\\\\ ');
+            row3.pop();
+
+            const tabular = [
+              `\\( \\begin{array} ${tabdef.join('')}`,
+              `${row1.join('')}`,
+              `${row2.join('')}`,
+              '\\hline',
+              `${row3.join('')}`,
+              '\\end{array} \\) ',
+            ].join('');
+
             steps.push({
               name: `${this.$t('step')} 2`,
               text: [
@@ -342,30 +414,10 @@ export default {
               subpanels: [
                 { name: 'Hinweis', text: 'Die größere Zahl mit dem größeren Exponenten wird links angezeigt' },
                 {
-                  name: 'Exponent beachten',
-                  text: [
-                    'Der \\( Shift-Faktor \\) des Exponenten muss auf die Mantissen mit dem kleiner Exponenten angewendet werden. \n ',
-                    '\\( (Shift: ', this.watcher.steps.CalculateDeltaE.data.deltaE, ') \\)',
-                  ].join(''),
-                  subsubpanels: [
-                    {
-                      name: 'Anpassen der rechten Mantisse',
-                      text: [
-                        ' Bits Mantisse rechts, vor dem Shift: ', this.watcher.steps.CalculateDeltaE.data.preShift.join(''),
-                        ' und danach: ', this.watcher.steps.AddMantissa.data.mantissa2.join(''),
-                      ].join(''),
-                    },
-                  ],
-                },
-                {
                   name: 'Neue Mantisse',
                   text: [
-                    'Die neue Mantisse ist somit: ',
-                    this.watcher.steps.AddMantissa.data.mantissa1.join(''),
-                    ' + ',
-                    this.watcher.steps.AddMantissa.data.mantissa2.join(''),
-                    ' = ',
-                    solution.mantissaBits.join(''),
+                    'Die neue Mantisse ist somit: \<br\> \<br\>',
+                    tabular,
                   ].join(''),
                 },
                 {
@@ -382,6 +434,30 @@ export default {
             });
             break;
           case 'mul':
+            steps.push({
+              name: `${this.$t('values')}`,
+              text: 'Werte der übertragenen Zahlen',
+              subpanels: [
+                {
+                  name: 'Zahl links: ',
+                  text: [
+                    'Wert: ', y1.valueString,
+                    ', Vorzeichen: ', (y1.sign === 0 ? '+' : '-'),
+                    ', Mantisse: ', mantissaString1,
+                    ', Exponent: ', expString1,
+                  ].join(''),
+                },
+                {
+                  name: 'Zahl rechts: ',
+                  text: [
+                    'Wert: ', y2.valueString,
+                    ', Vorzeichen: ', (y2.sign === 0 ? '+' : '-'),
+                    ', Mantisse: ', mantissaString2,
+                    ', Exponent: ', expString2,
+                  ].join(''),
+                },
+              ],
+            });
             steps.push({
               name: `${this.$t('step')} 1`,
               text: [
@@ -405,6 +481,30 @@ export default {
           case 'sub':
             break;
           case 'div':
+            steps.push({
+              name: `${this.$t('values')}`,
+              text: 'Werte der übertragenen Zahlen',
+              subpanels: [
+                {
+                  name: 'Zahl links: ',
+                  text: [
+                    'Wert: ', y1.valueString,
+                    ', Vorzeichen: ', (y1.sign === 0 ? '+' : '-'),
+                    ', Mantisse: ', mantissaString1,
+                    ', Exponent: ', expString1,
+                  ].join(''),
+                },
+                {
+                  name: 'Zahl rechts: ',
+                  text: [
+                    'Wert: ', y2.valueString,
+                    ', Vorzeichen: ', (y2.sign === 0 ? '+' : '-'),
+                    ', Mantisse: ', mantissaString2,
+                    ', Exponent: ', expString2,
+                  ].join(''),
+                },
+              ],
+            });
             steps.push({
               name: `${this.$t('step')} 1`,
               text: [
