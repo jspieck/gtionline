@@ -15,11 +15,6 @@
         E({{exponentBits}})
         <div v-on:mousedown="sliderMouseDown" class="slider"/>
       </div>
-      <div v-on:click="expandFraction" class="mobile_expandExponent">
-        <div class="arrowLeft">
-          <div class='arrowMask'></div>
-        </div>
-      </div>
       <div class="fraction" :style="{ width: (60 + (numBits - exponentBits - 1) *
         (containerWidth / (numBits - 1))) + 'px' }">
         <div v-on:click="expandExponent" class="expandFraction">
@@ -687,9 +682,13 @@ export default {
     },
     expandFraction() {
       this.exponentBits -= 1;
+      this.checkAndConvertFormat(0);
+      this.checkAndConvertFormat(1);
     },
     expandExponent() {
       this.exponentBits += 1;
+      this.checkAndConvertFormat(0);
+      this.checkAndConvertFormat(1);
     },
   },
 };
