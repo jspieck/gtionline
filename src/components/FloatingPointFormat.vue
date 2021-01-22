@@ -285,10 +285,13 @@ export default {
         const solution = tool.getIEEEFromString(this.exponentBits, this.solution);
         const y1 = tool.getIEEEFromString(this.exponentBits, num1);
         const y2 = tool.getIEEEFromString(this.exponentBits, num2);
-        const mantissaString1 = y1.mantissaBits.join('');
-        const mantissaString2 = y2.mantissaBits.join('');
+        let mantissaString1 = y1.mantissaBits.join('');
+        mantissaString1 = `1,${mantissaString1.substring(1)}`;
+        let mantissaString2 = y2.mantissaBits.join('');
+        mantissaString2 = `1,${mantissaString2.substring(1)}`;
         const expString1 = y1.exponentBits.join('');
         const expString2 = y2.exponentBits.join('');
+        const solMantissa = this.watcher.steps.Result.data.result.mantissaBits.join('').substring(1);
         const steps = [];
         switch (this.selectedFormat[2]) {
           case 'add':
@@ -524,7 +527,12 @@ export default {
         }
         steps.push({
           name: this.$t('solution'),
-          text: ['Die Lösung lautet: '].join(''),
+          text: [
+            'Die Lösung lautet: ',
+            this.watcher.steps.Result.data.result.sign, ' ',
+            this.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
+            solMantissa,
+          ].join(''),
           subpanels: [
             {
               name: 'Vorzeichen: ',
