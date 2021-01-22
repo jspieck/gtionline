@@ -4,9 +4,14 @@
   <div class="fp-arithmetic">
     <h4>{{$t('fpformat')}}</h4>
     <div class="formatContainer" v-on:mousemove="sliderMouseMove">
+      <div class="bits">
+        <FSelect :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
+                     :options="bitrangeOptions">
+        </FSelect>
+      </div>
       <div class="sign">VB</div>
       <div class="exponent" :style="{ width:
-        (60 + this.exponentBits * (this.containerWidth / (numBits - 1)))+ 'px' }">
+        (60 + this.exponentBits * (this.containerWidth / (this.numBits - 1)))+ 'px' }">
         <div v-on:click="expandFraction" class="expandExponent">
           <div class="arrowLeft">
             <div class='arrowMask'></div>
@@ -15,8 +20,8 @@
         E({{exponentBits}})
         <div v-on:mousedown="sliderMouseDown" class="slider"/>
       </div>
-      <div class="fraction" :style="{ width: (60 + (numBits - exponentBits - 1) *
-        (containerWidth / (numBits - 1))) + 'px' }">
+      <div class="fraction" :style="{ width: (60 + (this.numBits - this.exponentBits - 1) *
+        (this.containerWidth / (this.numBits - 1))) + 'px' }">
         <div v-on:click="expandExponent" class="expandFraction">
           <div class="arrowRight">
             <div class="arrowMask"></div>
@@ -79,12 +84,6 @@
       </div>
     </div>
 
-    <!--<h4>Eigene Lösung</h4>
-    <div class="solutionArea">
-      <input id="solutionInput">
-      <div class="divMargin"/>
-      <button id="checkSolution">Check</button>
-    </div>-->
     <h4>{{$t('correctSolution')}}</h4>
     <label class="attention">{{$t('attSolve')}}</label>
     <Accordion :solutionDescription="solDescr">
@@ -110,7 +109,7 @@ export default {
   },
   data() {
     return {
-      selectedFormat: ['decimal', 'ieee', 'add', 'decimal', 'ieee'], // 0: input left, 1: converted left, 2: operand, 3: input right, 4: converted right
+      selectedFormat: ['decimal', 'ieee', 'add', 'decimal', 'ieee', 'sixteen'], // 0: input left, 1: converted left, 2: operand, 3: input right, 4: converted right, 5: bit range
       mouseDown: false,
       solution: '',
       inputNums: { 0: '', 1: '' },
@@ -141,15 +140,40 @@ export default {
         ieee: 'IEEE (1 0101 1101)',
       };
     },
+    bitrangeOptions() {
+      return {
+        sixteen: '16 bit',
+        thirtytwo: '32 bit',
+        sixtyfour: '64 bit',
+      };
+    },
   },
   mounted() {
     this.$nextTick(() => {
       window.addEventListener('resize', () => {
         this.containerWidth = Math.min(500, window.innerWidth - 250);
       });
+      window.addEventListener('SelectionChanged', () => {
+        this.containerWidth = Math.min(500, window.innerWidth - 250);
+        this.computeSolution();
+        this.solDescrActive();
+      });
     });
   },
   methods: {
+    selectBitRange(num, val) {
+      this.selectedFormat[num] = val;
+      console.log(this.selectedFormat[num]);
+      if (val === 'sixteen') {
+        this.numBits = 16;
+      } else if (val === 'thirtytwo') {
+        this.numBits = 32;
+      } else if (val === 'sixtyfour') {
+        this.numBits = 64;
+      }
+      this.computeSolution();
+      this.solDescrActive();
+    },
     selectVal(num, val) {
       this.selectedFormat[num] = val;
       const nnum = num > 2 ? 1 : 0;
@@ -751,6 +775,7 @@ $arrow-size: 12px;
   flex-direction: row;
   margin: 10px;
   font-size: 14px;
+  color: white;
 }
 
 .mobile_formatContainer {
@@ -772,6 +797,42 @@ $arrow-size: 12px;
   z-index: 1;
   background: none;
   cursor: ew-resize;
+}
+
+.bits {
+  width: 80px;
+  height: 40px;
+  line-height: 40px;
+  color: white;
+  background: $freshBlue;
+  border-right: 1px solid white;
+}
+
+.bits .selectBox {
+  border: none;
+  background-color: transparent;
+  color: white;
+}
+
+.bits .selectBox .select {
+  border: none;
+  background-color: transparent;
+  color: white;
+}
+
+.bits .selectBox .fpfSelect{
+  border: none;
+  background-color: transparent;
+  color: white;
+}
+
+.mobile_bits {
+  width: 80%;
+  height: 40px;
+  line-height: 40px;
+  color: white;
+  background: $freshBlue;
+  border-right: 1px solid white;
 }
 
 .sign {

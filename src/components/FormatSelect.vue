@@ -43,7 +43,7 @@ select{
   text-decoration: none;
   vertical-align: middle;
   background-color: transparent;
-  color: #202124!important;
+  //color: #202124!important;
   height: 36px;
   padding-left: 8px;
   padding-right: 30px;
