@@ -100,6 +100,7 @@
 import * as tool from '../scripts/gti-tools';
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
+import * as description from './DescriptionSolution';
 
 export default {
   name: 'FloatingPointArithmetic',
@@ -114,7 +115,7 @@ export default {
       solution: '',
       inputNums: { 0: '', 1: '' },
       nums: { 0: '', 1: '' },
-      exponentBits: 4,
+      exponentBits: 5,
       numBits: 16,
       falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
@@ -142,9 +143,10 @@ export default {
     },
     bitrangeOptions() {
       return {
+        eight: '8 bit',
         sixteen: '16 bit',
         thirtytwo: '32 bit',
-        sixtyfour: '64 bit',
+        // sixtyfour: '64 bit',
       };
     },
   },
@@ -153,26 +155,41 @@ export default {
       window.addEventListener('resize', () => {
         this.containerWidth = Math.min(500, window.innerWidth - 250);
       });
-      window.addEventListener('SelectionChanged', () => {
+      window.addEventListener('unload', () => {
         this.containerWidth = Math.min(500, window.innerWidth - 250);
-        this.computeSolution();
-        this.solDescrActive();
       });
     });
   },
   methods: {
+    recalculate() {
+      this.containerWidth = Math.min(500, window.innerWidth - 250);
+      this.convertFormat(0);
+      this.convertFormat(1);
+      this.computeSolution();
+      this.solDescrActive();
+      this.$nextTick(() => {
+        if (window.MathJax) {
+          window.MathJax.typeset();
+        }
+      });
+    },
     selectBitRange(num, val) {
       this.selectedFormat[num] = val;
       console.log(this.selectedFormat[num]);
-      if (val === 'sixteen') {
+      if (val === 'eight') {
+        this.numBits = 8;
+        this.exponentBits = 3;
+      } else if (val === 'sixteen') {
         this.numBits = 16;
+        this.exponentBits = 5;
       } else if (val === 'thirtytwo') {
         this.numBits = 32;
-      } else if (val === 'sixtyfour') {
+        this.exponentBits = 8;
+      } /* else if (val === 'sixtyfour') {
         this.numBits = 64;
-      }
-      this.computeSolution();
-      this.solDescrActive();
+        this.exponentBits = 11;
+      } */
+      this.recalculate();
     },
     selectVal(num, val) {
       this.selectedFormat[num] = val;
@@ -182,8 +199,7 @@ export default {
     },
     selectOp(num, val) {
       this.selectedFormat[num] = val;
-      this.computeSolution();
-      this.solDescrActive();
+      this.recalculate();
     },
     checkFormat(format, conv) {
       let commaOccured = false;
@@ -303,277 +319,7 @@ export default {
       }
     },
     solDescrActive() {
-      const num1 = this.nums[0];
-      const num2 = this.nums[1];
-      if (num1 !== '' && num2 !== '' && num1 !== 'Falsches Format' && num2 !== 'Falsches Format') {
-        const solution = tool.getIEEEFromString(this.exponentBits, this.solution);
-        const y1 = tool.getIEEEFromString(this.exponentBits, num1);
-        const y2 = tool.getIEEEFromString(this.exponentBits, num2);
-        let mantissaString1 = y1.mantissaBits.join('');
-        mantissaString1 = `1,${mantissaString1.substring(1)}`;
-        let mantissaString2 = y2.mantissaBits.join('');
-        mantissaString2 = `1,${mantissaString2.substring(1)}`;
-        const expString1 = y1.exponentBits.join('');
-        const expString2 = y2.exponentBits.join('');
-        const solMantissa = this.watcher.steps.Result.data.result.mantissaBits.join('').substring(1);
-        const steps = [];
-        switch (this.selectedFormat[2]) {
-          case 'add':
-            steps.push({
-              name: `${this.$t('values')}`,
-              text: 'Werte der übertragenen Zahlen',
-              subpanels: [
-                {
-                  name: '1. Summand: ',
-                  text: [
-                    'Wert: ', y1.valueString,
-                    ', Vorzeichen: ', (y1.sign === 0 ? '+' : '-'),
-                    ', Mantisse: ', mantissaString1,
-                    ', Exponent: ', expString1,
-                  ].join(''),
-                },
-                {
-                  name: '2. Summand: ',
-                  text: [
-                    'Wert: ', y2.valueString,
-                    ', Vorzeichen: ', (y2.sign === 0 ? '+' : '-'),
-                    ', Mantisse: ', mantissaString2,
-                    ', Exponent: ', expString2,
-                  ].join(''),
-                },
-              ],
-            });
-            if (this.watcher.steps.CalculateDeltaE.data.deltaE === 0) {
-              steps.push({
-                name: `${this.$t('step')} 1`,
-                text: ['Die Exponenten beider Zahlen müssen angeglichen werden. \\( (', expString1, ' = ', expString2, ' \\Rightarrow i.O.) \\)'].join(''),
-              });
-            } else {
-              const left = this.watcher.steps.CalculateDeltaE.data.switched ? '<' : '>';
-              steps.push({
-                name: `${this.$t('step')} 1`,
-                text: ['Die Exponenten beider Zahlen müssen angeglichen werden. \\( (', expString1, ' \\neq ', expString2, ') \\)'].join(''),
-                subpanels: [
-                  {
-                    name: 'Differenz Exponent',
-                    text: [
-                      'Es wird immer der kleinere vom größeren Exponenten subtrahiert ',
-                      `\\( ( [ ${this.watcher.steps.CalculateDeltaE.data.expN1Bits.join('')} ] :=  ${this.watcher.steps.CalculateDeltaE.data.expN1} ${left}
-                      [ ${this.watcher.steps.CalculateDeltaE.data.expN2Bits.join('')} ] :=  ${this.watcher.steps.CalculateDeltaE.data.expN2}) \\) `,
-                      'daher ergibt sich eine Differenz von: ',
-                      this.watcher.steps.CalculateDeltaE.data.deltaE,
-                    ].join(''),
-                    subsubpanels: [
-                      {
-                        name: 'Anpassen der kleineren Mantisse',
-                        text: [
-                          ' Shiften der kleineren Mantisse: \\( ',
-                          this.watcher.steps.CalculateDeltaE.data.preShift.join(''),
-                          `\\overset{\\text{Shift: ${this.watcher.steps.CalculateDeltaE.data.deltaE} }}{\\rightarrow}`,
-                          this.watcher.steps.AddMantissa.data.mantissa2.join(''),
-                          '\\)',
-                        ].join(''),
-                      },
-                    ],
-                  },
-                ],
-              });
-            }
-            // TODO: Version if the mantissas are equal
-            // set up tabular for visual the addition
-            const mantissa1 = this.watcher.steps.AddMantissa.data.addition.steps.Addition.data
-              .op1Arr;
-            const mantissa2 = this.watcher.steps.AddMantissa.data.addition.steps.Addition.data
-              .op2Arr;
-            const carryBits = this.watcher.steps.AddMantissa.data.addition.steps.Addition.data
-              .carryArr;
-            const result = this.watcher.steps.AddMantissa.data.addition.steps.Addition.data
-              .resultArr;
-            const cols = this.watcher.steps.AddMantissa.data.binNum;
-            const row1 = [];
-            const row2 = [];
-            const row3 = [];
-            const tabdef = ['{'];
-            for (let i = mantissa1.length; i <= cols; i += 1) {
-              mantissa1.unshift(0);
-            }
-            for (let i = mantissa2.length; i <= cols; i += 1) {
-              mantissa2.unshift(0);
-            }
-            for (let i = carryBits.length; i <= cols; i += 1) {
-              carryBits.unshift(0);
-            }
-            for (let i = 0; i < cols; i += 1) {
-              tabdef.push('c');
-              row1.push(` ${mantissa1[i]}`);
-              row1.push('&');
-              row2.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
-              row2.push('&');
-              row3.push(` ${result[i]}`);
-              row3.push('&');
-            }
-            tabdef.push('}');
-            row1.pop();
-            row1.push('\\\\ ');
-            row2.pop();
-            row2.push('\\\\ ');
-            row3.pop();
-
-            const tabular = [
-              `\\( \\begin{array} ${tabdef.join('')}`,
-              `${row1.join('')}`,
-              `${row2.join('')}`,
-              '\\hline',
-              `${row3.join('')}`,
-              '\\end{array} \\) ',
-            ].join('');
-
-            steps.push({
-              name: `${this.$t('step')} 2`,
-              text: [
-                'Die Mantissen beider Zahlen müssen addiert werden.',
-              ].join(''),
-              subpanels: [
-                { name: 'Hinweis', text: 'Die größere Zahl mit dem größeren Exponenten wird links angezeigt' },
-                {
-                  name: 'Neue Mantisse',
-                  text: [
-                    'Die neue Mantisse ist somit: \<br\> \<br\>',
-                    tabular,
-                  ].join(''),
-                },
-                {
-                  name: 'Darstellung beachten',
-                  text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
-                  subsubpanels: [
-                    {
-                      name: 'Mantisse im Float',
-                      text: ['Im Float wird die führende 1 nicht angezeigt: ', this.watcher.steps.AddMantissa.data.normalizedMantissa.join('')].join(''),
-                    },
-                  ],
-                },
-              ],
-            });
-            break;
-          case 'mul':
-            steps.push({
-              name: `${this.$t('values')}`,
-              text: 'Werte der übertragenen Zahlen',
-              subpanels: [
-                {
-                  name: 'Zahl links: ',
-                  text: [
-                    'Wert: ', y1.valueString,
-                    ', Vorzeichen: ', (y1.sign === 0 ? '+' : '-'),
-                    ', Mantisse: ', mantissaString1,
-                    ', Exponent: ', expString1,
-                  ].join(''),
-                },
-                {
-                  name: 'Zahl rechts: ',
-                  text: [
-                    'Wert: ', y2.valueString,
-                    ', Vorzeichen: ', (y2.sign === 0 ? '+' : '-'),
-                    ', Mantisse: ', mantissaString2,
-                    ', Exponent: ', expString2,
-                  ].join(''),
-                },
-              ],
-            });
-            steps.push({
-              name: `${this.$t('step')} 1`,
-              text: [
-                'Die Exponenten beider Zahlen müssen addiert werden. (neuer Exponent: ',
-                this.binToDec(expString1) + this.binToDec(expString2),
-                ')',
-              ].join(''),
-            });
-            steps.push({
-              name: `${this.$t('step')} 2`,
-              text: [
-                'Die Mantissen beider Zahlen müssen multipliziert werden.',
-              ].join(''),
-              subpanels: [
-                { name: 'Exponent beachten', text: ['Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden. (Shift: ', this.binToDec(expString1) - this.binToDec(expString2), ')'].join('') },
-                { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
-                { name: 'Neue Mantisse', text: ['Die neue Mantisse ist somit: ', solution.mantissaBits.join('')].join('') },
-              ],
-            });
-            break;
-          case 'sub':
-            break;
-          case 'div':
-            steps.push({
-              name: `${this.$t('values')}`,
-              text: 'Werte der übertragenen Zahlen',
-              subpanels: [
-                {
-                  name: 'Zahl links: ',
-                  text: [
-                    'Wert: ', y1.valueString,
-                    ', Vorzeichen: ', (y1.sign === 0 ? '+' : '-'),
-                    ', Mantisse: ', mantissaString1,
-                    ', Exponent: ', expString1,
-                  ].join(''),
-                },
-                {
-                  name: 'Zahl rechts: ',
-                  text: [
-                    'Wert: ', y2.valueString,
-                    ', Vorzeichen: ', (y2.sign === 0 ? '+' : '-'),
-                    ', Mantisse: ', mantissaString2,
-                    ', Exponent: ', expString2,
-                  ].join(''),
-                },
-              ],
-            });
-            steps.push({
-              name: `${this.$t('step')} 1`,
-              text: [
-                'Die Exponenten beider Zahlen müssen subtrahiert werden. (neuer Exponent: ',
-                this.binToDec(expString1) - this.binToDec(expString2),
-                ')',
-              ].join(''),
-            });
-            steps.push({
-              name: `${this.$t('step')} 2`,
-              text: [
-                'Die Mantissen beider Zahlen müssen dividiert werden.',
-              ].join(''),
-              subpanels: [
-                { name: 'Exponent beachten', text: ['Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden. (Shift: ', this.binToDec(expString2) - this.binToDec(expString1), ')'].join('') },
-                { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
-                { name: 'Neue Mantisse', text: ['Die neue Mantisse ist somit: ', solution.mantissaBits.join('')].join('') },
-              ],
-            });
-            break;
-          default:
-        }
-        steps.push({
-          name: this.$t('solution'),
-          text: [
-            'Die Lösung lautet: ',
-            this.watcher.steps.Result.data.result.sign, ' ',
-            this.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
-            solMantissa,
-          ].join(''),
-          subpanels: [
-            {
-              name: 'Vorzeichen: ',
-              text: this.watcher.steps.Result.data.result.sign,
-            },
-            {
-              name: 'Exponent: ',
-              text: this.watcher.steps.Result.data.result.exponentBits.join(''),
-            },
-            {
-              name: 'Mantisse: ',
-              text: this.watcher.steps.Result.data.result.mantissaBits.join(''),
-            },
-          ],
-        });
-        this.solutionSteps = steps;
-      }
+      this.solutionSteps = (new description.DescriptionSolution(this)).description;
     },
     decToBin(num) {
       const fRep = parseFloat(num.replace(',', '.'));
@@ -714,13 +460,11 @@ export default {
     },
     expandFraction() {
       this.exponentBits -= 1;
-      this.checkAndConvertFormat(0);
-      this.checkAndConvertFormat(1);
+      this.recalculate();
     },
     expandExponent() {
       this.exponentBits += 1;
-      this.checkAndConvertFormat(0);
-      this.checkAndConvertFormat(1);
+      this.recalculate();
     },
   },
 };
@@ -775,7 +519,7 @@ $arrow-size: 12px;
   flex-direction: row;
   margin: 10px;
   font-size: 14px;
-  color: white;
+  color: white !important;
 }
 
 .mobile_formatContainer {
@@ -811,19 +555,7 @@ $arrow-size: 12px;
 .bits .selectBox {
   border: none;
   background-color: transparent;
-  color: white;
-}
-
-.bits .selectBox .select {
-  border: none;
-  background-color: transparent;
-  color: white;
-}
-
-.bits .selectBox .fpfSelect{
-  border: none;
-  background-color: transparent;
-  color: white;
+  color: white !important;
 }
 
 .mobile_bits {
@@ -833,6 +565,12 @@ $arrow-size: 12px;
   color: white;
   background: $freshBlue;
   border-right: 1px solid white;
+}
+
+.mobile_bits .selectBox {
+  border: none;
+  background-color: transparent;
+  color: white !important;
 }
 
 .sign {
@@ -986,6 +724,9 @@ $arrow-size: 12px;
   .slider{
     display: none;
   };
+  .bits{
+    display: none;
+  };
   .sign{
     display: none;
   };
@@ -1010,6 +751,9 @@ $arrow-size: 12px;
     display: none;
   };
   .mobile_slider{
+    display: none;
+  };
+  .mobile_bits{
     display: none;
   };
   .mobile_sign{
