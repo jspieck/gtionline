@@ -29,6 +29,8 @@ export class DescriptionSolution {
       const expString2 = y2.exponentBits.join('');
       const watcher = this.imp.watcher;
       const steps = [];
+      let originalMantissa1;
+      let originalMantissa2;
       let mantissa1;
       let mantissa2;
       let carryBits;
@@ -37,6 +39,8 @@ export class DescriptionSolution {
       const row1 = [];
       const row2 = [];
       const row3 = [];
+      const row4 = [];
+      const row5 = [];
       const tabdef = [];
       switch (this.imp.selectedFormat[2]) {
         // =========================================================================================
@@ -153,10 +157,6 @@ export class DescriptionSolution {
               'Die Mantissen beider Zahlen müssen addiert werden.',
             ].join(''),
             subpanels: [
-              {
-                name: 'Hinweis',
-                text: 'Die größere Zahl mit dem größeren Exponenten wird links angezeigt',
-              },
               {
                 name: 'Neue Mantisse',
                 text: [
@@ -309,10 +309,46 @@ export class DescriptionSolution {
             ],
           });
           const addWatcher = watcher.steps.Addition.data.addition;
+          if (addWatcher.steps.CalculateDeltaE.data.deltaE === 0) {
+            steps.push({
+              name: `${this.imp.$t('step')} 1`,
+              text: ['Die Exponenten beider Zahlen müssen angeglichen werden. \\( (', expString1, ' = ', expString2, ' \\Rightarrow i.O.) \\)'].join(''),
+            });
+          } else {
+            const left = addWatcher.steps.CalculateDeltaE.data.switched ? '<' : '>';
+            steps.push({
+              name: `${this.imp.$t('step')} 1`,
+              text: ['Die Exponenten beider Zahlen müssen angeglichen werden. \\( (', expString1, ' \\neq ', expString2, ') \\)'].join(''),
+              subpanels: [
+                {
+                  name: 'Differenz Exponent',
+                  text: [
+                    'Es wird immer der kleinere vom größeren Exponenten subtrahiert ',
+                    `\\( ( [ ${addWatcher.steps.CalculateDeltaE.data.expN1Bits.join('')} ] :=  ${addWatcher.steps.CalculateDeltaE.data.expN1} ${left}
+                      [ ${addWatcher.steps.CalculateDeltaE.data.expN2Bits.join('')} ] :=  ${addWatcher.steps.CalculateDeltaE.data.expN2}) \\) `,
+                    'daher ergibt sich eine Differenz von: ',
+                    addWatcher.steps.CalculateDeltaE.data.deltaE,
+                  ].join(''),
+                  subsubpanels: [
+                    {
+                      name: 'Anpassen der kleineren Mantisse',
+                      text: [
+                        ' Shiften der kleineren Mantisse: \\( ',
+                        addWatcher.steps.CalculateDeltaE.data.preShift.join(''),
+                        `\\overset{\\text{Shift: ${addWatcher.steps.CalculateDeltaE.data.deltaE} }}{\\rightarrow}`,
+                        addWatcher.steps.AddMantissa.data.mantissa2.join(''),
+                        '\\)',
+                      ].join(''),
+                    },
+                  ],
+                },
+              ],
+            });
+          }
           if (addWatcher.steps.AddMantissa.data.sign1 === 0
             && addWatcher.steps.AddMantissa.data.sign2 === 1) {
             steps.push({
-              name: `${this.imp.$t('step')} 1`,
+              name: `${this.imp.$t('step')} 2`,
               text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
               subpanels:
                 [
@@ -366,7 +402,7 @@ export class DescriptionSolution {
           } else if (addWatcher.steps.AddMantissa.data.sign1 === 1
             && addWatcher.steps.AddMantissa.data.sign2 === 0) {
             steps.push({
-              name: `${this.imp.$t('step')} 1`,
+              name: `${this.imp.$t('step')} 2`,
               text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
               subpanels:
                 [
@@ -419,7 +455,7 @@ export class DescriptionSolution {
             });
           } else {
             steps.push({
-              name: `${this.imp.$t('step')} 1`,
+              name: `${this.imp.$t('step')} 2`,
               text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
               subpanels:
                 [
@@ -516,53 +552,37 @@ export class DescriptionSolution {
                 ],
             });
           }
-          if (addWatcher.steps.CalculateDeltaE.data.deltaE === 0) {
-            steps.push({
-              name: `${this.imp.$t('step')} 2`,
-              text: ['Die Exponenten beider Zahlen müssen angeglichen werden. \\( (', expString1, ' = ', expString2, ' \\Rightarrow i.O.) \\)'].join(''),
-            });
-          } else {
-            const left = addWatcher.steps.CalculateDeltaE.data.switched ? '<' : '>';
-            steps.push({
-              name: `${this.imp.$t('step')} 2`,
-              text: ['Die Exponenten beider Zahlen müssen angeglichen werden. \\( (', expString1, ' \\neq ', expString2, ') \\)'].join(''),
-              subpanels: [
-                {
-                  name: 'Differenz Exponent',
-                  text: [
-                    'Es wird immer der kleinere vom größeren Exponenten subtrahiert ',
-                    `\\( ( [ ${addWatcher.steps.CalculateDeltaE.data.expN1Bits.join('')} ] :=  ${addWatcher.steps.CalculateDeltaE.data.expN1} ${left}
-                      [ ${addWatcher.steps.CalculateDeltaE.data.expN2Bits.join('')} ] :=  ${addWatcher.steps.CalculateDeltaE.data.expN2}) \\) `,
-                    'daher ergibt sich eine Differenz von: ',
-                    addWatcher.steps.CalculateDeltaE.data.deltaE,
-                  ].join(''),
-                  subsubpanels: [
-                    {
-                      name: 'Anpassen der kleineren Mantisse',
-                      text: [
-                        ' Shiften der kleineren Mantisse: \\( ',
-                        addWatcher.steps.CalculateDeltaE.data.preShift.join(''),
-                        `\\overset{\\text{Shift: ${addWatcher.steps.CalculateDeltaE.data.deltaE} }}{\\rightarrow}`,
-                        addWatcher.steps.AddMantissa.data.mantissa2.join(''),
-                        '\\)',
-                      ].join(''),
-                    },
-                  ],
-                },
-              ],
-            });
-          }
           // TODO: Version if the mantissas are equal
           // set up tabular for visual the addition
+          originalMantissa1 = addWatcher.steps.AddMantissa.data.mantissa1;
+          originalMantissa2 = addWatcher.steps.AddMantissa.data.mantissa2;
           mantissa1 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op1Arr;
           mantissa2 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op2Arr;
           carryBits = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.carryArr;
           result = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.resultArr;
           cols = addWatcher.steps.AddMantissa.data.binNum;
-          row1.push('&');
-          row2.push('&');
-          row3.push('+&');
+          if (addWatcher.steps.AddMantissa.data.sign1 === 0
+            && addWatcher.steps.AddMantissa.data.sign2 === 1) {
+            row1.push('&');
+            row2.push('-&');
+          } else if (addWatcher.steps.AddMantissa.data.sign1 === 0
+            && addWatcher.steps.AddMantissa.data.sign2 === 1) {
+            row1.push('-&');
+            row2.push('+&');
+          } else {
+            row1.push('-&');
+            row2.push('-&');
+          }
+          row3.push('&');
+          row4.push('+&');
+          row5.push('=&');
           tabdef.push('{');
+          for (let i = originalMantissa1.length; i <= cols; i += 1) {
+            originalMantissa1.unshift(0);
+          }
+          for (let i = originalMantissa2.length; i <= cols; i += 1) {
+            originalMantissa2.unshift(0);
+          }
           for (let i = mantissa1.length; i <= cols; i += 1) {
             mantissa1.unshift(0);
           }
@@ -574,12 +594,16 @@ export class DescriptionSolution {
           }
           for (let i = 0; i < cols; i += 1) {
             tabdef.push('c');
-            row1.push(` ${mantissa1[i]}`);
+            row1.push(` ${originalMantissa1[i]}`);
             row1.push('&');
-            row2.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
+            row2.push(` ${originalMantissa2[i]}`);
             row2.push('&');
-            row3.push(` ${result[i]}`);
+            row3.push(` ${mantissa1[i]}`);
             row3.push('&');
+            row4.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
+            row4.push('&');
+            row5.push(` ${result[i]}`);
+            row5.push('&');
           }
           tabdef.push('}');
           row1.pop();
@@ -587,13 +611,20 @@ export class DescriptionSolution {
           row2.pop();
           row2.push('\\\\ ');
           row3.pop();
+          row3.push('\\\\ ');
+          row4.pop();
+          row4.push('\\\\ ');
+          row5.pop();
 
           const subtractionMantissaTabular = [
             `\\( \\begin{array} ${tabdef.join('')}`,
             `${row1.join('')}`,
             `${row2.join('')}`,
-            '\\hline',
+            '\\hline_\{Complement\}',
             `${row3.join('')}`,
+            `${row4.join('')}`,
+            '\\hline',
+            `${row5.join('')}`,
             '\\end{array} \\) ',
           ].join('');
 
@@ -603,10 +634,6 @@ export class DescriptionSolution {
               'Die Mantissen beider Zahlen müssen addiert werden.',
             ].join(''),
             subpanels: [
-              {
-                name: 'Hinweis',
-                text: 'Die größere Zahl mit dem größeren Exponenten wird links angezeigt',
-              },
               {
                 name: 'Neue Mantisse',
                 text: [
