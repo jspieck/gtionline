@@ -309,23 +309,213 @@ export class DescriptionSolution {
             ],
           });
           const addWatcher = watcher.steps.Addition.data.addition;
-          steps.push({
-            name: `${this.imp.$t('step')} 1`,
-            text: ['Subtraktion entspricht der Addition mit dem Zweierkomplement'].join(''),
-            subpanels:
-              [
-                {
-                  name: 'Differenz Exponent',
-                  text: [
-                    'Es wird immer der kleinere vom größeren Exponenten subtrahiert ',
-                    `\\( ( [ ${addWatcher.steps.CalculateDeltaE.data.expN1Bits.join('')} ] :=  ${addWatcher.steps.CalculateDeltaE.data.expN1}
-                        [ ${addWatcher.steps.CalculateDeltaE.data.expN2Bits.join('')} ] :=  ${addWatcher.steps.CalculateDeltaE.data.expN2}) \\) `,
-                    'daher ergibt sich eine Differenz von: ',
-                    addWatcher.steps.CalculateDeltaE.data.deltaE,
-                  ].join(''),
-                },
-              ],
-          });
+          if (addWatcher.steps.AddMantissa.data.sign1 === 0
+            && addWatcher.steps.AddMantissa.data.sign2 === 1) {
+            steps.push({
+              name: `${this.imp.$t('step')} 1`,
+              text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
+              subpanels:
+                [
+                  {
+                    name: [
+                      'Bildung Zweierkomplement aus Mantisse: \\(',
+                      addWatcher.steps.AddMantissa.data.mantissa2.join(''),
+                      '\\)',
+                    ].join(''),
+                    text: 'Schritte',
+                    subsubpanels: [
+                      {
+                        name: 'Bits umkehren',
+                        text: [
+                          '\\(',
+                          addWatcher.steps.AddMantissa.data.mantissa2.join(''),
+                          '\\rightarrow',
+                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                            .flippedArray.join(''),
+                          '\\)',
+                        ].join(''),
+                      },
+                      {
+                        name: '1 addieren',
+                        text: [
+                          '\\(',
+                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                            .flippedArray.join(''),
+                          '\\rightarrow',
+                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                            .oneAdded.join(''),
+                          '\\)',
+                        ].join(''),
+                      },
+                      {
+                        name: 'Normalisieren',
+                        text: [
+                          '\\(',
+                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                            .oneAdded.join(''),
+                          '\\rightarrow',
+                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                            .normalizedArray.join(''),
+                          '\\)',
+                        ].join(''),
+                      },
+                    ],
+                  },
+                ],
+            });
+          } else if (addWatcher.steps.AddMantissa.data.sign1 === 1
+            && addWatcher.steps.AddMantissa.data.sign2 === 0) {
+            steps.push({
+              name: `${this.imp.$t('step')} 1`,
+              text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
+              subpanels:
+                [
+                  {
+                    name: [
+                      'Bildung Zweierkomplement aus Mantisse: \\(',
+                      addWatcher.steps.AddMantissa.data.mantissa1.join(''),
+                      '\\)',
+                    ].join(''),
+                    text: 'Schritte',
+                    subsubpanels: [
+                      {
+                        name: 'Bits umkehren',
+                        text: [
+                          '\\(',
+                          addWatcher.steps.AddMantissa.data.mantissa1.join(''),
+                          '\\rightarrow',
+                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                            .flippedArray.join(''),
+                          '\\)',
+                        ].join(''),
+                      },
+                      {
+                        name: '1 addieren',
+                        text: [
+                          '\\(',
+                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                            .flippedArray.join(''),
+                          '\\rightarrow',
+                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                            .oneAdded.join(''),
+                          '\\)',
+                        ].join(''),
+                      },
+                      {
+                        name: 'Normalisieren',
+                        text: [
+                          '\\(',
+                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                            .oneAdded.join(''),
+                          '\\rightarrow',
+                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                            .normalizedArray.join(''),
+                          '\\)',
+                        ].join(''),
+                      },
+                    ],
+                  },
+                ],
+            });
+          } else {
+            steps.push({
+              name: `${this.imp.$t('step')} 1`,
+              text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
+              subpanels:
+                [
+                  {
+                    name: [
+                      'Bildung Zweierkomplement aus Mantisse: \\(',
+                      addWatcher.steps.AddMantissa.data.mantissa1.join(''),
+                      '\\)',
+                    ].join(''),
+                    text: 'Schritte',
+                    subsubpanels: [
+                      {
+                        name: 'Bits umkehren',
+                        text: [
+                          '\\(',
+                          addWatcher.steps.AddMantissa.data.mantissa1.join(''),
+                          '\\rightarrow',
+                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                            .flippedArray.join(''),
+                          '\\)',
+                        ].join(''),
+                      },
+                      {
+                        name: '1 addieren',
+                        text: [
+                          '\\(',
+                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                            .flippedArray.join(''),
+                          '\\rightarrow',
+                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                            .oneAdded.join(''),
+                          '\\)',
+                        ].join(''),
+                      },
+                      {
+                        name: 'Normalisieren',
+                        text: [
+                          '\\(',
+                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                            .oneAdded.join(''),
+                          '\\rightarrow',
+                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                            .normalizedArray.join(''),
+                          '\\)',
+                        ].join(''),
+                      },
+                    ],
+                  },
+                  {
+                    name: [
+                      'Bildung Zweierkomplement aus Mantisse: \\(',
+                      addWatcher.steps.AddMantissa.data.mantissa2.join(''),
+                      '\\)',
+                    ].join(''),
+                    text: 'Schritte',
+                    subsubpanels: [
+                      {
+                        name: 'Bits umkehren',
+                        text: [
+                          '\\(',
+                          addWatcher.steps.AddMantissa.data.mantissa2.join(''),
+                          '\\rightarrow',
+                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                            .flippedArray.join(''),
+                          '\\)',
+                        ].join(''),
+                      },
+                      {
+                        name: '1 addieren',
+                        text: [
+                          '\\(',
+                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                            .flippedArray.join(''),
+                          '\\rightarrow',
+                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                            .oneAdded.join(''),
+                          '\\)',
+                        ].join(''),
+                      },
+                      {
+                        name: 'Normalisieren',
+                        text: [
+                          '\\(',
+                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                            .oneAdded.join(''),
+                          '\\rightarrow',
+                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                            .normalizedArray.join(''),
+                          '\\)',
+                        ].join(''),
+                      },
+                    ],
+                  },
+                ],
+            });
+          }
           if (addWatcher.steps.CalculateDeltaE.data.deltaE === 0) {
             steps.push({
               name: `${this.imp.$t('step')} 2`,
