@@ -10066,6 +10066,8 @@ var AdditionIEEE = /*#__PURE__*/function () {
 
       var op1 = new NumberBaseNComplement(2, binNum, mantissa1, binNum, sign1 === 1);
       var op2 = new NumberBaseNComplement(2, binNum, mantissa2, binNum, sign2 === 1);
+      this.watcher = this.watcher.step('AddMantissa').saveVariable('complement1', op1.watcher);
+      this.watcher = this.watcher.step('AddMantissa').saveVariable('complement2', op2.watcher);
       var addition = new AdditionBaseNComplement(op1, op2);
       this.watcher = this.watcher.step('AddMantissa').saveVariable('addition', addition.watcher);
       var additionResult = addition.getResult();
