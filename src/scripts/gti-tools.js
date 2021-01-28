@@ -9125,6 +9125,7 @@ var NumberBaseNComplement = /*#__PURE__*/function () {
     this.digitNum = digitNum;
     this.stringRepresentation = null;
     this.stringRepresentationNoLeadingZeros = null;
+    this.watcher = new Algorithm();
 
     if (!this._checkArray(representation)) {
       throw new Error('NumberBaseNComplement.constructor(base, digitNum, ...): representation contains invalid number.');
@@ -9137,7 +9138,9 @@ var NumberBaseNComplement = /*#__PURE__*/function () {
     this._normalizeArray();
 
     if (negate) {
-      this.arr = this.getFlipedArray(); // Add one
+      this.watcher = this.watcher.step('Complement').saveVariable('originalArray', _toConsumableArray(this.arr));
+      this.arr = this.getFlipedArray();
+      this.watcher = this.watcher.step('Complement').saveVariable('flippedArray', _toConsumableArray(this.arr)); // Add one
 
       for (var i = this.arr.length - 1; i >= 0; i--) {
         if (this.arr[i] !== this.base - 1) {
@@ -9148,9 +9151,13 @@ var NumberBaseNComplement = /*#__PURE__*/function () {
         }
       }
 
+      this.watcher = this.watcher.step('Complement').saveVariable('oneAdded', _toConsumableArray(this.arr));
+
       this._normalizeOffset();
 
       this._normalizeArray();
+
+      this.watcher = this.watcher.step('Complement').saveVariable('normalizedArray', _toConsumableArray(this.arr));
     } // delete right digits if the array is to long
 
 
@@ -10197,7 +10204,8 @@ var SubtractionIEEE = /*#__PURE__*/function () {
 
       flipedArr2[0] = flipedArr2[0] === 0 ? 1 : 0;
       var op1 = new NumberIEEE(n1.expBitNum, n1.manBitNum, n1.arr);
-      var op2 = new NumberIEEE(n2.expBitNum, n2.manBitNum, flipedArr2); // a - b = a + (-b)
+      var op2 = new NumberIEEE(n2.expBitNum, n2.manBitNum, flipedArr2);
+      this.watcher = this.watcher.step('Input').saveVariable('op1Sign', op1.sign).saveVariable('op1Sign', op1.exponentBits).saveVariable('op1Sign', op1.mantissaBits).saveVariable('op1Sign', op2.sign).saveVariable('op1Sign', op2.exponentBits).saveVariable('op1Sign', op2.mantissaBits); // a - b = a + (-b)
 
       var addition = new AdditionIEEE(op1, op2);
       this.watcher = this.watcher.step('Addition').saveVariable('addition', addition.watcher);
