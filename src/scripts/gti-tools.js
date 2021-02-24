@@ -9354,9 +9354,9 @@ var AdditionBaseNComplement = /*#__PURE__*/function () {
         _final2.unshift(m % base);
 
         carryBits.unshift(Math.floor(m / base));
-      }
+      } // console.log('Actual Add', n1Arr, n2Arr, final);
+      // We have an overflow if the XOR of the first two carry out bits are 1
 
-      console.log('Actual Add', n1Arr, n2Arr, _final2); // We have an overflow if the XOR of the first two carry out bits are 1
 
       this.producedOverflow = carryBits[0] !== carryBits[1]; // TODO this negative value is IEEE specific, since an overflow does not change the sign
 
@@ -9377,8 +9377,9 @@ var AdditionBaseNComplement = /*#__PURE__*/function () {
         _final2.unshift(carryBits[0]);
       }
 
-      var result = new NumberBaseNComplement(base, digitNum, _final2, 0, isNegative);
-      console.log('Actual Add Compl', n1Arr, n2Arr, result.arr);
+      this.negativeResult = isNegative;
+      var result = new NumberBaseNComplement(base, digitNum, _final2, 0, false); // console.log('Actual Add Compl', n1Arr, n2Arr, result.arr);
+
       this.watcher.step('Addition').saveVariable('op1', n1).saveVariable('op2', n2).saveVariable('op1Arr', _toConsumableArray(n1Arr)).saveVariable('op2Arr', _toConsumableArray(n2Arr)).saveVariable('carryArr', [].concat(carryBits)).saveVariable('resultArr', [].concat(_final2)).saveVariable('result', result).saveVariable('overflow', this.producedOverflow).saveVariable('equal', isEqual);
       return result;
     }
@@ -9461,7 +9462,7 @@ var DivisionBaseNSigned = /*#__PURE__*/function () {
           return a === 0;
         })) {
           // subt. not zero
-          if (subtractionResult.negative === false) {
+          if (operation.negativeResult === false) {
             // subt. positive result
             arr.push(1);
             op1arr = _toConsumableArray(subtractionResult.arr);
@@ -9972,9 +9973,10 @@ var AdditionIEEE = /*#__PURE__*/function () {
         }
       }
 
-      var additionData = this._addMantissa(mantissa1, mantissa2, sign1, sign2, mantissa2.length);
+      var additionData = this._addMantissa(mantissa1, mantissa2, sign1, sign2, mantissa2.length, deltaE); // console.log('Add M', mantissa1, mantissa2, sign1, sign2,
+      // additionData.normalizedMantissa, additionData.shift);
 
-      console.log('Add M', mantissa1, mantissa2, sign1, sign2, additionData.normalizedMantissa, additionData.shift);
+
       var sign = additionData.sign ? 1 : 0;
       var normalizedMantissa = additionData.normalizedMantissa;
       var shift = additionData.shift; // Check if newly calculated mantissa is equal to 0
@@ -10022,7 +10024,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
     }
   }, {
     key: "_addMantissa",
-    value: function _addMantissa(mantissa1, mantissa2, sign1, sign2, binNum) {
+    value: function _addMantissa(mantissa1, mantissa2, sign1, sign2, binNum, deltaE) {
       this.watcher = this.watcher.step('AddMantissa').saveVariable('mantissa1', mantissa1).saveVariable('mantissa2', mantissa2).saveVariable('sign1', sign1).saveVariable('sign2', sign2).saveVariable('binNum', binNum);
       var isEqual = mantissa1.length === mantissa2.length && mantissa1.every(function (value, index) {
         return value === mantissa2[index];
@@ -10064,19 +10066,33 @@ var AdditionIEEE = /*#__PURE__*/function () {
         };
       }
 
-      var op1 = new NumberBaseNComplement(2, binNum, mantissa1, binNum, sign1 === 1);
-      var op2 = new NumberBaseNComplement(2, binNum, mantissa2, binNum, sign2 === 1);
+      var op1;
+      var op2; // if deltaE > 0 then the sign of the first summand leads the result sign
+
+      if (deltaE > 0) {
+        op1 = new NumberBaseNComplement(2, binNum, mantissa1, binNum, false);
+        op2 = new NumberBaseNComplement(2, binNum, mantissa2, binNum, sign1 !== sign2);
+      } else {
+        op1 = new NumberBaseNComplement(2, binNum, mantissa1, binNum, sign1 === 1);
+        op2 = new NumberBaseNComplement(2, binNum, mantissa2, binNum, sign2 === 1);
+      }
+
       this.watcher = this.watcher.step('AddMantissa').saveVariable('complement1', op1.watcher);
       this.watcher = this.watcher.step('AddMantissa').saveVariable('complement2', op2.watcher);
       var addition = new AdditionBaseNComplement(op1, op2);
       this.watcher = this.watcher.step('AddMantissa').saveVariable('addition', addition.watcher);
       var additionResult = addition.getResult();
-      var sign = additionResult.negative;
+      var sign = sign1 === 1; // case respects to a possible changed sign if the summands have the same exponent
+
+      if (deltaE === 0) {
+        additionResult = new NumberBaseNComplement(2, additionResult.arr.length, _toConsumableArray(additionResult.arr), binNum, addition.negativeResult);
+        sign = addition.negativeResult;
+      }
 
       var unnormalizedMantissa = _toConsumableArray(additionResult.arr);
 
-      this.watcher = this.watcher.step('AddMantissa').saveVariable('unnormalizedMantissa', _toConsumableArray(unnormalizedMantissa));
-      console.log(unnormalizedMantissa);
+      this.watcher = this.watcher.step('AddMantissa').saveVariable('unnormalizedMantissa', _toConsumableArray(unnormalizedMantissa)); // console.log(unnormalizedMantissa);
+
       var shift = 0; // shift for overflowed addition
 
       if (unnormalizedMantissa.length > mantissa1.length) {
