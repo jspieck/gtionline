@@ -9420,6 +9420,7 @@ var DivisionBaseNSigned = /*#__PURE__*/function () {
       this.watcher = new Algorithm();
       var offset = Math.max(n1.offset, n2.offset);
       var digitsToTake = n1.arr.length + offset + 1;
+      this.watcher.step('DivisionInput').saveVariable('n1Arr', _toConsumableArray(n1.arr)).saveVariable('n2Arr', _toConsumableArray(n2.arr));
       this.watcher.step('DetermineSize').saveVariable('n1Offset', n1.offset).saveVariable('n2Offset', n2.offset).saveVariable('digitNum', n1.digitNum).saveVariable('offset', offset).saveVariable('digitsToTake', digitsToTake);
 
       var n1copy = _toConsumableArray(n1.arr);

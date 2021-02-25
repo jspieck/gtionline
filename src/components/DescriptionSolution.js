@@ -681,6 +681,7 @@ export class DescriptionSolution {
         // =========================================================================================
         // Division
         case 'div':
+          const divWatcher = watcher.steps.Division.data.division;
           steps.push({
             name: `${this.imp.$t('values')}`,
             text: 'Werte der übertragenen Zahlen',
@@ -708,11 +709,76 @@ export class DescriptionSolution {
           steps.push({
             name: `${this.imp.$t('step')} 1`,
             text: [
-              'Die Exponenten beider Zahlen müssen subtrahiert werden. (neuer Exponent: ',
+              'Die Exponenten beider Zahlen müssen subtrahiert werden. (neuer Exponent: \\(',
               this.imp.binToDec(expString1) - this.imp.binToDec(expString2),
-              ')',
+              '\\) )',
             ].join(''),
           });
+          // the calculation is set up in a table
+          // information, steps
+          const divSteps = divWatcher.steps.DivisionSteps.data; // steps
+          const countSteps = divSteps.countSteps; // count of steps until result
+          const n1Arr = divWatcher.steps.DivisionInput.data.n1Arr; // divisor
+          const n1len = n1Arr.length;
+          const n2Arr = divWatcher.steps.DivisionInput.data.n2Arr; // dividend
+          const n2len = n2Arr.length;
+          const divRes = divWatcher.steps.Result.data.result; // result of division
+          let arrLen = divSteps[`Step${countSteps - 1}_SubRes`].length + divRes.arr.length; // columns
+          arrLen = arrLen + n2len + 1;
+          // table definition
+          tabdef.push('{');
+          for (let i = 0; i < cols; i += 1) {
+            tabdef.push('c');
+          }
+          tabdef.push('}');
+          // build top row
+          const rows = [ // rows of the result table
+            n1Arr.join('&'),
+          ];
+          const diff = arrLen - n2len + 1 - Math.max(n1len, countSteps + 1); // empty space
+          for (let i = 0; i < diff; i += 1) {
+            rows[0] += '&';
+          }
+          rows[0] += ' : ';
+          rows[0] += n2Arr.join('&');
+          rows[0] += '\\\\ ';
+
+          // inner rows
+          for (let i = 1; i < countSteps; i += 1) {
+            rows.push('');
+            rows.push('');
+
+            for (let j = 1; j < i; j += 1) {
+              rows[i * 2 - 1] += '&';
+              rows[i * 2] += '&';
+            }
+            if (i > 1) {
+              rows[i * 2 - 1] = rows[i * 2].slice(0, -1);
+              rows[i * 2 - 1] += '-&';
+            } else {
+              rows[i * 2 - 1] += '-';
+            }
+
+            rows[i * 2 - 1] += n2Arr.join('&');
+            for (let j = n2len + i; j < arrLen; j += 1) {
+              rows[i * 2 - 1] += '&';
+            }
+            rows[i * 2] += divSteps[`Step${i}_SubRes`].join('&');
+            for (let j = divSteps[`Step${i}_SubRes`].length + i; j < arrLen; j += 1) {
+              rows[i * 2] += '&';
+            }
+
+            rows[i * 2 - 1] += '\\\\ ';
+            rows[i * 2 - 1] += '\\hline';
+            rows[i * 2] += '\\\\ ';
+          }
+
+          // Last row
+          rows.push(divRes.arr.join('&'));
+          for (let j = divRes.length; j < arrLen; j += 1) {
+            rows[-1] += '&';
+          }
+
           steps.push({
             name: `${this.imp.$t('step')} 2`,
             text: [
@@ -720,8 +786,12 @@ export class DescriptionSolution {
             ].join(''),
             subpanels: [
               {
-                name: 'Exponent beachten',
-                text: ['Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden. (Shift: ', this.imp.binToDec(expString2) - this.imp.binToDec(expString1), ')'].join(''),
+                name: 'Divison durchführen',
+                text: [
+                  `\\( \\begin{array} ${tabdef.join('')}`,
+                  rows.join(''),
+                  '\\end{array} \\) ',
+                ].join(''),
               },
               {
                 name: 'Darstellung beachten',
