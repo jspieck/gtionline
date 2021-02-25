@@ -9354,8 +9354,7 @@ var AdditionBaseNComplement = /*#__PURE__*/function () {
         _final2.unshift(m % base);
 
         carryBits.unshift(Math.floor(m / base));
-      } // console.log('Actual Add', n1Arr, n2Arr, final);
-      // We have an overflow if the XOR of the first two carry out bits are 1
+      } // We have an overflow if the XOR of the first two carry out bits are 1
 
 
       this.producedOverflow = carryBits[0] !== carryBits[1]; // TODO this negative value is IEEE specific, since an overflow does not change the sign
@@ -9378,8 +9377,7 @@ var AdditionBaseNComplement = /*#__PURE__*/function () {
       }
 
       this.negativeResult = isNegative;
-      var result = new NumberBaseNComplement(base, digitNum, _final2, 0, false); // console.log('Actual Add Compl', n1Arr, n2Arr, result.arr);
-
+      var result = new NumberBaseNComplement(base, digitNum, _final2, 0, false);
       this.watcher.step('Addition').saveVariable('op1', n1).saveVariable('op2', n2).saveVariable('op1Arr', _toConsumableArray(n1Arr)).saveVariable('op2Arr', _toConsumableArray(n2Arr)).saveVariable('carryArr', [].concat(carryBits)).saveVariable('resultArr', [].concat(_final2)).saveVariable('result', result).saveVariable('overflow', this.producedOverflow).saveVariable('equal', isEqual);
       return result;
     }
@@ -9869,6 +9867,57 @@ function getIEEEFromString(expBitNum, str) {
   return new NumberIEEE(expBitNum, arr.length - expBitNum - 1, arr);
 }
 
+/**
+ * roundArray rounds an array to a given length
+ * @param arr: Array to round
+ * @param count: necassary length
+ * @param roundup: true if the array has to be up rounded
+ * @param base: base of given array
+ * @returns {[]|*}: rounded arraay in the given base
+ */
+function roundArray(arr, count) {
+  var roundup = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var base = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 2;
+
+  if (arr.length < count) {
+    return arr;
+  }
+
+  var toRound = roundup;
+
+  if (!toRound) {
+    toRound = arr[count] >= base / 2;
+  }
+
+  while (arr.length > count) {
+    arr.pop();
+  }
+
+  if (toRound) {
+    var carryBits = [];
+    var _final = [];
+    carryBits.unshift(1);
+
+    for (var i = arr.length - 1; i >= 0; i--) {
+      var m = arr[i] + carryBits[0];
+
+      _final.unshift(m % base);
+
+      carryBits.unshift(Math.floor(m / base));
+    }
+
+    if (carryBits[0] !== carryBits[1]) {
+      _final.unshift(1);
+
+      _final.pop();
+    }
+
+    return _final;
+  } else {
+    return arr;
+  }
+}
+
 var AdditionIEEE = /*#__PURE__*/function () {
   function AdditionIEEE(n1, n2) {
     _classCallCheck(this, AdditionIEEE);
@@ -9973,9 +10022,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
         }
       }
 
-      var additionData = this._addMantissa(mantissa1, mantissa2, sign1, sign2, mantissa2.length, deltaE); // console.log('Add M', mantissa1, mantissa2, sign1, sign2,
-      // additionData.normalizedMantissa, additionData.shift);
-
+      var additionData = this._addMantissa(mantissa1, mantissa2, sign1, sign2, mantissa2.length, deltaE);
 
       var sign = additionData.sign ? 1 : 0;
       var normalizedMantissa = additionData.normalizedMantissa;
@@ -10091,8 +10138,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
 
       var unnormalizedMantissa = _toConsumableArray(additionResult.arr);
 
-      this.watcher = this.watcher.step('AddMantissa').saveVariable('unnormalizedMantissa', _toConsumableArray(unnormalizedMantissa)); // console.log(unnormalizedMantissa);
-
+      this.watcher = this.watcher.step('AddMantissa').saveVariable('unnormalizedMantissa', _toConsumableArray(unnormalizedMantissa));
       var shift = 0; // shift for overflowed addition
 
       if (unnormalizedMantissa.length > mantissa1.length) {
@@ -10125,15 +10171,9 @@ var AdditionIEEE = /*#__PURE__*/function () {
 
 
       unnormalizedMantissa.shift();
-      unnormalizedMantissa.push(0);
-      unnormalizedMantissa.splice(binNum, unnormalizedMantissa.length - binNum); // normal case result
+      unnormalizedMantissa.push(0); // round resulting array
 
-      while (unnormalizedMantissa.length > mantissa1.length - 1) {
-        unnormalizedMantissa.splice(-1, 1);
-      }
-
-      var normalizedMantissa = _toConsumableArray(unnormalizedMantissa);
-
+      var normalizedMantissa = roundArray(unnormalizedMantissa, mantissa1.length - 1);
       this.watcher = this.watcher.step('AddMantissa').saveVariable('shift', shift).saveVariable('sign', sign).saveVariable('normalizedMantissa', _toConsumableArray(normalizedMantissa));
       return {
         sign: sign,
@@ -10239,57 +10279,6 @@ var SubtractionIEEE = /*#__PURE__*/function () {
   return SubtractionIEEE;
 }();
 
-/**
- * roundArray rounds an array to a given length
- * @param arr: Array to round
- * @param count: necassary length
- * @param roundup: true if the array has to be up rounded
- * @param base: base of given array
- * @returns {[]|*}: rounded arraay in the given base
- */
-function roundArray(arr, count) {
-  var roundup = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-  var base = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 2;
-
-  if (arr.length < count) {
-    return arr;
-  }
-
-  var toRound = roundup;
-
-  if (!toRound) {
-    toRound = arr[count] >= base / 2;
-  }
-
-  while (arr.length > count) {
-    arr.pop();
-  }
-
-  if (toRound) {
-    var carryBits = [];
-    var _final = [];
-    carryBits.unshift(1);
-
-    for (var i = arr.length - 1; i >= 0; i--) {
-      var m = arr[i] + carryBits[0];
-
-      _final.unshift(m % base);
-
-      carryBits.unshift(Math.floor(m / base));
-    }
-
-    if (carryBits[0] !== carryBits[1]) {
-      _final.unshift(1);
-
-      _final.pop();
-    }
-
-    return _final;
-  } else {
-    return arr;
-  }
-}
-
 var MultiplicationIEEE = /*#__PURE__*/function () {
   function MultiplicationIEEE(n1, n2) {
     _classCallCheck(this, MultiplicationIEEE);
@@ -10355,7 +10344,6 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
       var multiplication = new MultiplicationBaseNSigned(op1, op2);
       this.watcher = this.watcher.step('Multiplication').saveVariable('multiplication', multiplication.watcher);
       var multiplicationResult = multiplication.getResult();
-      console.log(multiplicationResult);
       var digitNum = multiplicationResult.digitNum; // Adds zeros if unnormalized mantissa is to short
 
       var unnormalizedMantissa = _toConsumableArray(multiplicationResult.arr);
