@@ -9445,14 +9445,15 @@ var DivisionBaseNSigned = /*#__PURE__*/function () {
       var i = op2arr.length - 1; // iterator while loop, until mantice length
 
       var posOp1arr = op2arr.length; // position in left op
-      // binary division related to long division in binary
+
+      var countSteps = 0; // binary division related to long division in binary
 
       while (i <= this.manBitNum * 2 && remain) {
         var op1 = new NumberBaseNComplement(n1.base, op1arr.length, op1arr, offset, false);
         var op2 = new NumberBaseNComplement(n2.base, op2arr.length, op2arr, offset, true);
         var operation = new AdditionBaseNComplement(op1, op2);
         var subtractionResult = operation.getResult();
-        this.watcher.step('SubtractionInDivision').saveVariable('Subtraction', operation.watcher);
+        this.watcher.step('DivisionSteps').saveVariable("Step".concat(countSteps, "_Sub1"), _toConsumableArray(op1arr)).saveVariable("Step".concat(countSteps, "_Sub2"), _toConsumableArray(op1arr)).saveVariable("Step".concat(countSteps, "_SubRes"), _toConsumableArray(subtractionResult.arr));
 
         var subarray = _toConsumableArray(subtractionResult.arr);
 
@@ -9486,9 +9487,12 @@ var DivisionBaseNSigned = /*#__PURE__*/function () {
           remain = false; // subt. result is zero => no remain
         }
 
+        this.watcher.step('DivisionSteps').saveVariable("Step".concat(countSteps, "_ActRes"), [].concat(arr));
         i += 1;
+        countSteps += 1;
       }
 
+      this.watcher.step('DivisionSteps').saveVariable('countSteps', countSteps);
       var finalResult = new NumberBaseNSigned(n1.base, [].concat(arr), offset, n1.isNegative !== n2.isNegative);
       this.watcher.step('Result').saveVariable('digitsToTake', digitsToTake).saveVariable('result', finalResult);
       return finalResult;
