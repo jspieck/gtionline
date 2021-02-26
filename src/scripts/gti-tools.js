@@ -9454,7 +9454,7 @@ var DivisionBaseNSigned = /*#__PURE__*/function () {
         var op2 = new NumberBaseNComplement(n2.base, op2arr.length, op2arr, offset, true);
         var operation = new AdditionBaseNComplement(op1, op2);
         var subtractionResult = operation.getResult();
-        this.watcher.step('DivisionSteps').saveVariable("Step".concat(countSteps, "_Sub1"), _toConsumableArray(op1arr)).saveVariable("Step".concat(countSteps, "_Sub2"), _toConsumableArray(op1arr)).saveVariable("Step".concat(countSteps, "_SubRes"), _toConsumableArray(subtractionResult.arr));
+        this.watcher.step('DivisionSteps').saveVariable("Step".concat(countSteps, "_Sub1"), _toConsumableArray(op1arr)).saveVariable("Step".concat(countSteps, "_Sub2"), _toConsumableArray(op2arr)).saveVariable("Step".concat(countSteps, "_SubRes"), _toConsumableArray(subtractionResult.arr)).saveVariable("Step".concat(countSteps, "_SubRes_isNegative"), operation.negativeResult);
 
         var subarray = _toConsumableArray(subtractionResult.arr);
 
@@ -9464,6 +9464,7 @@ var DivisionBaseNSigned = /*#__PURE__*/function () {
           // subt. not zero
           if (operation.negativeResult === false) {
             // subt. positive result
+            this.watcher.step('DivisionSteps').saveVariable("Step".concat(countSteps, "_SubRes_isZero"), false);
             arr.push(1);
             op1arr = _toConsumableArray(subtractionResult.arr);
           } else {
@@ -9485,6 +9486,7 @@ var DivisionBaseNSigned = /*#__PURE__*/function () {
           }
         } else {
           arr.push(1);
+          this.watcher.step('DivisionSteps').saveVariable("Step".concat(countSteps, "_SubRes_isZero"), true);
           remain = false; // subt. result is zero => no remain
         }
 

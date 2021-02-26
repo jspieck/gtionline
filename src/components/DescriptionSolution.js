@@ -719,64 +719,75 @@ export class DescriptionSolution {
           const divSteps = divWatcher.steps.DivisionSteps.data; // steps
           const countSteps = divSteps.countSteps; // count of steps until result
           const n1Arr = divWatcher.steps.DivisionInput.data.n1Arr; // divisor
-          const n1len = n1Arr.length;
-          const n2Arr = divWatcher.steps.DivisionInput.data.n2Arr; // dividend
+          const n2Arr = divSteps.Step0_Sub2; // dividend
           const n2len = n2Arr.length;
           const divRes = divWatcher.steps.Result.data.result; // result of division
-          let arrLen = divSteps[`Step${countSteps - 1}_SubRes`].length + divRes.arr.length; // columns
+          let arrLen = Math.max(
+            divSteps[`Step${countSteps - 1}_SubRes`].length - 2,
+            divSteps.Step0_Sub1.length + divSteps.Step0_Sub2.length,
+          ); // columns
           arrLen = arrLen + n2len + 1;
           // table definition
           tabdef.push('{');
-          for (let i = 0; i < cols; i += 1) {
+          for (let i = 0; i < arrLen; i += 1) {
             tabdef.push('c');
           }
           tabdef.push('}');
           // build top row
           const rows = [ // rows of the result table
-            n1Arr.join('&'),
+            divSteps.Step0_Sub1.join('&'),
           ];
-          const diff = arrLen - n2len + 1 - Math.max(n1len, countSteps + 1); // empty space
-          for (let i = 0; i < diff; i += 1) {
+          rows[0] += '&:&';
+          rows[0] += n2Arr.join('&');
+          for (let i = n1Arr.length + n2Arr.length + 1; i < arrLen; i += 1) {
             rows[0] += '&';
           }
-          rows[0] += ' : ';
-          rows[0] += n2Arr.join('&');
-          rows[0] += '\\\\ ';
+          rows[0] += '\\\\';
 
           // inner rows
-          for (let i = 1; i < countSteps; i += 1) {
+          let wasNeg = false; // repeat last subtrahend
+          for (let i = 0; i < countSteps; i += 1) {
             rows.push('');
             rows.push('');
 
-            for (let j = 1; j < i; j += 1) {
-              rows[i * 2 - 1] += '&';
+            if (wasNeg) {
+              rows[i * 2 - 1] += '-';
+              rows[i * 2 - 1] += divSteps[`Step${i - 1}_Sub1`].join('&');
+              for (let j = divSteps[`Step${i - 1}_Sub1`].length; j < arrLen; j += 1) {
+                rows[i * 2 - 1] += '&';
+              }
+            } else {
+              rows[i * 2 - 1] += divSteps[`Step${i}_Sub1`].join('&');
+              for (let j = divSteps[`Step${i}_Sub1`].length; j < arrLen; j += 1) {
+                rows[i * 2 - 1] += '&';
+              }
+            }
+            wasNeg = divSteps[`Step${i}_SubRes_isNegative`];
+
+            for (let j = 0; j < i; j += 1) {
               rows[i * 2] += '&';
             }
-            if (i > 1) {
-              rows[i * 2 - 1] = rows[i * 2].slice(0, -1);
-              rows[i * 2 - 1] += '-&';
+            if (i >= 1) {
+              rows[i * 2] = rows[i * 2].slice(0, -1);
+              rows[i * 2] += '-&';
             } else {
-              rows[i * 2 - 1] += '-';
+              rows[i * 2] += '-';
             }
 
-            rows[i * 2 - 1] += n2Arr.join('&');
+            rows[i * 2] += n2Arr.join('&');
             for (let j = n2len + i; j < arrLen; j += 1) {
-              rows[i * 2 - 1] += '&';
-            }
-            rows[i * 2] += divSteps[`Step${i}_SubRes`].join('&');
-            for (let j = divSteps[`Step${i}_SubRes`].length + i; j < arrLen; j += 1) {
               rows[i * 2] += '&';
             }
 
             rows[i * 2 - 1] += '\\\\ ';
-            rows[i * 2 - 1] += '\\hline';
             rows[i * 2] += '\\\\ ';
-          }
+            rows[i * 2] += '\\hline';
+          } // end for
 
           // Last row
           rows.push(divRes.arr.join('&'));
-          for (let j = divRes.length; j < arrLen; j += 1) {
-            rows[-1] += '&';
+          for (let j = divRes.arr.length; j < divSteps.Step0_Sub1.length; j += 1) {
+            rows[rows.length - 1] += '& 0';
           }
 
           steps.push({

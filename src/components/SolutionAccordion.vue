@@ -57,7 +57,7 @@ export default {
 <style scoped lang="scss">
 .accordion {
   font-size: 1rem;
-  width: 663px;
+  width: 749px;
   border-radius: 5px;
 }
 
