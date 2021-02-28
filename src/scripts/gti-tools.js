@@ -9411,6 +9411,7 @@ var DivisionBaseNSigned = /*#__PURE__*/function () {
 
     this.watcher = null;
     this.producedOverflow = false;
+    this.firstNegativeStep = false;
     this.result = this._divide(n1, n2);
   }
 
@@ -9454,6 +9455,11 @@ var DivisionBaseNSigned = /*#__PURE__*/function () {
         var op2 = new NumberBaseNComplement(n2.base, op2arr.length, op2arr, offset, true);
         var operation = new AdditionBaseNComplement(op1, op2);
         var subtractionResult = operation.getResult();
+
+        if (countSteps === 0 && operation.negativeResult) {
+          this.firstNegativeStep = true;
+        }
+
         this.watcher.step('DivisionSteps').saveVariable("Step".concat(countSteps, "_Sub1"), _toConsumableArray(op1arr)).saveVariable("Step".concat(countSteps, "_Sub2"), _toConsumableArray(op2arr)).saveVariable("Step".concat(countSteps, "_SubRes"), _toConsumableArray(subtractionResult.arr)).saveVariable("Step".concat(countSteps, "_SubRes_isNegative"), operation.negativeResult);
 
         var subarray = _toConsumableArray(subtractionResult.arr);
@@ -10545,34 +10551,26 @@ var DivisionIEEE = /*#__PURE__*/function () {
         var divisionResult = operation.getResult();
         unnormalizedMantissa = _toConsumableArray(divisionResult.arr); // cut unnormalized matissa if to long
 
-        var digitNum = divisionResult.digitNum;
-
-        for (var i = unnormalizedMantissa.length; i < Math.max(n1.mantissaBits.length, n2.mantissaBits.length); i++) {
-          unnormalizedMantissa.push(0);
-        }
-
-        var cDigits = digitNum;
-
-        while (cDigits > 1 && unnormalizedMantissa[0] === 0) {
-          unnormalizedMantissa.splice(0, 1);
-          cDigits--;
-        } // Calculate shift
+        var digitNum = operation.manBitNum;
+        this.watcher = this.watcher.step('Division').saveVariable('divMantissa', _toConsumableArray(unnormalizedMantissa));
+        unnormalizedMantissa = roundArray(unnormalizedMantissa, digitNum); // Calculate shift
         // Positive: Rightshift | Negative: Leftshift
 
+        var i = 0;
 
-        if (cDigits >= 1) {
-          shift = cDigits - 1;
-        } else {
-          var _i = 0;
-
-          while (_i < unnormalizedMantissa.length) {
-            if (unnormalizedMantissa[_i] === 1) {
-              break;
-            }
-
-            _i++;
-            shift--;
+        while (i < unnormalizedMantissa.length) {
+          if (unnormalizedMantissa[i] === 1) {
+            break;
           }
+
+          i++;
+          shift--;
+        }
+
+        this.watcher = this.watcher.step('Division').saveVariable('divMantissa', _toConsumableArray(normalizedMantissa));
+
+        if (operation.firstNegativeStep) {
+          shift--;
         }
 
         if (shift === unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] === 0) {
@@ -10587,9 +10585,8 @@ var DivisionIEEE = /*#__PURE__*/function () {
         normalizedMantissa = [0];
       }
 
-      for (var _i2 = 0; _i2 < manBitNum; _i2++) {
-        var access = _i2 + Math.max(-shift, 0) + 1;
-        var num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
+      for (var _i = 1; _i <= manBitNum; _i++) {
+        var num = _i < unnormalizedMantissa.length ? unnormalizedMantissa[_i] : 0;
         normalizedMantissa.push(num);
       }
 
@@ -10597,7 +10594,7 @@ var DivisionIEEE = /*#__PURE__*/function () {
       var curE = finalE;
       var exponentBits = [];
 
-      for (var _i3 = 0; _i3 < expBitNum; _i3++) {
+      for (var _i2 = 0; _i2 < expBitNum; _i2++) {
         exponentBits.unshift(curE % 2);
         curE = Math.floor(curE / 2);
       } // Check if newly calculated ieee is equal to inf
