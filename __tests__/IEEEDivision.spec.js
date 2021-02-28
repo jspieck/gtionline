@@ -4,6 +4,10 @@ import {
   getIEEEFromString,
   DivisionIEEE,
 } from '../src/scripts/gti-tools';
+import {
+  checkMantissa,
+  checkArray,
+} from '../src/testHelper';
 
 describe('Division of two IEEE-Numbers', () => {
   test('DivisionIEEE: 5.0 / 2.0 == 2.5', () => {
@@ -17,13 +21,9 @@ describe('Division of two IEEE-Numbers', () => {
     expect(result.arr[0]).toBe(0);
     expect(result.sign).toBe(0);
     const expectedArray = [0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedArray.length; i += 1) {
-      expect(result.arr[i]).toBe(expectedArray[i]);
-    }
+    checkArray(expectedArray, result);
     const expectedMantissa = [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedMantissa.length; i += 1) {
-      expect(result.mantissaBits[i]).toBe(expectedMantissa[i]);
-    }
+    checkMantissa(expectedMantissa, result);
   });
 
   test('DivisionIEEE: -5.0 / 2.0 == -2.5', () => {
@@ -37,13 +37,9 @@ describe('Division of two IEEE-Numbers', () => {
     expect(result.arr[0]).toBe(1);
     expect(result.sign).toBe(1);
     const expectedArray = [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedArray.length; i += 1) {
-      expect(result.arr[i]).toBe(expectedArray[i]);
-    }
+    checkArray(expectedArray, result);
     const expectedMantissa = [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedMantissa.length; i += 1) {
-      expect(result.mantissaBits[i]).toBe(expectedMantissa[i]);
-    }
+    checkMantissa(expectedMantissa, result);
   });
 
   test('DivisionIEEE: 5.5 / 0.5 == 11.0', () => {
@@ -57,13 +53,9 @@ describe('Division of two IEEE-Numbers', () => {
     expect(result.arr[0]).toBe(0);
     expect(result.sign).toBe(0);
     const expectedArray = [0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedArray.length; i += 1) {
-      expect(result.arr[i]).toBe(expectedArray[i]);
-    }
+    checkArray(expectedArray, result);
     const expectedMantissa = [1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedMantissa.length; i += 1) {
-      expect(result.mantissaBits[i]).toBe(expectedMantissa[i]);
-    }
+    checkMantissa(expectedMantissa, result);
   });
 
   test('DivisionIEEE: 1.0 / 0.0 == Inf', () => {
@@ -77,13 +69,9 @@ describe('Division of two IEEE-Numbers', () => {
     expect(result.arr[0]).toBe(0);
     expect(result.sign).toBe(0);
     const expectedArray = [0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedArray.length; i += 1) {
-      expect(result.arr[i]).toBe(expectedArray[i]);
-    }
+    checkArray(expectedArray, result);
     const expectedMantissa = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedMantissa.length; i += 1) {
-      expect(result.mantissaBits[i]).toBe(expectedMantissa[i]);
-    }
+    checkMantissa(expectedMantissa, result);
   });
 
   test('DivisionIEEE: 0.0 / 0.0 == NaN', () => {
@@ -97,13 +85,9 @@ describe('Division of two IEEE-Numbers', () => {
     expect(result.arr[0]).toBe(1);
     expect(result.sign).toBe(1);
     const expectedArray = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-    for (let i = 0; i < expectedArray.length; i += 1) {
-      expect(result.arr[i]).toBe(expectedArray[i]);
-    }
+    checkArray(expectedArray, result);
     const expectedMantissa = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-    for (let i = 0; i < expectedMantissa.length; i += 1) {
-      expect(result.mantissaBits[i]).toBe(expectedMantissa[i]);
-    }
+    checkMantissa(expectedMantissa, result);
   });
 
   test('DivisionIEEE: 0.0 / 1.0 == 0.0', () => {
@@ -117,13 +101,9 @@ describe('Division of two IEEE-Numbers', () => {
     expect(result.arr[0]).toBe(0);
     expect(result.sign).toBe(0);
     const expectedArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedArray.length; i += 1) {
-      expect(result.arr[i]).toBe(expectedArray[i]);
-    }
+    checkArray(expectedArray, result);
     const expectedMantissa = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedMantissa.length; i += 1) {
-      expect(result.mantissaBits[i]).toBe(expectedMantissa[i]);
-    }
+    checkMantissa(expectedMantissa, result);
   });
 
   test('DivisionIEEE: 100 / NaN == NaN', () => {
@@ -137,13 +117,9 @@ describe('Division of two IEEE-Numbers', () => {
     expect(result.arr[0]).toBe(1);
     expect(result.sign).toBe(1);
     const expectedArray = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-    for (let i = 0; i < expectedArray.length; i += 1) {
-      expect(result.arr[i]).toBe(expectedArray[i]);
-    }
+    checkArray(expectedArray, result);
     const expectedMantissa = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-    for (let i = 0; i < expectedMantissa.length; i += 1) {
-      expect(result.mantissaBits[i]).toBe(expectedMantissa[i]);
-    }
+    checkMantissa(expectedMantissa, result);
   });
 
   test('DivisionIEEE: NaN / 100 == NaN', () => {
@@ -157,13 +133,9 @@ describe('Division of two IEEE-Numbers', () => {
     expect(result.arr[0]).toBe(1);
     expect(result.sign).toBe(1);
     const expectedArray = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-    for (let i = 0; i < expectedArray.length; i += 1) {
-      expect(result.arr[i]).toBe(expectedArray[i]);
-    }
+    checkArray(expectedArray, result);
     const expectedMantissa = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-    for (let i = 0; i < expectedMantissa.length; i += 1) {
-      expect(result.mantissaBits[i]).toBe(expectedMantissa[i]);
-    }
+    checkMantissa(expectedMantissa, result);
   });
 
   test('DivisionIEEE: 65500 / 0.5 == Inf', () => {
@@ -177,13 +149,9 @@ describe('Division of two IEEE-Numbers', () => {
     expect(result.arr[0]).toBe(0);
     expect(result.sign).toBe(0);
     const expectedArray = [0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedArray.length; i += 1) {
-      expect(result.arr[i]).toBe(expectedArray[i]);
-    }
+    checkArray(expectedArray, result);
     const expectedMantissa = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedMantissa.length; i += 1) {
-      expect(result.mantissaBits[i]).toBe(expectedMantissa[i]);
-    }
+    checkMantissa(expectedMantissa, result);
   });
 
   test('DivisionIEEE: -Inf / 0.5 == -Inf', () => {
@@ -197,13 +165,9 @@ describe('Division of two IEEE-Numbers', () => {
     expect(result.arr[0]).toBe(1);
     expect(result.sign).toBe(1);
     const expectedArray = [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedArray.length; i += 1) {
-      expect(result.arr[i]).toBe(expectedArray[i]);
-    }
+    checkArray(expectedArray, result);
     const expectedMantissa = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedMantissa.length; i += 1) {
-      expect(result.mantissaBits[i]).toBe(expectedMantissa[i]);
-    }
+    checkMantissa(expectedMantissa, result);
   });
 
   test('DivisionIEEE: 0.5 / Inf == Zero', () => {
@@ -217,13 +181,9 @@ describe('Division of two IEEE-Numbers', () => {
     expect(result.arr[0]).toBe(0);
     expect(result.sign).toBe(0);
     const expectedArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedArray.length; i += 1) {
-      expect(result.arr[i]).toBe(expectedArray[i]);
-    }
+    checkArray(expectedArray, result);
     const expectedMantissa = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (let i = 0; i < expectedMantissa.length; i += 1) {
-      expect(result.mantissaBits[i]).toBe(expectedMantissa[i]);
-    }
+    checkMantissa(expectedMantissa, result);
   });
 
   test('DivisionIEEE: Inf / Inf == NaN', () => {
@@ -237,12 +197,24 @@ describe('Division of two IEEE-Numbers', () => {
     expect(result.arr[0]).toBe(1);
     expect(result.sign).toBe(1);
     const expectedArray = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-    for (let i = 0; i < expectedArray.length; i += 1) {
-      expect(result.arr[i]).toBe(expectedArray[i]);
-    }
+    checkArray(expectedArray, result);
     const expectedMantissa = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-    for (let i = 0; i < expectedMantissa.length; i += 1) {
-      expect(result.mantissaBits[i]).toBe(expectedMantissa[i]);
-    }
+    checkMantissa(expectedMantissa, result);
+  });
+
+  test('DivisionIEEE: 12.0 / 3.4 == 3.53', () => {
+    const y1 = getIEEEFromString(5, '0 10010 1000000000');
+    const y2 = getIEEEFromString(5, '0 10000 1011001101');
+    const result = (new DivisionIEEE(y1, y2)).getResult();
+    expect(result.manBitNum).toBe(10);
+    expect(result.isZero).toBe(false);
+    expect(result.isInfinity).toBe(false);
+    expect(result.isNaN).toBe(false);
+    expect(result.arr[0]).toBe(0);
+    expect(result.sign).toBe(0);
+    const expectedArray = [0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1];
+    checkArray(expectedArray, result);
+    const expectedMantissa = [1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1];
+    checkMantissa(expectedMantissa, result);
   });
 });
