@@ -8504,6 +8504,57 @@ var TextCMOS = /*#__PURE__*/function () {
   return TextCMOS;
 }();
 
+/**
+ * roundArray rounds an array to a given length
+ * @param arr: Array to round
+ * @param count: necassary length
+ * @param roundup: true if the array has to be up rounded
+ * @param base: base of given array
+ * @returns {[]|*}: rounded arraay in the given base
+ */
+function roundArray(arr, count) {
+  var roundup = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var base = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 2;
+
+  if (arr.length < count) {
+    return arr;
+  }
+
+  var toRound = roundup;
+
+  if (!toRound) {
+    toRound = arr[count] >= base / 2;
+  }
+
+  while (arr.length > count) {
+    arr.pop();
+  }
+
+  if (toRound) {
+    var carryBits = [];
+    var _final = [];
+    carryBits.unshift(1);
+
+    for (var i = arr.length - 1; i >= 0; i--) {
+      var m = arr[i] + carryBits[0];
+
+      _final.unshift(m % base);
+
+      carryBits.unshift(Math.floor(m / base));
+    }
+
+    if (carryBits[0] !== carryBits[1]) {
+      _final.unshift(1);
+
+      _final.pop();
+    }
+
+    return _final;
+  } else {
+    return arr;
+  }
+}
+
 function numToChar(num) {
   if (num >= 0 && num <= 9) {
     return String.fromCharCode(num + '0'.charCodeAt());
@@ -9878,57 +9929,6 @@ function getIEEEFromString(expBitNum, str) {
   }
 
   return new NumberIEEE(expBitNum, arr.length - expBitNum - 1, arr);
-}
-
-/**
- * roundArray rounds an array to a given length
- * @param arr: Array to round
- * @param count: necassary length
- * @param roundup: true if the array has to be up rounded
- * @param base: base of given array
- * @returns {[]|*}: rounded arraay in the given base
- */
-function roundArray(arr, count) {
-  var roundup = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-  var base = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 2;
-
-  if (arr.length < count) {
-    return arr;
-  }
-
-  var toRound = roundup;
-
-  if (!toRound) {
-    toRound = arr[count] >= base / 2;
-  }
-
-  while (arr.length > count) {
-    arr.pop();
-  }
-
-  if (toRound) {
-    var carryBits = [];
-    var _final = [];
-    carryBits.unshift(1);
-
-    for (var i = arr.length - 1; i >= 0; i--) {
-      var m = arr[i] + carryBits[0];
-
-      _final.unshift(m % base);
-
-      carryBits.unshift(Math.floor(m / base));
-    }
-
-    if (carryBits[0] !== carryBits[1]) {
-      _final.unshift(1);
-
-      _final.pop();
-    }
-
-    return _final;
-  } else {
-    return arr;
-  }
 }
 
 var AdditionIEEE = /*#__PURE__*/function () {
@@ -11510,4 +11510,4 @@ var AdditionIEEEToLatex = /*#__PURE__*/function () {
   return AdditionIEEEToLatex;
 }();
 
-export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, DivisionBaseNSigned, DivisionIEEE, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, TextCMOS, getBaseNComplementFromString, getIEEEFromString, getNumFromString, parseBooleanFunction, toLaTeX };
+export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, DivisionBaseNSigned, DivisionIEEE, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, TextCMOS, getBaseNComplementFromString, getIEEEFromString, getNumFromString, parseBooleanFunction, roundArray, toLaTeX };
