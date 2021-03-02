@@ -726,7 +726,7 @@ export class DescriptionSolution {
             divSteps[`Step${countSteps - 1}_SubRes`].length - 2,
             divSteps.Step0_Sub1.length + divSteps.Step0_Sub2.length,
           ); // columns
-          arrLen = arrLen + n2len + 1;
+          arrLen = arrLen + n2len + 2;
           // table definition
           tabdef.push('{');
           for (let i = 0; i < arrLen; i += 1) {
@@ -735,7 +735,7 @@ export class DescriptionSolution {
           tabdef.push('}');
           // build top row
           const rows = [ // rows of the result table
-            divSteps.Step0_Sub1.join('&'),
+            `&${divSteps.Step0_Sub1.join('&')}`,
           ];
           rows[0] += '&:&';
           rows[0] += n2Arr.join('&');
@@ -747,13 +747,14 @@ export class DescriptionSolution {
           // inner rows
           let wasNeg = false; // repeat last subtrahend
           for (let i = 0; i < countSteps; i += 1) {
-            rows.push('');
-            rows.push('');
+            rows.push('&');
+            rows.push('&');
 
             if (wasNeg) {
-              rows[i * 2 - 1] += '-';
+              // rows[i * 2 - 1] += '-';
               rows[i * 2 - 1] += divSteps[`Step${i - 1}_Sub1`].join('&');
-              for (let j = divSteps[`Step${i - 1}_Sub1`].length; j < arrLen; j += 1) {
+              rows[i * 2 - 1] += '&0';
+              for (let j = divSteps[`Step${i - 1}_Sub1`].length + 1; j < arrLen; j += 1) {
                 rows[i * 2 - 1] += '&';
               }
             } else {
@@ -771,7 +772,7 @@ export class DescriptionSolution {
               rows[i * 2] = rows[i * 2].slice(0, -1);
               rows[i * 2] += '-&';
             } else {
-              rows[i * 2] += '-';
+              rows[i * 2] += '-&';
             }
 
             rows[i * 2] += n2Arr.join('&');
