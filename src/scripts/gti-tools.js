@@ -8506,18 +8506,28 @@ var TextCMOS = /*#__PURE__*/function () {
 
 /**
  * roundArray rounds an array to a given length
- * @param arr: Array to round
+ * @param inArr: Array to round, can also be a string
  * @param count: necassary length
  * @param roundup: true if the array has to be up rounded
  * @param base: base of given array
  * @returns {[]|*}: rounded arraay in the given base
  */
-function roundArray(arr, count) {
+function roundArray(inArr, count) {
   var roundup = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
   var base = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 2;
+  var arr = inArr;
 
   if (arr.length < count) {
     return arr;
+  }
+
+  var isString = false;
+
+  if (typeof arr === 'string') {
+    arr = arr.split('').map(function (num) {
+      return parseInt(num, 10);
+    });
+    isString = true;
   }
 
   var toRound = roundup;
@@ -8549,8 +8559,16 @@ function roundArray(arr, count) {
       _final.pop();
     }
 
+    if (isString) {
+      return _final.join('');
+    }
+
     return _final;
   } else {
+    if (isString) {
+      return arr.join('');
+    }
+
     return arr;
   }
 }

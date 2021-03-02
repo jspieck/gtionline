@@ -363,7 +363,7 @@ export default {
         mantisse += fParts[1];
       }
       if (mantisse.length > numBitsMantisse) {
-        mantisse = mantisse.substring(0, numBitsMantisse);
+        mantisse = tool.roundArray(mantisse, numBitsMantisse);
       }
       if (mantisse.length < numBitsMantisse) {
         mantisse += '0'.repeat(numBitsMantisse - mantisse.length);

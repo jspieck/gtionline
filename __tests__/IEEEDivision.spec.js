@@ -217,4 +217,22 @@ describe('Division of two IEEE-Numbers', () => {
     const expectedMantissa = [1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1];
     checkMantissa(expectedMantissa, result);
   });
+
+  test('2.DivisionIEEE: 12.0 / 3.4 == 3.53', () => {
+    const value1 = [0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0].join('');
+    const y1 = getIEEEFromString(5, value1);
+    const value2 = [0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0].join('');
+    const y2 = getIEEEFromString(5, value2);
+    const result = (new DivisionIEEE(y1, y2)).getResult();
+    expect(result.manBitNum).toBe(10);
+    expect(result.isZero).toBe(false);
+    expect(result.isInfinity).toBe(false);
+    expect(result.isNaN).toBe(false);
+    expect(result.arr[0]).toBe(0);
+    expect(result.sign).toBe(0);
+    const expectedArray2 = [0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0];
+    checkArray(expectedArray2, result);
+    const expectedMantissa = [1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0];
+    checkMantissa(expectedMantissa, result);
+  });
 });
