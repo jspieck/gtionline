@@ -209,7 +209,7 @@ export default {
       }
       for (let i = 0; i < convert.length; i += 1) {
         if (format === 'binary') {
-          if (!(['0', '1', ',', '-', '+'].includes(convert[i]))) {
+          if (!(['0', '1', ',', '.', '-', '+'].includes(convert[i]))) {
             return false;
           }
         }
@@ -220,7 +220,7 @@ export default {
         }
         if (format === 'decimal') {
           if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-            ',', '-', '+'].includes(convert[i]))) {
+            ',', '.', '-', '+'].includes(convert[i]))) {
             return false;
           }
         }
