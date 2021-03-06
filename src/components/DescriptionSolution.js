@@ -729,13 +729,15 @@ export class DescriptionSolution {
           arrLen = arrLen + n2len + 2;
           // table definition
           tabdef.push('{');
+          tabdef.push('c|');
           for (let i = 0; i < arrLen; i += 1) {
             tabdef.push('c');
           }
+          tabdef.push('|c');
           tabdef.push('}');
           // build top row
           const rows = [ // rows of the result table
-            `&${divSteps.Step0_Sub1.join('&')}`,
+            `&&${divSteps.Step0_Sub1.join('&')}`,
           ];
           rows[0] += '&:&';
           rows[0] += n2Arr.join('&');
@@ -745,48 +747,68 @@ export class DescriptionSolution {
           rows[0] += '\\\\';
 
           // inner rows
-          let wasNeg = false; // repeat last subtrahend
+          let wasNeg = 0; // repeat last subtrahend
           for (let i = 0; i < countSteps; i += 1) {
-            rows.push('&');
-            rows.push('&');
+            rows.push('&&');
+            rows.push(`${i}&&`);
 
-            if (wasNeg) {
-              // rows[i * 2 - 1] += '-';
-              rows[i * 2 - 1] += divSteps[`Step${i - 1}_Sub1`].join('&');
-              rows[i * 2 - 1] += '&0';
+            if (wasNeg !== 0) {
+              // first value, minuend
+              const stepsToAdd = divSteps[`Step${i - 1}_Sub1`];
+              for (let j = 0; j < i - 1; j += 1) {
+                stepsToAdd[j] = ' ';
+              }
+              rows[rows.length - 2] += stepsToAdd.join('&');
+              rows[rows.length - 2] += '&\\underline\{0\}';
               for (let j = divSteps[`Step${i - 1}_Sub1`].length + 1; j < arrLen; j += 1) {
-                rows[i * 2 - 1] += '&';
+                rows[rows.length - 2] += '&';
+              }
+              if (i > 0) {
+                rows[rows.length - 2] += '\\Sigma < 0 \\rightarrow 0';
               }
             } else {
-              rows[i * 2 - 1] += divSteps[`Step${i}_Sub1`].join('&');
+              const stepsToAdd = divSteps[`Step${i}_Sub1`];
+              for (let j = 0; j < i - wasNeg; j += 1) { // remove leading 0
+                stepsToAdd[j] = ' ';
+              }
+              rows[rows.length - 2] += stepsToAdd.join('&');
               for (let j = divSteps[`Step${i}_Sub1`].length; j < arrLen; j += 1) {
-                rows[i * 2 - 1] += '&';
+                rows[rows.length - 2] += '&';
+              }
+              if (i > 0) {
+                rows[rows.length - 2] += '\\Sigma > 0 \\rightarrow 1';
               }
             }
-            wasNeg = divSteps[`Step${i}_SubRes_isNegative`];
 
+            // second value, subtrahend
             for (let j = 0; j < i; j += 1) {
-              rows[i * 2] += '&';
+              rows[rows.length - 1] += '&';
             }
-            if (i >= 1) {
-              rows[i * 2] = rows[i * 2].slice(0, -1);
-              rows[i * 2] += '-&';
-            } else {
-              rows[i * 2] += '-&';
-            }
+            rows[rows.length - 1] = rows[rows.length - 1].slice(0, -1);
+            rows[rows.length - 1] += '-&';
 
-            rows[i * 2] += n2Arr.join('&');
+            rows[rows.length - 1] += n2Arr.join('&');
             for (let j = n2len + i; j < arrLen; j += 1) {
-              rows[i * 2] += '&';
+              rows[rows.length - 1] += '&';
+            }
+            if (wasNeg !== 0) {
+              rows[rows.length - 1] += '\\hookrightarrow \{\\scriptstyle wiederhole\\ Minuend\}';
             }
 
-            rows[i * 2 - 1] += '\\\\ ';
-            rows[i * 2] += '\\\\ ';
-            rows[i * 2] += '\\hline';
+            rows[rows.length - 2] += '\\\\ ';
+            rows[rows.length - 1] += '\\\\ ';
+            rows[rows.length - 1] += '\\hline';
+
+            if (divSteps[`Step${i}_SubRes_isNegative`]) {
+              wasNeg += 1;
+            } else {
+              wasNeg = 0;
+            }
           } // end for
 
           // Last row
-          rows.push(divRes.arr.join('&'));
+          rows.push('\\mathcal\{L\}&&');
+          rows[rows.length - 1] += divRes.arr.join('&');
           for (let j = divRes.arr.length; j < divSteps.Step0_Sub1.length; j += 1) {
             rows[rows.length - 1] += '& 0';
           }

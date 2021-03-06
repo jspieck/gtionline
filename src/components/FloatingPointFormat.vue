@@ -169,7 +169,12 @@ export default {
       this.solDescrActive();
       this.$nextTick(() => {
         if (window.MathJax) {
-          window.MathJax.typeset();
+          /* window.MathJax = {
+            // using mathjax extensions can work unreliable, thus I use typesetPromise()
+            loader: { load: ['[tex]/color'] },
+            tex: { packages: { '[+]': ['color'] } },
+          }; */
+          window.MathJax.typeset(); // https://github.com/mathjax/MathJax/issues/2557
         }
       });
     },
