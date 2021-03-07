@@ -808,7 +808,7 @@ export class DescriptionSolution {
 
           // Last row
           rows.push('\\mathcal\{L\}&&');
-          rows[rows.length - 1] += divRes.arr.join('&');
+          rows[rows.length - 1] += `${divRes.arr[0]},& ${divRes.arr.slice(1, divRes.arr.length).join('&')}`;
           for (let j = divRes.arr.length; j < divSteps.Step0_Sub1.length; j += 1) {
             rows[rows.length - 1] += '& 0';
           }
