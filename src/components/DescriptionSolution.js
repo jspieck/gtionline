@@ -759,7 +759,7 @@ export class DescriptionSolution {
                 stepsToAdd[j] = ' ';
               }
               rows[rows.length - 2] += stepsToAdd.join('&');
-              rows[rows.length - 2] += '&\\underline\{0\}';
+              rows[rows.length - 2] += '& 0';
               for (let j = divSteps[`Step${i - 1}_Sub1`].length + 1; j < arrLen; j += 1) {
                 rows[rows.length - 2] += '&';
               }
@@ -809,8 +809,14 @@ export class DescriptionSolution {
           // Last row
           rows.push('\\mathcal\{L\}&&');
           rows[rows.length - 1] += `${divRes.arr[0]},& ${divRes.arr.slice(1, divRes.arr.length).join('&')}`;
-          for (let j = divRes.arr.length; j < divSteps.Step0_Sub1.length; j += 1) {
-            rows[rows.length - 1] += '& 0';
+          rows[rows.length - 1] += '&';
+          for (let k = divRes.arr.length; k < arrLen - 2; k += 1) {
+            rows[rows.length - 1] += '&';
+          }
+          if (wasNeg !== 0) {
+            rows[rows.length - 1] += '&\\Sigma < 0 \\rightarrow 0';
+          } else {
+            rows[rows.length - 1] += '&\\Sigma > 0 \\rightarrow 1';
           }
 
           steps.push({
