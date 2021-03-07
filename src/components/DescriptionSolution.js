@@ -766,6 +766,7 @@ export class DescriptionSolution {
               if (i > 0) {
                 rows[rows.length - 2] += '\\Sigma < 0 \\rightarrow 0';
               }
+              rows[rows.length - 3] = rows[rows.length - 3].replace('-', '<');
             } else {
               const stepsToAdd = divSteps[`Step${i}_Sub1`];
               for (let j = 0; j < i - wasNeg; j += 1) { // remove leading 0
@@ -815,6 +816,7 @@ export class DescriptionSolution {
           }
           if (wasNeg !== 0) {
             rows[rows.length - 1] += '&\\Sigma < 0 \\rightarrow 0';
+            rows[rows.length - 2] = rows[rows.length - 2].replace('-', '<');
           } else {
             rows[rows.length - 1] += '&\\Sigma > 0 \\rightarrow 1';
           }
