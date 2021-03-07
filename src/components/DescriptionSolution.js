@@ -106,76 +106,92 @@ export class DescriptionSolution {
               ],
             });
           }
-          // TODO: Version if the mantissas are equal
-          // set up tabular for visual the addition
-          mantissa1 = watcher.steps.AddMantissa.data.addition.steps.Addition.data.op1Arr;
-          mantissa2 = watcher.steps.AddMantissa.data.addition.steps.Addition.data.op2Arr;
-          carryBits = watcher.steps.AddMantissa.data.addition.steps.Addition.data.carryArr;
-          result = watcher.steps.AddMantissa.data.addition.steps.Addition.data.resultArr;
-          cols = watcher.steps.AddMantissa.data.binNum;
-          row1.push('&');
-          row2.push('&');
-          row3.push('+&');
-          tabdef.push('{');
-          for (let i = mantissa1.length; i <= cols; i += 1) {
-            mantissa1.unshift(0);
-          }
-          for (let i = mantissa2.length; i <= cols; i += 1) {
-            mantissa2.unshift(0);
-          }
-          for (let i = carryBits.length; i <= cols; i += 1) {
-            carryBits.unshift(0);
-          }
-          for (let i = 0; i < cols; i += 1) {
-            tabdef.push('c');
-            row1.push(` ${mantissa1[i]}`);
+          if (!watcher.steps.AddMantissa.data.equalMantissa) {
+            // set up tabular for visual the addition
+            mantissa1 = watcher.steps.AddMantissa.data.addition.steps.Addition.data.op1Arr;
+            mantissa2 = watcher.steps.AddMantissa.data.addition.steps.Addition.data.op2Arr;
+            carryBits = watcher.steps.AddMantissa.data.addition.steps.Addition.data.carryArr;
+            result = watcher.steps.AddMantissa.data.addition.steps.Addition.data.resultArr;
+            cols = watcher.steps.AddMantissa.data.binNum;
             row1.push('&');
-            row2.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
             row2.push('&');
-            row3.push(` ${result[i]}`);
-            row3.push('&');
+            row3.push('+&');
+            tabdef.push('{');
+            for (let i = mantissa1.length; i <= cols; i += 1) {
+              mantissa1.unshift(0);
+            }
+            for (let i = mantissa2.length; i <= cols; i += 1) {
+              mantissa2.unshift(0);
+            }
+            for (let i = carryBits.length; i <= cols; i += 1) {
+              carryBits.unshift(0);
+            }
+            for (let i = 0; i < cols; i += 1) {
+              tabdef.push('c');
+              row1.push(` ${mantissa1[i]}`);
+              row1.push('&');
+              row2.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
+              row2.push('&');
+              row3.push(` ${result[i]}`);
+              row3.push('&');
+            }
+            tabdef.push('}');
+            row1.pop();
+            row1.push('\\\\ ');
+            row2.pop();
+            row2.push('\\\\ ');
+            row3.pop();
+
+            const additionMantissaTabular = [
+              `\\( \\begin{array} ${tabdef.join('')}`,
+              `${row1.join('')}`,
+              `${row2.join('')}`,
+              '\\hline',
+              `${row3.join('')}`,
+              '\\end{array} \\) ',
+            ].join('');
+
+            steps.push({
+              name: `${this.imp.$t('step')} 2`,
+              text: [
+                'Die Mantissen beider Zahlen müssen addiert werden.',
+              ].join(''),
+              subpanels: [
+                {
+                  name: 'Neue Mantisse',
+                  text: [
+                    'Die neue Mantisse ist somit: \<br\> \<br\>',
+                    additionMantissaTabular,
+                  ].join(''),
+                },
+                {
+                  name: 'Darstellung beachten',
+                  text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
+                  subsubpanels: [
+                    {
+                      name: 'Mantisse im Float',
+                      text: ['Im Float wird die führende 1 nicht angezeigt: ', this.imp.watcher.steps.AddMantissa.data.normalizedMantissa.join('')].join(''),
+                    },
+                  ],
+                },
+              ],
+            });
+          } else {
+            steps.push({
+              name: `${this.imp.$t('step')} 2`,
+              text: [
+                'Die Mantissen beider Zahlen müssen addiert werden.',
+              ].join(''),
+              subpanels: [
+                {
+                  name: 'Neue Mantisse',
+                  text: [
+                    'Die Mantissen sind identisch, \\( \\rightarrow \\) Exponent wird um 1 erhöht Mantisse bleibt gleich',
+                  ].join(''),
+                },
+              ],
+            });
           }
-          tabdef.push('}');
-          row1.pop();
-          row1.push('\\\\ ');
-          row2.pop();
-          row2.push('\\\\ ');
-          row3.pop();
-
-          const additionMantissaTabular = [
-            `\\( \\begin{array} ${tabdef.join('')}`,
-            `${row1.join('')}`,
-            `${row2.join('')}`,
-            '\\hline',
-            `${row3.join('')}`,
-            '\\end{array} \\) ',
-          ].join('');
-
-          steps.push({
-            name: `${this.imp.$t('step')} 2`,
-            text: [
-              'Die Mantissen beider Zahlen müssen addiert werden.',
-            ].join(''),
-            subpanels: [
-              {
-                name: 'Neue Mantisse',
-                text: [
-                  'Die neue Mantisse ist somit: \<br\> \<br\>',
-                  additionMantissaTabular,
-                ].join(''),
-              },
-              {
-                name: 'Darstellung beachten',
-                text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
-                subsubpanels: [
-                  {
-                    name: 'Mantisse im Float',
-                    text: ['Im Float wird die führende 1 nicht angezeigt: ', this.imp.watcher.steps.AddMantissa.data.normalizedMantissa.join('')].join(''),
-                  },
-                ],
-              },
-            ],
-          });
           steps.push({
             name: this.imp.$t('solution'),
             text: [
@@ -345,337 +361,388 @@ export class DescriptionSolution {
               ],
             });
           }
-          if (addWatcher.steps.AddMantissa.data.sign1 === 0
-            && addWatcher.steps.AddMantissa.data.sign2 === 1) {
-            steps.push({
-              name: `${this.imp.$t('step')} 2`,
-              text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
-              subpanels:
-                [
-                  {
-                    name: [
-                      'Bildung Zweierkomplement aus Mantisse: \\(',
-                      addWatcher.steps.AddMantissa.data.mantissa2.join(''),
-                      '\\)',
-                    ].join(''),
-                    text: 'Schritte',
-                    subsubpanels: [
-                      {
-                        name: 'Bits umkehren',
-                        text: [
-                          '\\(',
-                          addWatcher.steps.AddMantissa.data.mantissa2.join(''),
-                          '\\rightarrow',
-                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                            .flippedArray.join(''),
-                          '\\)',
-                        ].join(''),
-                      },
-                      {
-                        name: '1 addieren',
-                        text: [
-                          '\\(',
-                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                            .flippedArray.join(''),
-                          '\\rightarrow',
-                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                            .oneAdded.join(''),
-                          '\\)',
-                        ].join(''),
-                      },
-                      {
-                        name: 'Normalisieren',
-                        text: [
-                          '\\(',
-                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                            .oneAdded.join(''),
-                          '\\rightarrow',
-                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                            .normalizedArray.join(''),
-                          '\\)',
-                        ].join(''),
-                      },
-                    ],
-                  },
-                ],
-            });
-          } else if (addWatcher.steps.AddMantissa.data.sign1 === 1
-            && addWatcher.steps.AddMantissa.data.sign2 === 0) {
-            steps.push({
-              name: `${this.imp.$t('step')} 2`,
-              text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
-              subpanels:
-                [
-                  {
-                    name: [
-                      'Bildung Zweierkomplement aus Mantisse: \\(',
-                      addWatcher.steps.AddMantissa.data.mantissa1.join(''),
-                      '\\)',
-                    ].join(''),
-                    text: 'Schritte',
-                    subsubpanels: [
-                      {
-                        name: 'Bits umkehren',
-                        text: [
-                          '\\(',
-                          addWatcher.steps.AddMantissa.data.mantissa1.join(''),
-                          '\\rightarrow',
-                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                            .flippedArray.join(''),
-                          '\\)',
-                        ].join(''),
-                      },
-                      {
-                        name: '1 addieren',
-                        text: [
-                          '\\(',
-                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                            .flippedArray.join(''),
-                          '\\rightarrow',
-                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                            .oneAdded.join(''),
-                          '\\)',
-                        ].join(''),
-                      },
-                      {
-                        name: 'Normalisieren',
-                        text: [
-                          '\\(',
-                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                            .oneAdded.join(''),
-                          '\\rightarrow',
-                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                            .normalizedArray.join(''),
-                          '\\)',
-                        ].join(''),
-                      },
-                    ],
-                  },
-                ],
-            });
-          } else {
-            steps.push({
-              name: `${this.imp.$t('step')} 2`,
-              text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
-              subpanels:
-                [
-                  {
-                    name: [
-                      'Bildung Zweierkomplement aus Mantisse: \\(',
-                      addWatcher.steps.AddMantissa.data.mantissa1.join(''),
-                      '\\)',
-                    ].join(''),
-                    text: 'Schritte',
-                    subsubpanels: [
-                      {
-                        name: 'Bits umkehren',
-                        text: [
-                          '\\(',
-                          addWatcher.steps.AddMantissa.data.mantissa1.join(''),
-                          '\\rightarrow',
-                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                            .flippedArray.join(''),
-                          '\\)',
-                        ].join(''),
-                      },
-                      {
-                        name: '1 addieren',
-                        text: [
-                          '\\(',
-                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                            .flippedArray.join(''),
-                          '\\rightarrow',
-                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                            .oneAdded.join(''),
-                          '\\)',
-                        ].join(''),
-                      },
-                      {
-                        name: 'Normalisieren',
-                        text: [
-                          '\\(',
-                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                            .oneAdded.join(''),
-                          '\\rightarrow',
-                          addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                            .normalizedArray.join(''),
-                          '\\)',
-                        ].join(''),
-                      },
-                    ],
-                  },
-                  {
-                    name: [
-                      'Bildung Zweierkomplement aus Mantisse: \\(',
-                      addWatcher.steps.AddMantissa.data.mantissa2.join(''),
-                      '\\)',
-                    ].join(''),
-                    text: 'Schritte',
-                    subsubpanels: [
-                      {
-                        name: 'Bits umkehren',
-                        text: [
-                          '\\(',
-                          addWatcher.steps.AddMantissa.data.mantissa2.join(''),
-                          '\\rightarrow',
-                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                            .flippedArray.join(''),
-                          '\\)',
-                        ].join(''),
-                      },
-                      {
-                        name: '1 addieren',
-                        text: [
-                          '\\(',
-                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                            .flippedArray.join(''),
-                          '\\rightarrow',
-                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                            .oneAdded.join(''),
-                          '\\)',
-                        ].join(''),
-                      },
-                      {
-                        name: 'Normalisieren',
-                        text: [
-                          '\\(',
-                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                            .oneAdded.join(''),
-                          '\\rightarrow',
-                          addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                            .normalizedArray.join(''),
-                          '\\)',
-                        ].join(''),
-                      },
-                    ],
-                  },
-                ],
-            });
-          }
-          // TODO: Version if the mantissas are equal
-          // set up tabular for visual the addition
-          originalMantissa1 = addWatcher.steps.AddMantissa.data.mantissa1;
-          originalMantissa2 = addWatcher.steps.AddMantissa.data.mantissa2;
-          mantissa1 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op1Arr;
-          mantissa2 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op2Arr;
-          carryBits = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.carryArr;
-          result = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.resultArr;
-          cols = addWatcher.steps.AddMantissa.data.binNum;
-          if (addWatcher.steps.AddMantissa.data.sign1 === 0
-            && addWatcher.steps.AddMantissa.data.sign2 === 1) {
-            row1.push('&');
-            row2.push('-&');
-          } else if (addWatcher.steps.AddMantissa.data.sign1 === 0
-            && addWatcher.steps.AddMantissa.data.sign2 === 1) {
-            row1.push('-&');
-            row2.push('+&');
-          } else {
-            row1.push('-&');
-            row2.push('-&');
-          }
-          row3.push('&');
-          row4.push('+&');
-          row5.push('=&');
-          tabdef.push('{');
-          for (let i = originalMantissa1.length; i <= cols; i += 1) {
-            originalMantissa1.unshift(0);
-          }
-          for (let i = originalMantissa2.length; i <= cols; i += 1) {
-            originalMantissa2.unshift(0);
-          }
-          for (let i = mantissa1.length; i <= cols; i += 1) {
-            mantissa1.unshift(0);
-          }
-          for (let i = mantissa2.length; i <= cols; i += 1) {
-            mantissa2.unshift(0);
-          }
-          for (let i = carryBits.length; i <= cols; i += 1) {
-            carryBits.unshift(0);
-          }
-          for (let i = 0; i < cols; i += 1) {
-            tabdef.push('c');
-            row1.push(` ${originalMantissa1[i]}`);
-            row1.push('&');
-            row2.push(` ${originalMantissa2[i]}`);
-            row2.push('&');
-            row3.push(` ${mantissa1[i]}`);
+          if (!addWatcher.steps.AddMantissa.data.equalMantissa) { // case: equal mantissa
+            if (addWatcher.steps.AddMantissa.data.sign1 === 0
+              && addWatcher.steps.AddMantissa.data.sign2 === 1) {
+              steps.push({
+                name: `${this.imp.$t('step')} 2`,
+                text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
+                subpanels:
+                  [
+                    {
+                      name: [
+                        'Bildung Zweierkomplement aus Mantisse: \\(',
+                        addWatcher.steps.AddMantissa.data.mantissa2.join(''),
+                        '\\)',
+                      ].join(''),
+                      text: 'Schritte',
+                      subsubpanels: [
+                        {
+                          name: 'Bits umkehren',
+                          text: [
+                            '\\(',
+                            addWatcher.steps.AddMantissa.data.mantissa2.join(''),
+                            '\\rightarrow',
+                            addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                              .flippedArray.join(''),
+                            '\\)',
+                          ].join(''),
+                        },
+                        {
+                          name: '1 addieren',
+                          text: [
+                            '\\(',
+                            addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                              .flippedArray.join(''),
+                            '\\rightarrow',
+                            addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                              .oneAdded.join(''),
+                            '\\)',
+                          ].join(''),
+                        },
+                        {
+                          name: 'Normalisieren',
+                          text: [
+                            '\\(',
+                            addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                              .oneAdded.join(''),
+                            '\\rightarrow',
+                            addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                              .normalizedArray.join(''),
+                            '\\)',
+                          ].join(''),
+                        },
+                      ],
+                    },
+                  ],
+              });
+            } else if (addWatcher.steps.AddMantissa.data.sign1 === 1
+              && addWatcher.steps.AddMantissa.data.sign2 === 0) {
+              steps.push({
+                name: `${this.imp.$t('step')} 2`,
+                text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
+                subpanels:
+                  [
+                    {
+                      name: [
+                        'Bildung Zweierkomplement aus Mantisse: \\(',
+                        addWatcher.steps.AddMantissa.data.mantissa1.join(''),
+                        '\\)',
+                      ].join(''),
+                      text: 'Schritte',
+                      subsubpanels: [
+                        {
+                          name: 'Bits umkehren',
+                          text: [
+                            '\\(',
+                            addWatcher.steps.AddMantissa.data.mantissa1.join(''),
+                            '\\rightarrow',
+                            addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                              .flippedArray.join(''),
+                            '\\)',
+                          ].join(''),
+                        },
+                        {
+                          name: '1 addieren',
+                          text: [
+                            '\\(',
+                            addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                              .flippedArray.join(''),
+                            '\\rightarrow',
+                            addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                              .oneAdded.join(''),
+                            '\\)',
+                          ].join(''),
+                        },
+                        {
+                          name: 'Normalisieren',
+                          text: [
+                            '\\(',
+                            addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                              .oneAdded.join(''),
+                            '\\rightarrow',
+                            addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                              .normalizedArray.join(''),
+                            '\\)',
+                          ].join(''),
+                        },
+                      ],
+                    },
+                  ],
+              });
+            } else {
+              steps.push({
+                name: `${this.imp.$t('step')} 2`,
+                text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
+                subpanels:
+                  [
+                    {
+                      name: [
+                        'Bildung Zweierkomplement aus Mantisse: \\(',
+                        addWatcher.steps.AddMantissa.data.mantissa1.join(''),
+                        '\\)',
+                      ].join(''),
+                      text: 'Schritte',
+                      subsubpanels: [
+                        {
+                          name: 'Bits umkehren',
+                          text: [
+                            '\\(',
+                            addWatcher.steps.AddMantissa.data.mantissa1.join(''),
+                            '\\rightarrow',
+                            addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                              .flippedArray.join(''),
+                            '\\)',
+                          ].join(''),
+                        },
+                        {
+                          name: '1 addieren',
+                          text: [
+                            '\\(',
+                            addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                              .flippedArray.join(''),
+                            '\\rightarrow',
+                            addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                              .oneAdded.join(''),
+                            '\\)',
+                          ].join(''),
+                        },
+                        {
+                          name: 'Normalisieren',
+                          text: [
+                            '\\(',
+                            addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                              .oneAdded.join(''),
+                            '\\rightarrow',
+                            addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
+                              .normalizedArray.join(''),
+                            '\\)',
+                          ].join(''),
+                        },
+                      ],
+                    },
+                    {
+                      name: [
+                        'Bildung Zweierkomplement aus Mantisse: \\(',
+                        addWatcher.steps.AddMantissa.data.mantissa2.join(''),
+                        '\\)',
+                      ].join(''),
+                      text: 'Schritte',
+                      subsubpanels: [
+                        {
+                          name: 'Bits umkehren',
+                          text: [
+                            '\\(',
+                            addWatcher.steps.AddMantissa.data.mantissa2.join(''),
+                            '\\rightarrow',
+                            addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                              .flippedArray.join(''),
+                            '\\)',
+                          ].join(''),
+                        },
+                        {
+                          name: '1 addieren',
+                          text: [
+                            '\\(',
+                            addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                              .flippedArray.join(''),
+                            '\\rightarrow',
+                            addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                              .oneAdded.join(''),
+                            '\\)',
+                          ].join(''),
+                        },
+                        {
+                          name: 'Normalisieren',
+                          text: [
+                            '\\(',
+                            addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                              .oneAdded.join(''),
+                            '\\rightarrow',
+                            addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
+                              .normalizedArray.join(''),
+                            '\\)',
+                          ].join(''),
+                        },
+                      ],
+                    },
+                  ],
+              });
+            }
+            // set up tabular for visual the addition
+            originalMantissa1 = addWatcher.steps.AddMantissa.data.mantissa1;
+            originalMantissa2 = addWatcher.steps.AddMantissa.data.mantissa2;
+            mantissa1 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op1Arr;
+            mantissa2 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op2Arr;
+            carryBits = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.carryArr;
+            result = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.resultArr;
+            cols = addWatcher.steps.AddMantissa.data.binNum;
+            if (addWatcher.steps.AddMantissa.data.sign1 === 0
+              && addWatcher.steps.AddMantissa.data.sign2 === 1) {
+              row1.push('&');
+              row2.push('-&');
+            } else if (addWatcher.steps.AddMantissa.data.sign1 === 0
+              && addWatcher.steps.AddMantissa.data.sign2 === 1) {
+              row1.push('-&');
+              row2.push('+&');
+            } else {
+              row1.push('-&');
+              row2.push('-&');
+            }
             row3.push('&');
-            row4.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
-            row4.push('&');
-            row5.push(` ${result[i]}`);
-            row5.push('&');
+            row4.push('+&');
+            row5.push('=&');
+            tabdef.push('{');
+            for (let i = originalMantissa1.length; i <= cols; i += 1) {
+              originalMantissa1.unshift(0);
+            }
+            for (let i = originalMantissa2.length; i <= cols; i += 1) {
+              originalMantissa2.unshift(0);
+            }
+            for (let i = mantissa1.length; i <= cols; i += 1) {
+              mantissa1.unshift(0);
+            }
+            for (let i = mantissa2.length; i <= cols; i += 1) {
+              mantissa2.unshift(0);
+            }
+            for (let i = carryBits.length; i <= cols; i += 1) {
+              carryBits.unshift(0);
+            }
+            for (let i = 0; i < cols; i += 1) {
+              tabdef.push('c');
+              row1.push(` ${originalMantissa1[i]}`);
+              row1.push('&');
+              row2.push(` ${originalMantissa2[i]}`);
+              row2.push('&');
+              row3.push(` ${mantissa1[i]}`);
+              row3.push('&');
+              row4.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
+              row4.push('&');
+              row5.push(` ${result[i]}`);
+              row5.push('&');
+            }
+            tabdef.push('}');
+            row1.pop();
+            row1.push('\\\\ ');
+            row2.pop();
+            row2.push('\\\\ ');
+            row3.pop();
+            row3.push('\\\\ ');
+            row4.pop();
+            row4.push('\\\\ ');
+            row5.pop();
+
+            const subtractionMantissaTabular = [
+              `\\( \\begin{array} ${tabdef.join('')}`,
+              `${row1.join('')}`,
+              `${row2.join('')}`,
+              '\\hline_\{Complement\}',
+              `${row3.join('')}`,
+              `${row4.join('')}`,
+              '\\hline',
+              `${row5.join('')}`,
+              '\\end{array} \\) ',
+            ].join('');
+
+            steps.push({
+              name: `${this.imp.$t('step')} 3`,
+              text: [
+                'Die Mantissen beider Zahlen müssen addiert werden.',
+              ].join(''),
+              subpanels: [
+                {
+                  name: 'Neue Mantisse',
+                  text: [
+                    'Die neue Mantisse ist somit: \<br\> \<br\>',
+                    subtractionMantissaTabular,
+                  ].join(''),
+                },
+                {
+                  name: 'Darstellung beachten',
+                  text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
+                  subsubpanels: [
+                    {
+                      name: 'Mantisse im Float',
+                      text: ['Im Float wird die führende 1 nicht angezeigt: ', addWatcher.steps.AddMantissa.data.normalizedMantissa.join('')].join(''),
+                    },
+                  ],
+                },
+              ],
+            });
+            steps.push({
+              name: this.imp.$t('solution'),
+              text: [
+                'Die Lösung lautet: ',
+                addWatcher.steps.Result.data.result.sign, ' ',
+                addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
+                addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+              ].join(''),
+              subpanels: [
+                {
+                  name: 'Vorzeichen: ',
+                  text: addWatcher.steps.Result.data.result.sign,
+                },
+                {
+                  name: 'Exponent: ',
+                  text: addWatcher.steps.Result.data.result.exponentBits.join(''),
+                },
+                {
+                  name: 'Mantisse: ',
+                  text: addWatcher.steps.Result.data.result.mantissaBits.join(''),
+                },
+              ],
+            });
+          } else { // case: equal mantissa
+            console.log(addWatcher.steps.Result.data);
+            steps.push({
+              name: `${this.imp.$t('step')} 3`,
+              text: [
+                'Die Mantissen beider Zahlen müssen addiert werden.',
+              ].join(''),
+              subpanels: [
+                {
+                  name: 'Neue Mantisse',
+                  text: [
+                    'Mantissen sind identisch, neue Mantissa ist 0-Mantisse',
+                  ].join(''),
+                },
+                {
+                  name: 'Darstellung beachten',
+                  text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
+                  subsubpanels: [
+                    {
+                      name: 'Mantisse im Float',
+                      text: ['Im Float wird die führende 1 nicht angezeigt: ', addWatcher.steps.AddMantissa.data.normalizedMantissa.join('')].join(''),
+                    },
+                  ],
+                },
+              ],
+            });
+            steps.push({
+              name: this.imp.$t('solution'),
+              text: [
+                'Die Lösung lautet: ',
+                addWatcher.steps.Result.data.result.sign, ' ',
+                addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
+                addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+              ].join(''),
+              subpanels: [
+                {
+                  name: 'Vorzeichen: ',
+                  text: addWatcher.steps.Result.data.result.sign,
+                },
+                {
+                  name: 'Exponent: ',
+                  text: addWatcher.steps.Result.data.result.exponentBits.join(''),
+                },
+                {
+                  name: 'Mantisse: ',
+                  text: addWatcher.steps.Result.data.result.mantissaBits.join(''),
+                },
+              ],
+            });
           }
-          tabdef.push('}');
-          row1.pop();
-          row1.push('\\\\ ');
-          row2.pop();
-          row2.push('\\\\ ');
-          row3.pop();
-          row3.push('\\\\ ');
-          row4.pop();
-          row4.push('\\\\ ');
-          row5.pop();
 
-          const subtractionMantissaTabular = [
-            `\\( \\begin{array} ${tabdef.join('')}`,
-            `${row1.join('')}`,
-            `${row2.join('')}`,
-            '\\hline_\{Complement\}',
-            `${row3.join('')}`,
-            `${row4.join('')}`,
-            '\\hline',
-            `${row5.join('')}`,
-            '\\end{array} \\) ',
-          ].join('');
-
-          steps.push({
-            name: `${this.imp.$t('step')} 3`,
-            text: [
-              'Die Mantissen beider Zahlen müssen addiert werden.',
-            ].join(''),
-            subpanels: [
-              {
-                name: 'Neue Mantisse',
-                text: [
-                  'Die neue Mantisse ist somit: \<br\> \<br\>',
-                  subtractionMantissaTabular,
-                ].join(''),
-              },
-              {
-                name: 'Darstellung beachten',
-                text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
-                subsubpanels: [
-                  {
-                    name: 'Mantisse im Float',
-                    text: ['Im Float wird die führende 1 nicht angezeigt: ', addWatcher.steps.AddMantissa.data.normalizedMantissa.join('')].join(''),
-                  },
-                ],
-              },
-            ],
-          });
-          steps.push({
-            name: this.imp.$t('solution'),
-            text: [
-              'Die Lösung lautet: ',
-              addWatcher.steps.Result.data.result.sign, ' ',
-              addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
-              addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-            ].join(''),
-            subpanels: [
-              {
-                name: 'Vorzeichen: ',
-                text: addWatcher.steps.Result.data.result.sign,
-              },
-              {
-                name: 'Exponent: ',
-                text: addWatcher.steps.Result.data.result.exponentBits.join(''),
-              },
-              {
-                name: 'Mantisse: ',
-                text: addWatcher.steps.Result.data.result.mantissaBits.join(''),
-              },
-            ],
-          });
           break;
 
         // =========================================================================================
@@ -714,137 +781,159 @@ export class DescriptionSolution {
               '\\) )',
             ].join(''),
           });
-          // the calculation is set up in a table
-          // information, steps
-          const divSteps = divWatcher.steps.DivisionSteps.data; // steps
-          const countSteps = divSteps.countSteps; // count of steps until result
-          const n1Arr = divWatcher.steps.DivisionInput.data.n1Arr; // divisor
-          const n2Arr = divSteps.Step0_Sub2; // dividend
-          const n2len = n2Arr.length;
-          const divRes = divWatcher.steps.Result.data.result; // result of division
-          let arrLen = Math.max(
-            divSteps[`Step${countSteps - 1}_SubRes`].length - 2,
-            divSteps.Step0_Sub1.length + divSteps.Step0_Sub2.length,
-          ); // columns
-          arrLen = arrLen + n2len + 2;
-          // table definition
-          tabdef.push('{');
-          tabdef.push('c|');
-          for (let i = 0; i < arrLen; i += 1) {
-            tabdef.push('c');
-          }
-          tabdef.push('|c');
-          tabdef.push('}');
-          // build top row
-          const rows = [ // rows of the result table
-            `&&${divSteps.Step0_Sub1.join('&')}`,
-          ];
-          rows[0] += '&:&';
-          rows[0] += n2Arr.join('&');
-          for (let i = n1Arr.length + n2Arr.length + 1; i < arrLen; i += 1) {
-            rows[0] += '&';
-          }
-          rows[0] += '\\\\';
-
-          // inner rows
-          let wasNeg = 0; // repeat last subtrahend
-          for (let i = 0; i < countSteps; i += 1) {
-            rows.push('&&');
-            rows.push(`${i}&&`);
-
-            if (wasNeg !== 0) {
-              // first value, minuend
-              const stepsToAdd = divSteps[`Step${i - 1}_Sub1`];
-              for (let j = 0; j < i - 1; j += 1) {
-                stepsToAdd[j] = ' ';
-              }
-              rows[rows.length - 2] += stepsToAdd.join('&');
-              rows[rows.length - 2] += '& 0';
-              for (let j = divSteps[`Step${i - 1}_Sub1`].length + 1; j < arrLen; j += 1) {
-                rows[rows.length - 2] += '&';
-              }
-              if (i > 0) {
-                rows[rows.length - 2] += '\\Sigma < 0 \\rightarrow 0';
-              }
-              rows[rows.length - 3] = rows[rows.length - 3].replace('-', '<');
-            } else {
-              const stepsToAdd = divSteps[`Step${i}_Sub1`];
-              for (let j = 0; j < i - wasNeg; j += 1) { // remove leading 0
-                stepsToAdd[j] = ' ';
-              }
-              rows[rows.length - 2] += stepsToAdd.join('&');
-              for (let j = divSteps[`Step${i}_Sub1`].length; j < arrLen; j += 1) {
-                rows[rows.length - 2] += '&';
-              }
-              if (i > 0) {
-                rows[rows.length - 2] += '\\Sigma > 0 \\rightarrow 1';
-              }
+          if (!watcher.steps.Division.data.equalMantissa) { // case not equl mantissa
+            // the calculation is set up in a table
+            // information, steps
+            const divSteps = divWatcher.steps.DivisionSteps.data; // steps
+            const countSteps = divSteps.countSteps; // count of steps until result
+            const n1Arr = divWatcher.steps.DivisionInput.data.n1Arr; // divisor
+            const n2Arr = divSteps.Step0_Sub2; // dividend
+            const n2len = n2Arr.length;
+            const divRes = divWatcher.steps.Result.data.result; // result of division
+            let arrLen = Math.max(
+              divSteps[`Step${countSteps - 1}_SubRes`].length - 2,
+              divSteps.Step0_Sub1.length + divSteps.Step0_Sub2.length,
+            ); // columns
+            arrLen = arrLen + n2len + 2;
+            // table definition
+            tabdef.push('{');
+            tabdef.push('c|');
+            for (let i = 0; i < arrLen; i += 1) {
+              tabdef.push('c');
             }
-
-            // second value, subtrahend
-            for (let j = 0; j < i; j += 1) {
-              rows[rows.length - 1] += '&';
+            tabdef.push('|c');
+            tabdef.push('}');
+            // build top row
+            const rows = [ // rows of the result table
+              `&&${divSteps.Step0_Sub1.join('&')}`,
+            ];
+            rows[0] += '&:&';
+            rows[0] += n2Arr.join('&');
+            for (let i = n1Arr.length + n2Arr.length + 1; i < arrLen; i += 1) {
+              rows[0] += '&';
             }
-            rows[rows.length - 1] = rows[rows.length - 1].slice(0, -1);
-            rows[rows.length - 1] += '-&';
+            rows[0] += '\\\\';
 
-            rows[rows.length - 1] += n2Arr.join('&');
-            for (let j = n2len + i; j < arrLen; j += 1) {
-              rows[rows.length - 1] += '&';
-            }
-            if (wasNeg !== 0) {
-              rows[rows.length - 1] += '\\hookrightarrow \{\\scriptstyle wiederhole\\ Minuend\}';
-            }
+            // inner rows
+            let wasNeg = 0; // repeat last subtrahend
+            for (let i = 0; i < countSteps; i += 1) {
+              rows.push('&&');
+              rows.push(`${i}&&`);
 
-            rows[rows.length - 2] += '\\\\ ';
-            rows[rows.length - 1] += '\\\\ ';
-            rows[rows.length - 1] += '\\hline';
+              if (wasNeg !== 0) {
+                // first value, minuend
+                const stepsToAdd = divSteps[`Step${i - 1}_Sub1`];
+                for (let j = 0; j < i - 1; j += 1) {
+                  stepsToAdd[j] = ' ';
+                }
+                rows[rows.length - 2] += stepsToAdd.join('&');
+                rows[rows.length - 2] += '& 0';
+                for (let j = divSteps[`Step${i - 1}_Sub1`].length + 1; j < arrLen; j += 1) {
+                  rows[rows.length - 2] += '&';
+                }
+                if (i > 0) {
+                  rows[rows.length - 2] += '\\Sigma < 0 \\rightarrow 0';
+                }
+                rows[rows.length - 3] = rows[rows.length - 3].replace('-', '<');
+              } else {
+                const stepsToAdd = divSteps[`Step${i}_Sub1`];
+                for (let j = 0; j < i - wasNeg; j += 1) { // remove leading 0
+                  stepsToAdd[j] = ' ';
+                }
+                rows[rows.length - 2] += stepsToAdd.join('&');
+                for (let j = divSteps[`Step${i}_Sub1`].length; j < arrLen; j += 1) {
+                  rows[rows.length - 2] += '&';
+                }
+                if (i > 0) {
+                  rows[rows.length - 2] += '\\Sigma > 0 \\rightarrow 1';
+                }
+              }
 
-            if (divSteps[`Step${i}_SubRes_isNegative`]) {
-              wasNeg += 1;
-            } else {
-              wasNeg = 0;
-            }
-          } // end for
+              // second value, subtrahend
+              for (let j = 0; j < i; j += 1) {
+                rows[rows.length - 1] += '&';
+              }
+              rows[rows.length - 1] = rows[rows.length - 1].slice(0, -1);
+              rows[rows.length - 1] += '-&';
 
-          // Last row
-          rows.push('\\mathcal\{L\}&&');
-          rows[rows.length - 1] += `${divRes.arr[0]},& ${divRes.arr.slice(1, divRes.arr.length).join('&')}`;
-          rows[rows.length - 1] += '&';
-          for (let k = divRes.arr.length; k < arrLen - 2; k += 1) {
+              rows[rows.length - 1] += n2Arr.join('&');
+              for (let j = n2len + i; j < arrLen; j += 1) {
+                rows[rows.length - 1] += '&';
+              }
+              if (wasNeg !== 0) {
+                rows[rows.length - 1] += '\\hookrightarrow \{\\scriptstyle wiederhole\\ Minuend\}';
+              }
+
+              rows[rows.length - 2] += '\\\\ ';
+              rows[rows.length - 1] += '\\\\ ';
+              rows[rows.length - 1] += '\\hline';
+
+              if (divSteps[`Step${i}_SubRes_isNegative`]) {
+                wasNeg += 1;
+              } else {
+                wasNeg = 0;
+              }
+            } // end for
+
+            // Last row
+            rows.push('\\mathcal\{L\}&&');
+            rows[rows.length - 1] += `${divRes.arr[0]},& ${divRes.arr.slice(1, divRes.arr.length)
+              .join('&')}`;
             rows[rows.length - 1] += '&';
-          }
-          if (wasNeg !== 0) {
-            rows[rows.length - 1] += '&\\Sigma < 0 \\rightarrow 0';
-            rows[rows.length - 2] = rows[rows.length - 2].replace('-', '<');
-          } else {
-            rows[rows.length - 1] += '&\\Sigma > 0 \\rightarrow 1';
-          }
+            for (let k = divRes.arr.length; k < arrLen - 2; k += 1) {
+              rows[rows.length - 1] += '&';
+            }
+            if (wasNeg !== 0) {
+              rows[rows.length - 1] += '&\\Sigma < 0 \\rightarrow 0';
+              rows[rows.length - 2] = rows[rows.length - 2].replace('-', '<');
+            } else {
+              rows[rows.length - 1] += '&\\Sigma > 0 \\rightarrow 1';
+            }
 
-          steps.push({
-            name: `${this.imp.$t('step')} 2`,
-            text: [
-              'Die Mantissen beider Zahlen müssen dividiert werden.',
-            ].join(''),
-            subpanels: [
-              {
-                name: 'Divison durchführen',
-                text: [
-                  `\\( \\begin{array} ${tabdef.join('')}`,
-                  rows.join(''),
-                  '\\end{array} \\) ',
-                ].join(''),
-              },
-              {
-                name: 'Darstellung beachten',
-                text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
-              },
-              {
-                name: 'Neue Mantisse',
-                text: ['Die neue Mantisse ist somit: ', solution.mantissaBits.join('')].join(''),
-              },
-            ],
-          });
+            steps.push({
+              name: `${this.imp.$t('step')} 2`,
+              text: [
+                'Die Mantissen beider Zahlen müssen dividiert werden.',
+              ].join(''),
+              subpanels: [
+                {
+                  name: 'Divison durchführen',
+                  text: [
+                    `\\( \\begin{array} ${tabdef.join('')}`,
+                    rows.join(''),
+                    '\\end{array} \\) ',
+                  ].join(''),
+                },
+                {
+                  name: 'Darstellung beachten',
+                  text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
+                },
+                {
+                  name: 'Neue Mantisse',
+                  text: ['Die neue Mantisse ist somit: ', solution.mantissaBits.join('')].join(''),
+                },
+              ],
+            });
+          } else { // case equal mantissa
+            steps.push({
+              name: `${this.imp.$t('step')} 2`,
+              text: [
+                'Die Mantissen beider Zahlen müssen dividiert werden.',
+              ].join(''),
+              subpanels: [
+                {
+                  name: 'Divison durchführen',
+                  text: [
+                    'Die beiden Mantissen sind gleich, daher wird keine binäre Division durchgeführt',
+                  ].join(''),
+                },
+                {
+                  name: 'Neue Mantisse',
+                  text: ['Die neue Mantisse ist somit: ', solution.mantissaBits.join('')].join(''),
+                },
+              ],
+            });
+          }
           steps.push({
             name: this.imp.$t('solution'),
             text: [

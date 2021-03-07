@@ -10106,7 +10106,8 @@ var AdditionIEEE = /*#__PURE__*/function () {
       this.watcher = this.watcher.step('AddMantissa').saveVariable('mantissa1', mantissa1).saveVariable('mantissa2', mantissa2).saveVariable('sign1', sign1).saveVariable('sign2', sign2).saveVariable('binNum', binNum);
       var isEqual = mantissa1.length === mantissa2.length && mantissa1.every(function (value, index) {
         return value === mantissa2[index];
-      }); // x + x = 2x
+      });
+      this.watcher = this.watcher.step('AddMantissa').saveVariable('equalMantissa', isEqual); // x + x = 2x
 
       if (isEqual && sign1 === sign2) {
         var _normalizedMantissa = _toConsumableArray(mantissa1);
@@ -10130,7 +10131,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
         var _normalizedMantissa2 = [];
 
         for (var i = 0; i < mantissa1.length; i++) {
-          _normalizedMantissa2.shift(0);
+          _normalizedMantissa2[i] = 0;
         }
 
         var _shift2 = 0;
@@ -10559,6 +10560,7 @@ var DivisionIEEE = /*#__PURE__*/function () {
       var unnormalizedMantissa = [];
       var normalizedMantissa = [];
       var shift = 0;
+      this.watcher = this.watcher.step('Division').saveVariable('equalMantissa', similar);
 
       if (similar === false) {
         // case mantissa not equal
