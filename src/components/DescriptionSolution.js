@@ -789,7 +789,7 @@ export class DescriptionSolution {
             const n1Arr = divWatcher.steps.DivisionInput.data.n1Arr; // divisor
             const n2Arr = divSteps.Step0_Sub2; // dividend
             const n2len = n2Arr.length;
-            const divRes = divWatcher.steps.Result.data.result; // result of division
+            const divRes = divWatcher.steps.Result.data.resultArr; // result of division
             let arrLen = Math.max(
               divSteps[`Step${countSteps - 1}_SubRes`].length - 2,
               divSteps.Step0_Sub1.length + divSteps.Step0_Sub2.length,
@@ -877,10 +877,10 @@ export class DescriptionSolution {
 
             // Last row
             rows.push('\\mathcal\{L\}&&');
-            rows[rows.length - 1] += `${divRes.arr[0]},& ${divRes.arr.slice(1, divRes.arr.length)
+            rows[rows.length - 1] += `${divRes[0]},& ${divRes.slice(1, divRes.length)
               .join('&')}`;
             rows[rows.length - 1] += '&';
-            for (let k = divRes.arr.length; k < arrLen - 2; k += 1) {
+            for (let k = divRes.length; k < arrLen - 2; k += 1) {
               rows[rows.length - 1] += '&';
             }
             if (wasNeg !== 0) {

@@ -9572,7 +9572,7 @@ var DivisionBaseNSigned = /*#__PURE__*/function () {
 
       this.watcher.step('DivisionSteps').saveVariable('countSteps', countSteps);
       var finalResult = new NumberBaseNSigned(n1.base, [].concat(arr), offset, n1.isNegative !== n2.isNegative);
-      this.watcher.step('Result').saveVariable('digitsToTake', digitsToTake).saveVariable('result', finalResult);
+      this.watcher.step('Result').saveVariable('digitsToTake', digitsToTake).saveVariable('result', finalResult).saveVariable('resultArr', [].concat(arr));
       return finalResult;
     }
   }, {
