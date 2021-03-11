@@ -222,24 +222,24 @@ export class DescriptionSolution {
         case 'mul':
           steps.push({
             name: `${this.imp.$t('values')}`,
-            text: 'Werte der übertragenen Zahlen',
+            text: `${this.imp.$t('givenValues')}`,
             subpanels: [
               {
-                name: 'Zahl links: ',
+                name: `${this.imp.$t('leftValue')}: `,
                 text: [
-                  'Wert: ', y1.valueString,
-                  ', Vorzeichen: ', (y1.sign === 0 ? '+' : '-'),
-                  ', Mantisse: ', mantissaString1,
-                  ', Exponent: ', expString1,
+                  `${this.imp.$t('value')}`, y1.valueString,
+                  `, ${this.imp.$t('sign')}`, (y1.sign === 0 ? '+' : '-'),
+                  `, ${this.imp.$t('mantissa')}`, mantissaString1,
+                  `, ${this.imp.$t('exponent')}`, expString1,
                 ].join(''),
               },
               {
-                name: 'Zahl rechts: ',
+                name: `${this.imp.$t('rightValue')}: `,
                 text: [
-                  'Wert: ', y2.valueString,
-                  ', Vorzeichen: ', (y2.sign === 0 ? '+' : '-'),
-                  ', Mantisse: ', mantissaString2,
-                  ', Exponent: ', expString2,
+                  `${this.imp.$t('value')}`, y2.valueString,
+                  `, ${this.imp.$t('sign')}`, (y2.sign === 0 ? '+' : '-'),
+                  `, ${this.imp.$t('mantissa')}`, mantissaString2,
+                  `, ${this.imp.$t('exponent')}`, expString2,
                 ].join(''),
               },
             ],
@@ -247,7 +247,7 @@ export class DescriptionSolution {
           steps.push({
             name: `${this.imp.$t('step')} 1`,
             text: [
-              'Die Exponenten beider Zahlen müssen addiert werden. (neuer Exponent: ',
+              `${this.imp.$t('addExponents')}. (${this.imp.$t('newExponent')}: `,
               this.imp.binToDec(expString1) + this.imp.binToDec(expString2),
               ')',
             ].join(''),
@@ -255,42 +255,42 @@ export class DescriptionSolution {
           steps.push({
             name: `${this.imp.$t('step')} 2`,
             text: [
-              'Die Mantissen beider Zahlen müssen multipliziert werden.',
+              `${this.imp.$t('mulMantissa')}`,
             ].join(''),
             subpanels: [
               {
-                name: 'Exponent beachten',
-                text: ['Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden. (Shift: ', this.imp.binToDec(expString1) - this.imp.binToDec(expString2), ')'].join(''),
+                name: `${this.imp.$t('considerExponent')}`,
+                text: `${this.imp.$t('shiftExpMant')} (${this.imp.$t('shift')}: ${this.imp.binToDec(expString1) - this.imp.binToDec(expString2)} )`,
               },
               {
-                name: 'Darstellung beachten',
-                text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
+                name: `${this.imp.$t('considerRepresentation')}`,
+                text: `${this.imp.$t('consider1comma')}`,
               },
               {
-                name: 'Neue Mantisse',
-                text: ['Die neue Mantisse ist somit: ', solution.mantissaBits.join('')].join(''),
+                name: `${this.imp.$t('newMantissa')}`,
+                text: `${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('')}`,
               },
             ],
           });
           steps.push({
             name: this.imp.$t('solution'),
             text: [
-              'Die Lösung lautet: ',
+              `${this.imp.$t('correctSolution')}: `,
               this.imp.watcher.steps.Result.data.result.sign, ' ',
               this.imp.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
               this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
             ].join(''),
             subpanels: [
               {
-                name: 'Vorzeichen: ',
+                name: `${this.imp.$t('sign')}: `,
                 text: this.imp.watcher.steps.Result.data.result.sign,
               },
               {
-                name: 'Exponent: ',
+                name: `${this.imp.$t('exponent')}: `,
                 text: this.imp.watcher.steps.Result.data.result.exponentBits.join(''),
               },
               {
-                name: 'Mantisse: ',
+                name: `${this.imp.$t('mantissa')}: `,
                 text: this.imp.watcher.steps.Result.data.result.mantissaBits.join(''),
               },
             ],
