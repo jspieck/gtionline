@@ -9981,7 +9981,8 @@ var AdditionIEEE = /*#__PURE__*/function () {
         // Return n2
         var _result = new NumberIEEE(expBitNum, manBitNum, _toConsumableArray(n2.arr));
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'n2zero').saveVariable('result', _result);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'n2zero');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result);
         return _result;
       }
 
@@ -9989,7 +9990,8 @@ var AdditionIEEE = /*#__PURE__*/function () {
         // Return n1
         var _result2 = new NumberIEEE(expBitNum, manBitNum, _toConsumableArray(n1.arr));
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'n2zero').saveVariable('result', _result2);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'n2zero');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result2);
         return _result2;
       }
 
@@ -9997,7 +9999,8 @@ var AdditionIEEE = /*#__PURE__*/function () {
         // Return NaN
         var _result3 = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'nan').saveVariable('result', _result3);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'nan');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result3);
         return _result3;
       }
 
@@ -10011,7 +10014,8 @@ var AdditionIEEE = /*#__PURE__*/function () {
 
         var _result4 = new NumberIEEE(expBitNum, manBitNum, infArray);
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf').saveVariable('result', _result4);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result4);
         return _result4;
       } // Get unnormalized exponent
 
@@ -10062,7 +10066,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
       if (additionData.isZero || shift === normalizedMantissa.length - 1 && normalizedMantissa[0] === 0) {
         var _result5 = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero').saveVariable('result', _result5);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero');
         this.watcher = this.watcher.step('Result').saveVariable('result', _result5);
         return _result5;
       } // Calculate bits of the final Exponent
@@ -10083,13 +10087,13 @@ var AdditionIEEE = /*#__PURE__*/function () {
 
         var _result6 = new NumberIEEE(expBitNum, manBitNum, _infArray);
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf').saveVariable('result', _result6);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf');
         this.watcher = this.watcher.step('Result').saveVariable('result', _result6);
         return _result6;
       } // normal case result
 
 
-      this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'none').saveVariable('result', 'none');
+      this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'none');
       var resultArray = [sign];
       resultArray.push.apply(resultArray, _toConsumableArray(exponentBits));
       resultArray.push.apply(resultArray, _toConsumableArray(normalizedMantissa));
@@ -10343,7 +10347,8 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
         // Return NaN
         var _result = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'nan').saveVariable('result', _result);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'nan');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result);
         return _result;
       }
 
@@ -10355,7 +10360,8 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
 
         var _result2 = new NumberIEEE(expBitNum, manBitNum, infArray);
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf').saveVariable('result', _result2);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result2);
         return _result2;
       }
 
@@ -10369,7 +10375,8 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
 
         var _result3 = new NumberIEEE(expBitNum, manBitNum, _infArray);
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero').saveVariable('result', _result3);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result3);
         return _result3;
       }
 
@@ -10417,7 +10424,8 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
       if (shift === unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] === 0) {
         var _result4 = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero').saveVariable('result', _result4);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result4);
         return _result4;
       } // normalizes the mantissa
 
@@ -10457,12 +10465,13 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
 
         var _result5 = new NumberIEEE(expBitNum, manBitNum, _infArray2);
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf').saveVariable('result', _result5);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result5);
         return _result5;
       } // normal case result
 
 
-      this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'none').saveVariable('result', 'none');
+      this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'none');
       var resultArr = [sign];
       resultArr.push.apply(resultArr, exponentBits);
       resultArr.push.apply(resultArr, _toConsumableArray(normalizedMatissa));
@@ -10509,7 +10518,8 @@ var DivisionIEEE = /*#__PURE__*/function () {
         // Return NaN
         var _result = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'nan').saveVariable('result', _result);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'nan');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result);
         return _result;
       }
 
@@ -10517,7 +10527,8 @@ var DivisionIEEE = /*#__PURE__*/function () {
         // Return NaN, the second
         var _result2 = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'nan').saveVariable('result', _result2);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'nan');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result2);
         return _result2;
       }
 
@@ -10529,7 +10540,8 @@ var DivisionIEEE = /*#__PURE__*/function () {
 
         var _result3 = new NumberIEEE(expBitNum, manBitNum, infArray);
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf').saveVariable('result', _result3);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result3);
         return _result3;
       }
 
@@ -10543,7 +10555,8 @@ var DivisionIEEE = /*#__PURE__*/function () {
 
         var _result4 = new NumberIEEE(expBitNum, manBitNum, _infArray);
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero').saveVariable('result', _result4);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result4);
         return _result4;
       } // check if mantissas are equal
 
@@ -10599,7 +10612,8 @@ var DivisionIEEE = /*#__PURE__*/function () {
           // Return zero
           var _result5 = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
 
-          this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero').saveVariable('result', _result5);
+          this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero');
+          this.watcher = this.watcher.step('Result').saveVariable('result', _result5);
           return _result5;
         }
       } else {
@@ -10631,12 +10645,13 @@ var DivisionIEEE = /*#__PURE__*/function () {
 
         var _result6 = new NumberIEEE(expBitNum, manBitNum, _infArray2);
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf').saveVariable('result', _result6);
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result6);
         return _result6;
       } // normal case result
 
 
-      this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'none').saveVariable('result', 'none');
+      this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'none');
       var resultArray = [sign];
       resultArray.push.apply(resultArray, exponentBits);
       resultArray.push.apply(resultArray, _toConsumableArray(normalizedMantissa));
