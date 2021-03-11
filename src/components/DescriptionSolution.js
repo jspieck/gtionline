@@ -48,24 +48,24 @@ export class DescriptionSolution {
         case 'add':
           steps.push({
             name: `${this.imp.$t('values')}`,
-            text: 'Werte der übertragenen Zahlen',
+            text: `${this.imp.$t('givenValues')}`,
             subpanels: [
               {
-                name: '1. Summand: ',
+                name: `${this.imp.$t('firstSummand')}: `,
                 text: [
-                  'Wert: ', y1.valueString,
-                  ', Vorzeichen: ', (y1.sign === 0 ? '+' : '-'),
-                  ', Mantisse: ', mantissaString1,
-                  ', Exponent: ', expString1,
+                  `${this.imp.$t('value')}: `, y1.valueString,
+                  `, ${this.imp.$t('sign')}: `, (y1.sign === 0 ? '+' : '-'),
+                  `, ${this.imp.$t('mantissa')}: `, mantissaString1,
+                  `, ${this.imp.$t('exponent')}: `, expString1,
                 ].join(''),
               },
               {
-                name: '2. Summand: ',
+                name: `${this.imp.$t('secondSummand')}: `,
                 text: [
-                  'Wert: ', y2.valueString,
-                  ', Vorzeichen: ', (y2.sign === 0 ? '+' : '-'),
-                  ', Mantisse: ', mantissaString2,
-                  ', Exponent: ', expString2,
+                  `${this.imp.$t('value')}: `, y2.valueString,
+                  `, ${this.imp.$t('sign')}: `, (y2.sign === 0 ? '+' : '-'),
+                  `, ${this.imp.$t('mantissa')}: `, mantissaString2,
+                  `, ${this.imp.$t('exponent')}: `, expString2,
                 ].join(''),
               },
             ],
@@ -73,28 +73,28 @@ export class DescriptionSolution {
           if (watcher.steps.CalculateDeltaE.data.deltaE === 0) {
             steps.push({
               name: `${this.imp.$t('step')} 1`,
-              text: ['Die Exponenten beider Zahlen müssen angeglichen werden. \\( (', expString1, ' = ', expString2, ' \\Rightarrow i.O.) \\)'].join(''),
+              text: `${this.imp.$t('adjunstExponents')} \\( (${expString1} = ${expString2} \\Rightarrow i.O.) \\)`,
             });
           } else {
             const left = watcher.steps.CalculateDeltaE.data.switched ? '<' : '>';
             steps.push({
               name: `${this.imp.$t('step')} 1`,
-              text: ['Die Exponenten beider Zahlen müssen angeglichen werden. \\( (', expString1, ' \\neq ', expString2, ') \\)'].join(''),
+              text: `${this.imp.$t('adjunstExponents')} \\( (${expString1} \\neq ${expString2}) \\)`,
               subpanels: [
                 {
-                  name: 'Differenz Exponent',
+                  name: `${this.imp.$t('diffExponent')}`,
                   text: [
-                    'Es wird immer der kleinere vom größeren Exponenten subtrahiert ',
+                    `${this.imp.$t('smallerExponent')} `,
                     `\\( ( [ ${watcher.steps.CalculateDeltaE.data.expN1Bits.join('')} ] :=  ${watcher.steps.CalculateDeltaE.data.expN1} ${left}
                       [ ${watcher.steps.CalculateDeltaE.data.expN2Bits.join('')} ] :=  ${watcher.steps.CalculateDeltaE.data.expN2}) \\) `,
-                    'daher ergibt sich eine Differenz von: ',
+                    `${this.imp.$t('resDiffExponent')}: `,
                     this.imp.watcher.steps.CalculateDeltaE.data.deltaE,
                   ].join(''),
                   subsubpanels: [
                     {
-                      name: 'Anpassen der kleineren Mantisse',
+                      name: `${this.imp.$t('adjustSmallerMantissa')}`,
                       text: [
-                        ' Shiften der kleineren Mantisse: \\( ',
+                        ` ${this.imp.$t('shiftMantissa')}: \\( `,
                         watcher.steps.CalculateDeltaE.data.preShift.join(''),
                         `\\overset{\\text{Shift: ${watcher.steps.CalculateDeltaE.data.deltaE} }}{\\rightarrow}`,
                         watcher.steps.AddMantissa.data.mantissa2.join(''),
@@ -154,23 +154,24 @@ export class DescriptionSolution {
             steps.push({
               name: `${this.imp.$t('step')} 2`,
               text: [
-                'Die Mantissen beider Zahlen müssen addiert werden.',
+                `${this.imp.$t('addMantissa')}`,
               ].join(''),
               subpanels: [
                 {
-                  name: 'Neue Mantisse',
+                  name: `${this.imp.$t('newMantissa')}`,
                   text: [
-                    'Die neue Mantisse ist somit: \<br\> \<br\>',
+                    `${this.imp.$t('newMantissaIs')}`,
+                    ': \<br\> \<br\>',
                     additionMantissaTabular,
                   ].join(''),
                 },
                 {
-                  name: 'Darstellung beachten',
-                  text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
+                  name: `${this.imp.$t('considerRepresentation')}`,
+                  text: `${this.imp.$t('consider1comma')}`,
                   subsubpanels: [
                     {
-                      name: 'Mantisse im Float',
-                      text: ['Im Float wird die führende 1 nicht angezeigt: ', this.imp.watcher.steps.AddMantissa.data.normalizedMantissa.join('')].join(''),
+                      name: `${this.imp.$t('mantissaFloat')}`,
+                      text: `${this.imp.$t('mantissa1float')}: ${this.imp.watcher.steps.AddMantissa.data.normalizedMantissa.join('')}`,
                     },
                   ],
                 },
@@ -179,15 +180,11 @@ export class DescriptionSolution {
           } else {
             steps.push({
               name: `${this.imp.$t('step')} 2`,
-              text: [
-                'Die Mantissen beider Zahlen müssen addiert werden.',
-              ].join(''),
+              text: `${this.imp.$t('addMantissa')}`,
               subpanels: [
                 {
-                  name: 'Neue Mantisse',
-                  text: [
-                    'Die Mantissen sind identisch, \\( \\rightarrow \\) Exponent wird um 1 erhöht Mantisse bleibt gleich',
-                  ].join(''),
+                  name: `${this.imp.$t('newMantissa')}`,
+                  text: `${this.imp.$t('equalMantissa')}`,
                 },
               ],
             });
@@ -195,22 +192,22 @@ export class DescriptionSolution {
           steps.push({
             name: this.imp.$t('solution'),
             text: [
-              'Die Lösung lautet: ',
+              `${this.imp.$t('correctSolution')}: `,
               this.imp.watcher.steps.Result.data.result.sign, ' ',
               this.imp.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
               this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
             ].join(''),
             subpanels: [
               {
-                name: 'Vorzeichen: ',
+                name: `${this.imp.$t('sign')}: `,
                 text: this.imp.watcher.steps.Result.data.result.sign,
               },
               {
-                name: 'Exponent: ',
+                name: `${this.imp.$t('exponent')}: `,
                 text: this.imp.watcher.steps.Result.data.result.exponentBits.join(''),
               },
               {
-                name: 'Mantisse: ',
+                name: `${this.imp.$t('mantissa')}: `,
                 text: this.imp.watcher.steps.Result.data.result.mantissaBits.join(''),
               },
             ],
@@ -227,19 +224,19 @@ export class DescriptionSolution {
               {
                 name: `${this.imp.$t('leftValue')}: `,
                 text: [
-                  `${this.imp.$t('value')}`, y1.valueString,
-                  `, ${this.imp.$t('sign')}`, (y1.sign === 0 ? '+' : '-'),
-                  `, ${this.imp.$t('mantissa')}`, mantissaString1,
-                  `, ${this.imp.$t('exponent')}`, expString1,
+                  `${this.imp.$t('value')}: `, y1.valueString,
+                  `, ${this.imp.$t('sign')}: `, (y1.sign === 0 ? '+' : '-'),
+                  `, ${this.imp.$t('mantissa')}: `, mantissaString1,
+                  `, ${this.imp.$t('exponent')}: `, expString1,
                 ].join(''),
               },
               {
                 name: `${this.imp.$t('rightValue')}: `,
                 text: [
-                  `${this.imp.$t('value')}`, y2.valueString,
-                  `, ${this.imp.$t('sign')}`, (y2.sign === 0 ? '+' : '-'),
-                  `, ${this.imp.$t('mantissa')}`, mantissaString2,
-                  `, ${this.imp.$t('exponent')}`, expString2,
+                  `${this.imp.$t('value')}: `, y2.valueString,
+                  `, ${this.imp.$t('sign')}: `, (y2.sign === 0 ? '+' : '-'),
+                  `, ${this.imp.$t('mantissa')}: `, mantissaString2,
+                  `, ${this.imp.$t('exponent')}: `, expString2,
                 ].join(''),
               },
             ],
