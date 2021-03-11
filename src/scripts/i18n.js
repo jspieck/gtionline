@@ -46,6 +46,8 @@ export const i18n = new VueI18n({
       // neu
       // general
       steps: 'Schritte',
+      repeatMinuend: 'wiederhole\\ Minuend',
+      doDivision: 'Divison durchführen',
       // values
       value: 'Wert',
       givenValues: 'Werte der übertragenen Zahlen',
@@ -60,6 +62,7 @@ export const i18n = new VueI18n({
       exponent: 'Exponent',
       adjunstExponents: 'Die Exponenten beider Zahlen müssen angeglichen werden.',
       addExponents: 'Die Exponenten beider Zahlen müssen addiert werden.',
+      subtExponents: 'Die Exponenten beider Zahlen müssen subtrahiert werden.',
       diffExponent: 'Differenz Exponent',
       smallerExponent: 'Es wird immer der kleinere vom größeren Exponenten subtrahiert',
       resDiffExponent: 'daher ergibt sich eine Differenz von',
@@ -69,10 +72,12 @@ export const i18n = new VueI18n({
       mantissa: 'Mantisse',
       mulMantissa: 'Die Mantissen beider Zahlen müssen multipliziert werden.',
       addMantissa: 'Die Mantissen beider Zahlen müssen addiert werden.',
+      divMantissa: 'Die Mantissen beider Zahlen müssen dividiert werden.',
       newMantissa: 'Neue Mantisse',
       zeroMantissa: 'Mantissen sind identisch, neue Mantissa ist 0-Mantisse',
       newMantissaIs: 'Die neue Mantisse ist somit',
       equalMantissa: 'Die Mantissen sind identisch, \\( \\rightarrow \\) Exponent wird um 1 erhöht Mantisse bleibt gleich',
+      equalMantissaDiv: 'Die beiden Mantissen sind gleich, daher wird keine binäre Division durchgeführt',
       adjustSmallerMantissa: 'Anpassen der kleineren Mantisse',
       shiftMantissa: 'Shiften der kleineren Mantisse',
       mantissaFloat: 'Mantisse im Float',
