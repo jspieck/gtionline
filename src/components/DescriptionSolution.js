@@ -302,51 +302,52 @@ export class DescriptionSolution {
             text: 'Werte der übertragenen Zahlen',
             subpanels: [
               {
-                name: 'Minuend: ',
+                name: `${this.imp.$t('minuend')}: `,
                 text: [
-                  'Wert: ', y1.valueString,
-                  ', Vorzeichen: ', (y1.sign === 0 ? '+' : '-'),
-                  ', Mantisse: ', mantissaString1,
-                  ', Exponent: ', expString1,
+                  `${this.imp.$t('value')}: `, y1.valueString,
+                  `, ${this.imp.$t('sign')}: `, (y1.sign === 0 ? '+' : '-'),
+                  `, ${this.imp.$t('mantissa')}: `, mantissaString1,
+                  `, ${this.imp.$t('exponent')}: `, expString1,
                 ].join(''),
               },
               {
-                name: 'Subtrahend: ',
+                name: `${this.imp.$t('subrahend')}: `,
                 text: [
-                  'Wert: ', y2.valueString,
-                  ', Vorzeichen: ', (y2.sign === 0 ? '+' : '-'),
-                  ', Mantisse: ', mantissaString2,
-                  ', Exponent: ', expString2,
+                  `${this.imp.$t('value')}: `, y2.valueString,
+                  `, ${this.imp.$t('sign')}: `, (y2.sign === 0 ? '+' : '-'),
+                  `, ${this.imp.$t('mantissa')}: `, mantissaString2,
+                  `, ${this.imp.$t('exponent')}: `, expString2,
                 ].join(''),
               },
             ],
           });
           const addWatcher = watcher.steps.Addition.data.addition;
+          console.log(addWatcher.steps.AddMantissa.data);
           if (addWatcher.steps.CalculateDeltaE.data.deltaE === 0) {
             steps.push({
               name: `${this.imp.$t('step')} 1`,
-              text: ['Die Exponenten beider Zahlen müssen angeglichen werden. \\( (', expString1, ' = ', expString2, ' \\Rightarrow i.O.) \\)'].join(''),
+              text: `${this.imp.$t('adjunstExponents')} \\( (${expString1} = ${expString2} \\Rightarrow i.O.) \\)`,
             });
           } else {
             const left = addWatcher.steps.CalculateDeltaE.data.switched ? '<' : '>';
             steps.push({
               name: `${this.imp.$t('step')} 1`,
-              text: ['Die Exponenten beider Zahlen müssen angeglichen werden. \\( (', expString1, ' \\neq ', expString2, ') \\)'].join(''),
+              text: `${this.imp.$t('adjunstExponents')} \\( (${expString1} \\neq ${expString2}) \\)`,
               subpanels: [
                 {
-                  name: 'Differenz Exponent',
+                  name: `${this.imp.$t('diffExponent')}`,
                   text: [
-                    'Es wird immer der kleinere vom größeren Exponenten subtrahiert ',
+                    `${this.imp.$t('smallerExponent')} `,
                     `\\( ( [ ${addWatcher.steps.CalculateDeltaE.data.expN1Bits.join('')} ] :=  ${addWatcher.steps.CalculateDeltaE.data.expN1} ${left}
                       [ ${addWatcher.steps.CalculateDeltaE.data.expN2Bits.join('')} ] :=  ${addWatcher.steps.CalculateDeltaE.data.expN2}) \\) `,
-                    'daher ergibt sich eine Differenz von: ',
+                    `${this.imp.$t('resDiffExponent')}: `,
                     addWatcher.steps.CalculateDeltaE.data.deltaE,
                   ].join(''),
                   subsubpanels: [
                     {
-                      name: 'Anpassen der kleineren Mantisse',
+                      name: `${this.imp.$t('adjustSmallerMantissa')}`,
                       text: [
-                        ' Shiften der kleineren Mantisse: \\( ',
+                        ` ${this.imp.$t('shiftMantissa')}: \\( `,
                         addWatcher.steps.CalculateDeltaE.data.preShift.join(''),
                         `\\overset{\\text{Shift: ${addWatcher.steps.CalculateDeltaE.data.deltaE} }}{\\rightarrow}`,
                         addWatcher.steps.AddMantissa.data.mantissa2.join(''),
@@ -363,19 +364,19 @@ export class DescriptionSolution {
               && addWatcher.steps.AddMantissa.data.sign2 === 1) {
               steps.push({
                 name: `${this.imp.$t('step')} 2`,
-                text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
+                text: `${this.imp.$t('subtTwosComplement')}`,
                 subpanels:
                   [
                     {
                       name: [
-                        'Bildung Zweierkomplement aus Mantisse: \\(',
+                        `${this.imp.$t('mantissaTwosComplement')}: \\(`,
                         addWatcher.steps.AddMantissa.data.mantissa2.join(''),
                         '\\)',
                       ].join(''),
-                      text: 'Schritte',
+                      text: `${this.imp.$t('steps')}`,
                       subsubpanels: [
                         {
-                          name: 'Bits umkehren',
+                          name: `${this.imp.$t('switchBits')}`,
                           text: [
                             '\\(',
                             addWatcher.steps.AddMantissa.data.mantissa2.join(''),
@@ -386,7 +387,7 @@ export class DescriptionSolution {
                           ].join(''),
                         },
                         {
-                          name: '1 addieren',
+                          name: `${this.imp.$t('add1')}`,
                           text: [
                             '\\(',
                             addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
@@ -398,7 +399,7 @@ export class DescriptionSolution {
                           ].join(''),
                         },
                         {
-                          name: 'Normalisieren',
+                          name: `${this.imp.$t('normalize')}`,
                           text: [
                             '\\(',
                             addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
@@ -417,19 +418,19 @@ export class DescriptionSolution {
               && addWatcher.steps.AddMantissa.data.sign2 === 0) {
               steps.push({
                 name: `${this.imp.$t('step')} 2`,
-                text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
+                text: `${this.imp.$t('subtTwosComplement')}`,
                 subpanels:
                   [
                     {
                       name: [
-                        'Bildung Zweierkomplement aus Mantisse: \\(',
+                        `${this.imp.$t('mantissaTwosComplement')}: \\(`,
                         addWatcher.steps.AddMantissa.data.mantissa1.join(''),
                         '\\)',
                       ].join(''),
-                      text: 'Schritte',
+                      text: `${this.imp.$t('steps')}`,
                       subsubpanels: [
                         {
-                          name: 'Bits umkehren',
+                          name: `${this.imp.$t('switchBits')}`,
                           text: [
                             '\\(',
                             addWatcher.steps.AddMantissa.data.mantissa1.join(''),
@@ -440,7 +441,7 @@ export class DescriptionSolution {
                           ].join(''),
                         },
                         {
-                          name: '1 addieren',
+                          name: `${this.imp.$t('add1')}`,
                           text: [
                             '\\(',
                             addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
@@ -452,7 +453,7 @@ export class DescriptionSolution {
                           ].join(''),
                         },
                         {
-                          name: 'Normalisieren',
+                          name: `${this.imp.$t('normalize')}`,
                           text: [
                             '\\(',
                             addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
@@ -470,19 +471,19 @@ export class DescriptionSolution {
             } else {
               steps.push({
                 name: `${this.imp.$t('step')} 2`,
-                text: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
+                text: `${this.imp.$t('subtTwosComplement')}`,
                 subpanels:
                   [
                     {
                       name: [
-                        'Bildung Zweierkomplement aus Mantisse: \\(',
+                        `${this.imp.$t('mantissaTwosComplement')}: \\(`,
                         addWatcher.steps.AddMantissa.data.mantissa1.join(''),
                         '\\)',
                       ].join(''),
-                      text: 'Schritte',
+                      text: `${this.imp.$t('steps')}`,
                       subsubpanels: [
                         {
-                          name: 'Bits umkehren',
+                          name: `${this.imp.$t('switchBits')}`,
                           text: [
                             '\\(',
                             addWatcher.steps.AddMantissa.data.mantissa1.join(''),
@@ -493,7 +494,7 @@ export class DescriptionSolution {
                           ].join(''),
                         },
                         {
-                          name: '1 addieren',
+                          name: `${this.imp.$t('add1')}`,
                           text: [
                             '\\(',
                             addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
@@ -505,7 +506,7 @@ export class DescriptionSolution {
                           ].join(''),
                         },
                         {
-                          name: 'Normalisieren',
+                          name: `${this.imp.$t('normalize')}`,
                           text: [
                             '\\(',
                             addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
@@ -520,14 +521,14 @@ export class DescriptionSolution {
                     },
                     {
                       name: [
-                        'Bildung Zweierkomplement aus Mantisse: \\(',
+                        `${this.imp.$t('mantissaTwosComplement')}: \\(`,
                         addWatcher.steps.AddMantissa.data.mantissa2.join(''),
                         '\\)',
                       ].join(''),
-                      text: 'Schritte',
+                      text: `${this.imp.$t('steps')}`,
                       subsubpanels: [
                         {
-                          name: 'Bits umkehren',
+                          name: `${this.imp.$t('switchBits')}`,
                           text: [
                             '\\(',
                             addWatcher.steps.AddMantissa.data.mantissa2.join(''),
@@ -538,7 +539,7 @@ export class DescriptionSolution {
                           ].join(''),
                         },
                         {
-                          name: '1 addieren',
+                          name: `${this.imp.$t('add1')}`,
                           text: [
                             '\\(',
                             addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
@@ -550,7 +551,7 @@ export class DescriptionSolution {
                           ].join(''),
                         },
                         {
-                          name: 'Normalisieren',
+                          name: `${this.imp.$t('normalize')}`,
                           text: [
                             '\\(',
                             addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
@@ -643,24 +644,23 @@ export class DescriptionSolution {
 
             steps.push({
               name: `${this.imp.$t('step')} 3`,
-              text: [
-                'Die Mantissen beider Zahlen müssen addiert werden.',
-              ].join(''),
+              text: `${this.imp.$t('addMantissa')}`,
               subpanels: [
                 {
-                  name: 'Neue Mantisse',
+                  name: `${this.imp.$t('newMantissa')}`,
                   text: [
-                    'Die neue Mantisse ist somit: \<br\> \<br\>',
+                    `${this.imp.$t('newMantissaIs')}`,
+                    ': \<br\> \<br\>',
                     subtractionMantissaTabular,
                   ].join(''),
                 },
                 {
-                  name: 'Darstellung beachten',
-                  text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
+                  name: `${this.imp.$t('considerRepresentation')}`,
+                  text: `${this.imp.$t('consider1comma')}`,
                   subsubpanels: [
                     {
-                      name: 'Mantisse im Float',
-                      text: ['Im Float wird die führende 1 nicht angezeigt: ', addWatcher.steps.AddMantissa.data.normalizedMantissa.join('')].join(''),
+                      name: `${this.imp.$t('mantissaFloat')}`,
+                      text: `${this.imp.$t('mantissa1float')}: ${addWatcher.steps.AddMantissa.data.normalizedMantissa.join('')}`,
                     },
                   ],
                 },
@@ -669,22 +669,22 @@ export class DescriptionSolution {
             steps.push({
               name: this.imp.$t('solution'),
               text: [
-                'Die Lösung lautet: ',
+                `${this.imp.$t('correctSolution')}: `,
                 addWatcher.steps.Result.data.result.sign, ' ',
                 addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
                 addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
               ].join(''),
               subpanels: [
                 {
-                  name: 'Vorzeichen: ',
+                  name: `${this.imp.$t('sign')}: `,
                   text: addWatcher.steps.Result.data.result.sign,
                 },
                 {
-                  name: 'Exponent: ',
+                  name: `${this.imp.$t('exponent')}: `,
                   text: addWatcher.steps.Result.data.result.exponentBits.join(''),
                 },
                 {
-                  name: 'Mantisse: ',
+                  name: `${this.imp.$t('mantissa')}: `,
                   text: addWatcher.steps.Result.data.result.mantissaBits.join(''),
                 },
               ],
@@ -698,18 +698,16 @@ export class DescriptionSolution {
               ].join(''),
               subpanels: [
                 {
-                  name: 'Neue Mantisse',
-                  text: [
-                    'Mantissen sind identisch, neue Mantissa ist 0-Mantisse',
-                  ].join(''),
+                  name: `${this.imp.$t('newMantissa')}`,
+                  text: `${this.imp.$t('zeroMantissa')}`,
                 },
                 {
-                  name: 'Darstellung beachten',
-                  text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
+                  name: `${this.imp.$t('considerRepresentation')}`,
+                  text: `${this.imp.$t('consider1comma')}`,
                   subsubpanels: [
                     {
-                      name: 'Mantisse im Float',
-                      text: ['Im Float wird die führende 1 nicht angezeigt: ', addWatcher.steps.AddMantissa.data.normalizedMantissa.join('')].join(''),
+                      name: `${this.imp.$t('mantissaFloat')}`,
+                      text: `${this.imp.$t('mantissa1float')}: ${addWatcher.steps.AddMantissa.data.normalizedMantissa.join('')}`,
                     },
                   ],
                 },
@@ -718,22 +716,22 @@ export class DescriptionSolution {
             steps.push({
               name: this.imp.$t('solution'),
               text: [
-                'Die Lösung lautet: ',
+                `${this.imp.$t('correctSolution')}: `,
                 addWatcher.steps.Result.data.result.sign, ' ',
                 addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
                 addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
               ].join(''),
               subpanels: [
                 {
-                  name: 'Vorzeichen: ',
+                  name: `${this.imp.$t('sign')}: `,
                   text: addWatcher.steps.Result.data.result.sign,
                 },
                 {
-                  name: 'Exponent: ',
+                  name: `${this.imp.$t('exponent')}: `,
                   text: addWatcher.steps.Result.data.result.exponentBits.join(''),
                 },
                 {
-                  name: 'Mantisse: ',
+                  name: `${this.imp.$t('mantissa')}: `,
                   text: addWatcher.steps.Result.data.result.mantissaBits.join(''),
                 },
               ],

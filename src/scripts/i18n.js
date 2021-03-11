@@ -44,6 +44,8 @@ export const i18n = new VueI18n({
       check: 'Check',
       values: 'Werte',
       // neu
+      // general
+      steps: 'Schritte',
       // values
       value: 'Wert',
       givenValues: 'Werte der übertragenen Zahlen',
@@ -51,6 +53,8 @@ export const i18n = new VueI18n({
       rightValue: 'Zahl rechts',
       firstSummand: '1. Summand',
       secondSummand: '2. Summand',
+      minuend: 'Minuend',
+      subrahend: 'Subtrahend',
       sign: 'Vorzeichen',
       // exponent
       exponent: 'Exponent',
@@ -66,12 +70,19 @@ export const i18n = new VueI18n({
       mulMantissa: 'Die Mantissen beider Zahlen müssen multipliziert werden.',
       addMantissa: 'Die Mantissen beider Zahlen müssen addiert werden.',
       newMantissa: 'Neue Mantisse',
+      zeroMantissa: 'Mantissen sind identisch, neue Mantissa ist 0-Mantisse',
       newMantissaIs: 'Die neue Mantisse ist somit',
       equalMantissa: 'Die Mantissen sind identisch, \\( \\rightarrow \\) Exponent wird um 1 erhöht Mantisse bleibt gleich',
       adjustSmallerMantissa: 'Anpassen der kleineren Mantisse',
       shiftMantissa: 'Shiften der kleineren Mantisse',
       mantissaFloat: 'Mantisse im Float',
       mantissa1float: 'Im Float wird die führende 1 nicht angezeigt',
+      // twos complement
+      subtTwosComplement: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
+      mantissaTwosComplement: 'Bildung Zweierkomplement aus Mantisse',
+      switchBits: 'Bits umkehren',
+      add1: '1 addieren',
+      normalize: 'Normalisieren',
       // shift, representation
       shiftExpMant: 'Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden.',
       shift: 'Shift',
