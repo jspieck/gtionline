@@ -361,7 +361,7 @@ export class DescriptionSolution {
               ],
             });
           }
-          if (!addWatcher.steps.AddMantissa.data.equalMantissa) { // case: equal mantissa
+          if (!addWatcher.steps.AddMantissa.data.equalMantissa) { // case: not equal mantissa
             if (addWatcher.steps.AddMantissa.data.sign1 === 0
               && addWatcher.steps.AddMantissa.data.sign2 === 1) {
               steps.push({
@@ -693,9 +693,9 @@ export class DescriptionSolution {
               ],
             });
           } else { // case: equal mantissa
-            console.log(addWatcher.steps.Result.data);
+            console.log(addWatcher.steps.AddMantissa.data);
             steps.push({
-              name: `${this.imp.$t('step')} 3`,
+              name: `${this.imp.$t('step')} 2`,
               text: [
                 'Die Mantissen beider Zahlen müssen addiert werden.',
               ].join(''),

@@ -10063,6 +10063,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
         var _result5 = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
 
         this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero').saveVariable('result', _result5);
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result5);
         return _result5;
       } // Calculate bits of the final Exponent
 
@@ -10083,6 +10084,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
         var _result6 = new NumberIEEE(expBitNum, manBitNum, _infArray);
 
         this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf').saveVariable('result', _result6);
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result6);
         return _result6;
       } // normal case result
 
@@ -10131,7 +10133,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
         var _normalizedMantissa2 = [];
 
         for (var i = 0; i < mantissa1.length; i++) {
-          _normalizedMantissa2[i] = 0;
+          _normalizedMantissa2.push(0);
         }
 
         var _shift2 = 0;
