@@ -156,7 +156,7 @@ export const i18n = new VueI18n({
       newExponent: 'new exponent',
       considerExponent: 'consider the exponent',
       // mantissa
-      mantissa: 'mantisse',
+      mantissa: 'mantissa',
       mulMantissa: 'The mantissa of both numbers must be multiplied.',
       addMantissa: 'The mantissa of both numbers must be added.',
       divMantissa: 'The mantissa of both numbers must be divided.',
