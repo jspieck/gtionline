@@ -16,6 +16,55 @@ export class DescriptionSolution {
 
   // =========================================================================================
   // Addition
+  getAdditionTable() {
+    // set up tabular for visual the addition
+    const mantissa1 = this.imp.watcher.steps.AddMantissa.data.addition.steps.Addition.data.op1Arr;
+    const mantissa2 = this.imp.watcher.steps.AddMantissa.data.addition.steps.Addition.data.op2Arr;
+    const carryBits = this.imp.watcher.steps.AddMantissa.data.addition.steps.Addition.data.carryArr;
+    const result = this.imp.watcher.steps.AddMantissa.data.addition.steps.Addition.data.resultArr;
+    const cols = this.imp.watcher.steps.AddMantissa.data.binNum;
+    const row1 = [];
+    const row2 = [];
+    const row3 = [];
+    const tabdef = [];
+    row1.push('&');
+    row2.push('&');
+    row3.push('+&');
+    tabdef.push('{');
+    for (let i = mantissa1.length; i <= cols; i += 1) {
+      mantissa1.unshift(0);
+    }
+    for (let i = mantissa2.length; i <= cols; i += 1) {
+      mantissa2.unshift(0);
+    }
+    for (let i = carryBits.length; i <= cols; i += 1) {
+      carryBits.unshift(0);
+    }
+    for (let i = 0; i < cols; i += 1) {
+      tabdef.push('c');
+      row1.push(` ${mantissa1[i]}`);
+      row1.push('&');
+      row2.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
+      row2.push('&');
+      row3.push(` ${result[i]}`);
+      row3.push('&');
+    }
+    tabdef.push('}');
+    row1.pop();
+    row1.push('\\\\ ');
+    row2.pop();
+    row2.push('\\\\ ');
+    row3.pop();
+    return [
+      `\\( \\begin{array} ${tabdef.join('')}`,
+      `${row1.join('')}`,
+      `${row2.join('')}`,
+      '\\hline',
+      `${row3.join('')}`,
+      '\\end{array} \\) ',
+    ].join('');
+  }
+
   additionDescription(steps, solution, y1, y2) {
     let mantissaString1 = y1.mantissaBits.join('');
     mantissaString1 = `1,${mantissaString1.substring(1)}`;
@@ -24,15 +73,6 @@ export class DescriptionSolution {
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
     const watcher = this.imp.watcher;
-    let mantissa1;
-    let mantissa2;
-    let carryBits;
-    let result;
-    let cols;
-    const row1 = [];
-    const row2 = [];
-    const row3 = [];
-    const tabdef = [];
     steps.push({
       name: `${this.imp.$t('values')}`,
       text: `${this.imp.$t('givenValues')}`,
@@ -94,50 +134,6 @@ export class DescriptionSolution {
       });
     }
     if (!watcher.steps.AddMantissa.data.equalMantissa) {
-      // set up tabular for visual the addition
-      mantissa1 = watcher.steps.AddMantissa.data.addition.steps.Addition.data.op1Arr;
-      mantissa2 = watcher.steps.AddMantissa.data.addition.steps.Addition.data.op2Arr;
-      carryBits = watcher.steps.AddMantissa.data.addition.steps.Addition.data.carryArr;
-      result = watcher.steps.AddMantissa.data.addition.steps.Addition.data.resultArr;
-      cols = watcher.steps.AddMantissa.data.binNum;
-      row1.push('&');
-      row2.push('&');
-      row3.push('+&');
-      tabdef.push('{');
-      for (let i = mantissa1.length; i <= cols; i += 1) {
-        mantissa1.unshift(0);
-      }
-      for (let i = mantissa2.length; i <= cols; i += 1) {
-        mantissa2.unshift(0);
-      }
-      for (let i = carryBits.length; i <= cols; i += 1) {
-        carryBits.unshift(0);
-      }
-      for (let i = 0; i < cols; i += 1) {
-        tabdef.push('c');
-        row1.push(` ${mantissa1[i]}`);
-        row1.push('&');
-        row2.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
-        row2.push('&');
-        row3.push(` ${result[i]}`);
-        row3.push('&');
-      }
-      tabdef.push('}');
-      row1.pop();
-      row1.push('\\\\ ');
-      row2.pop();
-      row2.push('\\\\ ');
-      row3.pop();
-
-      const additionMantissaTabular = [
-        `\\( \\begin{array} ${tabdef.join('')}`,
-        `${row1.join('')}`,
-        `${row2.join('')}`,
-        '\\hline',
-        `${row3.join('')}`,
-        '\\end{array} \\) ',
-      ].join('');
-
       steps.push({
         name: `${this.imp.$t('step')} 2`,
         text: [
@@ -149,7 +145,7 @@ export class DescriptionSolution {
             text: [
               `${this.imp.$t('newMantissaIs')}`,
               ': \<br\> \<br\>',
-              additionMantissaTabular,
+              this.getAdditionTable(),
             ].join(''),
           },
           {
@@ -290,6 +286,90 @@ export class DescriptionSolution {
 
   // =========================================================================================
   // Subtraction
+  getSubtractionTable() {
+    // set up tabular for visual the addition
+    const addWatcher = this.imp.watcher.steps.Addition.data.addition;
+    const originalMantissa1 = addWatcher.steps.AddMantissa.data.mantissa1;
+    const originalMantissa2 = addWatcher.steps.AddMantissa.data.mantissa2;
+    const mantissa1 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op1Arr;
+    const mantissa2 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op2Arr;
+    const carryBits = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.carryArr;
+    const result = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.resultArr;
+    const cols = addWatcher.steps.AddMantissa.data.binNum;
+    const row1 = [];
+    const row2 = [];
+    const row3 = [];
+    const row4 = [];
+    const row5 = [];
+    const tabdef = [];
+    if (addWatcher.steps.AddMantissa.data.sign1 === 0
+      && addWatcher.steps.AddMantissa.data.sign2 === 1) {
+      row1.push('&');
+      row2.push('-&');
+    } else if (addWatcher.steps.AddMantissa.data.sign1 === 0
+      && addWatcher.steps.AddMantissa.data.sign2 === 1) {
+      row1.push('-&');
+      row2.push('+&');
+    } else {
+      row1.push('-&');
+      row2.push('-&');
+    }
+    row3.push('&');
+    row4.push('+&');
+    row5.push('=&');
+    tabdef.push('{');
+    for (let i = originalMantissa1.length; i <= cols; i += 1) {
+      originalMantissa1.unshift(0);
+    }
+    for (let i = originalMantissa2.length; i <= cols; i += 1) {
+      originalMantissa2.unshift(0);
+    }
+    for (let i = mantissa1.length; i <= cols; i += 1) {
+      mantissa1.unshift(0);
+    }
+    for (let i = mantissa2.length; i <= cols; i += 1) {
+      mantissa2.unshift(0);
+    }
+    for (let i = carryBits.length; i <= cols; i += 1) {
+      carryBits.unshift(0);
+    }
+    for (let i = 0; i < cols; i += 1) {
+      tabdef.push('c');
+      row1.push(` ${originalMantissa1[i]}`);
+      row1.push('&');
+      row2.push(` ${originalMantissa2[i]}`);
+      row2.push('&');
+      row3.push(` ${mantissa1[i]}`);
+      row3.push('&');
+      row4.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
+      row4.push('&');
+      row5.push(` ${result[i]}`);
+      row5.push('&');
+    }
+    tabdef.push('}');
+    row1.pop();
+    row1.push('\\\\ ');
+    row2.pop();
+    row2.push('\\\\ ');
+    row3.pop();
+    row3.push('\\\\ ');
+    row4.pop();
+    row4.push('\\\\ ');
+    row5.pop();
+
+    return [
+      `\\( \\begin{array} ${tabdef.join('')}`,
+      `${row1.join('')}`,
+      `${row2.join('')}`,
+      '\\hline_\{Complement\}',
+      `${row3.join('')}`,
+      `${row4.join('')}`,
+      '\\hline',
+      `${row5.join('')}`,
+      '\\end{array} \\) ',
+    ].join('');
+  }
+
   subtractionDescription(steps, solution, y1, y2) {
     let mantissaString1 = y1.mantissaBits.join('');
     mantissaString1 = `1,${mantissaString1.substring(1)}`;
@@ -298,19 +378,6 @@ export class DescriptionSolution {
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
     const watcher = this.imp.watcher;
-    let originalMantissa1;
-    let originalMantissa2;
-    let mantissa1;
-    let mantissa2;
-    let carryBits;
-    let result;
-    let cols;
-    const row1 = [];
-    const row2 = [];
-    const row3 = [];
-    const row4 = [];
-    const row5 = [];
-    const tabdef = [];
     steps.push({
       name: `${this.imp.$t('values')}`,
       text: 'Werte der übertragenen Zahlen',
@@ -581,81 +648,6 @@ export class DescriptionSolution {
             ],
         });
       }
-      // set up tabular for visual the addition
-      originalMantissa1 = addWatcher.steps.AddMantissa.data.mantissa1;
-      originalMantissa2 = addWatcher.steps.AddMantissa.data.mantissa2;
-      mantissa1 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op1Arr;
-      mantissa2 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op2Arr;
-      carryBits = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.carryArr;
-      result = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.resultArr;
-      cols = addWatcher.steps.AddMantissa.data.binNum;
-      if (addWatcher.steps.AddMantissa.data.sign1 === 0
-        && addWatcher.steps.AddMantissa.data.sign2 === 1) {
-        row1.push('&');
-        row2.push('-&');
-      } else if (addWatcher.steps.AddMantissa.data.sign1 === 0
-        && addWatcher.steps.AddMantissa.data.sign2 === 1) {
-        row1.push('-&');
-        row2.push('+&');
-      } else {
-        row1.push('-&');
-        row2.push('-&');
-      }
-      row3.push('&');
-      row4.push('+&');
-      row5.push('=&');
-      tabdef.push('{');
-      for (let i = originalMantissa1.length; i <= cols; i += 1) {
-        originalMantissa1.unshift(0);
-      }
-      for (let i = originalMantissa2.length; i <= cols; i += 1) {
-        originalMantissa2.unshift(0);
-      }
-      for (let i = mantissa1.length; i <= cols; i += 1) {
-        mantissa1.unshift(0);
-      }
-      for (let i = mantissa2.length; i <= cols; i += 1) {
-        mantissa2.unshift(0);
-      }
-      for (let i = carryBits.length; i <= cols; i += 1) {
-        carryBits.unshift(0);
-      }
-      for (let i = 0; i < cols; i += 1) {
-        tabdef.push('c');
-        row1.push(` ${originalMantissa1[i]}`);
-        row1.push('&');
-        row2.push(` ${originalMantissa2[i]}`);
-        row2.push('&');
-        row3.push(` ${mantissa1[i]}`);
-        row3.push('&');
-        row4.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
-        row4.push('&');
-        row5.push(` ${result[i]}`);
-        row5.push('&');
-      }
-      tabdef.push('}');
-      row1.pop();
-      row1.push('\\\\ ');
-      row2.pop();
-      row2.push('\\\\ ');
-      row3.pop();
-      row3.push('\\\\ ');
-      row4.pop();
-      row4.push('\\\\ ');
-      row5.pop();
-
-      const subtractionMantissaTabular = [
-        `\\( \\begin{array} ${tabdef.join('')}`,
-        `${row1.join('')}`,
-        `${row2.join('')}`,
-        '\\hline_\{Complement\}',
-        `${row3.join('')}`,
-        `${row4.join('')}`,
-        '\\hline',
-        `${row5.join('')}`,
-        '\\end{array} \\) ',
-      ].join('');
-
       steps.push({
         name: `${this.imp.$t('step')} 3`,
         text: `${this.imp.$t('addMantissa')}`,
@@ -665,7 +657,7 @@ export class DescriptionSolution {
             text: [
               `${this.imp.$t('newMantissaIs')}`,
               ': \<br\> \<br\>',
-              subtractionMantissaTabular,
+              this.getSubtractionTable(),
             ].join(''),
           },
           {
@@ -755,6 +747,124 @@ export class DescriptionSolution {
 
   // =========================================================================================
   // Division
+  getDivisionTable() {
+    // the calculation is set up in a table
+    // information, steps
+    const tabdef = [];
+    const divWatcher = this.imp.watcher.steps.Division.data.division;
+    const divSteps = divWatcher.steps.DivisionSteps.data; // steps
+    const countSteps = divSteps.countSteps; // count of steps until result
+    const n1Arr = divWatcher.steps.DivisionInput.data.n1Arr; // divisor
+    const n2Arr = divSteps.Step0_Sub2; // dividend
+    const n2len = n2Arr.length;
+    const divRes = divWatcher.steps.Result.data.resultArr; // result of division
+    let arrLen = Math.max(
+      divSteps[`Step${countSteps - 1}_SubRes`].length - 2,
+      divSteps.Step0_Sub1.length + divSteps.Step0_Sub2.length,
+    ); // columns
+    arrLen = arrLen + n2len + 2;
+    // table definition
+    tabdef.push('{');
+    tabdef.push('c|');
+    for (let i = 0; i < arrLen; i += 1) {
+      tabdef.push('c');
+    }
+    tabdef.push('|c');
+    tabdef.push('}');
+    // build top row
+    const rows = [ // rows of the result table
+      `&&${divSteps.Step0_Sub1.join('&')}`,
+    ];
+    rows[0] += '&:&';
+    rows[0] += n2Arr.join('&');
+    for (let i = n1Arr.length + n2Arr.length + 1; i < arrLen; i += 1) {
+      rows[0] += '&';
+    }
+    rows[0] += '\\\\';
+
+    // inner rows
+    let wasNeg = 0; // repeat last subtrahend
+    for (let i = 0; i < countSteps; i += 1) {
+      rows.push('&&');
+      rows.push(`${i}&&`);
+
+      if (wasNeg !== 0) {
+        // first value, minuend
+        const stepsToAdd = divSteps[`Step${i - 1}_Sub1`];
+        for (let j = 0; j < i - 1; j += 1) {
+          stepsToAdd[j] = ' ';
+        }
+        rows[rows.length - 2] += stepsToAdd.join('&');
+        rows[rows.length - 2] += '& 0';
+        for (let j = divSteps[`Step${i - 1}_Sub1`].length + 1; j < arrLen; j += 1) {
+          rows[rows.length - 2] += '&';
+        }
+        if (i > 0) {
+          rows[rows.length - 2] += '\\Sigma < 0 \\rightarrow 0';
+        }
+        rows[rows.length - 3] = rows[rows.length - 3].replace('-', '<');
+      } else {
+        const stepsToAdd = divSteps[`Step${i}_Sub1`];
+        for (let j = 0; j < i - wasNeg; j += 1) { // remove leading 0
+          stepsToAdd[j] = ' ';
+        }
+        rows[rows.length - 2] += stepsToAdd.join('&');
+        for (let j = divSteps[`Step${i}_Sub1`].length; j < arrLen; j += 1) {
+          rows[rows.length - 2] += '&';
+        }
+        if (i > 0) {
+          rows[rows.length - 2] += '\\Sigma > 0 \\rightarrow 1';
+        }
+      }
+
+      // second value, subtrahend
+      for (let j = 0; j < i; j += 1) {
+        rows[rows.length - 1] += '&';
+      }
+      rows[rows.length - 1] = rows[rows.length - 1].slice(0, -1);
+      rows[rows.length - 1] += '-&';
+
+      rows[rows.length - 1] += n2Arr.join('&');
+      for (let j = n2len + i; j < arrLen; j += 1) {
+        rows[rows.length - 1] += '&';
+      }
+      if (wasNeg !== 0) {
+        rows[rows.length - 1] += `\\hookrightarrow \{\\scriptstyle ${this.imp.$t('repeatMinuend')}\}`;
+      }
+
+      rows[rows.length - 2] += '\\\\ ';
+      rows[rows.length - 1] += '\\\\ ';
+      rows[rows.length - 1] += '\\hline';
+
+      if (divSteps[`Step${i}_SubRes_isNegative`]) {
+        wasNeg += 1;
+      } else {
+        wasNeg = 0;
+      }
+    } // end for
+
+    // Last row
+    rows.push('\\mathcal\{L\}&&');
+    rows[rows.length - 1] += `${divRes[0]},& ${divRes.slice(1, divRes.length)
+      .join('&')}`;
+    rows[rows.length - 1] += '&';
+    for (let k = divRes.length; k < arrLen - 2; k += 1) {
+      rows[rows.length - 1] += '&';
+    }
+    if (wasNeg !== 0) {
+      rows[rows.length - 1] += '&\\Sigma < 0 \\rightarrow 0';
+      rows[rows.length - 2] = rows[rows.length - 2].replace('-', '<');
+    } else {
+      rows[rows.length - 1] += '&\\Sigma > 0 \\rightarrow 1';
+    }
+
+    return [
+      `\\( \\begin{array} ${tabdef.join('')}`,
+      rows.join(''),
+      '\\end{array} \\) ',
+    ].join('');
+  }
+
   divisionDescription(steps, solution, y1, y2) {
     let mantissaString1 = y1.mantissaBits.join('');
     mantissaString1 = `1,${mantissaString1.substring(1)}`;
@@ -763,8 +873,6 @@ export class DescriptionSolution {
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
     const watcher = this.imp.watcher;
-    const tabdef = [];
-    const divWatcher = watcher.steps.Division.data.division;
     steps.push({
       name: `${this.imp.$t('values')}`,
       text: `${this.imp.$t('givenValues')}`,
@@ -797,126 +905,14 @@ export class DescriptionSolution {
         '\\) )',
       ].join(''),
     });
-    if (!watcher.steps.Division.data.equalMantissa) { // case not equl mantissa
-      // the calculation is set up in a table
-      // information, steps
-      const divSteps = divWatcher.steps.DivisionSteps.data; // steps
-      const countSteps = divSteps.countSteps; // count of steps until result
-      const n1Arr = divWatcher.steps.DivisionInput.data.n1Arr; // divisor
-      const n2Arr = divSteps.Step0_Sub2; // dividend
-      const n2len = n2Arr.length;
-      const divRes = divWatcher.steps.Result.data.resultArr; // result of division
-      let arrLen = Math.max(
-        divSteps[`Step${countSteps - 1}_SubRes`].length - 2,
-        divSteps.Step0_Sub1.length + divSteps.Step0_Sub2.length,
-      ); // columns
-      arrLen = arrLen + n2len + 2;
-      // table definition
-      tabdef.push('{');
-      tabdef.push('c|');
-      for (let i = 0; i < arrLen; i += 1) {
-        tabdef.push('c');
-      }
-      tabdef.push('|c');
-      tabdef.push('}');
-      // build top row
-      const rows = [ // rows of the result table
-        `&&${divSteps.Step0_Sub1.join('&')}`,
-      ];
-      rows[0] += '&:&';
-      rows[0] += n2Arr.join('&');
-      for (let i = n1Arr.length + n2Arr.length + 1; i < arrLen; i += 1) {
-        rows[0] += '&';
-      }
-      rows[0] += '\\\\';
-
-      // inner rows
-      let wasNeg = 0; // repeat last subtrahend
-      for (let i = 0; i < countSteps; i += 1) {
-        rows.push('&&');
-        rows.push(`${i}&&`);
-
-        if (wasNeg !== 0) {
-          // first value, minuend
-          const stepsToAdd = divSteps[`Step${i - 1}_Sub1`];
-          for (let j = 0; j < i - 1; j += 1) {
-            stepsToAdd[j] = ' ';
-          }
-          rows[rows.length - 2] += stepsToAdd.join('&');
-          rows[rows.length - 2] += '& 0';
-          for (let j = divSteps[`Step${i - 1}_Sub1`].length + 1; j < arrLen; j += 1) {
-            rows[rows.length - 2] += '&';
-          }
-          if (i > 0) {
-            rows[rows.length - 2] += '\\Sigma < 0 \\rightarrow 0';
-          }
-          rows[rows.length - 3] = rows[rows.length - 3].replace('-', '<');
-        } else {
-          const stepsToAdd = divSteps[`Step${i}_Sub1`];
-          for (let j = 0; j < i - wasNeg; j += 1) { // remove leading 0
-            stepsToAdd[j] = ' ';
-          }
-          rows[rows.length - 2] += stepsToAdd.join('&');
-          for (let j = divSteps[`Step${i}_Sub1`].length; j < arrLen; j += 1) {
-            rows[rows.length - 2] += '&';
-          }
-          if (i > 0) {
-            rows[rows.length - 2] += '\\Sigma > 0 \\rightarrow 1';
-          }
-        }
-
-        // second value, subtrahend
-        for (let j = 0; j < i; j += 1) {
-          rows[rows.length - 1] += '&';
-        }
-        rows[rows.length - 1] = rows[rows.length - 1].slice(0, -1);
-        rows[rows.length - 1] += '-&';
-
-        rows[rows.length - 1] += n2Arr.join('&');
-        for (let j = n2len + i; j < arrLen; j += 1) {
-          rows[rows.length - 1] += '&';
-        }
-        if (wasNeg !== 0) {
-          rows[rows.length - 1] += `\\hookrightarrow \{\\scriptstyle ${this.imp.$t('repeatMinuend')}\}`;
-        }
-
-        rows[rows.length - 2] += '\\\\ ';
-        rows[rows.length - 1] += '\\\\ ';
-        rows[rows.length - 1] += '\\hline';
-
-        if (divSteps[`Step${i}_SubRes_isNegative`]) {
-          wasNeg += 1;
-        } else {
-          wasNeg = 0;
-        }
-      } // end for
-
-      // Last row
-      rows.push('\\mathcal\{L\}&&');
-      rows[rows.length - 1] += `${divRes[0]},& ${divRes.slice(1, divRes.length)
-        .join('&')}`;
-      rows[rows.length - 1] += '&';
-      for (let k = divRes.length; k < arrLen - 2; k += 1) {
-        rows[rows.length - 1] += '&';
-      }
-      if (wasNeg !== 0) {
-        rows[rows.length - 1] += '&\\Sigma < 0 \\rightarrow 0';
-        rows[rows.length - 2] = rows[rows.length - 2].replace('-', '<');
-      } else {
-        rows[rows.length - 1] += '&\\Sigma > 0 \\rightarrow 1';
-      }
-
+    if (!watcher.steps.Division.data.equalMantissa) { // case not equal mantissa
       steps.push({
         name: `${this.imp.$t('step')} 2`,
         text: `${this.imp.$t('divMantissa')}`,
         subpanels: [
           {
             name: `${this.imp.$t('doDivision')}`,
-            text: [
-              `\\( \\begin{array} ${tabdef.join('')}`,
-              rows.join(''),
-              '\\end{array} \\) ',
-            ].join(''),
+            text: this.getDivisionTable(),
           },
           {
             name: `${this.imp.$t('considerRepresentation')}`,
