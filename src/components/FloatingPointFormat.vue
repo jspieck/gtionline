@@ -3,12 +3,12 @@
   v-on:mouseup="sliderMouseUp"-->
   <div class="fp-arithmetic">
     <h4>{{$t('fpformat')}}</h4>
+    <div class="bits">
+      <FSelect :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
+               :options="bitrangeOptions">
+      </FSelect>
+    </div>
     <div class="formatContainer" v-on:mousemove="sliderMouseMove">
-      <div class="bits">
-        <FSelect :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
-                     :options="bitrangeOptions">
-        </FSelect>
-      </div>
       <div class="sign">VB</div>
       <div class="exponent" :style="{ width:
         (60 + this.exponentBits * (this.containerWidth / (this.numBits - 1)))+ 'px' }">
@@ -86,6 +86,9 @@
 
     <h4>{{$t('correctSolution')}}</h4>
     <label class="attention">{{$t('attSolve')}}</label>
+    <div class="pdfGen">
+      <button v-on:click="downloadPdf" v-if="solDescr.length > 0">Pdf</button>
+    </div>
     <Accordion :solutionDescription="solDescr">
       <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
         {{panel.text}}
@@ -101,6 +104,7 @@ import * as tool from '../scripts/gti-tools';
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
 import * as description from './DescriptionSolution';
+import * as pdf from './generatePdf';
 
 export default {
   name: 'FloatingPointArithmetic',
@@ -258,6 +262,10 @@ export default {
           window.MathJax.typeset();
         }
       });
+    },
+    downloadPdf() {
+      this.recalculate();
+      this.pdf = (new pdf.PdfDescription(this)).pdf;
     },
     convertFormat(num) {
       const firstFormat = this.selectedFormat[num * 3];
@@ -549,12 +557,16 @@ $arrow-size: 12px;
 }
 
 .bits {
+  float: right;
+  position: relative;
+  margin: 10px;
+  font-size: 14px;
+  color: white !important;
   width: 80px;
   height: 40px;
   line-height: 40px;
-  color: white;
   background: $freshBlue;
-  border-right: 1px solid white;
+  break-after: auto;
 }
 
 .bits .selectBox {
@@ -720,6 +732,18 @@ $arrow-size: 12px;
   top: -15%;
   right: 0%;
   bottom: 0%;
+}
+
+.pdfGen{
+  float: right;
+  display: inline-flex;
+  flex-direction: row;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  right: 0px;
+  top: 0px;
+  line-height: 40px;
 }
 
 @media(max-width: 750px){
