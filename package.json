@@ -15,6 +15,7 @@
     "core-js": "^3.6.5",
     "fontkit": "^1.8.1",
     "jspdf": "^2.3.1",
+    "katex": "^0.13.0",
     "pretty-checkbox-vue": "^1.1.9",
     "vue": "^2.6.12",
     "vue-i18n": "^8.21.1",

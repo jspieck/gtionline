@@ -87,7 +87,7 @@
     <h4>{{$t('correctSolution')}}</h4>
     <label class="attention">{{$t('attSolve')}}</label>
     <div class="pdfGen">
-      <button v-on:click="downloadPdf" v-if="solDescr.length > 0">Pdf</button>
+      <button v-on:click="downloadPdf" v-if="this.solution">Pdf</button>
     </div>
     <Accordion :solutionDescription="solDescr">
       <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">

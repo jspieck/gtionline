@@ -1,5 +1,7 @@
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
 // import * as tool from '../scripts/gti-tools';
+import * as katex from 'katex';
+
 const { jsPDF } = require('jspdf');
 
 function classCallCheck(instance, Constructor) {
@@ -14,15 +16,29 @@ export class PdfDescription {
     this.imp = imp;
     // eslint-disable-next-line new-cap
     this.doc = new jsPDF();
-
+    this.generateLatexString();
     this.pdf = this.generatePdf();
   }
 
+  generateLatexString() {
+    this.string = 'c = \\pm\\sqrt{a^2 + b^2}';
+  }
+
   generatePdf() {
-    // get a blob when you're done
+    // test latex compiler
+    // const latex = 'Hi, this is a line of text.$\\rightarrow \\mathbb\{N\}$';
+    const html = katex.renderToString(this.string, {
+      throwOnError: false,
+    });
+    // pdf
     const doc = this.doc;
-    doc.text(`${this.imp.$t('values')}`, 10, 10);
-    doc.save('a4.pdf');
+    doc.html(html, {
+      callback(idoc) {
+        idoc.save();
+      },
+      x: 10,
+      y: 10,
+    });
   }
 }
 
