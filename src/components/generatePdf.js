@@ -27,18 +27,31 @@ export class PdfDescription {
   generatePdf() {
     // test latex compiler
     // const latex = 'Hi, this is a line of text.$\\rightarrow \\mathbb\{N\}$';
-    const html = katex.renderToString(this.string, {
-      throwOnError: false,
-    });
+    let html;
+    try {
+      html = katex.renderToString(this.string, {
+        output: 'html',
+        throwOnError: false,
+        logging: true, // only in dev status
+      });
+    } catch (err) { console.log(err); }
+
+    console.log(html);
     // pdf
     const doc = this.doc;
     doc.html(html, {
       callback(idoc) {
-        idoc.save();
+        idoc.save('save.pdf');
+      },
+      html2canvas: {
+        foreignObjectRendering: true,
+        allowTaint: true,
+        svgRendering: true,
       },
       x: 10,
       y: 10,
-    });
+    })
+      .then((n) => { console.log(n); });
   }
 }
 
