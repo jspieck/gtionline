@@ -4,6 +4,7 @@ import PrettyCheckbox from 'pretty-checkbox-vue';
 import Home from '../views/Home.vue';
 import FloatingPointArithmetic from '@/components/FloatingPointArithmetic.vue';
 import KVDiagram from '@/components/KVDiagram.vue';
+import DescriptionPDF from '@/components/DescriptionPDF.vue';
 
 Vue.use(VueRouter);
 Vue.use(PrettyCheckbox);
@@ -31,6 +32,11 @@ const routes = [
     path: '/kvdiagram',
     name: 'KVDiagram',
     component: KVDiagram,
+  },
+  {
+    path: '/descriptionpdf',
+    name: 'DescriptionPDF',
+    component: DescriptionPDF,
   },
 ];
 
