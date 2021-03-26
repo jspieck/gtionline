@@ -22,14 +22,6 @@ export default {
   },
   methods: {
     compileMath() {
-      this.math = this.$route.query.math;
-      return this.$nextTick(() => {
-        if (window.MathJax) {
-          window.MathJax.typeset();
-        }
-      });
-    },
-    print() {
       const langSelect = document.getElementById('languageDropdown');
       langSelect.style.visibility = 'hidden';
       const navBar = document.querySelector('.navbar');
@@ -42,16 +34,18 @@ export default {
       menu.style.visibility = 'hidden';
       const icon = document.getElementById('logo');
       icon.style.visibility = 'hidden';
+      this.math = this.$route.query.math;
+      return this.$nextTick(() => {
+        if (window.MathJax) {
+          window.MathJax.typeset();
+        }
+      });
+    },
+    print() {
       const pdfGen = document.querySelector('.pdfGen');
       pdfGen.style.visibility = 'hidden';
       window.print();
-      navBar.style.visibility = 'visible';
-      menubtn.style.visibility = 'visible';
-      menuicon.style.visibility = 'visible';
-      menu.style.visibility = 'visible';
-      icon.style.visibility = 'visible';
       pdfGen.style.visibility = 'visible';
-      langSelect.style.visibility = 'visible';
     },
   },
 };
