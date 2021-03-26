@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div id="equation" ref="equation" v-html="math">
-    </div>
-    <div class="pdfGen">
+    <div style="float: left" class="pdfGen">
       <button v-on:click="print" v-if="this.math">Print</button>
+    </div>
+    <div id="equation" ref="equation" v-html="math">
     </div>
   </div>
 </template>
