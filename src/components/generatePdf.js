@@ -20,8 +20,10 @@ export class PdfDescription {
   }
 
   additionString() {
-    let latex = '\\(';
-    latex += `${this.imp.$t('approach')}\\newline`;
+    let latex = '';
+    latex += `${this.imp.$t('approach')} <br>`;
+    latex += `${this.imp.$t('step')} 2 <br>`;
+    latex += '\\(';
     latex += this.description.getAdditionTable();
     latex += '\\)';
     this.string = latex;

@@ -1,7 +1,6 @@
 <template>
   <div>
-    <div id="equation" ref="equation">
-      {{math}}
+    <div id="equation" ref="equation" v-html="math">
     </div>
     <div class="pdfGen">
       <button v-on:click="print" v-if="this.math">Print</button>
