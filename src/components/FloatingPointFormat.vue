@@ -173,11 +173,6 @@ export default {
       this.solDescrActive();
       this.$nextTick(() => {
         if (window.MathJax) {
-          /* window.MathJax = {
-            // using mathjax extensions can work unreliable, thus I use typesetPromise()
-            loader: { load: ['[tex]/color'] },
-            tex: { packages: { '[+]': ['color'] } },
-          }; */
           window.MathJax.typeset(); // https://github.com/mathjax/MathJax/issues/2557
         }
       });
@@ -194,10 +189,7 @@ export default {
       } else if (val === 'thirtytwo') {
         this.numBits = 32;
         this.exponentBits = 8;
-      } /* else if (val === 'sixtyfour') {
-        this.numBits = 64;
-        this.exponentBits = 11;
-      } */
+      }
       this.recalculate();
     },
     selectVal(num, val) {

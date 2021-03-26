@@ -49,6 +49,7 @@ export const i18n = new VueI18n({
       repeatMinuend: 'wiederhole\\ Minuend',
       doDivision: 'Divison durchführen',
       getDescription: 'Beschreibung',
+      approach: 'Lösungsweg',
       // values
       value: 'Wert',
       givenValues: 'Werte der übertragenen Zahlen',
@@ -137,6 +138,7 @@ export const i18n = new VueI18n({
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
       getDescription: 'description',
+      approach: 'Approach',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -225,6 +227,7 @@ export const i18n = new VueI18n({
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
       getDescription: 'description',
+      approach: 'Approach',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -313,6 +316,7 @@ export const i18n = new VueI18n({
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
       getDescription: 'description',
+      approach: 'Approach',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -401,6 +405,7 @@ export const i18n = new VueI18n({
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
       getDescription: 'description',
+      approach: 'Approach',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',

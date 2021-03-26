@@ -19,10 +19,54 @@ export class PdfDescription {
     this.pdf = this.generatePdf();
   }
 
-  generateLatexString() {
-    const latex = this.description.getAdditionTable();
-    // const latex = '\\( \\mathcal\{N\} \\rightarrow k + z \\)';
+  additionString() {
+    let latex = '\\(';
+    latex += `${this.imp.$t('approach')}\\newline`;
+    latex += this.description.getAdditionTable();
+    latex += '\\)';
     this.string = latex;
+  }
+
+  subractionString() {
+    let latex = '\\(';
+    latex += this.description.getSubtractionTable();
+    latex += '\\)';
+    this.string = latex;
+  }
+
+  multiplicationString() {
+    let latex = '\\(';
+    latex += this.description.getAdditionTable();
+    latex += '\\)';
+    this.string = latex;
+  }
+
+  divisionString() {
+    let latex = '\\(';
+    latex += this.description.getDivisionTable();
+    latex += '\\)';
+    this.string = latex;
+  }
+
+  generateLatexString() {
+    switch (this.imp.selectedFormat[2]) {
+      case 'add':
+        this.additionString();
+        break;
+
+      case 'mul':
+        this.multiplicationString();
+        break;
+
+      case 'sub':
+        this.subractionString();
+        break;
+
+      case 'div':
+        this.divisionString();
+        break;
+      default:
+    }
   }
 
   generatePdf() {
@@ -32,6 +76,3 @@ export class PdfDescription {
     window.open(routeData.href, '_blank');
   }
 }
-
-
-// add your content to the document here, as usual

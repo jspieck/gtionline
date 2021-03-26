@@ -56,12 +56,12 @@ export class DescriptionSolution {
     row2.push('\\\\ ');
     row3.pop();
     return [
-      `\\( \\begin{array} ${tabdef.join('')}`,
+      `\\begin{array} ${tabdef.join('')}`,
       `${row1.join('')}`,
       `${row2.join('')}`,
       '\\hline',
       `${row3.join('')}`,
-      '\\end{array} \\) ',
+      '\\end{array}',
     ].join('');
   }
 
@@ -145,7 +145,9 @@ export class DescriptionSolution {
             text: [
               `${this.imp.$t('newMantissaIs')}`,
               ': \<br\> \<br\>',
+              '\\(',
               this.getAdditionTable(),
+              '\\)',
             ].join(''),
           },
           {
@@ -358,7 +360,7 @@ export class DescriptionSolution {
     row5.pop();
 
     return [
-      `\\( \\begin{array} ${tabdef.join('')}`,
+      `\\begin{array} ${tabdef.join('')}`,
       `${row1.join('')}`,
       `${row2.join('')}`,
       '\\hline_\{Complement\}',
@@ -366,7 +368,7 @@ export class DescriptionSolution {
       `${row4.join('')}`,
       '\\hline',
       `${row5.join('')}`,
-      '\\end{array} \\) ',
+      '\\end{array}',
     ].join('');
   }
 
@@ -657,7 +659,9 @@ export class DescriptionSolution {
             text: [
               `${this.imp.$t('newMantissaIs')}`,
               ': \<br\> \<br\>',
+              '\\(',
               this.getSubtractionTable(),
+              '\\)',
             ].join(''),
           },
           {
@@ -859,9 +863,9 @@ export class DescriptionSolution {
     }
 
     return [
-      `\\( \\begin{array} ${tabdef.join('')}`,
+      `\\begin{array} ${tabdef.join('')}`,
       rows.join(''),
-      '\\end{array} \\) ',
+      '\\end{array}',
     ].join('');
   }
 
@@ -912,7 +916,7 @@ export class DescriptionSolution {
         subpanels: [
           {
             name: `${this.imp.$t('doDivision')}`,
-            text: this.getDivisionTable(),
+            text: `\\(${this.getDivisionTable()}\\)`,
           },
           {
             name: `${this.imp.$t('considerRepresentation')}`,
