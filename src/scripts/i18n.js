@@ -50,6 +50,7 @@ export const i18n = new VueI18n({
       doDivision: 'Divison durchführen',
       getDescription: 'Beschreibung',
       approach: 'Lösungsweg',
+      gti: 'Grundlagen der technischen Informatik',
       // values
       value: 'Wert',
       givenValues: 'Werte der übertragenen Zahlen',
@@ -139,6 +140,7 @@ export const i18n = new VueI18n({
       doDivision: 'execute division',
       getDescription: 'description',
       approach: 'Approach',
+      gti: 'Foundations of Computer Engineering',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -228,6 +230,7 @@ export const i18n = new VueI18n({
       doDivision: 'execute division',
       getDescription: 'description',
       approach: 'Approach',
+      gti: 'Foundations of Computer Engineering',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -317,6 +320,7 @@ export const i18n = new VueI18n({
       doDivision: 'execute division',
       getDescription: 'description',
       approach: 'Approach',
+      gti: 'Foundations of Computer Engineering',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -406,6 +410,7 @@ export const i18n = new VueI18n({
       doDivision: 'execute division',
       getDescription: 'description',
       approach: 'Approach',
+      gti: 'Foundations of Computer Engineering',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
