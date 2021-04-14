@@ -190,7 +190,6 @@ export class PdfDescription {
 
   generatePdf() {
     const html = this.string;
-    console.log(this.$router);
     const routeData = router.resolve({ name: 'DescriptionPDF', query: { math: html } });
     window.open(routeData.href, '_blank');
   }
