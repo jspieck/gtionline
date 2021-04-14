@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div style="float: left" class="pdfGen">
-      <button v-on:click="print" v-if="this.math">Print</button>
-    </div>
     <div id="equation" ref="equation" v-html="math">
     </div>
   </div>
@@ -18,6 +15,12 @@ export default {
   },
   mounted() {
     this.compileMath();
+    window.addEventListener('load', () => {
+      window.print();
+    });
+    window.addEventListener('afterprint', () => {
+      window.close();
+    });
   },
   methods: {
     compileMath() {
@@ -40,28 +43,10 @@ export default {
         }
       });
     },
-    print() {
-      const pdfGen = document.querySelector('.pdfGen');
-      pdfGen.style.visibility = 'hidden';
-      window.print();
-      pdfGen.style.visibility = 'visible';
-    },
   },
 };
 </script>
 
 <style scoped lang="scss">
-
-.pdfGen{
-  float: right;
-  display: inline-flex;
-  flex-direction: row;
-  position: relative;
-  width: 40px;
-  height: 40px;
-  right: 0px;
-  top: 0px;
-  line-height: 40px;
-}
 
 </style>
