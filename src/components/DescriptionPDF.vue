@@ -38,17 +38,17 @@ export default {
   methods: {
     compileMath() {
       const langSelect = document.getElementById('languageDropdown');
-      langSelect.style.visibility = 'hidden';
+      langSelect.style.visibility = 'collapse';
       const navBar = document.querySelector('.navbar');
-      navBar.style.visibility = 'hidden';
+      navBar.style.visibility = 'collapse';
       const menubtn = document.getElementById('menu-btn');
-      menubtn.style.visibility = 'hidden';
+      menubtn.style.visibility = 'collapse';
       const menuicon = document.querySelector('.menu-icon');
       menuicon.style.visibility = 'hidden';
       const menu = document.querySelector('.menu');
-      menu.style.visibility = 'hidden';
+      menu.style.visibility = 'collapse';
       const icon = document.getElementById('logo');
-      icon.style.visibility = 'hidden';
+      icon.style.visibility = 'collapse';
       this.math = this.$route.query.math;
       return this.$nextTick(() => {
         if (window.MathJax) {

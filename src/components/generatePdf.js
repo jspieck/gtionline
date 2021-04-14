@@ -22,18 +22,23 @@ export class PdfDescription {
 
   getStyle() {
     let style = '';
-    style += '<style type="text/css" scoped>';
+    style += '<style scoped>';
     // header
-    style += 'h1 \{ color: black; font-family: arial; font-size: 200%; font-weight: bold;'
-      + 'break-after: always; \}';
-    style += 'h2 \{ color: black; font-family: arial; font-size: 150%; font-weight: bold; text-align: left \}';
-    style += 'h3 \{ color: black; font-family: arial; font-size: 120%;  text-align: left\}';
+    style += '#header1 { color: black; font-family: arial; font-size: 200%; font-weight: bold;'
+      + 'break-after: always; margin-left: 1cm; margin-right: 1cm; margin-bottom: 1cm;'
+      + 'margin-top: 0.5cm}';
+    style += '#header2 { color: black; font-family: arial; font-size: 110%; font-weight: bold;'
+      + 'text-align: left; margin-left: 1cm; margin-right: 1cm; margin-top: 1cm}';
+    style += '#header3 { color: black; font-family: arial; font-size: 100%;  text-align: left;'
+      + 'margin-left: 1cm; margin-right: 1cm; margin-top: 0.5cm}';
     // text
-    style += 'txt \{ color: black; font-family: arial; font-size: 100%; text-align: left\}';
-    style += 'ctr \{ color: black; font-family: arial; font-size: 100%; text-align: center\}';
+    style += '#txt { color: black; font-family: arial; font-size: 100%; text-align: left;'
+      + 'margin-left: 1cm; margin-right: 1cm}';
+    style += '#ctr { color: black; font-family: arial; font-size: 100%; text-align: center; '
+      + 'margin-left: 1cm; margin-right: 1cm}';
     // table
-    style += 'tab1 \{ width:60%; border-spacing: 5px; padding: 15px; border: 1px solid black;'
-      + 'border-collapse: collapse; margin-left:auto; margin-right:auto; text-align: center;\}';
+    style += '#tab1 { width:60%; border-spacing: 5px; padding: 15px; border: 1px solid black;'
+      + 'border-collapse: collapse; margin-left:auto; margin-right:auto; text-align: center;}';
 
     style += '</style>';
     this.style = style;
@@ -42,7 +47,7 @@ export class PdfDescription {
   getHeader() {
     let header = '';
     header += `<ctr>${this.imp.$t('approach')}</ctr>`;
-    header += `<h1>${this.imp.$t('gti')}</h1>`;
+    header += `<div id="header1">${this.imp.$t('gti')}</div>`;
     this.header = header;
   }
 
@@ -55,8 +60,8 @@ export class PdfDescription {
     const expString2 = y2.exponentBits.join('');
     // values
     let values = '';
-    values += `<h2>${this.imp.$t('values')}</h2>`;
-    values += '<table style="tab1">';
+    values += `<div id="header2">${this.imp.$t('values')}</div>`;
+    values += '<table id="tab1">';
     // headings
     values += '<tr>';
     values += '<th></th>';
@@ -117,7 +122,8 @@ export class PdfDescription {
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
     const watcher = this.imp.watcher;
-    let latex = '<div style="width:95%; justify-content: center;" id="scoped-content">';
+    let latex = '<style scoped>#scoped-content { width:95%; justify-content: center; }</style>';
+    latex += '<div id="scoped-content">';
     // style
     latex += this.style;
     // header
@@ -126,7 +132,7 @@ export class PdfDescription {
     // values
     latex += this.values;
     // calc
-    latex += `<h2>${this.imp.$t('step')} 1 </h2> <br>`;
+    latex += `<div id="header2">${this.imp.$t('step')} 1 </div> <br>`;
     latex += '<div>\\(';
     latex += this.description.getAdditionTable();
     latex += '\\)</div>';
