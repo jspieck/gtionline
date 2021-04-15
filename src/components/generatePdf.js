@@ -39,6 +39,9 @@ export class PdfDescription {
     // table
     style += '#tab1 { width:60%; border-spacing: 5px; padding: 15px; border: 1px solid black;'
       + 'border-collapse: collapse; margin-left:auto; margin-right:auto; text-align: center;}';
+    // footer
+    style += '#foot { position: fixed; left: 0; bottom: 0; width: 100%; color: gray;'
+      + ' text-align: center; margin-bottom: 0.7cm; }';
 
     style += '</style>';
     this.style = style;
@@ -49,6 +52,12 @@ export class PdfDescription {
     header += `<ctr>${this.imp.$t('approach')}</ctr>`;
     header += `<div id="header1">${this.imp.$t('gti')}</div>`;
     this.header = header;
+  }
+
+  getDisclaimer() {
+    let disclaimer = '';
+    disclaimer += `<div id="foot">${this.imp.$t('disclaimer')}</div>`;
+    this.disclaimer = disclaimer;
   }
 
   getValues(y1, y2) {
@@ -137,6 +146,9 @@ export class PdfDescription {
     latex += this.description.getAdditionTable();
     latex += '\\)</div>';
     latex += '</div>';
+    // disclaimer
+    latex += this.disclaimer;
+
     this.string = latex;
   }
   /* eslint-enable no-unused-vars */
@@ -173,6 +185,7 @@ export class PdfDescription {
     const y2 = tool.getIEEEFromString(this.imp.exponentBits, num2);
     this.getStyle();
     this.getHeader();
+    this.getDisclaimer();
     this.getValues(y1, y2);
     switch (this.imp.selectedFormat[2]) {
       case 'add':

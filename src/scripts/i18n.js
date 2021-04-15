@@ -51,6 +51,7 @@ export const i18n = new VueI18n({
       getDescription: 'Beschreibung',
       approach: 'Lösungsweg',
       gti: 'Grundlagen der technischen Informatik',
+      disclaimer: 'Disclaimer', // TODO
       // values
       value: 'Wert',
       givenValues: 'Werte der übertragenen Zahlen',
