@@ -51,7 +51,14 @@ export const i18n = new VueI18n({
       getDescription: 'Beschreibung',
       approach: 'Lösungsweg',
       gti: 'Grundlagen der technischen Informatik',
-      disclaimer: 'Disclaimer', // TODO
+      disclaimer: 'Haftungsausschluss:<br>'
+        + 'Dies ist ein durch die GTI-Online-Webseite automatisch generierter Lösungsweg. Jedwehige'
+        + ' Ausgabe kann als Entwurf angesehen werden und ist somit <u>inoffiziell</u>.<br>'
+        + 'Wir geben uns große Mühe um für euch ein zuverlässiges und korrektes Hilfsmittel zu '
+        + 'entwickeln. Trotzdem kann es sein, dass der Lösungsweg oder die Lösung selbst Fehler enthalten. '
+        + 'Gründe hierfür sind unteranderem eine spezielle Browserversion. '
+        + 'Bitte überprüfen Sie den Inhalt bevor Sie diesen zum Beispiel in einer Klausur verwenden.',
+      example: 'Beispiel',
       // values
       value: 'Wert',
       givenValues: 'Werte der übertragenen Zahlen',
@@ -142,6 +149,13 @@ export const i18n = new VueI18n({
       getDescription: 'description',
       approach: 'Approach',
       gti: 'Foundations of Computer Engineering',
+      disclaimer: 'Disclaimer:<br>'
+        + 'This is an automatically generated solution approach by the '
+        + 'GTI-Online-Website. Every output is completely <u>unofficial</u> and in the drafts state.<br>'
+        + 'We are making lots of efforts to build a correct and reliable tool for you. '
+        + 'Regardless, there may be failures in the solution or approach. That can especially '
+        + 'depend on your browser version. Please review before using it for instance in an exam.',
+      example: 'Example',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -232,6 +246,13 @@ export const i18n = new VueI18n({
       getDescription: 'description',
       approach: 'Approach',
       gti: 'Foundations of Computer Engineering',
+      disclaimer: 'Disclaimer:<br>'
+        + 'This is an automatically generated solution approach by the '
+        + 'GTI-Online-Website. Every output is completely <u>unofficial</u> and in the drafts state.<br>'
+        + 'We are making lots of efforts to build a correct and reliable tool for you. '
+        + 'Regardless, there may be failures in the solution or approach. That can especially '
+        + 'depend on your browser version. Please review before using it for instance in an exam.',
+      example: 'Example',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -322,6 +343,13 @@ export const i18n = new VueI18n({
       getDescription: 'description',
       approach: 'Approach',
       gti: 'Foundations of Computer Engineering',
+      disclaimer: 'Disclaimer:<br>'
+        + 'This is an automatically generated solution approach by the '
+        + 'GTI-Online-Website. Every output is completely <u>unofficial</u> and in the drafts state.<br>'
+        + 'We are making lots of efforts to build a correct and reliable tool for you. '
+        + 'Regardless, there may be failures in the solution or approach. That can especially '
+        + 'depend on your browser version. Please review before using it for instance in an exam.',
+      example: 'Example',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -412,6 +440,13 @@ export const i18n = new VueI18n({
       getDescription: 'description',
       approach: 'Approach',
       gti: 'Foundations of Computer Engineering',
+      disclaimer: 'Disclaimer:<br>'
+        + 'This is an automatically generated solution approach by the '
+        + 'GTI-Online-Website. Every output is completely <u>unofficial</u> and in the drafts state.<br>'
+        + 'We are making lots of efforts to build a correct and reliable tool for you. '
+        + 'Regardless, there may be failures in the solution or approach. That can especially '
+        + 'depend on your browser version. Please review before using it for instance in an exam.',
+      example: 'Example',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
