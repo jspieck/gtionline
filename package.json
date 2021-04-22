@@ -14,6 +14,7 @@
     "browserify": "^17.0.0",
     "core-js": "^3.6.5",
     "fontkit": "^1.8.1",
+    "pdfjs-dist": "^2.7.570",
     "pretty-checkbox-vue": "^1.1.9",
     "vue": "^2.6.12",
     "vue-html-to-paper": "^1.3.1",

@@ -8,8 +8,8 @@
         <img :src="fau_logo" alt="FAU_Logo" style="width: 35%">
       </div>
     </div>
-    <div id="equation" ref="equation" v-html="math">
-    </div>
+    <div id="equation" ref="equation" v-html="math"></div>
+    <button @click="render">Render</button>
   </div>
 </template>
 
@@ -27,6 +27,7 @@ export default {
     };
   },
   mounted() {
+    /* eslint-disable */
     this.compileMath();
     window.addEventListener('load', () => {
       window.print();
@@ -34,8 +35,27 @@ export default {
     window.addEventListener('afterprint', () => {
       window.close();
     });
+    
+    /* eslint-enable */
+  },
+  updated() {
+    // Not working right now, but you get the idea
+
   },
   methods: {
+    render() {
+      /* eslint-disable */
+      const pdfGen = new jspdf.jsPDF('l', 'pt', 'a4');
+      pdfGen.html(document.getElementById("equation"), {
+        callback: function call(pdfFin) {
+          const iframe = document.createElement('iframe');
+          iframe.setAttribute('style', 'position:absolute;right:200px; top:200px; bottom:0; height:1000px; width:1000px');
+          document.body.appendChild(iframe);
+          iframe.src = pdfFin.output('datauristring');
+        },
+      });
+      /* eslint-enable */
+    },
     compileMath() {
       const langSelect = document.getElementById('languageDropdown');
       langSelect.style.visibility = 'collapse';
@@ -61,5 +81,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+  #equation {
+    width: 1000px;
+  }
 </style>

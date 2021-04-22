@@ -3,11 +3,9 @@
   v-on:mouseup="sliderMouseUp"-->
   <div class="fp-arithmetic">
     <h4>{{$t('fpformat')}}</h4>
-    <div class="bits">
-      <FSelect :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
+      <FSelect class="bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
                :options="bitrangeOptions">
       </FSelect>
-    </div>
     <div class="formatContainer" v-on:mousemove="sliderMouseMove">
       <div class="sign">VB</div>
       <div class="exponent" :style="{ width:
@@ -89,12 +87,14 @@
     <div class="pdfGen">
       <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
     </div>
-    <Accordion :solutionDescription="solDescr">
-      <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
-        {{panel.text}}
-        <span v-if="index === solDescr.length - 1">{{solution}}</span>
-      </p>
-    </Accordion>
+    <div id="solution">
+      <Accordion :solutionDescription="solDescr">
+        <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
+          {{panel.text}}
+          <span v-if="index === solDescr.length - 1">{{solution}}</span>
+        </p>
+      </Accordion>
+    </div>
   </div>
 </template>
 
@@ -256,8 +256,32 @@ export default {
       });
     },
     downloadPdf() {
+      /* eslint-disable */
+      /* const xPos = 10;
+      let yPos = 10;
+      const margin = 20;
+      for (const s of this.solutionSteps) {
+        pdfGen.text(xPos, yPos, "" + s.name);
+        yPos += margin;
+        pdfGen.text(xPos, yPos, "" + s.text);
+        yPos += margin;
+        if (s.subpanels != null) {
+          for (const sub of s.subpanels) {
+            pdfGen.text(xPos, yPos, "" + sub.name);
+            yPos += margin;
+            pdfGen.text(xPos, yPos, "" + sub.text);
+            yPos += margin;
+          }
+        }
+      }
+      const iframe = document.createElement('iframe');
+      iframe.setAttribute('style', 'position:absolute;right:200px; top:200px; bottom:0; height:1000px; width:1000px');
+      document.body.appendChild(iframe);
+      iframe.src = pdfGen.output('datauristring');*/
       this.recalculate();
+      // this.pdf = new pdf.PdfDescription(this);
       this.pdf = (new pdf.PdfDescription(this)).pdf;
+      /* eslint-enable */
     },
     convertFormat(num) {
       const firstFormat = this.selectedFormat[num * 3];
@@ -549,22 +573,24 @@ $arrow-size: 12px;
 }
 
 .bits {
-  float: right;
   position: relative;
   margin: 10px;
   font-size: 14px;
-  color: white !important;
+  color: white;
   width: 80px;
   height: 40px;
   line-height: 40px;
   background: $freshBlue;
   break-after: auto;
 }
+.bits::v-deep select {
+  color: white;
+  background: #0d336f;
+}
 
 .bits .selectBox {
   border: none;
   background-color: transparent;
-  color: white !important;
 }
 
 .mobile_bits {
@@ -727,7 +753,7 @@ $arrow-size: 12px;
 }
 
 .pdfGen{
-  float: right;
+  margin-left: 20px;
   display: inline-flex;
   flex-direction: row;
   position: relative;
