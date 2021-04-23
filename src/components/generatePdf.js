@@ -23,19 +23,27 @@ export class PdfDescription {
   getStyle() {
     let style = '';
     style += '<style scoped>';
+    // MathJax
+    style += '.MathJax { font-size: 11px !important; } ';
     // header
     style += '#header1 { color: black; font-family: arial; font-size: 28px; font-weight: bold;'
       + 'break-after: always; margin-left: auto; margin-right: auto; margin-bottom: 0.5cm;'
       + 'margin-top: 0.5cm} ';
     style += '#header2 { color: black; font-family: arial; font-size: 16px; font-weight: bold;'
       + 'text-align: left; margin-left: 1cm; margin-right: 1cm; margin-top: 0.5cm} ';
-    style += '#header3 { color: black; font-family: arial; font-size: 12px;  text-align: left;'
-      + 'margin-left: 1cm; margin-right: 1cm; margin-top: 0.5cm} ';
+    style += '#header3 { color: black; font-family: arial; font-size: 13px;  text-align: left;'
+      + 'margin-left: 0; margin-right: 0; margin-top: 0.5cm; margin-bottom: 0.25cm;'
+      + 'font-style: italic} ';
     // text
     style += '#txt { color: black; font-family: arial; font-size: 12px; text-align: left;'
       + 'margin-left: 1cm; margin-right: 1cm} ';
     style += '#ctr { color: black; font-family: arial; font-size: 12px; text-align: center; '
       + 'margin-left: auto; margin-right: auto} ';
+    // list
+    style += 'ul, ol{ display: block; list-style-type: decimal; list-style-type: disc; '
+      + ' margin-top: 1em; margin-bottom: 1em; margin-left: 1cm; margin-right: 1cm;'
+      + 'padding-left: 0.3cm;}';
+    style += 'li { color: black; font-family: arial; font-size: 12px; text-align: left;} ';
     // table
     style += '#tab1 { width:60%; border-spacing: 5px; padding: 15px;'
       + 'border-collapse: collapse; margin-left:auto; margin-right:auto; text-align: center} ';
@@ -160,9 +168,50 @@ export class PdfDescription {
     latex += this.values;
     // calc
     latex += `<div id="header2">${this.imp.$t('step')} 1 </div> <br>`;
-    latex += '<div>\\(';
+    latex += `<div id="txt">${this.imp.$t('adjunstExponents')} `;
+    if (watcher.steps.CalculateDeltaE.data.deltaE === 0) {
+      latex += `\\( (${expString1} = ${expString2} \\Rightarrow i.O.) \\)`;
+      latex += '</div>';
+    } else {
+      const left = watcher.steps.CalculateDeltaE.data.switched ? '<' : '>';
+      latex += `\\( (${expString1} \\neq ${expString2}) \\)`;
+      latex += '</div>';
+      latex += '<ul>';
+      latex += `<li><div id="header3">${this.imp.$t('diffExponent')}</div>`;
+      latex += [
+        `${this.imp.$t('smallerExponent')} `,
+        `\\( ( [ ${watcher.steps.CalculateDeltaE.data.expN1Bits.join('')} ] :=  ${watcher.steps.CalculateDeltaE.data.expN1} ${left}
+                [ ${watcher.steps.CalculateDeltaE.data.expN2Bits.join('')} ] :=  ${watcher.steps.CalculateDeltaE.data.expN2}) \\) <br>`,
+        `${this.imp.$t('resDiffExponent')}: `,
+        '\\(',
+        this.imp.watcher.steps.CalculateDeltaE.data.deltaE,
+        '\\)</li>',
+      ].join('');
+      latex += `<li><div id="header3">${this.imp.$t('adjustSmallerMantissa')}</div>`;
+      latex += [
+        `${this.imp.$t('shiftMantissa')}: \\( `,
+        watcher.steps.CalculateDeltaE.data.preShift.join(''),
+        `\\overset{\\text{Shift: ${watcher.steps.CalculateDeltaE.data.deltaE} }}{\\rightarrow}`,
+        watcher.steps.AddMantissa.data.mantissa2.join(''),
+        '\\)',
+        '</li></ul>',
+      ].join('');
+    }
+
+    latex += `<div id="header2">${this.imp.$t('step')} 2 </div>`;
+    latex += '<ul>';
+    latex += `<li><div id="header3">${this.imp.$t('addition')} ${this.imp.$t('mantissa')}</div></li>`;
+    latex += '<div id="ctr">\\(';
     latex += this.description.getAdditionTable();
     latex += '\\)</div>';
+    latex += `<li><div id="header3">${this.imp.$t('considerRepresentation')}</div>`;
+    latex += [
+      `${this.imp.$t('consider1comma')}<br>`,
+      `${this.imp.$t('mantissa1float')} \\( `,
+      `${this.imp.watcher.steps.AddMantissa.data.normalizedMantissa.join('')}`,
+      '\\)',
+      '</li></ul>',
+    ].join('');
     latex += '</div>';
     // disclaimer
     latex += this.disclaimer;
