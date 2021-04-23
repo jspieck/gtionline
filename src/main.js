@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import VueHtmlToPaper from 'vue-html-to-paper';
+// import VueHtmlToPaper from 'vue-html-to-paper';
 import App from './App.vue';
 import router from './router';
 import { i18n } from './scripts/i18n';
@@ -21,4 +21,5 @@ const options = {
   ],
 };
 
-Vue.use(VueHtmlToPaper, options);
+// Vue.use(VueHtmlToPaper, options);
+Vue.use(options);
