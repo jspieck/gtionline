@@ -50,7 +50,7 @@ export const i18n = new VueI18n({
       doDivision: 'Divison durchführen',
       getDescription: 'Beschreibung',
       approach: 'Lösungsweg',
-      gti: 'Grundlagen der technischen Informatik',
+      gti: 'Grundlagen der Technischen Informatik',
       disclaimer: 'Haftungsausschluss:<br>'
         + 'Dies ist ein durch die GTI-Online-Webseite automatisch generierter Lösungsweg. Jedwehige'
         + ' Ausgabe kann als Entwurf angesehen werden und ist somit <u>inoffiziell</u>.<br>'
@@ -59,6 +59,7 @@ export const i18n = new VueI18n({
         + 'Gründe hierfür sind unteranderem eine spezielle Browserversion. '
         + 'Bitte überprüfen Sie den Inhalt bevor Sie diesen zum Beispiel in einer Klausur verwenden.',
       example: 'Beispiel',
+      composition: 'Zusammensetzung',
       // values
       value: 'Wert',
       givenValues: 'Werte der übertragenen Zahlen',
@@ -156,6 +157,7 @@ export const i18n = new VueI18n({
         + 'Regardless, there may be failures in the solution or approach. That can especially '
         + 'depend on your browser version. Please review before using it for instance in an exam.',
       example: 'Example',
+      composition: 'composition',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -253,6 +255,7 @@ export const i18n = new VueI18n({
         + 'Regardless, there may be failures in the solution or approach. That can especially '
         + 'depend on your browser version. Please review before using it for instance in an exam.',
       example: 'Example',
+      composition: 'composition',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -350,6 +353,7 @@ export const i18n = new VueI18n({
         + 'Regardless, there may be failures in the solution or approach. That can especially '
         + 'depend on your browser version. Please review before using it for instance in an exam.',
       example: 'Example',
+      composition: 'composition',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -447,6 +451,7 @@ export const i18n = new VueI18n({
         + 'Regardless, there may be failures in the solution or approach. That can especially '
         + 'depend on your browser version. Please review before using it for instance in an exam.',
       example: 'Example',
+      composition: 'composition',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',

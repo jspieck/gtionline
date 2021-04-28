@@ -38,10 +38,6 @@ export default {
 
     /* eslint-enable */
   },
-  updated() {
-    // Not working right now, but you get the idea
-
-  },
   methods: {
     render() {
       /* eslint-disable */

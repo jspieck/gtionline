@@ -177,7 +177,7 @@ export class PdfDescription {
       latex += `\\( (${expString1} \\neq ${expString2}) \\)`;
       latex += '</div>';
       latex += '<ul>';
-      latex += `<li><div id="header3">${this.imp.$t('diffExponent')}</div>`;
+      latex += `<li><div id="header3">${this.imp.$t('diffExponent')} :</div>`;
       latex += [
         `${this.imp.$t('smallerExponent')} `,
         `\\( ( [ ${watcher.steps.CalculateDeltaE.data.expN1Bits.join('')} ] :=  ${watcher.steps.CalculateDeltaE.data.expN1} ${left}
@@ -187,7 +187,7 @@ export class PdfDescription {
         this.imp.watcher.steps.CalculateDeltaE.data.deltaE,
         '\\)</li>',
       ].join('');
-      latex += `<li><div id="header3">${this.imp.$t('adjustSmallerMantissa')}</div>`;
+      latex += `<li><div id="header3">${this.imp.$t('adjustSmallerMantissa')} :</div>`;
       latex += [
         `${this.imp.$t('shiftMantissa')}: \\( `,
         watcher.steps.CalculateDeltaE.data.preShift.join(''),
@@ -200,11 +200,11 @@ export class PdfDescription {
 
     latex += `<div id="header2">${this.imp.$t('step')} 2 </div>`;
     latex += '<ul>';
-    latex += `<li><div id="header3">${this.imp.$t('addition')} ${this.imp.$t('mantissa')}</div></li>`;
+    latex += `<li><div id="header3">${this.imp.$t('addition')} ${this.imp.$t('mantissa')} :</div></li>`;
     latex += '<div id="ctr">\\(';
     latex += this.description.getAdditionTable();
     latex += '\\)</div>';
-    latex += `<li><div id="header3">${this.imp.$t('considerRepresentation')}</div>`;
+    latex += `<li><div id="header3">${this.imp.$t('considerRepresentation')} :</div>`;
     latex += [
       `${this.imp.$t('consider1comma')}<br>`,
       `${this.imp.$t('mantissa1float')} \\( `,
@@ -213,6 +213,38 @@ export class PdfDescription {
       '</li></ul>',
     ].join('');
     latex += '</div>';
+
+    latex += `<div id="header2">${this.imp.$t('step')} 3 </div>`;
+    latex += '<ul>';
+    latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
+    latex += [
+      `${this.imp.$t('correctSolution')}: `,
+      this.imp.watcher.steps.Result.data.result.sign, ' ',
+      this.imp.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
+      this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+      '</li>',
+    ].join('');
+    latex += `<li><div id="header3">${this.imp.$t('composition')} :</div></li>`;
+    latex += '</ul>';
+    latex += '<table id="tab1">';
+    // headings
+    latex += '<tr>';
+    latex += '<th></th>';
+    latex += `<th>${this.imp.$t('values')}</th>`;
+    latex += '</tr>';
+    latex += '<tr>';
+    latex += `<td>${this.imp.$t('sign')}</td>`;
+    latex += `<td>${this.imp.watcher.steps.Result.data.result.sign}</td>`;
+    latex += '</tr>';
+    latex += '<tr>';
+    latex += `<td>${this.imp.$t('exponent')}</td>`;
+    latex += `<td>${this.imp.watcher.steps.Result.data.result.exponentBits.join('')}</td>`;
+    latex += '</tr>';
+    latex += '<tr>';
+    latex += `<td>${this.imp.$t('mantissa')}</td>`;
+    latex += `<td>${this.imp.watcher.steps.Result.data.result.mantissaBits.join('')}</td>`;
+    latex += '</tr>';
+    latex += '</table>';
     // disclaimer
     latex += this.disclaimer;
 
