@@ -105,9 +105,7 @@ import * as tool from '../scripts/gti-tools';
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
 import * as description from './DescriptionSolution';
-// import * as pdf from './generatePdf';
-// import faulogo from '../assets/FAU_logo.png';
-// import codesignlogo from '../assets/codesign.png';
+import * as pdf from './generatePdf';
 
 export default {
   name: 'FloatingPointArithmetic',
@@ -292,7 +290,11 @@ export default {
       return [canvas.toDataURL('image/png'), image.width, image.height];
       /* eslint-enable */
     },
-    async downloadPdf() {
+    downloadPdf() {
+      this.recalculate();
+      this.pdf = (new pdf.PdfDescription(this)).pdf;
+    },
+    async downloadPdfAlternativ() {
       /* eslint-disable */
       // add title images
       let content =  [];
@@ -389,7 +391,7 @@ export default {
       // Every second textblock is a mathjax textblock
       const textBlocks = [];
       let slapIndex = 0;
-      for (let i = 0; i < indices.length; i += 1) { 
+      for (let i = 0; i < indices.length; i += 1) {
         textBlocks.push(str.substring(slapIndex, indices[i]));
         textBlocks.push(str.substring(indices[i], indices2[i] + 2));
         slapIndex = indices2[i] + 2;

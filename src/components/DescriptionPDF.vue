@@ -9,7 +9,7 @@
       </div>
     </div>
     <div id="equation" ref="equation" v-html="math"></div>
-    <button @click="render">Render</button>
+    <!--<button @click="render">Render</button>-->
   </div>
 </template>
 
@@ -35,7 +35,7 @@ export default {
     window.addEventListener('afterprint', () => {
       window.close();
     });
-    
+
     /* eslint-enable */
   },
   updated() {
