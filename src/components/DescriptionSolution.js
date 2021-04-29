@@ -174,13 +174,20 @@ export class DescriptionSolution {
         ],
       });
     }
+    const decSol = this.imp.ieeeToDec([
+      this.imp.watcher.steps.Result.data.result.sign, ' ',
+      this.imp.watcher.steps.Result.data.result.exponentBits.join(''),
+      this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+    ].join(''));
     steps.push({
       name: this.imp.$t('solution'),
       text: [
         `${this.imp.$t('correctSolution')}: `,
         this.imp.watcher.steps.Result.data.result.sign, ' ',
         this.imp.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
-        this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+        this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
+        '\\( \\implies \\)',
+        ` ${this.imp.$t('decimal')}: ${decSol}`,
       ].join(''),
       subpanels: [
         {
@@ -261,13 +268,20 @@ export class DescriptionSolution {
         },
       ],
     });
+    const decSol = this.imp.ieeeToDec([
+      this.imp.watcher.steps.Result.data.result.sign, ' ',
+      this.imp.watcher.steps.Result.data.result.exponentBits.join(''),
+      this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+    ].join(''));
     steps.push({
       name: this.imp.$t('solution'),
       text: [
         `${this.imp.$t('correctSolution')}: `,
         this.imp.watcher.steps.Result.data.result.sign, ' ',
         this.imp.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
-        this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+        this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
+        '\\( \\implies \\)',
+        ` ${this.imp.$t('decimal')}: ${decSol}`,
       ].join(''),
       subpanels: [
         {
@@ -405,7 +419,6 @@ export class DescriptionSolution {
       ],
     });
     const addWatcher = watcher.steps.Addition.data.addition;
-    console.log(addWatcher.steps.AddMantissa.data);
     if (addWatcher.steps.CalculateDeltaE.data.deltaE === 0) {
       steps.push({
         name: `${this.imp.$t('step')} 1`,
@@ -676,13 +689,20 @@ export class DescriptionSolution {
           },
         ],
       });
+      const decSol = this.imp.ieeeToDec([
+        addWatcher.steps.Result.data.result.sign, ' ',
+        addWatcher.steps.Result.data.result.exponentBits.join(''),
+        addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+      ].join(''));
       steps.push({
         name: this.imp.$t('solution'),
         text: [
           `${this.imp.$t('correctSolution')}: `,
           addWatcher.steps.Result.data.result.sign, ' ',
           addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
-          addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+          addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
+          '\\( \\implies \\)',
+          ` ${this.imp.$t('decimal')}: ${decSol}`,
         ].join(''),
         subpanels: [
           {
@@ -723,13 +743,20 @@ export class DescriptionSolution {
           },
         ],
       });
+      const decSol = this.imp.ieeeToDec([
+        addWatcher.steps.Result.data.result.sign, ' ',
+        addWatcher.steps.Result.data.result.exponentBits.join(''),
+        addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+      ].join(''));
       steps.push({
         name: this.imp.$t('solution'),
         text: [
           `${this.imp.$t('correctSolution')}: `,
           addWatcher.steps.Result.data.result.sign, ' ',
           addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
-          addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+          addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
+          '\\( \\implies \\)',
+          ` ${this.imp.$t('decimal')}: ${decSol}`,
         ].join(''),
         subpanels: [
           {
@@ -944,13 +971,20 @@ export class DescriptionSolution {
         ],
       });
     }
+    const decSol = this.imp.ieeeToDec([
+      this.imp.watcher.steps.Result.data.result.sign, ' ',
+      this.imp.watcher.steps.Result.data.result.exponentBits.join(''),
+      this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+    ].join(''));
     steps.push({
       name: this.imp.$t('solution'),
       text: [
         `${this.imp.$t('correctSolution')}: `,
         this.imp.watcher.steps.Result.data.result.sign, ' ',
         this.imp.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
-        this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+        this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
+        '\\( \\implies \\)',
+        ` ${this.imp.$t('decimal')}: ${decSol}`,
       ].join(''),
       subpanels: [
         {

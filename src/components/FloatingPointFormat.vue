@@ -550,6 +550,28 @@ export default {
       }
       return `${sign}${preDecimal},${decimal}`;
     },
+    ieeeToDec(num) {
+      const ieeeWithoutSpace = num.replace(/\s/g, '');
+      if (ieeeWithoutSpace.length !== this.numBits) {
+        return 0;
+      }
+      const sign = ieeeWithoutSpace[0] === '0' ? 1 : -1;
+      const exponentbits = ieeeWithoutSpace.substring(1, 1 + this.exponentBits);
+      const mantisse = ieeeWithoutSpace.substring(1 + this.exponentBits, this.numBits);
+      const bias = this.getBias();
+      let exponent = 0.0;
+      let calcExp = 0;
+      for (let i = exponentbits.length - 1; i >= 0; i -= 1) {
+        exponent += exponentbits[i] * (2 ** calcExp);
+        calcExp += 1;
+      }
+      exponent -= bias;
+      let decimal = 1.0;
+      for (let i = 0; i < mantisse.length; i += 1) {
+        decimal += mantisse[i] * (2 ** (-i - 1));
+      }
+      return sign * decimal * (2 ** exponent);
+    },
     preventGlobalMouseEvents() {
       document.body.style['pointer-events'] = 'none';
     },
