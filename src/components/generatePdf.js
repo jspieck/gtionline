@@ -47,8 +47,9 @@ export class PdfDescription {
     // table
     style += '#tab1 { width:60%; border-spacing: 5px; padding: 15px;'
       + 'border-collapse: collapse; margin-left:auto; margin-right:auto; text-align: center} ';
-    style += 'th { font-weight: bold; text-size: 14px; border-bottom: 1px solid gray} ';
-    style += 'tr, td { text-size: 12px;} ';
+    style += 'th { font-weight: bold; text-size: 12px; font-family: arial;'
+      + 'border-bottom: 1px solid gray} ';
+    style += 'tr, td { text-size: 12px; font-family: arial} ';
     style += 'td:first-child, th:first-child { text-size: 12px; border-right: 1px solid gray} ';
     // footer
     style += '#foot { position: fixed; left: 0; bottom: 0; width: auto; color: lightgray;'
@@ -61,22 +62,22 @@ export class PdfDescription {
 
   getHeader() {
     let header = '';
+    header += `<div id="header1">${this.imp.$t('gti')}</div>`;
     switch (this.imp.selectedFormat[2]) {
       case 'add':
-        header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('addition')}</ctr>`;
+        header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('addition')} \\( ${this.imp.inputNums['0']} + ${this.imp.inputNums['1']} \\)</ctr>`;
         break;
       case 'mul':
-        header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('multiplication')}</ctr>`;
+        header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('multiplication')} \\( ${this.imp.inputNums['0']} * ${this.imp.inputNums['1']} \\)</ctr>`;
         break;
       case 'sub':
-        header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('subtraction')}</ctr>`;
+        header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('subtraction')} \\( ${this.imp.inputNums['0']} - ${this.imp.inputNums['1']} \\)</ctr>`;
         break;
       case 'div':
-        header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('division')}</ctr>`;
+        header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('division')} \\( ${this.imp.inputNums['0']} : ${this.imp.inputNums['1']} \\)</ctr>`;
         break;
       default:
     }
-    header += `<div id="header1">${this.imp.$t('gti')}</div>`;
     this.header = header;
   }
 
@@ -217,11 +218,17 @@ export class PdfDescription {
     latex += `<div id="header2">${this.imp.$t('step')} 3 </div>`;
     latex += '<ul>';
     latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
-    latex += [
-      `${this.imp.$t('correctSolution')}: `,
+    const decSol = this.imp.ieeeToDec([
       this.imp.watcher.steps.Result.data.result.sign, ' ',
-      this.imp.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
+      this.imp.watcher.steps.Result.data.result.exponentBits.join(''),
       this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+    ].join(''));
+    latex += [
+      `${this.imp.$t('correctSolution')}: \\(`,
+      this.imp.watcher.steps.Result.data.result.sign, '\\,',
+      this.imp.watcher.steps.Result.data.result.exponentBits.join(''), '\\,',
+      this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1), '\\,',
+      `\\Rightarrow ${decSol} \\)`,
       '</li>',
     ].join('');
     latex += `<li><div id="header3">${this.imp.$t('composition')} :</div></li>`;

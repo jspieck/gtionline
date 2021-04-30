@@ -378,13 +378,13 @@ export default {
       const str = String(text);
       const indices = [];
       let index = str.indexOf("\\(");
-      while (index != -1) {
+      while (index !== -1) {
         indices.push(index);
         index = str.indexOf("\\(", index + 1);
       }
       const indices2 = [];
       let index2 = str.indexOf("\\)");
-      while (index2 != -1) {
+      while (index2 !== -1) {
         indices2.push(index2);
         index2 = str.indexOf("\\)", index2 + 1);
       }

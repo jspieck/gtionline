@@ -28,8 +28,8 @@ export class DescriptionSolution {
     const row3 = [];
     const tabdef = [];
     row1.push('&');
-    row2.push('&');
-    row3.push('+&');
+    row2.push('+&');
+    row3.push('&');
     tabdef.push('{');
     for (let i = mantissa1.length; i <= cols; i += 1) {
       mantissa1.unshift(0);
