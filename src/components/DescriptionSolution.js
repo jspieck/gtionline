@@ -565,6 +565,7 @@ export class DescriptionSolution {
             ],
         });
       } else {
+        console.log(addWatcher.steps.AddMantissa);
         steps.push({
           name: `${this.imp.$t('step')} 2`,
           text: `${this.imp.$t('subtTwosComplement')}`,

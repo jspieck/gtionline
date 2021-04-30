@@ -51,6 +51,8 @@ export class PdfDescription {
       + 'border-bottom: 1px solid gray} ';
     style += 'tr, td { text-size: 12px; font-family: arial} ';
     style += 'td:first-child, th:first-child { text-size: 12px; border-right: 1px solid gray} ';
+    // pagebreak
+    style += '#page-break { display: block; page-break-before: always; margin-bottom: 1cm;} ';
     // footer
     style += '#foot { position: fixed; left: 0; bottom: 0; width: auto; color: lightgray;'
       + ' text-align: center; margin-bottom: 0.7cm; margin-left: 0.7cm; margin-right: 0.7cm; '
@@ -151,10 +153,6 @@ export class PdfDescription {
 
   /* eslint-disable no-unused-vars */
   additionString(solution, y1, y2) {
-    let mantissaString1 = y1.mantissaBits.join('');
-    mantissaString1 = `1,${mantissaString1.substring(1)}`;
-    let mantissaString2 = y2.mantissaBits.join('');
-    mantissaString2 = `1,${mantissaString2.substring(1)}`;
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
     const watcher = this.imp.watcher;
@@ -261,9 +259,180 @@ export class PdfDescription {
 
   // eslint-disable-next-line no-unused-vars
   subractionString(solution, y1, y2) {
-    let latex = '\\(';
+    const expString1 = y1.exponentBits.join('');
+    const expString2 = y2.exponentBits.join('');
+    const watcher = this.imp.watcher.steps.Addition.data.addition;
+    let latex = '<style scoped>#scoped-content { width:100%; justify-content: center; }</style>';
+    latex += '<div id="scoped-content">';
+    // style
+    latex += this.style;
+    // header
+    latex += this.header;
+    // content
+    // values
+    latex += this.values;
+    // calc
+    latex += `<div id="header2">${this.imp.$t('step')} 1 </div> <br>`;
+    latex += `<div id="txt">${this.imp.$t('adjunstExponents')} `;
+    if (watcher.steps.CalculateDeltaE.data.deltaE === 0) {
+      latex += `\\( (${expString1} = ${expString2} \\Rightarrow i.O.) \\)`;
+      latex += '</div>';
+    } else {
+      const left = watcher.steps.CalculateDeltaE.data.switched ? '<' : '>';
+      latex += `\\( (${expString1} \\neq ${expString2}) \\)`;
+      latex += '</div>';
+      latex += '<ul>';
+      latex += `<li><div id="header3">${this.imp.$t('diffExponent')} :</div>`;
+      latex += [
+        `${this.imp.$t('smallerExponent')} `,
+        `\\( ( [ ${watcher.steps.CalculateDeltaE.data.expN1Bits.join('')} ] :=  ${watcher.steps.CalculateDeltaE.data.expN1} ${left}
+                [ ${watcher.steps.CalculateDeltaE.data.expN2Bits.join('')} ] :=  ${watcher.steps.CalculateDeltaE.data.expN2}) \\) <br>`,
+        `${this.imp.$t('resDiffExponent')}: `,
+        '\\(',
+        watcher.steps.CalculateDeltaE.data.deltaE,
+        '\\)</li>',
+      ].join('');
+      latex += `<li><div id="header3">${this.imp.$t('adjustSmallerMantissa')} :</div>`;
+      latex += [
+        `${this.imp.$t('shiftMantissa')}: \\( `,
+        watcher.steps.CalculateDeltaE.data.preShift.join(''),
+        `\\overset{\\text{Shift: ${watcher.steps.CalculateDeltaE.data.deltaE} }}{\\rightarrow}`,
+        watcher.steps.AddMantissa.data.mantissa2.join(''),
+        '\\)',
+        '</li></ul>',
+      ].join('');
+    }
+
+    latex += `<div id="header2">${this.imp.$t('step')} 2 </div>`;
+    latex += '<ul>';
+    latex += `<div id="txt">${this.imp.$t('subtTwosComplement')} `;
+
+    if (watcher.steps.AddMantissa.data.sign1 === 1) {
+      latex += [`<div id="header3">${this.imp.$t('considerRepresentation')} \\(`,
+        watcher.steps.AddMantissa.data.mantissa1.join(''),
+        '\\)</div>',
+      ].join('');
+      latex += `<li><div id="header3">${this.imp.$t('switchBits')} :</div></li>`;
+      latex += [
+        '\\(',
+        watcher.steps.AddMantissa.data.mantissa1.join(''),
+        '\\rightarrow',
+        watcher.steps.AddMantissa.data.complement1.steps.Complement.data.flippedArray.join(''),
+        '\\) </li>',
+      ].join('');
+      latex += `<li><div id="header3">${this.imp.$t('add1')} :</div></li>`;
+      latex += [
+        '\\(',
+        watcher.steps.AddMantissa.data.complement1.steps.Complement.data.flippedArray.join(''),
+        '\\rightarrow',
+        watcher.steps.AddMantissa.data.complement1.steps.Complement.data.oneAdded.join(''),
+        '\\) </li>',
+      ].join('');
+      latex += `<li><div id="header3">${this.imp.$t('normalize')} :</div></li>`;
+      latex += [
+        '\\(',
+        watcher.steps.AddMantissa.data.complement1.steps.Complement.data.oneAdded.join(''),
+        '\\rightarrow',
+        watcher.steps.AddMantissa.data.complement1.steps.Complement.data.normalizedArray.join(''),
+        '\\) </li>',
+      ].join('');
+    }
+    if (watcher.steps.AddMantissa.data.sign2 === 1) {
+      latex += [`<div id="header3">${this.imp.$t('considerRepresentation')} \\(`,
+        watcher.steps.AddMantissa.data.mantissa2.join(''),
+        '\\)</div>',
+      ].join('');
+      latex += `<li><div id="header3">${this.imp.$t('switchBits')} :</div></li>`;
+      latex += [
+        '\\(',
+        watcher.steps.AddMantissa.data.mantissa2.join(''),
+        '\\rightarrow',
+        watcher.steps.AddMantissa.data.complement2.steps.Complement.data.flippedArray.join(''),
+        '\\) </li>',
+      ].join('');
+      latex += `<li><div id="header3">${this.imp.$t('add1')} :</div></li>`;
+      latex += [
+        '\\(',
+        watcher.steps.AddMantissa.data.complement2.steps.Complement.data.flippedArray.join(''),
+        '\\rightarrow',
+        watcher.steps.AddMantissa.data.complement2.steps.Complement.data.oneAdded.join(''),
+        '\\) </li>',
+      ].join('');
+      latex += `<li><div id="header3">${this.imp.$t('normalize')} :</div></li>`;
+      latex += [
+        '\\(',
+        watcher.steps.AddMantissa.data.complement2.steps.Complement.data.oneAdded.join(''),
+        '\\rightarrow',
+        watcher.steps.AddMantissa.data.complement2.steps.Complement.data.normalizedArray.join(''),
+        '\\) </li>',
+      ].join('');
+    }
+    latex += '</ul>';
+
+    latex += '</ul>';
+    latex += '</div>';
+
+    latex += `<div id="header2">${this.imp.$t('step')} 3 </div>`;
+    latex += '<ul>';
+    latex += `<li><div id="header3">${this.imp.$t('addition')} ${this.imp.$t('mantissa')} :</div></li>`;
+    latex += '<div id="ctr">\\(';
     latex += this.description.getSubtractionTable();
-    latex += '\\)';
+    latex += '\\)</div>';
+    latex += `<li><div id="header3">${this.imp.$t('considerRepresentation')} :</div>`;
+    latex += [
+      `${this.imp.$t('consider1comma')}<br>`,
+      `${this.imp.$t('mantissa1float')} \\( `,
+      `${watcher.steps.AddMantissa.data.normalizedMantissa.join('')}`,
+      '\\)',
+      '</li></ul>',
+    ].join('');
+    latex += '</div>';
+
+    if (watcher.steps.AddMantissa.data.sign1 === 1
+      && watcher.steps.AddMantissa.data.sign2 === 1) {
+      latex += '<div id="page-break"></div>';
+    }
+
+    latex += `<div id="header2">${this.imp.$t('step')} 4 </div>`;
+    latex += '<ul>';
+    latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
+    const decSol = this.imp.ieeeToDec([
+      watcher.steps.Result.data.result.sign, ' ',
+      watcher.steps.Result.data.result.exponentBits.join(''),
+      watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+    ].join(''));
+    latex += [
+      `${this.imp.$t('correctSolution')}: \\(`,
+      watcher.steps.Result.data.result.sign, '\\,',
+      watcher.steps.Result.data.result.exponentBits.join(''), '\\,',
+      watcher.steps.Result.data.result.mantissaBits.join('').substring(1), '\\,',
+      `\\Rightarrow ${decSol} \\)`,
+      '</li>',
+    ].join('');
+    latex += `<li><div id="header3">${this.imp.$t('composition')} :</div></li>`;
+    latex += '</ul>';
+    latex += '<table id="tab1">';
+    // headings
+    latex += '<tr>';
+    latex += '<th></th>';
+    latex += `<th>${this.imp.$t('values')}</th>`;
+    latex += '</tr>';
+    latex += '<tr>';
+    latex += `<td>${this.imp.$t('sign')}</td>`;
+    latex += `<td>${watcher.steps.Result.data.result.sign}</td>`;
+    latex += '</tr>';
+    latex += '<tr>';
+    latex += `<td>${this.imp.$t('exponent')}</td>`;
+    latex += `<td>${watcher.steps.Result.data.result.exponentBits.join('')}</td>`;
+    latex += '</tr>';
+    latex += '<tr>';
+    latex += `<td>${this.imp.$t('mantissa')}</td>`;
+    latex += `<td>${watcher.steps.Result.data.result.mantissaBits.join('')}</td>`;
+    latex += '</tr>';
+    latex += '</table>';
+    // disclaimer
+    latex += this.disclaimer;
+
     this.string = latex;
   }
 
