@@ -62,18 +62,30 @@ export class PdfDescription {
     this.style = style;
   }
 
-  getHeader() {
+  getHeader(y2) {
     let header = '';
     header += `<div id="header1">${this.imp.$t('gti')}</div>`;
     switch (this.imp.selectedFormat[2]) {
       case 'add':
-        header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('addition')} \\( ${this.imp.inputNums['0']} + ${this.imp.inputNums['1']} \\)</ctr>`;
+        if (y2.sign === 0) {
+          header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('addition')} \\( ${this.imp.inputNums['0']} + ${this.imp.inputNums['1']} \\)</ctr>`;
+        } else {
+          header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('addition')} \\( ${this.imp.inputNums['0']} + ${this.imp.inputNums['1']} \\Rightarrow \\)`;
+          const negate = this.imp.inputNums['1'] * -1;
+          header += ` ${this.imp.$t('subtraction')} \\( ${this.imp.inputNums['0']} - ${negate} \\)</ctr>`;
+        }
         break;
       case 'mul':
         header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('multiplication')} \\( ${this.imp.inputNums['0']} * ${this.imp.inputNums['1']} \\)</ctr>`;
         break;
       case 'sub':
-        header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('subtraction')} \\( ${this.imp.inputNums['0']} - ${this.imp.inputNums['1']} \\)</ctr>`;
+        if (y2.sign === 0) {
+          header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('subtraction')} \\( ${this.imp.inputNums['0']} - ${this.imp.inputNums['1']} \\)</ctr>`;
+        } else {
+          header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('subtraction')} \\( ${this.imp.inputNums['0']} - ${this.imp.inputNums['1']} \\Rightarrow \\)`;
+          const negate = this.imp.inputNums['1'] * -1;
+          header += ` ${this.imp.$t('addition')} \\( ${this.imp.inputNums['0']} + ${negate} \\)</ctr>`;
+        }
         break;
       case 'div':
         header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('division')} \\( ${this.imp.inputNums['0']} : ${this.imp.inputNums['1']} \\)</ctr>`;
@@ -459,12 +471,23 @@ export class PdfDescription {
     const y1 = tool.getIEEEFromString(this.imp.exponentBits, num1);
     const y2 = tool.getIEEEFromString(this.imp.exponentBits, num2);
     this.getStyle();
-    this.getHeader();
+    this.getHeader(y2);
     this.getDisclaimer();
     this.getValues(y1, y2);
     switch (this.imp.selectedFormat[2]) {
       case 'add':
-        this.additionString(solution, y1, y2);
+        console.log('add');
+        console.log(y1);
+        console.log(y2);
+        if (y1.sign === 0 && y2.sign === 0) {
+          this.additionString(solution, y1, y2);
+        } else if (y2.sign === 1) {
+          y2.sign = 0;
+          y2.arr[0] = 0;
+          this.subractionString(solution, y1, y2);
+        } else {
+          this.subractionString(solution, y1, y2);
+        }
         break;
 
       case 'mul':
@@ -472,7 +495,21 @@ export class PdfDescription {
         break;
 
       case 'sub':
-        this.subractionString(solution, y1, y2);
+        console.log('sub');
+        console.log(y1);
+        console.log(y2);
+        if (y2.sign === 0) {
+          console.log('shit');
+          this.subractionString(solution, y1, y2);
+        } else if (y1.sign === 1 && y2.sign === 1) {
+          console.log('fuck');
+          this.subractionString(solution, y1, y2);
+        } else {
+          console.log('damn');
+          y2.sign = 0;
+          y2.arr[0] = 0;
+          this.additionString(solution, y1, y2);
+        }
         break;
 
       case 'div':
