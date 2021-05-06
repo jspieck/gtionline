@@ -3,9 +3,12 @@
   v-on:mouseup="sliderMouseUp"-->
   <div class="fp-arithmetic">
     <h4>{{$t('fpformat')}}</h4>
-      <FSelect class="bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
-               :options="bitrangeOptions">
-      </FSelect>
+    <FSelect class="bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
+             :options="bitrangeOptions">
+    </FSelect>
+    <FSelect class="mobile_bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
+             :options="bitrangeOptions">
+    </FSelect>
     <div class="formatContainer" v-on:mousemove="sliderMouseMove">
       <div class="sign">VB</div>
       <div class="exponent" :style="{ width:
@@ -90,6 +93,9 @@
         <label class="attention" v-if="negativeSubtrahend">{{$t('negativeSubtrahend')}}</label>
       </div>
       <div class="pdfGen">
+        <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
+      </div>
+      <div class="mobile_pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
       </div>
     </div>
@@ -759,13 +765,13 @@ $arrow-size: 12px;
   background: #0d336f;
 }
 
-.bits .selectBox {
+.bits selectBox {
+  width: 80% !important;
   border: none;
   background-color: transparent;
 }
 
 .mobile_bits {
-  width: 80%;
   height: 40px;
   line-height: 40px;
   color: white;
@@ -773,7 +779,13 @@ $arrow-size: 12px;
   border-right: 1px solid white;
 }
 
-.mobile_bits .selectBox {
+.mobile_bits::v-deep select {
+  color: white;
+  background: #0d336f;
+}
+
+.mobile_bits selectBox {
+  width: 60% !important;
   border: none;
   background-color: transparent;
   color: white !important;
@@ -935,6 +947,16 @@ $arrow-size: 12px;
   line-height: 40px;
 }
 
+.mobile_pdfGen{
+  margin-left: 0;
+  text-align:center;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  top: 0px;
+  line-height: 40px;
+}
+
 #jaxHelper {
   visibility: hidden;
 }
@@ -967,6 +989,9 @@ $arrow-size: 12px;
   .arrowMask{
     display: none;
   }
+  .pdfGen {
+    display: none;
+  }
 }
 @media(min-width: 751px){
   .mobile_formatContainer{
@@ -991,6 +1016,9 @@ $arrow-size: 12px;
     display: none;
   };
   .mobile_expandFraction{
+    display: none;
+  };
+  .mobile_pdfGen{
     display: none;
   };
 }
