@@ -1014,7 +1014,15 @@ export class DescriptionSolution {
       const steps = [];
       switch (this.imp.selectedFormat[2]) {
         case 'add':
-          this.additionDescription(steps, solution, y1, y2);
+          if (y1.sign === 0 && y2.sign === 0) {
+            this.additionDescription(steps, solution, y1, y2);
+          } else if (y2.sign === 1) {
+            y2.sign = 0;
+            y2.arr[0] = 0;
+            this.subtractionDescription(steps, solution, y1, y2);
+          } else {
+            this.subtractionDescription(steps, solution, y1, y2);
+          }
           break;
 
         case 'mul':
@@ -1022,7 +1030,15 @@ export class DescriptionSolution {
           break;
 
         case 'sub':
-          this.subtractionDescription(steps, solution, y1, y2);
+          if (y2.sign === 0) {
+            this.subtractionDescription(steps, solution, y1, y2);
+          } else if (y1.sign === 1 && y2.sign === 1) {
+            this.subtractionDescription(steps, solution, y1, y2);
+          } else {
+            y2.sign = 0;
+            y2.arr[0] = 0;
+            this.additionDescription(steps, solution, y1, y2);
+          }
           break;
 
         case 'div':

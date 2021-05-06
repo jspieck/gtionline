@@ -60,6 +60,8 @@ export const i18n = new VueI18n({
         + 'Bitte überprüfen Sie den Inhalt bevor Sie diesen zum Beispiel in einer Klausur verwenden.',
       example: 'Beispiel',
       composition: 'Zusammensetzung',
+      negativeSummand: 'Eine Addition mit einem negativen Wert wird behandelt wie eine Subtraktion.',
+      negativeSubtrahend: 'Ein negativer Subtrahend wirkt sich wie ein positiver Summand aus.',
       // values
       value: 'Wert',
       givenValues: 'Werte der übertragenen Zahlen',
@@ -158,6 +160,8 @@ export const i18n = new VueI18n({
         + 'depend on your browser version. Please review before using it for instance in an exam.',
       example: 'Example',
       composition: 'composition',
+      negativeSummand: 'An addition with a negative value is similar to a subtraction.',
+      negativeSubtrahend: 'A negative subtrahend is similar to a positive summand.',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -256,6 +260,8 @@ export const i18n = new VueI18n({
         + 'depend on your browser version. Please review before using it for instance in an exam.',
       example: 'Example',
       composition: 'composition',
+      negativeSummand: 'An addition with a negative value is similar to a subtraction.',
+      negativeSubtrahend: 'A negative subtrahend is similar to a positive summand.',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -354,6 +360,8 @@ export const i18n = new VueI18n({
         + 'depend on your browser version. Please review before using it for instance in an exam.',
       example: 'Example',
       composition: 'composition',
+      negativeSummand: 'An addition with a negative value is similar to a subtraction.',
+      negativeSubtrahend: 'A negative subtrahend is similar to a positive summand.',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -452,6 +460,8 @@ export const i18n = new VueI18n({
         + 'depend on your browser version. Please review before using it for instance in an exam.',
       example: 'Example',
       composition: 'composition',
+      negativeSummand: 'An addition with a negative value is similar to a subtraction.',
+      negativeSubtrahend: 'A negative subtrahend is similar to a positive summand.',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',

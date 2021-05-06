@@ -83,9 +83,15 @@
     </div>
 
     <h4>{{$t('correctSolution')}}</h4>
-    <label class="attention">{{$t('attSolve')}}</label>
-    <div class="pdfGen">
-      <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
+    <div style="position: relative">
+      <div>
+        <label class="attention">{{$t('attSolve')}}</label>
+        <label class="attention" v-if="negativeSummand">{{$t('negativeSummand')}}</label>
+        <label class="attention" v-if="negativeSubtrahend">{{$t('negativeSubtrahend')}}</label>
+      </div>
+      <div class="pdfGen">
+        <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
+      </div>
     </div>
     <div id="solution">
       <Accordion :solutionDescription="solDescr">
@@ -125,6 +131,8 @@ export default {
       falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
       solutionSteps: [],
+      negativeSummand: false,
+      negativeSubtrahend: false,
     };
   },
   computed: {
@@ -441,15 +449,37 @@ export default {
         console.log(y1);
         console.log(y2);
         let result = null;
+        this.negativeSummand = false;
+        this.negativeSubtrahend = false;
         switch (this.selectedFormat[2]) {
           case 'add':
-            result = new tool.AdditionIEEE(y1, y2);
+            if (y1.sign === 0 && y2.sign === 0) {
+              result = new tool.AdditionIEEE(y1, y2);
+            } else if (y2.sign === 1) {
+              y2.sign = 0;
+              y2.arr[0] = 0;
+              this.negativeSummand = true;
+              result = new tool.SubtractionIEEE(y1, y2);
+            } else {
+              this.negativeSummand = true;
+              result = new tool.SubtractionIEEE(y1, y2);
+            }
             break;
           case 'mul':
             result = new tool.MultiplicationIEEE(y1, y2);
             break;
           case 'sub':
-            result = new tool.SubtractionIEEE(y1, y2);
+            if (y2.sign === 0) {
+              result = new tool.SubtractionIEEE(y1, y2);
+            } else if (y1.sign === 1) {
+              this.negativeSubtrahend = true;
+              result = new tool.SubtractionIEEE(y1, y2);
+            } else {
+              this.negativeSubtrahend = true;
+              y2.sign = 0;
+              y2.arr[0] = 0;
+              result = new tool.AdditionIEEE(y1, y2);
+            }
             break;
           case 'div':
             result = new tool.DivisionIEEE(y1, y2);
@@ -894,13 +924,13 @@ $arrow-size: 12px;
 }
 
 .pdfGen{
-  margin-left: 20px;
+  margin-left: 0;
   display: inline-flex;
   flex-direction: row;
-  position: relative;
+  position: absolute;
   width: 40px;
   height: 40px;
-  right: 0px;
+  right: 180px;
   top: 0px;
   line-height: 40px;
 }
