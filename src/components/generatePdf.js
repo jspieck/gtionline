@@ -1,8 +1,7 @@
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
-// import * as tool from '../scripts/gti-tools';
+import * as tool from '../scripts/gti-tools';
 import * as description from './DescriptionSolution';
 import router from '../router/index';
-import * as tool from '@/scripts/gti-tools';
 
 function classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -163,7 +162,6 @@ export class PdfDescription {
     this.values = values;
   }
 
-  /* eslint-disable no-unused-vars */
   additionString(solution, y1, y2) {
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
@@ -267,7 +265,6 @@ export class PdfDescription {
 
     this.string = latex;
   }
-  /* eslint-enable no-unused-vars */
 
   // eslint-disable-next-line no-unused-vars
   subtractionString(solution, y1, y2) {
@@ -456,13 +453,81 @@ export class PdfDescription {
     this.string = latex;
   }
 
-  // eslint-disable-next-line no-unused-vars
+  /* eslint-disable no-unused-vars */
   divisionString(solution, y1, y2) {
-    let latex = '\\(';
+    const expString1 = y1.exponentBits.join('');
+    const expString2 = y2.exponentBits.join('');
+    const watcher = this.imp.watcher;
+    let latex = '<style scoped>#scoped-content { width:100%; justify-content: center; }</style>';
+    latex += '<div id="scoped-content">';
+    // style
+    latex += this.style;
+    // header
+    latex += this.header;
+    // content
+    // values
+    latex += this.values;
+    // calc
+    latex += `<div id="header2">${this.imp.$t('step')} 1 </div> <br>`;
+    latex += `<div id="header2">${this.imp.$t('step')} 2 </div>`;
+    latex += '<ul>';
+    latex += `<li><div id="header3">${this.imp.$t('division')} ${this.imp.$t('mantissa')} :</div></li>`;
+    latex += '<div id="ctr">\\(';
     latex += this.description.getDivisionTable();
-    latex += '\\)';
+    latex += '\\)</div>';
+    latex += `<li><div id="header3">${this.imp.$t('considerRepresentation')} :</div>`;
+    latex += [
+      `${this.imp.$t('consider1comma')}<br>`,
+      `${this.imp.$t('mantissa1float')} \\( `,
+      `${solution.mantissaBits.join('')}`,
+      '\\)',
+      '</li></ul>',
+    ].join('');
+    latex += '</div>';
+
+    latex += `<div id="header2">${this.imp.$t('step')} 3 </div>`;
+    latex += '<ul>';
+    latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
+    const decSol = this.imp.ieeeToDec([
+      this.imp.watcher.steps.Result.data.result.sign, ' ',
+      this.imp.watcher.steps.Result.data.result.exponentBits.join(''),
+      this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+    ].join(''));
+    latex += [
+      `${this.imp.$t('correctSolution')}: \\(`,
+      this.imp.watcher.steps.Result.data.result.sign, '\\,',
+      this.imp.watcher.steps.Result.data.result.exponentBits.join(''), '\\,',
+      this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1), '\\,',
+      `\\Rightarrow ${decSol} \\)`,
+      '</li>',
+    ].join('');
+    latex += `<li><div id="header3">${this.imp.$t('composition')} :</div></li>`;
+    latex += '</ul>';
+    latex += '<table id="tab1">';
+    // headings
+    latex += '<tr>';
+    latex += '<th></th>';
+    latex += `<th>${this.imp.$t('values')}</th>`;
+    latex += '</tr>';
+    latex += '<tr>';
+    latex += `<td>${this.imp.$t('sign')}</td>`;
+    latex += `<td>${this.imp.watcher.steps.Result.data.result.sign}</td>`;
+    latex += '</tr>';
+    latex += '<tr>';
+    latex += `<td>${this.imp.$t('exponent')}</td>`;
+    latex += `<td>${this.imp.watcher.steps.Result.data.result.exponentBits.join('')}</td>`;
+    latex += '</tr>';
+    latex += '<tr>';
+    latex += `<td>${this.imp.$t('mantissa')}</td>`;
+    latex += `<td>${this.imp.watcher.steps.Result.data.result.mantissaBits.join('')}</td>`;
+    latex += '</tr>';
+    latex += '</table>';
+    // disclaimer
+    latex += this.disclaimer;
+
     this.string = latex;
   }
+  /* eslint-enable no-unused-vars */
 
   generateLatexString() {
     const num1 = this.imp.nums[0];
@@ -476,9 +541,6 @@ export class PdfDescription {
     this.getValues(y1, y2);
     switch (this.imp.selectedFormat[2]) {
       case 'add':
-        console.log('add');
-        console.log(y1);
-        console.log(y2);
         if (y1.sign === 0 && y2.sign === 0) {
           this.additionString(solution, y1, y2);
         } else if (y2.sign === 1) {
@@ -515,7 +577,7 @@ export class PdfDescription {
 
   generatePdf() {
     const html = this.string;
-    const routeData = router.resolve({ name: 'DescriptionPDF', query: { math: html } });
-    window.open(routeData.href, '_blank');
+    const actpath = window.location.pathname;
+    router.replace({ name: 'DescriptionPDF', params: { math: html, path: actpath } });
   }
 }

@@ -1,10 +1,10 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import PrettyCheckbox from 'pretty-checkbox-vue';
-import Home from '../views/Home.vue';
 import FloatingPointArithmetic from '@/components/FloatingPointArithmetic.vue';
 import KVDiagram from '@/components/KVDiagram.vue';
 import DescriptionPDF from '@/components/DescriptionPDF.vue';
+import Home from '../views/Home.vue';
 
 Vue.use(VueRouter);
 Vue.use(PrettyCheckbox);

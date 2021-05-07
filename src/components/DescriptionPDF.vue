@@ -26,17 +26,22 @@ export default {
       codesign_logo: codesignlogo,
     };
   },
-  mounted() {
+  beforeMount() {
     /* eslint-disable */
+    window.addEventListener('afterprint', () => {
+      window.open(this.$route.params.path, '_self')
+    });
+    /* eslint-enable */
+  },
+  mounted() {
+    this.fau_logo = faulogo;
+    this.codesign_logo = codesignlogo;
     this.compileMath();
-    window.addEventListener('load', () => {
+  },
+  updated() {
+    this.$nextTick(() => {
       window.print();
     });
-    window.addEventListener('afterprint', () => {
-      window.close();
-    });
-
-    /* eslint-enable */
   },
   methods: {
     render() {
@@ -65,7 +70,7 @@ export default {
       menu.style.visibility = 'collapse';
       const icon = document.getElementById('logo');
       icon.style.visibility = 'collapse';
-      this.math = this.$route.query.math;
+      this.math = this.$route.params.math;
       return this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();
