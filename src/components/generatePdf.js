@@ -270,7 +270,7 @@ export class PdfDescription {
   /* eslint-enable no-unused-vars */
 
   // eslint-disable-next-line no-unused-vars
-  subractionString(solution, y1, y2) {
+  subtractionString(solution, y1, y2) {
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
     const watcher = this.imp.watcher.steps.Addition.data.addition;
@@ -484,9 +484,9 @@ export class PdfDescription {
         } else if (y2.sign === 1) {
           y2.sign = 0;
           y2.arr[0] = 0;
-          this.subractionString(solution, y1, y2);
+          this.subtractionString(solution, y1, y2);
         } else {
-          this.subractionString(solution, y1, y2);
+          this.subtractionString(solution, y1, y2);
         }
         break;
 
@@ -495,17 +495,11 @@ export class PdfDescription {
         break;
 
       case 'sub':
-        console.log('sub');
-        console.log(y1);
-        console.log(y2);
         if (y2.sign === 0) {
-          console.log('shit');
-          this.subractionString(solution, y1, y2);
+          this.subtractionString(solution, y1, y2);
         } else if (y1.sign === 1 && y2.sign === 1) {
-          console.log('fuck');
-          this.subractionString(solution, y1, y2);
+          this.subtractionString(solution, y1, y2);
         } else {
-          console.log('damn');
           y2.sign = 0;
           y2.arr[0] = 0;
           this.additionString(solution, y1, y2);
