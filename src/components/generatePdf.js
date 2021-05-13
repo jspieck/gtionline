@@ -577,7 +577,12 @@ export class PdfDescription {
 
   generatePdf() {
     const html = this.string;
-    const actpath = window.location.pathname;
-    router.replace({ name: 'DescriptionPDF', params: { math: html, path: actpath } });
+    const actquery = {
+      value1: this.imp.inputNums[0],
+      value2: this.imp.inputNums[1],
+      operator: this.imp.selectedFormat[2],
+    };
+    const returnRoute = router.resolve({ name: 'FloatingPointArithmetic', query: actquery });
+    router.replace({ name: 'DescriptionPDF', params: { math: html, returnRoute: returnRoute.href } });
   }
 }

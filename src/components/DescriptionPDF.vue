@@ -29,7 +29,7 @@ export default {
   beforeMount() {
     /* eslint-disable */
     window.addEventListener('afterprint', () => {
-      window.open(this.$route.params.path, '_self')
+      window.open(this.$route.params.returnRoute, '_self');
     });
     /* eslint-enable */
   },

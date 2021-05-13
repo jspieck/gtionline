@@ -47,7 +47,7 @@
         <table id="fpfTable1" class="floatingPointInput">
           <tr>
             <td>
-              <input id="fpfInput0" v-model="inputNums[0]" :placeholder="this.$t('inputNumber')"
+              <input id="fpfInput0" v-model="inputNums[0]" :placeholder="this.$t('inputNumber') "
                 @input="checkAndConvertFormat(0)"/>
             </td>
             <td><FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
@@ -126,11 +126,27 @@ export default {
     Accordion: SolutionAccordion,
   },
   data() {
+    let hasdefault = false;
+    let input1 = '';
+    if (this.$route.query.value1) {
+      input1 = this.$route.query.value1;
+      hasdefault = true;
+    }
+    let input2 = '';
+    if (this.$route.query.value2) {
+      input2 = this.$route.query.value2;
+      hasdefault = true;
+    }
+    let operator = 'add';
+    if (this.$route.query.operator) {
+      operator = this.$route.query.operator;
+      hasdefault = true;
+    }
     return {
-      selectedFormat: ['decimal', 'ieee', 'add', 'decimal', 'ieee', 'sixteen'], // 0: input left, 1: converted left, 2: operand, 3: input right, 4: converted right, 5: bit range
+      selectedFormat: ['decimal', 'ieee', operator, 'decimal', 'ieee', 'sixteen'], // 0: input left, 1: converted left, 2: operand, 3: input right, 4: converted right, 5: bit range
       mouseDown: false,
       solution: '',
-      inputNums: { 0: '', 1: '' },
+      inputNums: { 0: input1, 1: input2 },
       nums: { 0: '', 1: '' },
       exponentBits: 5,
       numBits: 16,
@@ -139,6 +155,7 @@ export default {
       solutionSteps: [],
       negativeSummand: false,
       negativeSubtrahend: false,
+      default: hasdefault,
     };
   },
   computed: {
@@ -177,6 +194,12 @@ export default {
       window.addEventListener('unload', () => {
         this.containerWidth = Math.min(500, window.innerWidth - 250);
       });
+      if (this.default) {
+        console.log(this.inputNums);
+        this.checkAndConvertFormat(0);
+        this.checkAndConvertFormat(1);
+        this.recalculate();
+      }
     });
   },
   methods: {
@@ -492,7 +515,6 @@ export default {
             break;
           default:
         }
-        console.log(result.getResult());
         this.watcher = result.watcher;
         let solution = '';
         solution = result.getResult().bitString;
