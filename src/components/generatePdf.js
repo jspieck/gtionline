@@ -24,6 +24,9 @@ export class PdfDescription {
     style += '<style scoped>';
     // MathJax
     style += '.MathJax { font-size: 11px !important; } ';
+    // page
+    style += '#body { size: A4; padding-top: 2cm; margin-top: 2cm; margin-bottom: 0.5cm; }';
+    style += '#page :first { size: A4; margin-top: 0; margin-bottom: 0.5cm; }';
     // header
     style += '#header1 { color: black; font-family: arial; font-size: 28px; font-weight: bold;'
       + 'break-after: always; margin-left: auto; margin-right: auto; margin-bottom: 0.5cm;'
@@ -51,7 +54,7 @@ export class PdfDescription {
     style += 'tr, td { text-size: 12px; font-family: arial} ';
     style += 'td:first-child, th:first-child { text-size: 12px; border-right: 1px solid gray} ';
     // pagebreak
-    style += '#page-break { display: block; page-break-before: always; margin-bottom: 1cm;} ';
+    style += '#page-break { display: block; page-break-before: always; padding-bottom: 2cm} ';
     // footer
     style += '#foot { position: fixed; left: 0; bottom: 0; width: auto; color: lightgray;'
       + ' text-align: center; margin-bottom: 0.7cm; margin-left: 0.7cm; margin-right: 0.7cm; '
@@ -484,7 +487,7 @@ export class PdfDescription {
       '</li></ul>',
     ].join('');
     latex += '</div>';
-
+    latex += '<div id="page-break"></div>';
     latex += `<div id="header2">${this.imp.$t('step')} 3 </div>`;
     latex += '<ul>';
     latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
