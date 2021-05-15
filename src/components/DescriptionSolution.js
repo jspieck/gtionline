@@ -100,13 +100,13 @@ export class DescriptionSolution {
     if (watcher.steps.CalculateDeltaE.data.deltaE === 0) {
       steps.push({
         name: `${this.imp.$t('step')} 1`,
-        text: `${this.imp.$t('adjunstExponents')} \\( (${expString1} = ${expString2} \\Rightarrow i.O.) \\)`,
+        text: `${this.imp.$t('adjustExponents')} \\( (${expString1} = ${expString2} \\Rightarrow i.O.) \\)`,
       });
     } else {
       const left = watcher.steps.CalculateDeltaE.data.switched ? '<' : '>';
       steps.push({
         name: `${this.imp.$t('step')} 1`,
-        text: `${this.imp.$t('adjunstExponents')} \\( (${expString1} \\neq ${expString2}) \\)`,
+        text: `${this.imp.$t('adjustExponents')} \\( (${expString1} \\neq ${expString2}) \\)`,
         subpanels: [
           {
             name: `${this.imp.$t('diffExponent')}`,
@@ -215,13 +215,13 @@ export class DescriptionSolution {
     mantissaString2 = `1,${mantissaString2.substring(1)}`;
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
-    // const watcher = this.imp.watcher;
+    const watcher = this.imp.watcher;
     steps.push({
       name: `${this.imp.$t('values')}`,
       text: `${this.imp.$t('givenValues')}`,
       subpanels: [
         {
-          name: `${this.imp.$t('leftValue')}: `,
+          name: `${this.imp.$t('firstFactor')}: `,
           text: [
             `${this.imp.$t('value')}: `, y1.valueString,
             `, ${this.imp.$t('sign')}: `, (y1.sign === 0 ? '+' : '-'),
@@ -230,7 +230,7 @@ export class DescriptionSolution {
           ].join(''),
         },
         {
-          name: `${this.imp.$t('rightValue')}: `,
+          name: `${this.imp.$t('secondFactor')}: `,
           text: [
             `${this.imp.$t('value')}: `, y2.valueString,
             `, ${this.imp.$t('sign')}: `, (y2.sign === 0 ? '+' : '-'),
@@ -264,37 +264,37 @@ export class DescriptionSolution {
         },
         {
           name: `${this.imp.$t('newMantissa')}`,
-          text: `${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('')}`,
+          text: `${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('').substring(1)}`,
         },
       ],
     });
     const decSol = this.imp.ieeeToDec([
-      this.imp.watcher.steps.Result.data.result.sign, ' ',
-      this.imp.watcher.steps.Result.data.result.exponentBits.join(''),
-      this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+      watcher.steps.Result.data.result.sign, ' ',
+      watcher.steps.Result.data.result.exponentBits.join(''),
+      watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
     ].join(''));
     steps.push({
       name: this.imp.$t('solution'),
       text: [
         `${this.imp.$t('correctSolution')}: `,
-        this.imp.watcher.steps.Result.data.result.sign, ' ',
-        this.imp.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
-        this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
+        watcher.steps.Result.data.result.sign, ' ',
+        watcher.steps.Result.data.result.exponentBits.join(''), ' ',
+        watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
         '\\( \\implies \\)',
         ` ${this.imp.$t('decimal')}: ${decSol}`,
       ].join(''),
       subpanels: [
         {
           name: `${this.imp.$t('sign')}: `,
-          text: this.imp.watcher.steps.Result.data.result.sign,
+          text: watcher.steps.Result.data.result.sign,
         },
         {
           name: `${this.imp.$t('exponent')}: `,
-          text: this.imp.watcher.steps.Result.data.result.exponentBits.join(''),
+          text: watcher.steps.Result.data.result.exponentBits.join(''),
         },
         {
           name: `${this.imp.$t('mantissa')}: `,
-          text: this.imp.watcher.steps.Result.data.result.mantissaBits.join(''),
+          text: watcher.steps.Result.data.result.mantissaBits.join(''),
         },
       ],
     });
@@ -408,7 +408,7 @@ export class DescriptionSolution {
           ].join(''),
         },
         {
-          name: `${this.imp.$t('subrahend')}: `,
+          name: `${this.imp.$t('subtrahend')}: `,
           text: [
             `${this.imp.$t('value')}: `, y2.valueString,
             `, ${this.imp.$t('sign')}: `, (y2.sign === 0 ? '+' : '-'),
@@ -422,13 +422,13 @@ export class DescriptionSolution {
     if (addWatcher.steps.CalculateDeltaE.data.deltaE === 0) {
       steps.push({
         name: `${this.imp.$t('step')} 1`,
-        text: `${this.imp.$t('adjunstExponents')} \\( (${expString1} = ${expString2} \\Rightarrow i.O.) \\)`,
+        text: `${this.imp.$t('adjustExponents')} \\( (${expString1} = ${expString2} \\Rightarrow i.O.) \\)`,
       });
     } else {
       const left = addWatcher.steps.CalculateDeltaE.data.switched ? '<' : '>';
       steps.push({
         name: `${this.imp.$t('step')} 1`,
-        text: `${this.imp.$t('adjunstExponents')} \\( (${expString1} \\neq ${expString2}) \\)`,
+        text: `${this.imp.$t('adjustExponents')} \\( (${expString1} \\neq ${expString2}) \\)`,
         subpanels: [
           {
             name: `${this.imp.$t('diffExponent')}`,
@@ -952,7 +952,7 @@ export class DescriptionSolution {
           },
           {
             name: `${this.imp.$t('newMantissa')}`,
-            text: `${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('')}`,
+            text: `${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('').substring(1)}`,
           },
         ],
       });
@@ -967,38 +967,38 @@ export class DescriptionSolution {
           },
           {
             name: `${this.imp.$t('newMantissa')}`,
-            text: `${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('')}`,
+            text: `${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('').substring(1)}`,
           },
         ],
       });
     }
     const decSol = this.imp.ieeeToDec([
-      this.imp.watcher.steps.Result.data.result.sign, ' ',
-      this.imp.watcher.steps.Result.data.result.exponentBits.join(''),
-      this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+      watcher.steps.Result.data.result.sign, ' ',
+      watcher.steps.Result.data.result.exponentBits.join(''),
+      watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
     ].join(''));
     steps.push({
       name: this.imp.$t('solution'),
       text: [
         `${this.imp.$t('correctSolution')}: `,
-        this.imp.watcher.steps.Result.data.result.sign, ' ',
-        this.imp.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
-        this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
+        watcher.steps.Result.data.result.sign, ' ',
+        watcher.steps.Result.data.result.exponentBits.join(''), ' ',
+        watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
         '\\( \\implies \\)',
         ` ${this.imp.$t('decimal')}: ${decSol}`,
       ].join(''),
       subpanels: [
         {
           name: `${this.imp.$t('sign')}: `,
-          text: this.imp.watcher.steps.Result.data.result.sign,
+          text: watcher.steps.Result.data.result.sign,
         },
         {
           name: `${this.imp.$t('exponent')}: `,
-          text: this.imp.watcher.steps.Result.data.result.exponentBits.join(''),
+          text: watcher.steps.Result.data.result.exponentBits.join(''),
         },
         {
           name: `${this.imp.$t('mantissa')}: `,
-          text: this.imp.watcher.steps.Result.data.result.mantissaBits.join(''),
+          text: watcher.steps.Result.data.result.mantissaBits.join(''),
         },
       ],
     });
