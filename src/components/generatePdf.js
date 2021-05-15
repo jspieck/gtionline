@@ -487,7 +487,10 @@ export class PdfDescription {
       '</li></ul>',
     ].join('');
     latex += '</div>';
-    latex += '<div id="page-break"></div>';
+    const steps = this.imp.watcher.steps.Division.data.division.steps.DivisionSteps.data.countSteps;
+    if (steps > 17) {
+      latex += '<div id="page-break"></div>';
+    }
     latex += `<div id="header2">${this.imp.$t('step')} 3 </div>`;
     latex += '<ul>';
     latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
