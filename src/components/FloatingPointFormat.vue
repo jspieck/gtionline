@@ -569,7 +569,6 @@ export default {
       }
       // get zero
       let isZero = true;
-      console.log([fParts[0], fParts[1]].join(''));
       for (const c of [fParts[0], fParts[1]].join('')) {
         if (c !== '0') {
           isZero = false;
@@ -632,6 +631,18 @@ export default {
     },
     ieeeToDec(num) {
       const ieeeWithoutSpace = num.replace(/\s/g, '');
+      // get zero
+      let isZero = true;
+      console.log(ieeeWithoutSpace.substr(1));
+      for (const c of ieeeWithoutSpace.substr(1)) {
+        if (c !== '0') {
+          isZero = false;
+          break;
+        }
+      }
+      if (isZero) {
+        return 0.0;
+      }
       if (ieeeWithoutSpace.length !== this.numBits) {
         return 0;
       }
