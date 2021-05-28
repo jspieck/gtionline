@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import faulogo from '../assets/FAU_logo.png';
-import codesignlogo from '../assets/codesign.png';
+import { faulogo } from '../assets/FAU_logo.png';
+import { codesignlogo } from '../assets/codesign.png';
 
 export default {
   name: 'DescriptionPDF',
@@ -34,8 +34,6 @@ export default {
     /* eslint-enable */
   },
   mounted() {
-    this.fau_logo = faulogo;
-    this.codesign_logo = codesignlogo;
     this.compileMath();
   },
   updated() {

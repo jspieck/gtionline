@@ -208,6 +208,87 @@ export class DescriptionSolution {
 
   // =========================================================================================
   // Multiplication
+  /* eslint-disable */
+  getMultiplicationTable() {
+    // the calculation is set up in a table
+    // information, steps
+    const tabdef = [];
+    const watcher = this.imp.watcher;
+    const mulWatcher = watcher.steps.Multiplication.data.multiplication;
+    const mulSteps = mulWatcher.steps.MultiplicationSteps.data; // steps
+    const countSteps = mulSteps.countSteps; // count of steps until result
+    const n1Arr = mulWatcher.steps.MultiplicationInput.data.leftArr; // first factor
+    const n2Arr = mulWatcher.steps.MultiplicationInput.data.rightArr; // second factor
+    const n2len = n2Arr.length;
+    const n1len = n1Arr.length;
+    const mulRes = mulWatcher.steps.Result.data.resultArr; // result of multiplication
+    let arrLen = Math.max(
+      mulSteps[`Step${countSteps - 1}_cur`].arr.length - 2,
+      mulSteps.Step0_cur.arr.length + mulSteps.Step0_toAdd.arr.length,
+    ); // columns
+    arrLen = arrLen + n2len + 2;
+    // table definition
+    tabdef.push('{');
+    tabdef.push('c|');
+    for (let i = 0; i < arrLen; i += 1) {
+      tabdef.push('c');
+    }
+    tabdef.push('|c');
+    tabdef.push('}');
+    // build top row
+    const rows = [ // rows of the result table
+      `&&${n1Arr.join('&')}`,
+    ];
+    rows[0] += '&\\times&';
+    rows[0] += n2Arr.join('&');
+    for (let i = n1Arr.length + n2Arr.length + 1; i < arrLen; i += 1) {
+      rows[0] += '&';
+    }
+    rows[0] += '\\\\';
+    rows[0] += '\\hline';
+
+    // inner rows
+    for (let i = 0; i < countSteps; i += 1) {
+      rows.push(`${i}&`);
+      const stepsToAdd = mulSteps[`Step${i}_toAdd`].arr;
+      console.log(stepsToAdd);
+      if (i > 0 && !stepsToAdd.every(a => a === 0)) {
+        stepsToAdd.shift()
+      }
+      // for (let j = 0; j < i; j += 1) { // remove leading 0
+      //  stepsToAdd[j] = '';
+      // }
+      for (let j = 0; j < i; j += 1) {
+        rows[rows.length - 1] += '&';
+      }
+      rows[rows.length - 1] = rows[rows.length - 1];
+      rows[rows.length - 1] += '+&';
+
+      rows[rows.length - 1] += stepsToAdd.join('&');
+      for (let j = stepsToAdd.length + i; j < arrLen; j += 1) {
+        rows[rows.length - 1] += '&';
+      }
+      rows[rows.length - 1] += `\\%`;
+
+      rows[rows.length - 1] += '\\\\ ';
+    } // end for
+
+    // Last row
+    rows.push('\\mathcal\{L\}&&');
+    rows[rows.length - 1] += `${mulRes[0]},& ${mulRes.join('&')}`;
+    for (let k = mulRes.length + 1; k < arrLen - 1; k += 1) {
+      rows[rows.length - 1] += '&';
+    }
+    rows[rows.length - 1] += '&\\Sigma > 0 \\rightarrow 1';
+
+    return [
+      `\\begin{array} ${tabdef.join('')}`,
+      rows.join(''),
+      '\\end{array}',
+    ].join('');
+  }
+  /* eslint-enable */
+
   multiplicationDescription(steps, solution, y1, y2) {
     let mantissaString1 = y1.mantissaBits.join('');
     mantissaString1 = `1,${mantissaString1.substring(1)}`;
@@ -255,8 +336,8 @@ export class DescriptionSolution {
       ].join(''),
       subpanels: [
         {
-          name: `${this.imp.$t('considerExponent')}`,
-          text: `${this.imp.$t('shiftExpMant')} (${this.imp.$t('shift')}: ${this.imp.binToDec(expString1) - this.imp.binToDec(expString2)} )`,
+          name: `${this.imp.$t('doMultiplication')}`,
+          text: `\\(${this.getMultiplicationTable()}\\)`,
         },
         {
           name: `${this.imp.$t('considerRepresentation')}`,

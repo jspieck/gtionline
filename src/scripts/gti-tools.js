@@ -9099,11 +9099,12 @@ var MultiplicationBaseNSigned = /*#__PURE__*/function () {
     key: "_multiply",
     value: function _multiply(n1, n2) {
       this.watcher = new Algorithm();
+      this.watcher.step('MultiplicationInput').saveVariable('n1Arr', _toConsumableArray(n1.arr)).saveVariable('n2Arr', _toConsumableArray(n2.arr));
       var base = n1.base;
       var isNegative = n1.isNegative && !n2.isNegative || n2.isNegative && !n1.isNegative;
       this.watcher.step('GetSign').saveVariable('signN1', n1.isNegative).saveVariable('signN2', n2.isNegative).saveVariable('isNegative', isNegative);
       var cur = new NumberBaseNSigned(base, [0], 0, false);
-      this.watcher.step('Multiplication').saveVariable('num1', n1).saveVariable('num2', n2); // remove right zeros, fastenating the multiplication
+      this.watcher.step('Multiplication').saveVariable('num1', n1).saveVariable('num2', n2); // remove right zeros, fastening the multiplication
 
       var arr1 = n1.arr;
       var arr2 = n2.arr;
@@ -9111,21 +9112,24 @@ var MultiplicationBaseNSigned = /*#__PURE__*/function () {
       while (arr1[arr1.length - 1] === 0 && arr2[arr2.length - 1] === 0 && Math.min(n1.arr.length, n2.arr.length) > 0) {
         arr1.pop();
         arr2.pop();
-      } // multiplication with 0
+      }
 
+      this.watcher.step('MultiplicationInput').saveVariable('n1Arr', _toConsumableArray(n1.arr)).saveVariable('n2Arr', _toConsumableArray(n2.arr)).saveVariable('leftArr', _toConsumableArray(arr1)).saveVariable('rightArr', _toConsumableArray(arr2)); // multiplication with 0
 
       if (Math.min(n1.arr.length, n2.arr.length) === 0) {
         var _result = new NumberBaseNSigned(base, [0]);
 
-        this.watcher.step('Final').saveVariable('result', _result);
+        this.watcher.step('Result').saveVariable('result', _result).saveVariable('resultArr', _toConsumableArray(_result.arr));
         return _result;
       } // main multiplication
 
 
+      this.watcher.step('MultiplicationSteps').saveVariable('countSteps', n2.arr.length);
+
       for (var i = 0; i < n2.arr.length; i++) {
         var num = new NumberBaseNSigned(base, n1.arr, i, false);
         var toAdd = new MultiplicationBaseNSingleDigit(num, arr2[i]).getResult();
-        this.watcher.step("MultStep".concat(i)).saveVariable('cur', cur).saveVariable('toAdd', toAdd);
+        this.watcher.step('MultiplicationSteps').saveVariable("Step".concat(i, "_cur"), cur).saveVariable("Step".concat(i, "_toAdd"), toAdd);
 
         for (var j = 0; j < i; j++) {
           toAdd.arr.unshift(0);
@@ -9136,7 +9140,7 @@ var MultiplicationBaseNSigned = /*#__PURE__*/function () {
 
       this.watcher.step('MultFinal').saveVariable('cur', cur);
       var result = new NumberBaseNSigned(base, cur.arr, cur.offset, isNegative);
-      this.watcher.step('Final').saveVariable('result', result);
+      this.watcher.step('Result').saveVariable('result', result).saveVariable('resultArr', _toConsumableArray(result.arr));
       return result;
     }
   }, {
