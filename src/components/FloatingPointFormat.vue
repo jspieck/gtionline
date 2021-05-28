@@ -197,7 +197,6 @@ export default {
         this.containerWidth = Math.min(500, window.innerWidth - 250);
       });
       if (this.default) {
-        console.log(this.inputNums);
         this.checkAndConvertFormat(0);
         this.checkAndConvertFormat(1);
         this.recalculate();
@@ -219,7 +218,6 @@ export default {
     },
     selectBitRange(num, val) {
       this.selectedFormat[num] = val;
-      console.log(this.selectedFormat[num]);
       if (val === 'eight') {
         this.numBits = 8;
         this.exponentBits = 3;
@@ -236,7 +234,6 @@ export default {
       this.selectedFormat[num] = val;
       const nnum = num > 2 ? 1 : 0;
       this.checkAndConvertFormat(nnum);
-      console.log(val);
     },
     selectOp(num, val) {
       this.selectedFormat[num] = val;
@@ -325,7 +322,6 @@ export default {
       canvas.height = image.height;
       var context = canvas.getContext('2d');
       context.drawImage(image, 0, 0);
-      console.log("C", canvas.toDataURL('image/png'));
       return [canvas.toDataURL('image/png'), image.width, image.height];
       /* eslint-enable */
     },
@@ -477,8 +473,6 @@ export default {
         && num1 !== this.falseFormatOutput && num2 !== this.falseFormatOutput) {
         const y1 = tool.getIEEEFromString(this.exponentBits, num1);
         const y2 = tool.getIEEEFromString(this.exponentBits, num2);
-        console.log(y1);
-        console.log(y2);
         let result = null;
         this.negativeSummand = false;
         this.negativeSubtrahend = false;
@@ -633,7 +627,6 @@ export default {
       const ieeeWithoutSpace = num.replace(/\s/g, '');
       // get zero
       let isZero = true;
-      console.log(ieeeWithoutSpace.substr(1));
       for (const c of ieeeWithoutSpace.substr(1)) {
         if (c !== '0') {
           isZero = false;
