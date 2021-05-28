@@ -88,9 +88,10 @@
     <h4>{{$t('correctSolution')}}</h4>
     <div style="position: relative">
       <div>
-        <label class="attention">{{$t('attSolve')}}</label>
+        <label class="attention" v-if="denominatorZero === false">{{$t('attSolve')}}</label>
         <label class="attention" v-if="negativeSummand">{{$t('negativeSummand')}}</label>
         <label class="attention" v-if="negativeSubtrahend">{{$t('negativeSubtrahend')}}</label>
+        <label class="attention" v-if="denominatorZero">{{$t('zeroDivision')}}</label>
       </div>
       <div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
@@ -155,6 +156,7 @@ export default {
       solutionSteps: [],
       negativeSummand: false,
       negativeSubtrahend: false,
+      denominatorZero: false,
       default: hasdefault,
     };
   },
@@ -511,6 +513,12 @@ export default {
             }
             break;
           case 'div':
+            if (y2.isZero) {
+              this.denominatorZero = true;
+              this.solutionSteps = [];
+              this.solDescr();
+              return;
+            }
             result = new tool.DivisionIEEE(y1, y2);
             break;
           default:
