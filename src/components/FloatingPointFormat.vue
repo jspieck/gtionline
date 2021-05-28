@@ -559,6 +559,20 @@ export default {
         sign = 1;
         fParts[0] = fParts[0].substring(1);
       }
+      // get zero
+      let isZero = true;
+      console.log([fParts[0], fParts[1]].join(''));
+      for (const c of [fParts[0], fParts[1]].join('')) {
+        if (c !== '0') {
+          isZero = false;
+          break;
+        }
+      }
+      if (isZero) {
+        const exponent = '0'.repeat(this.exponentBits);
+        const mantissa = '0'.repeat(this.numBits - this.exponentBits - 1);
+        return `${sign} ${exponent} ${mantissa}`;
+      }
       // trim leading zeroes
       const preDecimal = fParts[0].replace(/^0+/, '');
       // transform to 1,xxx format
