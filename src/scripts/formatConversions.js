@@ -50,10 +50,14 @@ export class FormatConversions {
     const preDecimal = fParts[0].replace(/^0+/, '');
     // transform to 1,xxx format
     let mantisse = preDecimal.substring(1);
+    const correction = preDecimal === '';
     const shiftNumber = mantisse.length;
     const numBitsMantisse = this.numBits - this.exponentBits - 1;
     if (fParts[1] != null) {
       mantisse += fParts[1];
+    }
+    if (correction) {
+      mantisse = mantisse.slice(1);
     }
     if (mantisse.length > numBitsMantisse) {
       mantisse = tool.roundArray(mantisse, numBitsMantisse);
@@ -61,13 +65,14 @@ export class FormatConversions {
     if (mantisse.length < numBitsMantisse) {
       mantisse += '0'.repeat(numBitsMantisse - mantisse.length);
     }
-    let exponent = (shiftNumber + bias).toString(2);
+    let exponent = (shiftNumber + bias - correction).toString(2);
     // fill with leading zeroes
     if (exponent.length > this.exponentBits) {
       // TODO Number is too big and cannot be displayed
       exponent = exponent.substring(exponent.length - this.exponentBits);
     }
     exponent = '0'.repeat(this.exponentBits - exponent.length) + exponent;
+
     this.result = `${sign} ${exponent} ${mantisse}`;
   }
 
