@@ -11,13 +11,19 @@ function classCallCheck(instance, Constructor) {
 }
 
 export class PdfDescription {
-  constructor(imp) {
+  constructor(imp, exponentBits, numBits, watcher) {
     classCallCheck(this, PdfDescription);
     this.imp = imp;
     // eslint-disable-next-line new-cap
-    this.description = new description.DescriptionSolution(this.imp);
-    this.generateLatexString();
-    this.pdf = this.generatePdf();
+    this.description = new description.DescriptionSolution(
+      this.imp,
+      exponentBits,
+      numBits,
+      watcher,
+    );
+    this.exponentBits = exponentBits;
+    this.numBits = numBits;
+    this.watcher = watcher;
   }
 
   getStyle() {
@@ -222,7 +228,8 @@ export class PdfDescription {
       latex += '<ul>';
       latex += `<li><div id="header3">${this.imp.$t('addition')} ${this.imp.$t('mantissa')} :</div></li>`;
       latex += '<div id="ctr">\\(';
-      latex += this.description.getAdditionTable();
+      this.description.getAdditionTable();
+      latex += this.description.table;
       latex += '\\)</div>';
       latex += `<li><div id="header3">${this.imp.$t('considerRepresentation')} :</div>`;
       latex += [
@@ -405,7 +412,8 @@ export class PdfDescription {
       latex += '<ul>';
       latex += `<li><div id="header3">${this.imp.$t('addition')} ${this.imp.$t('mantissa')} :</div></li>`;
       latex += '<div id="ctr">\\(';
-      latex += this.description.getSubtractionTable();
+      this.description.getSubtractionTable();
+      latex += this.description.table;
       latex += '\\)</div>';
       latex += `<li><div id="header3">${this.imp.$t('considerRepresentation')} :</div>`;
       latex += [
@@ -509,7 +517,8 @@ export class PdfDescription {
       latex += '<ul>';
       latex += `<li><div id="header3">${this.imp.$t('multiplication')} ${this.imp.$t('mantissa')} :</div></li>`;
       latex += '<div id="ctr">\\(';
-      latex += this.description.getMultiplicationTable();
+      this.description.getMultiplicationTable();
+      latex += this.description.table;
       latex += '\\)</div>';
       latex += `<li><div id="header3">${this.imp.$t('considerRepresentation')} :</div>`;
       latex += [
@@ -603,7 +612,7 @@ export class PdfDescription {
       converter.binToDec(y2.exponentBits.join(''));
       const rightVal = converter.result;
       latex += [
-        `${this.imp.$t('subExponents')}. (${this.imp.$t('newExponent')}: `,
+        `${this.imp.$t('subtExponents')}. (${this.imp.$t('newExponent')}: `,
         leftVal - rightVal,
         ')',
       ].join('');
@@ -612,7 +621,8 @@ export class PdfDescription {
       latex += '<ul>';
       latex += `<li><div id="header3">${this.imp.$t('division')} ${this.imp.$t('mantissa')} :</div></li>`;
       latex += '<div id="ctr">\\(';
-      latex += this.description.getDivisionTable();
+      this.description.getDivisionTable();
+      latex += this.description.table;
       latex += '\\)</div>';
       latex += `<li><div id="header3">${this.imp.$t('considerRepresentation')} :</div>`;
       latex += [
@@ -674,17 +684,16 @@ export class PdfDescription {
     this.string = latex;
   }
 
-  generateLatexString() {
-    const num1 = this.imp.nums[0];
-    const num2 = this.imp.nums[1];
-    const solution = tool.getIEEEFromString(this.imp.exponentBits, this.imp.solution);
-    const y1 = tool.getIEEEFromString(this.imp.exponentBits, num1);
-    const y2 = tool.getIEEEFromString(this.imp.exponentBits, num2);
+  generatePdf(num1, num2, solutionString, actOperator, actFormat1 = 'decimal', actFormat2 = 'decimal') {
+    const solution = tool.getIEEEFromString(this.exponentBits, solutionString);
+    const y1 = tool.getIEEEFromString(this.exponentBits, num1);
+    const y2 = tool.getIEEEFromString(this.exponentBits, num2);
     this.getStyle();
     this.getHeader(y2);
     this.getDisclaimer();
     this.getValues(y1, y2);
-    switch (this.imp.selectedFormat[2]) {
+    this.description.makeDescription(num1, num2, solutionString, actOperator);
+    switch (actOperator) {
       case 'add':
         if (y1.sign === 0 && y2.sign === 0) {
           this.additionString(solution, y1, y2);
@@ -718,14 +727,13 @@ export class PdfDescription {
         break;
       default:
     }
-  }
-
-  generatePdf() {
     const html = this.string;
     const actquery = {
-      value1: this.imp.inputNums[0],
-      value2: this.imp.inputNums[1],
-      operator: this.imp.selectedFormat[2],
+      value1: num1,
+      value2: num2,
+      operator: actOperator,
+      format1: actFormat1,
+      format2: actFormat2,
     };
     const returnRoute = router.resolve({ name: 'FloatingPointArithmetic', query: actquery });
     router.replace({ name: 'DescriptionPDF', params: { math: html, returnRoute: returnRoute.href } });

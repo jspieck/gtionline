@@ -144,8 +144,18 @@ export default {
       operator = this.$route.query.operator;
       hasdefault = true;
     }
+    let format1 = 'decimal';
+    if (this.$route.query.format1) {
+      format1 = this.$route.query.format1;
+      hasdefault = true;
+    }
+    let format2 = 'decimal';
+    if (this.$route.query.format2) {
+      format2 = this.$route.query.format2;
+      hasdefault = true;
+    }
     return {
-      selectedFormat: ['decimal', 'ieee', operator, 'decimal', 'ieee', 'sixteen'], // 0: input left, 1: converted left, 2: operand, 3: input right, 4: converted right, 5: bit range
+      selectedFormat: [format1, 'ieee', operator, format2, 'ieee', 'sixteen'], // 0: input left, 1: converted left, 2: operand, 3: input right, 4: converted right, 5: bit range
       mouseDown: false,
       solution: '',
       inputNums: { 0: input1, 1: input2 },
@@ -159,6 +169,7 @@ export default {
       negativeSubtrahend: false,
       denominatorZero: false,
       default: hasdefault,
+      watcher: '',
     };
   },
   computed: {
@@ -293,7 +304,13 @@ export default {
     },
     downloadPdf() {
       this.recalculate();
-      this.pdf = (new pdf.PdfDescription(this)).pdf;
+      const descr = new pdf.PdfDescription(
+        this,
+        this.exponentBits,
+        this.numBits,
+        this.watcher,
+      );
+      descr.generatePdf(this.nums[0], this.nums[1], this.solution, this.selectedFormat[2]);
     },
     convertFormat(num) {
       const firstFormat = this.selectedFormat[num * 3];
@@ -339,13 +356,12 @@ export default {
         ieeeSolution.computeSolution(this.nums[0], this.nums[1], this.selectedFormat[2]);
       }
       const watcher = ieeeSolution.watcher;
+      this.watcher = watcher;
       this.negativeSubtrahend = ieeeSolution.negativeSubtrahend;
       this.negativeSummand = ieeeSolution.negativeSummand;
       this.denominatorZero = ieeeSolution.denominatorZero;
       if (!this.denominatorZero) {
         this.solution = ieeeSolution.result;
-        console.log('Compute');
-        console.log(this.solution);
         const descr = new description.DescriptionSolution(
           this,
           this.exponentBits,

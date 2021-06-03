@@ -10032,7 +10032,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
       var sign2;
       var switched;
 
-      if (n1.exponent >= n2.exponent && n1.sign === 0) {
+      if (n1.exponent >= n2.exponent && n1.sign === 0 && n2.sign === 0) {
         exponent1 = n1.exponent;
         exponent2 = n2.exponent;
         mantissa1 = _toConsumableArray(n1.mantissaBits);

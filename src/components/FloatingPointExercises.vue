@@ -27,7 +27,14 @@
       <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
     </div>
     <h4>{{$t('correctSolution')}}</h4>
-    <label class="attention">{{$t('attSolve')}}</label>
+    <div style="position: relative">
+      <div>
+        <label class="attention">{{$t('attSolve')}}</label>
+      </div>
+      <div class="pdfGen">
+        <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
+      </div>
+    </div>
     <div id="solution">
       <Accordion :solutionDescription="solDescr">
         <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
@@ -45,7 +52,7 @@ import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
 import * as solution from '../scripts/ieeeSolution';
 import * as description from '../scripts/DescriptionSolution';
-// import * as pdf from '../scripts/generatePdf';
+import * as pdf from '../scripts/generatePdf';
 
 export default {
   name: 'FloatingPointArithmetic',
@@ -69,6 +76,10 @@ export default {
       solution: '',
       result: { sign: 0, exponentBits: [], mantissaBits: [] },
       containerWidth: 500,
+      watcher: '',
+      solutionSteps: [],
+      fp1: '',
+      fp2: '',
     };
   },
   computed: {
@@ -85,6 +96,16 @@ export default {
     },
   },
   methods: {
+    downloadPdf() {
+      this.computeSolution();
+      const descr = new pdf.PdfDescription(
+        this,
+        this.exponentBits,
+        this.numBits,
+        this.watcher,
+      );
+      descr.generatePdf(this.fp1, this.fp2, this.solution, this.selectedFormat[0], 'ieee', 'ieee');
+    },
     checkSolution() {
       if (this.propVB.replace(/\s/g, '') === `${this.result.sign}`) {
         this.backVB = 'correctInput';
@@ -129,6 +150,11 @@ export default {
         }
       });
       this.computeSolution();
+      this.$nextTick(() => {
+        if (window.MathJax) {
+          window.MathJax.typeset();
+        }
+      });
     },
     selectVal(num, val) {
       this.selectedFormat[num] = val;
@@ -143,6 +169,7 @@ export default {
       const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
       ieeeSolution.computeSolution(this.fp1, this.fp2, this.selectedFormat[0]);
       const watcher = ieeeSolution.watcher;
+      this.watcher = watcher;
       this.solution = ieeeSolution.result;
 
       const descr = new description.DescriptionSolution(
@@ -154,34 +181,6 @@ export default {
       descr.makeDescription(this.fp1, this.fp2, this.solution, this.selectedFormat[0]);
       this.solutionSteps = descr.result;
     },
-    /* computeSolution(num1, num2) {
-      if (num1 !== '' && num2 !== ''
-        && num1 !== 'Falsches Format' && num2 !== 'Falsches Format') {
-        const y1 = tool.getIEEEFromString(this.exponentBits, num1);
-        const y2 = tool.getIEEEFromString(this.exponentBits, num2);
-        console.log(y1);
-        console.log(y2);
-        let result = null;
-        switch (this.selectedFormat[0]) {
-          case 'add':
-            result = new tool.AdditionIEEE(y1, y2);
-            break;
-          case 'mul':
-            result = new tool.MultiplicationIEEE(y1, y2);
-            break;
-          case 'sub':
-            result = new tool.SubtractionIEEE(y1, y2);
-            break;
-          case 'div':
-            result = new tool.DivisionIEEE(y1, y2);
-            break;
-          default:
-        }
-        console.log(result.getResult());
-        this.result = result.getResult();
-        this.solution = result.getResult().bitString;
-      }
-    }, */
   },
 };
 </script>
@@ -343,6 +342,18 @@ $arrow-size: 12px;
   top: -15%;
   right: 0%;
   bottom: 0%;
+}
+
+.pdfGen{
+  margin-left: 0;
+  display: inline-flex;
+  flex-direction: row;
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  right: 180px;
+  top: 0px;
+  line-height: 40px;
 }
 
 @media screen and (max-width: 815px) {
