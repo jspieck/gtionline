@@ -259,7 +259,15 @@ export class DescriptionSolution {
     for (let i = n1Arr.length + n2Arr.length + 1; i < arrLen; i += 1) {
       rows[0] += '&';
     }
-    rows[0] += `\\ (${this.imp.binToDec(n1Arr.join(''))}_\{10\} * ${this.imp.binToDec(n2Arr.join(''))}_\{10\})\\\\`;
+    converter = new convertFormat.FormatConversions(
+      this.imp.exponentBits,
+      this.imp.numBits,
+    );
+    converter.binToDec(n1Arr.join(''));
+    const leftVal = converter.result;
+    converter.binToDec(n2Arr.join(''));
+    const rightVal = converter.result;
+    rows[0] += `\\ (${leftVal}_\{10\} * ${rightVal}_\{10\})\\\\`;
     rows[0] += '\\hline';
 
     // inner rows
@@ -286,7 +294,12 @@ export class DescriptionSolution {
       if (padding > 0) {
         stepsToAdd = stepsToAdd.concat(Array(padding).fill(0, 0)); // Pad right
       }
-      const add = this.imp.binToDec(stepsToAdd.join('')) * 2**-i;
+      const converter = new convertFormat.FormatConversions(
+        this.imp.exponentBits,
+        this.imp.numBits,
+      );
+      converter.binToDec(stepsToAdd.join(''));
+      const add = converter.result * 2**-i;
       rows[rows.length - 1] += `\\ (${add}_\{10\})`;
 
       rows[rows.length - 1] += '\\\\ ';
@@ -305,7 +318,12 @@ export class DescriptionSolution {
     for (let k = actCols; k <= arrLen; k += 1) {
       rows[rows.length - 1] += '&';
     }
-    const add = this.imp.binToDec(mulRes.join(''));
+    let converter = new convertFormat.FormatConversions(
+      this.imp.exponentBits,
+      this.imp.numBits,
+    );
+    converter.binToDec(mulRes.join(''));
+    const add = converter.result;
     rows[rows.length - 1] += `&\\ (${add}_\{10\})`;
 
     return [
@@ -356,11 +374,19 @@ export class DescriptionSolution {
         ].join(''),
       });
     } else {
+      const converter = new convertFormat.FormatConversions(
+        this.imp.exponentBits,
+        this.imp.numBits,
+      );
+      converter.binToDec(expString1);
+      const leftVal = converter.result;
+      converter.binToDec(expString2);
+      const rightVal = converter.result;
       steps.push({
         name: `${this.imp.$t('step')} 1`,
         text: [
           `${this.imp.$t('addExponents')}. (${this.imp.$t('newExponent')}: `,
-          this.imp.binToDec(expString1) + this.imp.binToDec(expString2),
+          leftVal + rightVal,
           ')',
         ].join(''),
       });
@@ -1076,11 +1102,19 @@ export class DescriptionSolution {
         ].join(''),
       });
     } else {
+      const converter = new convertFormat.FormatConversions(
+        this.imp.exponentBits,
+        this.imp.numBits,
+      );
+      converter.binToDec(expString1);
+      const leftVal = converter.result;
+      converter.binToDec(expString2);
+      const rightVal = converter.result;
       steps.push({
         name: `${this.imp.$t('step')} 1`,
         text: [
           `${this.imp.$t('subtExponents')} (${this.imp.$t('newExponent')}: \\(`,
-          this.imp.binToDec(expString1) - this.imp.binToDec(expString2),
+          leftVal - rightVal,
           '\\) )',
         ].join(''),
       });

@@ -491,9 +491,17 @@ export class PdfDescription {
       latex += `<div id="header2">${this.imp.$t('step')} 1 </div> <br>`;
       latex += '<ul>';
       latex += `<div id="txt">${this.imp.$t('adjustExponents')} `;
+      const converter = new convertFormat.FormatConversions(
+        this.imp.exponentBits,
+        this.imp.numBits,
+      );
+      converter.binToDec(y1.exponentBits.join(''));
+      const leftVal = converter.result;
+      converter.binToDec(y2.exponentBits.join(''));
+      const rightVal = converter.result;
       latex += [
         `${this.imp.$t('addExponents')}. (${this.imp.$t('newExponent')}: `,
-        this.imp.binToDec(y1.exponentBits.join('')) + this.imp.binToDec(y2.exponentBits.join('')),
+        leftVal + rightVal,
         ')',
       ].join('');
       latex += '</ul>';
@@ -586,9 +594,17 @@ export class PdfDescription {
       latex += `<div id="header2">${this.imp.$t('step')} 1 </div> <br>`;
       latex += '<ul>';
       latex += `<div id="txt">${this.imp.$t('adjustExponents')} `;
+      const converter = new convertFormat.FormatConversions(
+        this.imp.exponentBits,
+        this.imp.numBits,
+      );
+      converter.binToDec(y1.exponentBits.join(''));
+      const leftVal = converter.result;
+      converter.binToDec(y2.exponentBits.join(''));
+      const rightVal = converter.result;
       latex += [
         `${this.imp.$t('subExponents')}. (${this.imp.$t('newExponent')}: `,
-        this.imp.binToDec(y1.exponentBits.join('')) - this.imp.binToDec(y2.exponentBits.join('')),
+        leftVal - rightVal,
         ')',
       ].join('');
       latex += '</ul>';
