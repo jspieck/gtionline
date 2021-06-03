@@ -1,5 +1,6 @@
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
-import * as tool from '../scripts/gti-tools';
+import * as tool from './gti-tools';
+import * as convertFormat from './formatConversions';
 
 function classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -183,11 +184,13 @@ export class DescriptionSolution {
         });
       }
     }
-    const decSol = this.imp.ieeeToDec([
+    const converter = new convertFormat.FormatConversions(this.imp.exponentBits, this.imp.numBits);
+    converter.ieeeToDec([
       this.imp.watcher.steps.Result.data.result.sign, ' ',
       this.imp.watcher.steps.Result.data.result.exponentBits.join(''),
       this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
     ].join(''));
+    const decSol = converter.result;
     steps.push({
       name: this.imp.$t('solution'),
       text: [
@@ -383,11 +386,13 @@ export class DescriptionSolution {
         ],
       });
     }
-    const decSol = this.imp.ieeeToDec([
+    const converter = new convertFormat.FormatConversions(this.imp.exponentBits, this.imp.numBits);
+    converter.ieeeToDec([
       watcher.steps.Result.data.result.sign, ' ',
       watcher.steps.Result.data.result.exponentBits.join(''),
       watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
     ].join(''));
+    const decSol = converter.result;
     steps.push({
       name: this.imp.$t('solution'),
       text: [
@@ -540,6 +545,41 @@ export class DescriptionSolution {
         text: [
           `${this.imp.$t('subWithZero')}`,
         ].join(''),
+      });
+      const converter = new convertFormat.FormatConversions(
+        this.imp.exponentBits,
+        this.imp.numBits,
+      );
+      converter.ieeeToDec([
+        addWatcher.steps.Result.data.result.sign, ' ',
+        addWatcher.steps.Result.data.result.exponentBits.join(''),
+        addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+      ].join(''));
+      const decSol = converter.result;
+      steps.push({
+        name: this.imp.$t('solution'),
+        text: [
+          `${this.imp.$t('correctSolution')}: `,
+          addWatcher.steps.Result.data.result.sign, ' ',
+          addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
+          addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
+          '\\( \\implies \\)',
+          ` ${this.imp.$t('decimal')}: ${decSol}`,
+        ].join(''),
+        subpanels: [
+          {
+            name: `${this.imp.$t('sign')}: `,
+            text: addWatcher.steps.Result.data.result.sign,
+          },
+          {
+            name: `${this.imp.$t('exponent')}: `,
+            text: addWatcher.steps.Result.data.result.exponentBits.join(''),
+          },
+          {
+            name: `${this.imp.$t('mantissa')}: `,
+            text: addWatcher.steps.Result.data.result.mantissaBits.join(''),
+          },
+        ],
       });
     } else {
       if (addWatcher.steps.CalculateDeltaE.data.deltaE === 0) {
@@ -812,12 +852,17 @@ export class DescriptionSolution {
             },
           ],
         });
-        const decSol = this.imp.ieeeToDec([
+        const converter = new convertFormat.FormatConversions(
+          this.imp.exponentBits,
+          this.imp.numBits,
+        );
+        converter.ieeeToDec([
           addWatcher.steps.Result.data.result.sign, ' ',
           addWatcher.steps.Result.data.result.exponentBits.join(''),
           addWatcher.steps.Result.data.result.mantissaBits.join('')
             .substring(1),
         ].join(''));
+        const decSol = converter.result;
         steps.push({
           name: this.imp.$t('solution'),
           text: [
@@ -869,36 +914,6 @@ export class DescriptionSolution {
         });
       }
     }
-    const decSol = this.imp.ieeeToDec([
-      addWatcher.steps.Result.data.result.sign, ' ',
-      addWatcher.steps.Result.data.result.exponentBits.join(''),
-      addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-    ].join(''));
-    steps.push({
-      name: this.imp.$t('solution'),
-      text: [
-        `${this.imp.$t('correctSolution')}: `,
-        addWatcher.steps.Result.data.result.sign, ' ',
-        addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
-        addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
-        '\\( \\implies \\)',
-        ` ${this.imp.$t('decimal')}: ${decSol}`,
-      ].join(''),
-      subpanels: [
-        {
-          name: `${this.imp.$t('sign')}: `,
-          text: addWatcher.steps.Result.data.result.sign,
-        },
-        {
-          name: `${this.imp.$t('exponent')}: `,
-          text: addWatcher.steps.Result.data.result.exponentBits.join(''),
-        },
-        {
-          name: `${this.imp.$t('mantissa')}: `,
-          text: addWatcher.steps.Result.data.result.mantissaBits.join(''),
-        },
-      ],
-    });
   }
 
   // =========================================================================================
@@ -1107,11 +1122,13 @@ export class DescriptionSolution {
         });
       }
     }
-    const decSol = this.imp.ieeeToDec([
+    const converter = new convertFormat.FormatConversions(this.imp.exponentBits, this.imp.numBits);
+    converter.ieeeToDec([
       watcher.steps.Result.data.result.sign, ' ',
       watcher.steps.Result.data.result.exponentBits.join(''),
       watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
     ].join(''));
+    const decSol = converter.result;
     steps.push({
       name: this.imp.$t('solution'),
       text: [

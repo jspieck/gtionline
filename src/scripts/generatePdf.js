@@ -1,7 +1,8 @@
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
-import * as tool from '../scripts/gti-tools';
+import * as tool from './gti-tools';
 import * as description from './DescriptionSolution';
 import router from '../router/index';
+import * as convertFormat from './formatConversions';
 
 function classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -237,11 +238,13 @@ export class PdfDescription {
     }
     latex += '<ul>';
     latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
-    const decSol = this.imp.ieeeToDec([
+    const converter = new convertFormat.FormatConversions(this.imp.exponentBits, this.imp.numBits);
+    converter.ieeeToDec([
       watcher.steps.Result.data.result.sign, ' ',
       watcher.steps.Result.data.result.exponentBits.join(''),
       watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
     ].join(''));
+    const decSol = converter.result;
     latex += [
       `${this.imp.$t('correctSolution')}: \\(`,
       watcher.steps.Result.data.result.sign, '\\,',
@@ -423,11 +426,13 @@ export class PdfDescription {
     }
     latex += '<ul>';
     latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
-    const decSol = this.imp.ieeeToDec([
+    const converter = new convertFormat.FormatConversions(this.imp.exponentBits, this.imp.numBits);
+    converter.ieeeToDec([
       watcher.steps.Result.data.result.sign, ' ',
       watcher.steps.Result.data.result.exponentBits.join(''),
       watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
     ].join(''));
+    const decSol = converter.result;
     latex += [
       `${this.imp.$t('correctSolution')}: \\(`,
       watcher.steps.Result.data.result.sign, '\\,',
@@ -516,12 +521,14 @@ export class PdfDescription {
     }
     latex += '<ul>';
     latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
-    const decSol = this.imp.ieeeToDec([
+    const converter = new convertFormat.FormatConversions(this.imp.exponentBits, this.imp.numBits);
+    converter.ieeeToDec([
       watcher.steps.Result.data.result.sign, ' ',
       watcher.steps.Result.data.result.exponentBits.join(''),
       watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
     ].join(''));
-    latex += [
+    const decSol = converter.result;
+      latex += [
       `${this.imp.$t('correctSolution')}: \\(`,
       watcher.steps.Result.data.result.sign, '\\,',
       watcher.steps.Result.data.result.exponentBits.join(''), '\\,',
@@ -609,11 +616,13 @@ export class PdfDescription {
     }
     latex += '<ul>';
     latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
-    const decSol = this.imp.ieeeToDec([
+    const converter = new convertFormat.FormatConversions(this.imp.exponentBits, this.imp.numBits);
+    converter.ieeeToDec([
       watcher.steps.Result.data.result.sign, ' ',
       watcher.steps.Result.data.result.exponentBits.join(''),
       watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
     ].join(''));
+    const decSol = converter.result;
     latex += [
       `${this.imp.$t('correctSolution')}: \\(`,
       watcher.steps.Result.data.result.sign, '\\,',
