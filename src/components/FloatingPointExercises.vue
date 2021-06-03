@@ -28,20 +28,24 @@
     </div>
     <h4>{{$t('correctSolution')}}</h4>
     <label class="attention">{{$t('attSolve')}}</label>
-    <Accordion :solutionDescription="solDescr">
-      <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
-        {{panel.text}}
-        <span v-if="index === solDescr.length - 1">{{solution}}</span>
-      </p>
-    </Accordion>
+    <div id="solution">
+      <Accordion :solutionDescription="solDescr">
+        <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
+          {{panel.text}}
+          <span v-if="index === solDescr.length - 1">{{solution}}</span>
+        </p>
+      </Accordion>
+    </div>
   </div>
 </template>
 
 <script>
-import * as tool from '../scripts/gti-tools';
 import * as randomIEEE from '../scripts/randomIEEE';
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
+import * as solution from '../scripts/ieeeSolution';
+import * as description from '../scripts/DescriptionSolution';
+// import * as pdf from '../scripts/generatePdf';
 
 export default {
   name: 'FloatingPointArithmetic',
@@ -77,18 +81,7 @@ export default {
       };
     },
     solDescr() {
-      return [
-        { name: `${this.$t('step')} 1`, text: 'Die Exponenten beider Zahlen müssen angeglichen werden.' },
-        {
-          name: `${this.$t('step')} 2`,
-          text: 'Die Mantissen beider Zahlen müssen multipliziert werden.',
-          subpanels: [
-            { name: 'Exponent beachten', text: 'Der Shift-Faktor des Exponenten muss auf die Mantissen angewendet werden.' },
-            { name: 'Darstellung beachten', text: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.' },
-          ],
-        },
-        { name: this.$t('solution'), text: 'Die Lösung lautet: ' },
-      ];
+      return this.solutionSteps;
     },
   },
   methods: {
@@ -135,7 +128,7 @@ export default {
           window.MathJax.typeset();
         }
       });
-      this.computeSolution(this.fp1, this.fp2);
+      this.computeSolution();
     },
     selectVal(num, val) {
       this.selectedFormat[num] = val;
@@ -146,7 +139,22 @@ export default {
     selectOp(num, val) {
       this.selectedFormat[num] = val;
     },
-    computeSolution(num1, num2) {
+    computeSolution() {
+      const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
+      ieeeSolution.computeSolution(this.fp1, this.fp2, this.selectedFormat[0]);
+      const watcher = ieeeSolution.watcher;
+      this.solution = ieeeSolution.result;
+
+      const descr = new description.DescriptionSolution(
+        this,
+        this.exponentBits,
+        this.numBits,
+        watcher,
+      );
+      descr.makeDescription(this.fp1, this.fp2, this.solution, this.selectedFormat[0]);
+      this.solutionSteps = descr.result;
+    },
+    /* computeSolution(num1, num2) {
       if (num1 !== '' && num2 !== ''
         && num1 !== 'Falsches Format' && num2 !== 'Falsches Format') {
         const y1 = tool.getIEEEFromString(this.exponentBits, num1);
@@ -173,7 +181,7 @@ export default {
         this.result = result.getResult();
         this.solution = result.getResult().bitString;
       }
-    },
+    }, */
   },
 };
 </script>

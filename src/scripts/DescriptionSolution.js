@@ -9,21 +9,25 @@ function classCallCheck(instance, Constructor) {
 }
 
 export class DescriptionSolution {
-  constructor(imp) {
+  constructor(imp, exponentBits, numBits, watcher) {
     classCallCheck(this, DescriptionSolution);
     this.imp = imp;
-    this.description = this.makeDescription();
+    this.table = '';
+    this.result = [];
+    this.exponentBits = exponentBits;
+    this.numBits = numBits;
+    this.watcher = watcher;
   }
 
   // =========================================================================================
   // Addition
   getAdditionTable() {
     // set up tabular for visual the addition
-    const mantissa1 = this.imp.watcher.steps.AddMantissa.data.addition.steps.Addition.data.op1Arr;
-    const mantissa2 = this.imp.watcher.steps.AddMantissa.data.addition.steps.Addition.data.op2Arr;
-    const carryBits = this.imp.watcher.steps.AddMantissa.data.addition.steps.Addition.data.carryArr;
-    const result = this.imp.watcher.steps.AddMantissa.data.addition.steps.Addition.data.resultArr;
-    const cols = this.imp.watcher.steps.AddMantissa.data.binNum;
+    const mantissa1 = this.watcher.steps.AddMantissa.data.addition.steps.Addition.data.op1Arr;
+    const mantissa2 = this.watcher.steps.AddMantissa.data.addition.steps.Addition.data.op2Arr;
+    const carryBits = this.watcher.steps.AddMantissa.data.addition.steps.Addition.data.carryArr;
+    const result = this.watcher.steps.AddMantissa.data.addition.steps.Addition.data.resultArr;
+    const cols = this.watcher.steps.AddMantissa.data.binNum;
     const row1 = [];
     const row2 = [];
     const row3 = [];
@@ -56,7 +60,7 @@ export class DescriptionSolution {
     row2.pop();
     row2.push('\\\\ ');
     row3.pop();
-    return [
+    this.table = [
       `\\begin{array} ${tabdef.join('')}`,
       `${row1.join('')}`,
       `${row2.join('')}`,
@@ -66,15 +70,15 @@ export class DescriptionSolution {
     ].join('');
   }
 
-  additionDescription(steps, solution, y1, y2) {
+  additionDescription(solution, y1, y2) {
     let mantissaString1 = y1.mantissaBits.join('');
     mantissaString1 = `1,${mantissaString1.substring(1)}`;
     let mantissaString2 = y2.mantissaBits.join('');
     mantissaString2 = `1,${mantissaString2.substring(1)}`;
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
-    const watcher = this.imp.watcher;
-    steps.push({
+    const watcher = this.watcher;
+    this.result.push({
       name: `${this.imp.$t('values')}`,
       text: `${this.imp.$t('givenValues')}`,
       subpanels: [
@@ -99,7 +103,7 @@ export class DescriptionSolution {
       ],
     });
     if (y1.isZero || y2.isZero) {
-      steps.push({
+      this.result.push({
         name: `${this.imp.$t('step')} 1`,
         text: [
           `${this.imp.$t('addWithZero')}`,
@@ -107,13 +111,13 @@ export class DescriptionSolution {
       });
     } else {
       if (watcher.steps.CalculateDeltaE.data.deltaE === 0) {
-        steps.push({
+        this.result.push({
           name: `${this.imp.$t('step')} 1`,
           text: `${this.imp.$t('adjustExponents')} \\( (${expString1} = ${expString2} \\Rightarrow i.O.) \\)`,
         });
       } else {
         const left = watcher.steps.CalculateDeltaE.data.switched ? '<' : '>';
-        steps.push({
+        this.result.push({
           name: `${this.imp.$t('step')} 1`,
           text: `${this.imp.$t('adjustExponents')} \\( (${expString1} \\neq ${expString2}) \\)`,
           subpanels: [
@@ -124,7 +128,7 @@ export class DescriptionSolution {
                 `\\( ( [ ${watcher.steps.CalculateDeltaE.data.expN1Bits.join('')} ] :=  ${watcher.steps.CalculateDeltaE.data.expN1} ${left}
                       [ ${watcher.steps.CalculateDeltaE.data.expN2Bits.join('')} ] :=  ${watcher.steps.CalculateDeltaE.data.expN2}) \\) `,
                 `${this.imp.$t('resDiffExponent')}: `,
-                this.imp.watcher.steps.CalculateDeltaE.data.deltaE,
+                this.watcher.steps.CalculateDeltaE.data.deltaE,
               ].join(''),
               subsubpanels: [
                 {
@@ -143,7 +147,8 @@ export class DescriptionSolution {
         });
       }
       if (!watcher.steps.AddMantissa.data.equalMantissa) {
-        steps.push({
+        this.getAdditionTable();
+        this.result.push({
           name: `${this.imp.$t('step')} 2`,
           text: [
             `${this.imp.$t('addMantissa')}`,
@@ -155,7 +160,7 @@ export class DescriptionSolution {
                 `${this.imp.$t('newMantissaIs')}`,
                 ': \<br\> \<br\>',
                 '\\(',
-                this.getAdditionTable(),
+                this.table,
                 '\\)',
               ].join(''),
             },
@@ -165,14 +170,14 @@ export class DescriptionSolution {
               subsubpanels: [
                 {
                   name: `${this.imp.$t('mantissaFloat')}`,
-                  text: `${this.imp.$t('mantissa1float')}: ${this.imp.watcher.steps.AddMantissa.data.normalizedMantissa.join('')}`,
+                  text: `${this.imp.$t('mantissa1float')}: ${this.watcher.steps.AddMantissa.data.normalizedMantissa.join('')}`,
                 },
               ],
             },
           ],
         });
       } else {
-        steps.push({
+        this.result.push({
           name: `${this.imp.$t('step')} 2`,
           text: `${this.imp.$t('addMantissa')}`,
           subpanels: [
@@ -184,35 +189,35 @@ export class DescriptionSolution {
         });
       }
     }
-    const converter = new convertFormat.FormatConversions(this.imp.exponentBits, this.imp.numBits);
+    const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
     converter.ieeeToDec([
-      this.imp.watcher.steps.Result.data.result.sign, ' ',
-      this.imp.watcher.steps.Result.data.result.exponentBits.join(''),
-      this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+      this.watcher.steps.Result.data.result.sign, ' ',
+      this.watcher.steps.Result.data.result.exponentBits.join(''),
+      this.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
     ].join(''));
     const decSol = converter.result;
-    steps.push({
+    this.result.push({
       name: this.imp.$t('solution'),
       text: [
         `${this.imp.$t('correctSolution')}: `,
-        this.imp.watcher.steps.Result.data.result.sign, ' ',
-        this.imp.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
-        this.imp.watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
+        this.watcher.steps.Result.data.result.sign, ' ',
+        this.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
+        this.watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
         '\\( \\implies \\)',
         ` ${this.imp.$t('decimal')}: ${decSol}`,
       ].join(''),
       subpanels: [
         {
           name: `${this.imp.$t('sign')}: `,
-          text: this.imp.watcher.steps.Result.data.result.sign,
+          text: this.watcher.steps.Result.data.result.sign,
         },
         {
           name: `${this.imp.$t('exponent')}: `,
-          text: this.imp.watcher.steps.Result.data.result.exponentBits.join(''),
+          text: this.watcher.steps.Result.data.result.exponentBits.join(''),
         },
         {
           name: `${this.imp.$t('mantissa')}: `,
-          text: this.imp.watcher.steps.Result.data.result.mantissaBits.join(''),
+          text: this.watcher.steps.Result.data.result.mantissaBits.join(''),
         },
       ],
     });
@@ -225,7 +230,7 @@ export class DescriptionSolution {
     // the calculation is set up in a table
     // information, steps
     const tabdef = [];
-    const watcher = this.imp.watcher;
+    const watcher = this.watcher;
     const mulWatcher = watcher.steps.Multiplication.data.multiplication;
     const mulSteps = mulWatcher.steps.MultiplicationSteps.data; // steps
     const n1Arr = mulWatcher.steps.MultiplicationInput.data.leftArr; // first factor
@@ -260,8 +265,8 @@ export class DescriptionSolution {
       rows[0] += '&';
     }
     converter = new convertFormat.FormatConversions(
-      this.imp.exponentBits,
-      this.imp.numBits,
+      this.exponentBits,
+      this.numBits,
     );
     converter.binToDec(n1Arr.join(''));
     const leftVal = converter.result;
@@ -295,8 +300,8 @@ export class DescriptionSolution {
         stepsToAdd = stepsToAdd.concat(Array(padding).fill(0, 0)); // Pad right
       }
       const converter = new convertFormat.FormatConversions(
-        this.imp.exponentBits,
-        this.imp.numBits,
+        this.exponentBits,
+        this.numBits,
       );
       converter.binToDec(stepsToAdd.join(''));
       const add = converter.result * 2**-i;
@@ -319,14 +324,14 @@ export class DescriptionSolution {
       rows[rows.length - 1] += '&';
     }
     let converter = new convertFormat.FormatConversions(
-      this.imp.exponentBits,
-      this.imp.numBits,
+      this.exponentBits,
+      this.numBits,
     );
     converter.binToDec(mulRes.join(''));
     const add = converter.result;
     rows[rows.length - 1] += `&\\ (${add}_\{10\})`;
 
-    return [
+    this.table = [
       `\\begin{array} ${tabdef.join('')}`,
       rows.join(''),
       '\\end{array}',
@@ -334,15 +339,15 @@ export class DescriptionSolution {
   }
   /* eslint-enable */
 
-  multiplicationDescription(steps, solution, y1, y2) {
+  multiplicationDescription(solution, y1, y2) {
     let mantissaString1 = y1.mantissaBits.join('');
     mantissaString1 = `1,${mantissaString1.substring(1)}`;
     let mantissaString2 = y2.mantissaBits.join('');
     mantissaString2 = `1,${mantissaString2.substring(1)}`;
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
-    const watcher = this.imp.watcher;
-    steps.push({
+    const watcher = this.watcher;
+    this.result.push({
       name: `${this.imp.$t('values')}`,
       text: `${this.imp.$t('givenValues')}`,
       subpanels: [
@@ -367,7 +372,7 @@ export class DescriptionSolution {
       ],
     });
     if (y1.isZero || y2.isZero) {
-      steps.push({
+      this.result.push({
         name: `${this.imp.$t('step')} 1`,
         text: [
           `${this.imp.$t('mulWithZero')}`,
@@ -375,14 +380,14 @@ export class DescriptionSolution {
       });
     } else {
       const converter = new convertFormat.FormatConversions(
-        this.imp.exponentBits,
-        this.imp.numBits,
+        this.exponentBits,
+        this.numBits,
       );
       converter.binToDec(expString1);
       const leftVal = converter.result;
       converter.binToDec(expString2);
       const rightVal = converter.result;
-      steps.push({
+      this.result.push({
         name: `${this.imp.$t('step')} 1`,
         text: [
           `${this.imp.$t('addExponents')}. (${this.imp.$t('newExponent')}: `,
@@ -390,7 +395,8 @@ export class DescriptionSolution {
           ')',
         ].join(''),
       });
-      steps.push({
+      this.getMultiplicationTable();
+      this.result.push({
         name: `${this.imp.$t('step')} 2`,
         text: [
           `${this.imp.$t('mulMantissa')}`,
@@ -398,7 +404,7 @@ export class DescriptionSolution {
         subpanels: [
           {
             name: `${this.imp.$t('doMultiplication')}`,
-            text: `\\(${this.getMultiplicationTable()}\\)`,
+            text: `\\(${this.table}\\)`,
           },
           {
             name: `${this.imp.$t('considerRepresentation')}`,
@@ -412,14 +418,14 @@ export class DescriptionSolution {
         ],
       });
     }
-    const converter = new convertFormat.FormatConversions(this.imp.exponentBits, this.imp.numBits);
+    const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
     converter.ieeeToDec([
       watcher.steps.Result.data.result.sign, ' ',
       watcher.steps.Result.data.result.exponentBits.join(''),
       watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
     ].join(''));
     const decSol = converter.result;
-    steps.push({
+    this.result.push({
       name: this.imp.$t('solution'),
       text: [
         `${this.imp.$t('correctSolution')}: `,
@@ -450,7 +456,7 @@ export class DescriptionSolution {
   // Subtraction
   getSubtractionTable() {
     // set up tabular for visual the addition
-    const addWatcher = this.imp.watcher.steps.Addition.data.addition;
+    const addWatcher = this.watcher.steps.Addition.data.addition;
     const originalMantissa1 = addWatcher.steps.AddMantissa.data.mantissa1;
     const originalMantissa2 = addWatcher.steps.AddMantissa.data.mantissa2;
     const mantissa1 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op1Arr;
@@ -519,7 +525,7 @@ export class DescriptionSolution {
     row4.push('\\\\ ');
     row5.pop();
 
-    return [
+    this.table = [
       `\\begin{array} ${tabdef.join('')}`,
       `${row1.join('')}`,
       `${row2.join('')}`,
@@ -532,15 +538,15 @@ export class DescriptionSolution {
     ].join('');
   }
 
-  subtractionDescription(steps, solution, y1, y2) {
+  subtractionDescription(solution, y1, y2) {
     let mantissaString1 = y1.mantissaBits.join('');
     mantissaString1 = `1,${mantissaString1.substring(1)}`;
     let mantissaString2 = y2.mantissaBits.join('');
     mantissaString2 = `1,${mantissaString2.substring(1)}`;
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
-    const watcher = this.imp.watcher;
-    steps.push({
+    const watcher = this.watcher;
+    this.result.push({
       name: `${this.imp.$t('values')}`,
       text: 'Werte der übertragenen Zahlen',
       subpanels: [
@@ -566,15 +572,15 @@ export class DescriptionSolution {
     });
     const addWatcher = watcher.steps.Addition.data.addition;
     if (y1.isZero || y2.isZero) {
-      steps.push({
+      this.result.push({
         name: `${this.imp.$t('step')} 1`,
         text: [
           `${this.imp.$t('subWithZero')}`,
         ].join(''),
       });
       const converter = new convertFormat.FormatConversions(
-        this.imp.exponentBits,
-        this.imp.numBits,
+        this.exponentBits,
+        this.numBits,
       );
       converter.ieeeToDec([
         addWatcher.steps.Result.data.result.sign, ' ',
@@ -582,7 +588,7 @@ export class DescriptionSolution {
         addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
       ].join(''));
       const decSol = converter.result;
-      steps.push({
+      this.result.push({
         name: this.imp.$t('solution'),
         text: [
           `${this.imp.$t('correctSolution')}: `,
@@ -609,13 +615,13 @@ export class DescriptionSolution {
       });
     } else {
       if (addWatcher.steps.CalculateDeltaE.data.deltaE === 0) {
-        steps.push({
+        this.result.push({
           name: `${this.imp.$t('step')} 1`,
           text: `${this.imp.$t('adjustExponents')} \\( (${expString1} = ${expString2} \\Rightarrow i.O.) \\)`,
         });
       } else {
         const left = addWatcher.steps.CalculateDeltaE.data.switched ? '<' : '>';
-        steps.push({
+        this.result.push({
           name: `${this.imp.$t('step')} 1`,
           text: `${this.imp.$t('adjustExponents')} \\( (${expString1} \\neq ${expString2}) \\)`,
           subpanels: [
@@ -647,7 +653,7 @@ export class DescriptionSolution {
       if (!addWatcher.steps.AddMantissa.data.equalMantissa) { // case: not equal mantissa
         if (addWatcher.steps.AddMantissa.data.sign1 === 0
           && addWatcher.steps.AddMantissa.data.sign2 === 1) {
-          steps.push({
+          this.result.push({
             name: `${this.imp.$t('step')} 2`,
             text: `${this.imp.$t('subtTwosComplement')}`,
             subpanels:
@@ -701,7 +707,7 @@ export class DescriptionSolution {
           });
         } else if (addWatcher.steps.AddMantissa.data.sign1 === 1
           && addWatcher.steps.AddMantissa.data.sign2 === 0) {
-          steps.push({
+          this.result.push({
             name: `${this.imp.$t('step')} 2`,
             text: `${this.imp.$t('subtTwosComplement')}`,
             subpanels:
@@ -754,7 +760,7 @@ export class DescriptionSolution {
               ],
           });
         } else {
-          steps.push({
+          this.result.push({
             name: `${this.imp.$t('step')} 2`,
             text: `${this.imp.$t('subtTwosComplement')}`,
             subpanels:
@@ -852,7 +858,8 @@ export class DescriptionSolution {
               ],
           });
         }
-        steps.push({
+        this.getSubtractionTable();
+        this.result.push({
           name: `${this.imp.$t('step')} 3`,
           text: `${this.imp.$t('addMantissa')}`,
           subpanels: [
@@ -862,7 +869,7 @@ export class DescriptionSolution {
                 `${this.imp.$t('newMantissaIs')}`,
                 ': \<br\> \<br\>',
                 '\\(',
-                this.getSubtractionTable(),
+                this.table,
                 '\\)',
               ].join(''),
             },
@@ -879,8 +886,8 @@ export class DescriptionSolution {
           ],
         });
         const converter = new convertFormat.FormatConversions(
-          this.imp.exponentBits,
-          this.imp.numBits,
+          this.exponentBits,
+          this.numBits,
         );
         converter.ieeeToDec([
           addWatcher.steps.Result.data.result.sign, ' ',
@@ -889,7 +896,7 @@ export class DescriptionSolution {
             .substring(1),
         ].join(''));
         const decSol = converter.result;
-        steps.push({
+        this.result.push({
           name: this.imp.$t('solution'),
           text: [
             `${this.imp.$t('correctSolution')}: `,
@@ -916,7 +923,7 @@ export class DescriptionSolution {
           ],
         });
       } else { // case: equal mantissa
-        steps.push({
+        this.result.push({
           name: `${this.imp.$t('step')} 2`,
           text: [
             'Die Mantissen beider Zahlen müssen addiert werden.',
@@ -948,7 +955,7 @@ export class DescriptionSolution {
     // the calculation is set up in a table
     // information, steps
     const tabdef = [];
-    const divWatcher = this.imp.watcher.steps.Division.data.division;
+    const divWatcher = this.watcher.steps.Division.data.division;
     const divSteps = divWatcher.steps.DivisionSteps.data; // steps
     const countSteps = divSteps.countSteps; // count of steps until result
     const n1Arr = divWatcher.steps.DivisionInput.data.n1Arr; // divisor
@@ -1055,22 +1062,22 @@ export class DescriptionSolution {
       rows[rows.length - 1] += '&\\Sigma > 0 \\rightarrow 1';
     }
 
-    return [
+    this.table = [
       `\\begin{array} ${tabdef.join('')}`,
       rows.join(''),
       '\\end{array}',
     ].join('');
   }
 
-  divisionDescription(steps, solution, y1, y2) {
+  divisionDescription(solution, y1, y2) {
     let mantissaString1 = y1.mantissaBits.join('');
     mantissaString1 = `1,${mantissaString1.substring(1)}`;
     let mantissaString2 = y2.mantissaBits.join('');
     mantissaString2 = `1,${mantissaString2.substring(1)}`;
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
-    const watcher = this.imp.watcher;
-    steps.push({
+    const watcher = this.watcher;
+    this.result.push({
       name: `${this.imp.$t('values')}`,
       text: `${this.imp.$t('givenValues')}`,
       subpanels: [
@@ -1095,7 +1102,7 @@ export class DescriptionSolution {
       ],
     });
     if (y1.isZero) {
-      steps.push({
+      this.result.push({
         name: `${this.imp.$t('step')} 1`,
         text: [
           `${this.imp.$t('divWithZero')}`,
@@ -1103,14 +1110,14 @@ export class DescriptionSolution {
       });
     } else {
       const converter = new convertFormat.FormatConversions(
-        this.imp.exponentBits,
-        this.imp.numBits,
+        this.exponentBits,
+        this.numBits,
       );
       converter.binToDec(expString1);
       const leftVal = converter.result;
       converter.binToDec(expString2);
       const rightVal = converter.result;
-      steps.push({
+      this.result.push({
         name: `${this.imp.$t('step')} 1`,
         text: [
           `${this.imp.$t('subtExponents')} (${this.imp.$t('newExponent')}: \\(`,
@@ -1119,13 +1126,14 @@ export class DescriptionSolution {
         ].join(''),
       });
       if (!watcher.steps.Division.data.equalMantissa) { // case not equal mantissa
-        steps.push({
+        this.getDivisionTable();
+        this.result.push({
           name: `${this.imp.$t('step')} 2`,
           text: `${this.imp.$t('divMantissa')}`,
           subpanels: [
             {
               name: `${this.imp.$t('doDivision')}`,
-              text: `\\(${this.getDivisionTable()}\\)`,
+              text: `\\(${this.table}\\)`,
             },
             {
               name: `${this.imp.$t('considerRepresentation')}`,
@@ -1139,7 +1147,7 @@ export class DescriptionSolution {
           ],
         });
       } else { // case equal mantissa
-        steps.push({
+        this.result.push({
           name: `${this.imp.$t('step')} 2`,
           text: `${this.imp.$t('divMantissa')}`,
           subpanels: [
@@ -1156,14 +1164,14 @@ export class DescriptionSolution {
         });
       }
     }
-    const converter = new convertFormat.FormatConversions(this.imp.exponentBits, this.imp.numBits);
+    const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
     converter.ieeeToDec([
       watcher.steps.Result.data.result.sign, ' ',
       watcher.steps.Result.data.result.exponentBits.join(''),
       watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
     ].join(''));
     const decSol = converter.result;
-    steps.push({
+    this.result.push({
       name: this.imp.$t('solution'),
       text: [
         `${this.imp.$t('correctSolution')}: `,
@@ -1190,50 +1198,47 @@ export class DescriptionSolution {
     });
   }
 
-  makeDescription() {
-    const num1 = this.imp.nums[0];
-    const num2 = this.imp.nums[1];
+  makeDescription(num1, num2, solutionString, operator) {
     if (num1 !== '' && num2 !== '' && num1 !== 'Falsches Format' && num2 !== 'Falsches Format') {
-      const solution = tool.getIEEEFromString(this.imp.exponentBits, this.imp.solution);
-      const y1 = tool.getIEEEFromString(this.imp.exponentBits, num1);
-      const y2 = tool.getIEEEFromString(this.imp.exponentBits, num2);
-      const steps = [];
-      switch (this.imp.selectedFormat[2]) {
+      const solution = tool.getIEEEFromString(this.exponentBits, solutionString);
+      const y1 = tool.getIEEEFromString(this.exponentBits, num1);
+      const y2 = tool.getIEEEFromString(this.exponentBits, num2);
+      switch (operator) {
         case 'add':
           if (y1.sign === 0 && y2.sign === 0) {
-            this.additionDescription(steps, solution, y1, y2);
+            this.additionDescription(solution, y1, y2);
           } else if (y2.sign === 1) {
             y2.sign = 0;
             y2.arr[0] = 0;
-            this.subtractionDescription(steps, solution, y1, y2);
+            this.subtractionDescription(solution, y1, y2);
           } else {
-            this.subtractionDescription(steps, solution, y1, y2);
+            this.subtractionDescription(solution, y1, y2);
           }
           break;
 
         case 'mul':
-          this.multiplicationDescription(steps, solution, y1, y2);
+          this.multiplicationDescription(solution, y1, y2);
           break;
 
         case 'sub':
           if (y2.sign === 0) {
-            this.subtractionDescription(steps, solution, y1, y2);
+            this.subtractionDescription(solution, y1, y2);
           } else if (y1.sign === 1 && y2.sign === 1) {
-            this.subtractionDescription(steps, solution, y1, y2);
+            this.subtractionDescription(solution, y1, y2);
           } else {
             y2.sign = 0;
             y2.arr[0] = 0;
-            this.additionDescription(steps, solution, y1, y2);
+            this.additionDescription(solution, y1, y2);
           }
           break;
 
         case 'div':
-          this.divisionDescription(steps, solution, y1, y2);
+          this.divisionDescription(solution, y1, y2);
           break;
         default:
       }
-      return steps;
+    } else {
+      this.result = null;
     }
-    return null;
   }
 }

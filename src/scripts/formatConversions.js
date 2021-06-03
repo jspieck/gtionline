@@ -44,6 +44,7 @@ export class FormatConversions {
       const exponent = '0'.repeat(this.exponentBits);
       const mantissa = '0'.repeat(this.numBits - this.exponentBits - 1);
       this.result = `${sign} ${exponent} ${mantissa}`;
+      return;
     }
     // trim leading zeroes
     const preDecimal = fParts[0].replace(/^0+/, '');

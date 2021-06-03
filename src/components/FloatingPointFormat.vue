@@ -114,12 +114,12 @@
 
 <script>
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
-import * as tool from '../scripts/gti-tools';
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
 import * as description from '../scripts/DescriptionSolution';
 import * as pdf from '../scripts/generatePdf';
 import * as convertFormat from '../scripts/formatConversions';
+import * as solution from '../scripts/ieeeSolution';
 
 export default {
   name: 'FloatingPointArithmetic',
@@ -210,7 +210,6 @@ export default {
       this.convertFormat(0);
       this.convertFormat(1);
       this.computeSolution();
-      this.solDescrActive();
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset(); // https://github.com/mathjax/MathJax/issues/2557
@@ -286,7 +285,6 @@ export default {
       }
       this.convertFormat(num);
       this.computeSolution();
-      this.solDescrActive();
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();
@@ -336,67 +334,29 @@ export default {
       this.nums[num] = converted;
     },
     computeSolution() {
-      const num1 = this.nums[0];
-      const num2 = this.nums[1];
-      if (num1 !== '' && num2 !== ''
-        && num1 !== this.falseFormatOutput && num2 !== this.falseFormatOutput) {
-        const y1 = tool.getIEEEFromString(this.exponentBits, num1);
-        const y2 = tool.getIEEEFromString(this.exponentBits, num2);
-        let result = null;
-        this.negativeSummand = false;
-        this.negativeSubtrahend = false;
-        switch (this.selectedFormat[2]) {
-          case 'add':
-            if (y1.sign === 0 && y2.sign === 0) {
-              result = new tool.AdditionIEEE(y1, y2);
-            } else if (y2.sign === 1) {
-              y2.sign = 0;
-              y2.arr[0] = 0;
-              this.negativeSummand = true;
-              result = new tool.SubtractionIEEE(y1, y2);
-            } else {
-              this.negativeSummand = true;
-              result = new tool.SubtractionIEEE(y1, y2);
-            }
-            break;
-          case 'mul':
-            result = new tool.MultiplicationIEEE(y1, y2);
-            break;
-          case 'sub':
-            if (y2.sign === 0) {
-              result = new tool.SubtractionIEEE(y1, y2);
-            } else if (y1.sign === 1) {
-              this.negativeSubtrahend = true;
-              result = new tool.SubtractionIEEE(y1, y2);
-            } else {
-              this.negativeSubtrahend = true;
-              y2.sign = 0;
-              y2.arr[0] = 0;
-              result = new tool.AdditionIEEE(y1, y2);
-            }
-            break;
-          case 'div':
-            if (y2.isZero) {
-              this.denominatorZero = true;
-              this.solutionSteps = [];
-              this.solDescr();
-              return;
-            }
-            result = new tool.DivisionIEEE(y1, y2);
-            break;
-          default:
-        }
-        this.watcher = result.watcher;
-        let solution = '';
-        solution = result.getResult().bitString;
-        if (result.getResult().isNaN) solution += ' is Nan';
-        if (result.getResult().isZero) solution += ' is Zero';
-        if (result.getResult().isInfinity) solution += ' is Inf';
-        this.solution = solution;
+      const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
+      if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
+        ieeeSolution.computeSolution(this.nums[0], this.nums[1], this.selectedFormat[2]);
       }
-    },
-    solDescrActive() {
-      this.solutionSteps = (new description.DescriptionSolution(this)).description;
+      const watcher = ieeeSolution.watcher;
+      this.negativeSubtrahend = ieeeSolution.negativeSubtrahend;
+      this.negativeSummand = ieeeSolution.negativeSummand;
+      this.denominatorZero = ieeeSolution.denominatorZero;
+      if (!this.denominatorZero) {
+        this.solution = ieeeSolution.result;
+        console.log('Compute');
+        console.log(this.solution);
+        const descr = new description.DescriptionSolution(
+          this,
+          this.exponentBits,
+          this.numBits,
+          watcher,
+        );
+        if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
+          descr.makeDescription(this.nums[0], this.nums[1], this.solution, this.selectedFormat[2]);
+        }
+        this.solutionSteps = descr.result;
+      }
     },
     preventGlobalMouseEvents() {
       document.body.style['pointer-events'] = 'none';
