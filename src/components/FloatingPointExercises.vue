@@ -39,6 +39,7 @@
 
 <script>
 import * as tool from '../scripts/gti-tools';
+import * as randomIEEE from '../scripts/randomIEEE';
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
 
@@ -112,19 +113,6 @@ export default {
         this.backM = 'incorrectInput';
       }
     },
-    generateRandomBit() {
-      return Math.round(Math.random());
-    },
-    generateRandomBits(n) {
-      let bitString = '';
-      for (let i = 0; i < n; i += 1) {
-        bitString += this.generateRandomBit();
-      }
-      return bitString;
-    },
-    generateRandomIEEE() {
-      return `${this.generateRandomBit()} ${this.generateRandomBits(this.exponentBits)} ${this.generateRandomBits(this.numBits - 1 - this.exponentBits)}`;
-    },
     generateExercise() {
       const operation = this.selectedFormat[0];
       const opNames = {
@@ -133,8 +121,11 @@ export default {
         sub: [this.$t('subtraction'), '-'],
         div: [this.$t('division'), '/'],
       };
-      this.fp1 = this.generateRandomIEEE();
-      this.fp2 = this.generateRandomIEEE();
+      const random = new randomIEEE.RandomIEEE(this.exponentBits, this.numBits);
+      random.generateRandomIEEE();
+      this.fp1 = random.result;
+      random.generateRandomIEEE();
+      this.fp2 = random.result;
       this.exerciseText = `Es seien die Gleitkommazahlen \\( fp_1 \\) und \\( fp_2 \\) im 16 Bit Gleitkommaformat gegeben. Berechnen Sie die ${opNames[operation][0]} \\( fp_1 ${opNames[operation][1]} fp_2 \\) ohne die Binärdarstellung zu verlassen und geben Sie diese wieder als Gleitkommazahl an:
 
           \\( fp_1 = \\text{${this.fp1}} \\)\n
