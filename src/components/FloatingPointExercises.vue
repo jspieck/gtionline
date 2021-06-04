@@ -51,6 +51,7 @@ import * as randomIEEE from '../scripts/randomIEEE';
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
 import * as solution from '../scripts/ieeeSolution';
+import * as checker from '../scripts/checkSolution';
 import * as description from '../scripts/DescriptionSolution';
 import * as pdf from '../scripts/generatePdf';
 
@@ -107,25 +108,11 @@ export default {
       descr.generatePdf(this.fp1, this.fp2, this.solution, this.selectedFormat[0], 'ieee', 'ieee');
     },
     checkSolution() {
-      if (this.propVB.replace(/\s/g, '') === `${this.result.sign}`) {
-        this.backVB = 'correctInput';
-      } else {
-        this.backVB = 'incorrectInput';
-      }
-      const resultString = this.result.bitString.replace(/\s/g, '');
-      const resultE = resultString.substring(1, 1 + this.exponentBits);
-      const resultM = resultString.substring(1 + this.exponentBits);
-      console.log('He', resultE, resultM);
-      if (this.propE.replace(/\s/g, '') === resultE) {
-        this.backE = 'correctInput';
-      } else {
-        this.backE = 'incorrectInput';
-      }
-      if (this.propM.replace(/\s/g, '') === resultM) {
-        this.backM = 'correctInput';
-      } else {
-        this.backM = 'incorrectInput';
-      }
+      const checkSolution = new checker.CheckSolution(this.exponentBits);
+      checkSolution.checkSolution(this.result, this.propVB, this.propE, this.propM);
+      this.backVB = checkSolution.backVB;
+      this.backE = checkSolution.backE;
+      this.backM = checkSolution.backM;
     },
     generateExercise() {
       const operation = this.selectedFormat[0];
@@ -171,6 +158,7 @@ export default {
       const watcher = ieeeSolution.watcher;
       this.watcher = watcher;
       this.solution = ieeeSolution.result;
+      this.result = ieeeSolution.resultObject;
 
       const descr = new description.DescriptionSolution(
         this,

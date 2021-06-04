@@ -17,6 +17,7 @@ export class IEEESolution {
     this.actBit = '';
     this.bitString = '';
     this.result = '';
+    this.resultObject = '';
     this.watcher = '';
     this.negativeSummand = false;
     this.negativeSubtrahend = false;
@@ -77,6 +78,7 @@ export class IEEESolution {
       if (result.getResult().isZero) solution += ' is Zero';
       if (result.getResult().isInfinity) solution += ' is Inf';
       this.result = solution;
+      this.resultObject = result.watcher.steps.Result.data.result;
     }
   }
 }
