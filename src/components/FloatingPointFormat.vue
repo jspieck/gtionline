@@ -355,8 +355,8 @@ export default {
       if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
         ieeeSolution.computeSolution(this.nums[0], this.nums[1], this.selectedFormat[2]);
       }
-      const watcher = ieeeSolution.watcher;
-      this.watcher = watcher;
+      this.watcher = JSON.parse(JSON.stringify(ieeeSolution.watcher));
+      // this.watcher = ieeeSolution.watcher;
       this.negativeSubtrahend = ieeeSolution.negativeSubtrahend;
       this.negativeSummand = ieeeSolution.negativeSummand;
       this.denominatorZero = ieeeSolution.denominatorZero;
@@ -366,7 +366,7 @@ export default {
           this,
           this.exponentBits,
           this.numBits,
-          watcher,
+          ieeeSolution.watcher,
         );
         if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
           descr.makeDescription(this.nums[0], this.nums[1], this.solution, this.selectedFormat[2]);

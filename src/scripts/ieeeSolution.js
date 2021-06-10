@@ -36,30 +36,40 @@ export class IEEESolution {
         case 'add':
           if (y1.sign === 0 && y2.sign === 0) {
             result = new tool.AdditionIEEE(y1, y2);
+            this.resultObject = result.watcher.steps.Result.data.result;
           } else if (y2.sign === 1) {
             y2.sign = 0;
             y2.arr[0] = 0;
             this.negativeSummand = true;
             result = new tool.SubtractionIEEE(y1, y2);
+            // eslint-disable-next-line max-len
+            this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
           } else {
             this.negativeSummand = true;
             result = new tool.SubtractionIEEE(y1, y2);
+            // eslint-disable-next-line max-len
+            this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
           }
           break;
         case 'mul':
           result = new tool.MultiplicationIEEE(y1, y2);
+          this.resultObject = result.watcher.steps.Result.data.result;
           break;
         case 'sub':
           if (y2.sign === 0) {
             result = new tool.SubtractionIEEE(y1, y2);
+            this.resultObject = result.watcher.steps.Result.data.result;
           } else if (y1.sign === 1) {
             this.negativeSubtrahend = true;
             result = new tool.SubtractionIEEE(y1, y2);
+            // eslint-disable-next-line max-len
+            this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
           } else {
             this.negativeSubtrahend = true;
             y2.sign = 0;
             y2.arr[0] = 0;
             result = new tool.AdditionIEEE(y1, y2);
+            this.resultObject = result.watcher.steps.Result.data.result;
           }
           break;
         case 'div':
@@ -68,6 +78,7 @@ export class IEEESolution {
             return;
           }
           result = new tool.DivisionIEEE(y1, y2);
+          this.resultObject = result.watcher.steps.Result.data.result;
           break;
         default:
       }
@@ -78,7 +89,6 @@ export class IEEESolution {
       if (result.getResult().isZero) solution += ' is Zero';
       if (result.getResult().isInfinity) solution += ' is Inf';
       this.result = solution;
-      this.resultObject = result.watcher.steps.Result.data.result;
     }
   }
 }
