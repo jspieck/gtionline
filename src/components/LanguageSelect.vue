@@ -68,6 +68,11 @@ export default {
       this.selected = lang;
       this.open = false;
       this.$emit('input', lang);
+      this.$nextTick(() => {
+        if (window.MathJax) {
+          window.MathJax.typeset();
+        }
+      });
     },
   },
 };

@@ -9210,8 +9210,10 @@ var NumberBaseNComplement = /*#__PURE__*/function () {
 
     this._normalizeArray();
 
+    this.watcher = this.watcher.step('Complement').saveVariable('originalArray', _toConsumableArray(this.arr));
+    this.watcher = this.watcher.step('Complement').saveVariable('negate', negate);
+
     if (negate) {
-      this.watcher = this.watcher.step('Complement').saveVariable('originalArray', _toConsumableArray(this.arr));
       this.arr = this.getFlipedArray();
       this.watcher = this.watcher.step('Complement').saveVariable('flippedArray', _toConsumableArray(this.arr)); // Add one
 
@@ -9231,6 +9233,8 @@ var NumberBaseNComplement = /*#__PURE__*/function () {
       this._normalizeArray();
 
       this.watcher = this.watcher.step('Complement').saveVariable('normalizedArray', _toConsumableArray(this.arr));
+    } else {
+      this.watcher = this.watcher.step('Complement').saveVariable('flippedArray', _toConsumableArray(this.arr)).saveVariable('oneAdded', _toConsumableArray(this.arr)).saveVariable('normalizedArray', _toConsumableArray(this.arr));
     } // delete right digits if the array is to long
 
 
@@ -10032,7 +10036,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
       var sign2;
       var switched;
 
-      if (n1.exponent >= n2.exponent && n1.sign === 0 && n2.sign === 0) {
+      if (n1.exponent >= n2.exponent) {
         exponent1 = n1.exponent;
         exponent2 = n2.exponent;
         mantissa1 = _toConsumableArray(n1.mantissaBits);
@@ -10166,10 +10170,10 @@ var AdditionIEEE = /*#__PURE__*/function () {
         op2 = new NumberBaseNComplement(2, binNum, mantissa2, binNum, sign2 === 1);
       }
 
-      this.watcher = this.watcher.step('AddMantissa').saveVariable('complement1', op1.watcher);
-      this.watcher = this.watcher.step('AddMantissa').saveVariable('complement2', op2.watcher);
+      this.watcher = this.watcher.step('AddMantissa').saveVariable('complement1', JSON.parse(JSON.stringify(op1.watcher)));
+      this.watcher = this.watcher.step('AddMantissa').saveVariable('complement2', JSON.parse(JSON.stringify(op2.watcher)));
       var addition = new AdditionBaseNComplement(op1, op2);
-      this.watcher = this.watcher.step('AddMantissa').saveVariable('addition', addition.watcher);
+      this.watcher = this.watcher.step('AddMantissa').saveVariable('addition', JSON.parse(JSON.stringify(addition.watcher)));
       var additionResult = addition.getResult();
       var sign = sign1 === 1; // case respects to a possible changed sign if the summands have the same exponent
 

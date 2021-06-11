@@ -90,6 +90,9 @@
       <div>
         <label class="attention" v-if="denominatorZero === false">{{$t('attSolve')}}</label>
         <label class="attention" v-if="negativeSummand">{{$t('negativeSummand')}}</label>
+        <label class="attention" v-if="negativeMinuendSubtrahend">
+          {{$t('negativeMinuendSubtrahend')}}
+        </label>
         <label class="attention" v-if="negativeSubtrahend">{{$t('negativeSubtrahend')}}</label>
         <label class="attention" v-if="denominatorZero">{{$t('zeroDivision')}}</label>
       </div>
@@ -167,6 +170,7 @@ export default {
       solutionSteps: [],
       negativeSummand: false,
       negativeSubtrahend: false,
+      negativeMinuendSubtrahend: false,
       denominatorZero: false,
       default: hasdefault,
       watcher: '',
@@ -356,7 +360,7 @@ export default {
         ieeeSolution.computeSolution(this.nums[0], this.nums[1], this.selectedFormat[2]);
       }
       this.watcher = JSON.parse(JSON.stringify(ieeeSolution.watcher));
-      // this.watcher = ieeeSolution.watcher;
+      this.negativeMinuendSubtrahend = ieeeSolution.negativeMinuendSubtrahend;
       this.negativeSubtrahend = ieeeSolution.negativeSubtrahend;
       this.negativeSummand = ieeeSolution.negativeSummand;
       this.denominatorZero = ieeeSolution.denominatorZero;

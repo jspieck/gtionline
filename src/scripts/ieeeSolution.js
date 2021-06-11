@@ -22,6 +22,7 @@ export class IEEESolution {
     this.negativeSummand = false;
     this.negativeSubtrahend = false;
     this.denominatorZero = true;
+    this.negativeMinuendSubtrahend = false;
   }
 
   computeSolution(num1, num2, operator) {
@@ -32,6 +33,7 @@ export class IEEESolution {
       this.negativeSummand = false;
       this.negativeSubtrahend = false;
       this.denominatorZero = false;
+      this.negativeMinuendSubtrahend = false;
       switch (operator) {
         case 'add':
           if (y1.sign === 0 && y2.sign === 0) {
@@ -41,12 +43,17 @@ export class IEEESolution {
             y2.sign = 0;
             y2.arr[0] = 0;
             this.negativeSummand = true;
+            if (y1.sign === 1) {
+              this.negativeMinuendSubtrahend = true;
+            }
             result = new tool.SubtractionIEEE(y1, y2);
             // eslint-disable-next-line max-len
             this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
           } else {
             this.negativeSummand = true;
-            result = new tool.SubtractionIEEE(y1, y2);
+            y1.sign = 0;
+            y1.arr[0] = 0;
+            result = new tool.SubtractionIEEE(y2, y1);
             // eslint-disable-next-line max-len
             this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
           }
@@ -57,9 +64,13 @@ export class IEEESolution {
           break;
         case 'sub':
           if (y2.sign === 0) {
+            if (y1.sign === 1) {
+              this.negativeMinuendSubtrahend = true;
+            }
             result = new tool.SubtractionIEEE(y1, y2);
-            this.resultObject = result.watcher.steps.Result.data.result;
-          } else if (y1.sign === 1) {
+            // eslint-disable-next-line max-len
+            this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
+          } else if (y1.sign === 1 && y2.sign === 1) {
             this.negativeSubtrahend = true;
             result = new tool.SubtractionIEEE(y1, y2);
             // eslint-disable-next-line max-len
