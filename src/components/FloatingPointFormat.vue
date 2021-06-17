@@ -84,7 +84,24 @@
         </table>
       </div>
     </div>
-
+    <div class="solutionArea">
+      <div class="solutionInput">
+        <p>{{$t('signBit')}}</p>
+        <input id="propVB" :class="backVB" v-model="propVB">
+      </div>
+      <div class="divMargin"/>
+      <div class="solutionInput">
+        <p>{{$t('exponentBits')}}</p>
+        <input id="propE" :class="backE" v-model="propE">
+      </div>
+      <div class="divMargin"/>
+      <div class="solutionInput">
+        <p>{{$t('fractionBits')}}</p>
+        <input id="propM" :class="backM" v-model="propM">
+      </div>
+      <div class="divMargin"/>
+      <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
+    </div>
     <h4>{{$t('correctSolution')}}</h4>
     <div style="position: relative">
       <div>
@@ -120,6 +137,7 @@
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
 import * as description from '../scripts/DescriptionSolution';
+import * as checker from '../scripts/checkSolution';
 import * as pdf from '../scripts/generatePdf';
 import * as convertFormat from '../scripts/formatConversions';
 import * as solution from '../scripts/ieeeSolution';
@@ -161,6 +179,7 @@ export default {
       selectedFormat: [format1, 'ieee', operator, format2, 'ieee', 'sixteen'], // 0: input left, 1: converted left, 2: operand, 3: input right, 4: converted right, 5: bit range
       mouseDown: false,
       solution: '',
+      solutionObject: '',
       inputNums: { 0: input1, 1: input2 },
       nums: { 0: '', 1: '' },
       exponentBits: 5,
@@ -174,6 +193,12 @@ export default {
       denominatorZero: false,
       default: hasdefault,
       watcher: '',
+      propVB: '',
+      backVB: '',
+      propE: '',
+      backE: '',
+      propM: '',
+      backM: '',
     };
   },
   computed: {
@@ -376,7 +401,15 @@ export default {
           descr.makeDescription(this.nums[0], this.nums[1], this.solution, this.selectedFormat[2]);
         }
         this.solutionSteps = descr.result;
+        this.solutionObject = ieeeSolution.resultObject;
       }
+    },
+    checkSolution() {
+      const checkSolution = new checker.CheckSolution(this.exponentBits);
+      checkSolution.checkSolution(this.solutionObject, this.propVB, this.propE, this.propM);
+      this.backVB = checkSolution.backVB;
+      this.backE = checkSolution.backE;
+      this.backM = checkSolution.backM;
     },
     preventGlobalMouseEvents() {
       document.body.style['pointer-events'] = 'none';
@@ -729,6 +762,22 @@ $arrow-size: 12px;
 
 #jaxHelper {
   visibility: hidden;
+}
+
+.solutionInput {
+  display: inline-block;
+}
+
+.correctInput {
+  background: $lightAzure;
+}
+
+.incorrectInput {
+  background: $lightRed;
+}
+
+#solutionInput {
+  width: 200px;
 }
 
 @media(max-width: 750px){

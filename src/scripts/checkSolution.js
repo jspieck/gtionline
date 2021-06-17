@@ -18,7 +18,6 @@ export class CheckSolution {
   }
 
   checkSolution(result, propVB, propE, propM) {
-    console.log(result);
     if (propVB.replace(/\s/g, '') === `${result.sign}`) {
       this.backVB = 'correctInput';
     } else {
@@ -27,7 +26,6 @@ export class CheckSolution {
     const resultString = result.bitString.replace(/\s/g, '');
     const resultE = resultString.substring(1, 1 + this.exponentBits);
     const resultM = resultString.substring(1 + this.exponentBits);
-    console.log('He', resultE, resultM);
     if (propE.replace(/\s/g, '') === resultE) {
       this.backE = 'correctInput';
     } else {

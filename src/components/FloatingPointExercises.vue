@@ -75,7 +75,7 @@ export default {
       propM: '',
       backM: '',
       solution: '',
-      result: { sign: 0, exponentBits: [], mantissaBits: [] },
+      solutionObject: '',
       containerWidth: 500,
       watcher: '',
       solutionSteps: [],
@@ -109,7 +109,7 @@ export default {
     },
     checkSolution() {
       const checkSolution = new checker.CheckSolution(this.exponentBits);
-      checkSolution.checkSolution(this.result, this.propVB, this.propE, this.propM);
+      checkSolution.checkSolution(this.solutionObject, this.propVB, this.propE, this.propM);
       this.backVB = checkSolution.backVB;
       this.backE = checkSolution.backE;
       this.backM = checkSolution.backM;
@@ -158,7 +158,7 @@ export default {
       const watcher = ieeeSolution.watcher;
       this.watcher = watcher;
       this.solution = ieeeSolution.result;
-      this.result = ieeeSolution.resultObject;
+      this.solutionObject = ieeeSolution.resultObject;
 
       const descr = new description.DescriptionSolution(
         this,
