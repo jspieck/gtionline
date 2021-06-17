@@ -9931,14 +9931,41 @@ var NumberIEEE = /*#__PURE__*/function () {
   return NumberIEEE;
 }();
 function getIEEEFromString(expBitNum, str) {
+  var string = str;
+
   if (str.length <= expBitNum + 2) {
     console.log('getIEEEFromString(expBitNum, str): Given string is not compatible with the given number of expBitNum.');
     process.exit(1);
   }
 
-  for (var i = 0; i < str.length; i++) {
-    if (str[i] === ' ') continue;
-    var n = charToNum$1(str[i]);
+  var inf = false;
+  var zero = false;
+  var nan = false;
+
+  if (string.search('Inf') !== -1) {
+    inf = true;
+  } else if (string.search('Zero') !== -1) {
+    zero = true;
+  } else if (string.search('Nan') !== -1) {
+    nan = true;
+  } // Remove whitesapce
+
+
+  string = string.replace(/\s+/g, '');
+  var hadText = false;
+
+  if (inf || zero || nan) {
+    var oldLength = string.length; // eslint-disable-next-line no-useless-escape
+
+    string = string.replace(/[^0-9\.]+/g, '');
+
+    if (oldLength > string.length) {
+      hadText = true;
+    }
+  }
+
+  for (var i = 0; i < string.length; i++) {
+    var n = charToNum$1(string[i]);
 
     if (n < 0 || n >= 2) {
       console.log('getIEEEFromString(expBitNum, str): Given string is not compatible with base 2.');
@@ -9948,13 +9975,23 @@ function getIEEEFromString(expBitNum, str) {
 
   var arr = [];
 
-  for (var _i2 = 0; _i2 < str.length; _i2++) {
-    if (str[_i2] === ' ') continue; // delete whitespace
+  for (var _i2 = 0; _i2 < string.length; _i2++) {
+    if (string[_i2] === ' ') continue; // delete whitespace
 
-    arr.push(charToNum$1(str[_i2]));
+    arr.push(charToNum$1(string[_i2]));
   }
 
-  return new NumberIEEE(expBitNum, arr.length - expBitNum - 1, arr);
+  var number = new NumberIEEE(expBitNum, arr.length - expBitNum - 1, arr);
+
+  if (hadText && inf) {
+    number.isInfinity = true;
+  } else if (hadText && nan) {
+    number.isNaN = true;
+  } else if (hadText && zero) {
+    number.isZero = true;
+  }
+
+  return number;
 }
 
 var AdditionIEEE = /*#__PURE__*/function () {
