@@ -95,6 +95,7 @@ export const i18n = new VueI18n({
       considerExponent: 'Exponent beachten',
       // mantissa
       mantissa: 'Mantisse',
+      solutionIsNan: 'Die Mantisse muss nicht berechnet werden, da das Ergebnis sicher NaN ist.',
       mulMantissa: 'Die Mantissen beider Zahlen müssen multipliziert werden.',
       addMantissa: 'Die Mantissen beider Zahlen müssen addiert werden.',
       divMantissa: 'Die Mantissen beider Zahlen müssen dividiert werden.',
@@ -206,6 +207,7 @@ export const i18n = new VueI18n({
       // mantissa
       mantissa: 'mantissa',
       mulMantissa: 'The mantissa of both numbers must be multiplied.',
+      solutionIsNan: 'The mantissa can not be calculated because the input leads to NaN.',
       addMantissa: 'The mantissa of both numbers must be added.',
       divMantissa: 'The mantissa of both numbers must be divided.',
       newMantissa: 'new mantissa',
@@ -317,6 +319,7 @@ export const i18n = new VueI18n({
       // mantissa
       mantissa: 'mantissa',
       mulMantissa: 'The mantissa of both numbers must be multiplied.',
+      solutionIsNan: 'The mantissa can not be calculated because the input leads to NaN.',
       addMantissa: 'The mantissa of both numbers must be added.',
       divMantissa: 'The mantissa of both numbers must be divided.',
       newMantissa: 'new mantissa',
@@ -428,6 +431,7 @@ export const i18n = new VueI18n({
       // mantissa
       mantissa: 'mantissa',
       mulMantissa: 'The mantissa of both numbers must be multiplied.',
+      solutionIsNan: 'The mantissa can not be calculated because the input leads to NaN.',
       addMantissa: 'The mantissa of both numbers must be added.',
       divMantissa: 'The mantissa of both numbers must be divided.',
       newMantissa: 'new mantissa',
@@ -539,6 +543,7 @@ export const i18n = new VueI18n({
       // mantissa
       mantissa: 'mantissa',
       mulMantissa: 'The mantissa of both numbers must be multiplied.',
+      solutionIsNan: 'The mantissa can not be calculated because the input leads to NaN.',
       addMantissa: 'The mantissa of both numbers must be added.',
       divMantissa: 'The mantissa of both numbers must be divided.',
       newMantissa: 'new mantissa',
