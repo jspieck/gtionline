@@ -9528,6 +9528,10 @@ var DivisionBaseNSigned = /*#__PURE__*/function () {
       var countSteps = 0; // binary division related to long division in binary
 
       while (i <= this.manBitNum * 2 && remain) {
+        if (op1arr.length > op2arr.length) {
+          op2arr = op2arr.concat(Array(op1arr.length - op2arr.length).fill(0, 0)); // Pad right
+        }
+
         var op1 = new NumberBaseNComplement(n1.base, op1arr.length, op1arr, offset, false);
         var op2 = new NumberBaseNComplement(n2.base, op2arr.length, op2arr, offset, true);
         var operation = new AdditionBaseNComplement(op1, op2);
