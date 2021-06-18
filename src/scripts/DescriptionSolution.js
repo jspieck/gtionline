@@ -293,8 +293,10 @@ export class DescriptionSolution {
         if (!isZero) {
           stepsToAdd = n1Arr;
         }
-        stepsToAdd = stepsToAdd.concat(Array(stepLength - stepsToAdd.length)
-          .fill(0, 0)); // Pad right
+        if (stepLength - stepsToAdd.length > 0) {
+          stepsToAdd = stepsToAdd.concat(Array(stepLength - stepsToAdd.length)
+            .fill(0, 0)); // Pad right
+        }
         for (let j = 0; j < i; j += 1) {
           rows[rows.length - 1] += '&';
         }
@@ -349,7 +351,7 @@ export class DescriptionSolution {
         '\\end{array}',
       ].join('');
     } else {
-      this.table = `${this.imp.$t('solutionIsNan')}`;
+      this.table = `\\text{${this.imp.$t('solutionIsNan')}}`;
     }
   }
   /* eslint-enable */
