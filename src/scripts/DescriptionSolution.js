@@ -1060,35 +1060,53 @@ export class DescriptionSolution {
           '\\) )',
         ].join(''),
       });
-      if (!watcher.steps.Division.data.equalMantissa) { // case not equal mantissa
-        this.getDivisionTable();
+      if (!watcher.steps.Result.data.result.isNaN) {
+        if (!watcher.steps.Division.data.equalMantissa) { // case not equal mantissa
+          this.getDivisionTable();
+          this.result.push({
+            name: `${this.imp.$t('step')} 2`,
+            text: `${this.imp.$t('divMantissa')}`,
+            subpanels: [
+              {
+                name: `${this.imp.$t('doDivision')}`,
+                text: `\\(${this.table}\\)`,
+              },
+              {
+                name: `${this.imp.$t('considerRepresentation')}`,
+                text: `${this.imp.$t('consider1comma')}`,
+              },
+              {
+                name: `${this.imp.$t('newMantissa')}`,
+                text: `${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('')
+                  .substring(1)}`,
+              },
+            ],
+          });
+        } else { // case equal mantissa
+          this.result.push({
+            name: `${this.imp.$t('step')} 2`,
+            text: `${this.imp.$t('divMantissa')}`,
+            subpanels: [
+              {
+                name: `${this.imp.$t('doDivision')}`,
+                text: `${this.imp.$t('equalMantissaDiv')}`,
+              },
+              {
+                name: `${this.imp.$t('newMantissa')}`,
+                text: `${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('')
+                  .substring(1)}`,
+              },
+            ],
+          });
+        }
+      } else {
         this.result.push({
           name: `${this.imp.$t('step')} 2`,
           text: `${this.imp.$t('divMantissa')}`,
           subpanels: [
             {
               name: `${this.imp.$t('doDivision')}`,
-              text: `\\(${this.table}\\)`,
-            },
-            {
-              name: `${this.imp.$t('considerRepresentation')}`,
-              text: `${this.imp.$t('consider1comma')}`,
-            },
-            {
-              name: `${this.imp.$t('newMantissa')}`,
-              text: `${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('')
-                .substring(1)}`,
-            },
-          ],
-        });
-      } else { // case equal mantissa
-        this.result.push({
-          name: `${this.imp.$t('step')} 2`,
-          text: `${this.imp.$t('divMantissa')}`,
-          subpanels: [
-            {
-              name: `${this.imp.$t('doDivision')}`,
-              text: `${this.imp.$t('equalMantissaDiv')}`,
+              text: `${this.imp.$t('solutionIsNan')}`,
             },
             {
               name: `${this.imp.$t('newMantissa')}`,
