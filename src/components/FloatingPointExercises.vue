@@ -147,7 +147,6 @@ export default {
       this.selectedFormat[num] = val;
       const nnum = num > 2 ? 1 : 0;
       this.checkAndConvertFormat(nnum);
-      console.log(val);
     },
     selectOp(num, val) {
       this.selectedFormat[num] = val;

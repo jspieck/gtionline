@@ -75,7 +75,6 @@ export default {
   },
   methods: {
     chooseLang(lang) {
-      console.log(lang.name);
       this.$i18n.locale = lang.name;
     },
   },
