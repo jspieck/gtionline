@@ -444,11 +444,6 @@ export class PdfDescription {
           '</li></ul>',
         ].join('');
         latex += '</div>';
-
-        if (watcher.steps.AddMantissa.data.sign1 === 1
-          && watcher.steps.AddMantissa.data.sign2 === 1) {
-          latex += '<div id="page-break"></div>';
-        }
       } else { // case: equal mantissa
         actStep += 1;
         latex += `<div id="header2">${this.imp.$t('step')} ${actStep} </div>`;
@@ -472,6 +467,9 @@ export class PdfDescription {
       }
     }
     actStep += 1;
+    if (actStep === 4) {
+      latex += '<div id="page-break"></div>';
+    }
     latex += `<div id="header2">${this.imp.$t('step')} ${actStep} </div>`;
     latex += '<ul>';
     latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
@@ -658,6 +656,10 @@ export class PdfDescription {
         ')',
       ].join('');
       latex += '</ul>';
+      const steps = watcher.steps.Division.data.division.steps.DivisionSteps.data.countSteps;
+      if (steps > 14) {
+        latex += '<div id="page-break"></div>';
+      }
       latex += `<div id="header2">${this.imp.$t('step')} 2 </div>`;
       latex += '<ul>';
       latex += `<li><div id="header3">${this.imp.$t('division')} ${this.imp.$t('mantissa')} :</div></li>`;
@@ -675,8 +677,7 @@ export class PdfDescription {
         '</li></ul>',
       ].join('');
       latex += '</div>';
-      const steps = watcher.steps.Division.data.division.steps.DivisionSteps.data.countSteps;
-      if (steps > 17) {
+      if ((steps <= 14) && (steps > 6)) {
         latex += '<div id="page-break"></div>';
       }
       latex += `<div id="header2">${this.imp.$t('step')} 3 </div>`;

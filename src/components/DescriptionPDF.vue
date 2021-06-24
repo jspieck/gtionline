@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div style="display: flex; margin-bottom: 20px; margin-top: 0">
-      <div style="flex: 50%;">
-        <img :src="codesign_logo" alt="CODESIGN_LOGO" style="width: 35%">
+    <div style="display: flex; margin-bottom: 40px; margin-top: 0">
+      <div style="flex: 50%; padding: 15px;">
+        <img :src="codesign_logo" alt="CODESIGN_LOGO" style="width: 50%">
       </div>
-      <div style="flex: 50%;">
-        <img :src="fau_logo" alt="FAU_Logo" style="width: 35%">
+      <div style="flex: 50%; padding: 15px;">
+        <img :src="fau_logo" alt="FAU_Logo" style="width: 50%">
       </div>
     </div>
     <div id="equation" ref="equation" v-html="math"></div>
@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import { faulogo } from '../assets/FAU_logo.png';
-import { codesignlogo } from '../assets/codesign.png';
+import faulogo from '../assets/FAU_logo.png';
+import codesignlogo from '../assets/codesign.png';
 
 export default {
   name: 'DescriptionPDF',
@@ -38,7 +38,9 @@ export default {
   },
   updated() {
     this.$nextTick(() => {
-      window.print();
+      setTimeout(() => {
+        window.print();
+      }, 250);
     });
   },
   methods: {
