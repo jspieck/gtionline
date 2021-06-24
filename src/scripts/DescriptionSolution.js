@@ -816,48 +816,12 @@ export class DescriptionSolution {
             },
           ],
         });
-        const converter = new convertFormat.FormatConversions(
-          this.exponentBits,
-          this.numBits,
-        );
-        converter.ieeeToDec([
-          addWatcher.steps.Result.data.result.sign, ' ',
-          addWatcher.steps.Result.data.result.exponentBits.join(''),
-          addWatcher.steps.Result.data.result.mantissaBits.join('')
-            .substring(1),
-        ].join(''));
-        const decSol = converter.result;
-        this.result.push({
-          name: this.imp.$t('solution'),
-          text: [
-            `${this.imp.$t('correctSolution')}: `,
-            addWatcher.steps.Result.data.result.sign, ' ',
-            addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
-            addWatcher.steps.Result.data.result.mantissaBits.join('')
-              .substring(1), ' ',
-            '\\( \\implies \\)',
-            ` ${this.imp.$t('decimal')}: ${decSol}`,
-          ].join(''),
-          subpanels: [
-            {
-              name: `${this.imp.$t('sign')}: `,
-              text: addWatcher.steps.Result.data.result.sign,
-            },
-            {
-              name: `${this.imp.$t('exponent')}: `,
-              text: addWatcher.steps.Result.data.result.exponentBits.join(''),
-            },
-            {
-              name: `${this.imp.$t('mantissa')}: `,
-              text: addWatcher.steps.Result.data.result.mantissaBits.join(''),
-            },
-          ],
-        });
       } else { // case: equal mantissa
+        actStep += 1;
         this.result.push({
-          name: `${this.imp.$t('step')} 2`,
+          name: `${this.imp.$t('step')} ${actStep}`,
           text: [
-            'Die Mantissen beider Zahlen müssen addiert werden.',
+            `${this.imp.$t('subtraction')} ${this.imp.$t('mantissa')}`,
           ].join(''),
           subpanels: [
             {
@@ -877,6 +841,43 @@ export class DescriptionSolution {
           ],
         });
       }
+      const converter = new convertFormat.FormatConversions(
+        this.exponentBits,
+        this.numBits,
+      );
+      converter.ieeeToDec([
+        addWatcher.steps.Result.data.result.sign, ' ',
+        addWatcher.steps.Result.data.result.exponentBits.join(''),
+        addWatcher.steps.Result.data.result.mantissaBits.join('')
+          .substring(1),
+      ].join(''));
+      const decSol = converter.result;
+      this.result.push({
+        name: this.imp.$t('solution'),
+        text: [
+          `${this.imp.$t('correctSolution')}: `,
+          addWatcher.steps.Result.data.result.sign, ' ',
+          addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
+          addWatcher.steps.Result.data.result.mantissaBits.join('')
+            .substring(1), ' ',
+          '\\( \\implies \\)',
+          ` ${this.imp.$t('decimal')}: ${decSol}`,
+        ].join(''),
+        subpanels: [
+          {
+            name: `${this.imp.$t('sign')}: `,
+            text: addWatcher.steps.Result.data.result.sign,
+          },
+          {
+            name: `${this.imp.$t('exponent')}: `,
+            text: addWatcher.steps.Result.data.result.exponentBits.join(''),
+          },
+          {
+            name: `${this.imp.$t('mantissa')}: `,
+            text: addWatcher.steps.Result.data.result.mantissaBits.join(''),
+          },
+        ],
+      });
     }
   }
 
@@ -1175,7 +1176,16 @@ export class DescriptionSolution {
 
         case 'sub':
           if (y2.sign === 0) {
-            this.subtractionDescription(solution, y1, y2);
+            if (y1.sign === 1) {
+              this.negativeMinuendSubtrahend = true;
+              y1.sign = 0;
+              y1.arr[0] = 0;
+              y2.sign = 0;
+              y2.arr[0] = 0;
+              this.additionDescription(solution, y1, y2);
+            } else {
+              this.subtractionDescription(solution, y1, y2);
+            }
           } else if (y1.sign === 1 && y2.sign === 1) {
             this.subtractionDescription(solution, y1, y2);
           } else {

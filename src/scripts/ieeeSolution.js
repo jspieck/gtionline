@@ -66,10 +66,19 @@ export class IEEESolution {
           if (y2.sign === 0) {
             if (y1.sign === 1) {
               this.negativeMinuendSubtrahend = true;
+              y1.sign = 0;
+              y1.arr[0] = 0;
+              y2.sign = 0;
+              y2.arr[0] = 0;
+              result = new tool.AdditionIEEE(y1, y2);
+              this.resultObject = result.watcher.steps.Result.data.result;
+              this.resultObject.sign = 1;
+              this.resultObject.arr[0] = 0;
+            } else {
+              result = new tool.SubtractionIEEE(y1, y2);
+              // eslint-disable-next-line max-len
+              this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
             }
-            result = new tool.SubtractionIEEE(y1, y2);
-            // eslint-disable-next-line max-len
-            this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
           } else if (y1.sign === 1 && y2.sign === 1) {
             this.negativeSubtrahend = true;
             result = new tool.SubtractionIEEE(y1, y2);

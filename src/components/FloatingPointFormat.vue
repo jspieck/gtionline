@@ -339,7 +339,14 @@ export default {
         this.numBits,
         this.watcher,
       );
-      descr.generatePdf(this.nums[0], this.nums[1], this.solution, this.selectedFormat[2]);
+      descr.generatePdf(
+        this.nums[0],
+        this.nums[1],
+        this.solution,
+        this.selectedFormat[2],
+        'ieee',
+        'ieee',
+      );
     },
     convertFormat(num) {
       const firstFormat = this.selectedFormat[num * 3];
