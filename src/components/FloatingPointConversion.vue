@@ -63,7 +63,14 @@
       <div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
       </div>
-    </div>
+    </div><div id="solution">
+    <Accordion :solutionDescription="solDescr">
+      <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
+        {{panel.text}}
+        <span v-if="index === solDescr.length - 1">{{solution}}</span>
+      </p>
+    </Accordion>
+  </div>
   </div>
 </template>
 
@@ -72,9 +79,14 @@
 import { getIEEEFromString } from '@/scripts/gti-tools';
 import * as checker from '../scripts/checkSolution';
 import * as convertFormat from '../scripts/formatConversions';
+import * as description from '../scripts/DescriptionSolution';
+import SolutionAccordion from './SolutionAccordion.vue';
 
 export default {
   name: 'FloatingPointConversion',
+  components: {
+    Accordion: SolutionAccordion,
+  },
   data() {
     return {
       selectedFormat: '',
@@ -82,6 +94,7 @@ export default {
       solution: '',
       generated: false,
       solutionObject: '',
+      solutionSteps: [],
       exponentBits: 5,
       numBits: 16,
       falseFormatOutput: 'Falsches Format!',
@@ -98,12 +111,8 @@ export default {
     };
   },
   computed: {
-    bitrangeOptions() {
-      return {
-        eight: '8 bit',
-        sixteen: '16 bit',
-        thirtytwo: '32 bit',
-      };
+    solDescr() {
+      return this.solutionSteps;
     },
   },
   mounted() {
@@ -133,6 +142,9 @@ export default {
           window.MathJax.typeset();
         }
       });
+      const descr = new description.DescriptionSolution(this, this.exponentBits, this.numBits, '');
+      descr.makeDescriptionConversion(this.solutionObject);
+      this.solutionSteps = descr.result;
     },
     generateExercise() {
       let number = (Math.floor(Math.random() * 100) + Math.random()).toFixed(4);

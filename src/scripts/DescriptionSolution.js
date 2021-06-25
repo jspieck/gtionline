@@ -1270,6 +1270,28 @@ export class DescriptionSolution {
 
   // eslint-disable-next-line no-unused-vars
   makeDescriptionConversion(solution) {
-    this.result = null;
+    this.result.push({
+      name: this.imp.$t('solution'),
+      text: [
+        `${this.imp.$t('correctSolution')}: `,
+        solution.sign, ' ',
+        solution.exponentBits.join(''), ' ',
+        solution.mantissaBits.join('').substring(1), ' ',
+      ].join(''),
+      subpanels: [
+        {
+          name: `${this.imp.$t('sign')}: `,
+          text: solution.sign,
+        },
+        {
+          name: `${this.imp.$t('exponent')}: `,
+          text: solution.exponentBits.join(''),
+        },
+        {
+          name: `${this.imp.$t('mantissa')}: `,
+          text: solution.mantissaBits.join(''),
+        },
+      ],
+    });
   }
 }
