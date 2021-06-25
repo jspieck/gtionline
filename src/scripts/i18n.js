@@ -46,6 +46,8 @@ export const i18n = new VueI18n({
       // neu
       // general
       conversion: 'Konvertierung',
+      conversionExercise1: 'Konvertiere: ',
+      conversionExercise2: 'in eine IEEE-Flieskommazahl einer Exponenten-Länge von: ',
       steps: 'Schritte',
       repeatMinuend: 'wiederhole\\ Minuend',
       doDivision: 'Divison durchführen',
@@ -161,7 +163,9 @@ export const i18n = new VueI18n({
       values: 'Values',
       // TODO: Übersetzen
       // general
-      conversion: 'conversion',
+      conversion: 'Conversion',
+      conversionExercise1: 'Convert: ',
+      conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
       steps: 'steps',
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
@@ -275,7 +279,9 @@ export const i18n = new VueI18n({
       values: 'Valeurs',
       // TODO: Übersetzen
       // general
-      conversion: 'conversion',
+      conversion: 'Conversion',
+      conversionExercise1: 'Convert: ',
+      conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
       steps: 'steps',
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
@@ -390,7 +396,9 @@ export const i18n = new VueI18n({
       values: 'valore',
       // TODO: Übersetzen
       // general
-      conversion: 'conversion',
+      conversion: 'Conversion',
+      conversionExercise1: 'Convert: ',
+      conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
       steps: 'steps',
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
@@ -505,7 +513,9 @@ export const i18n = new VueI18n({
       values: 'valōrēs',
       // TODO: Übersetzen
       // general
-      conversion: 'conversion',
+      conversion: 'Conversion',
+      conversionExercise1: 'Convert: ',
+      conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
       steps: 'steps',
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',

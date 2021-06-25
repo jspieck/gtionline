@@ -42,16 +42,16 @@ export default {
     tabs() {
       return [
         {
+          title: this.$t('conversion'),
+          value: 'convert',
+        },
+        {
           title: this.$t('exercises'),
           value: 'exercises',
         },
         {
           title: this.$t('freeCalculation'),
           value: 'free',
-        },
-        {
-          title: this.$t('conversion'),
-          value: 'convert',
         },
       ];
     },

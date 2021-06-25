@@ -1,5 +1,37 @@
 <template>
   <div class="fp-exercise">
+    <h4>{{$t('fpformat')}}</h4>
+    <div class="formatContainer" v-on:mousemove="sliderMouseMove">
+      <div class="sign">VB</div>
+      <div class="exponent" :style="{ width:
+        (60 + this.exponentBits * (this.containerWidth / (this.numBits - 1)))+ 'px' }">
+        <div v-on:click="expandFraction" class="expandExponent">
+          <div class="arrowLeft">
+            <div class='arrowMask'></div>
+          </div>
+        </div>
+        E({{exponentBits}})
+        <div v-on:mousedown="sliderMouseDown" class="slider"/>
+      </div>
+      <div class="fraction" :style="{ width: (60 + (this.numBits - this.exponentBits - 1) *
+        (this.containerWidth / (this.numBits - 1))) + 'px' }">
+        <div v-on:click="expandExponent" class="expandFraction">
+          <div class="arrowRight">
+            <div class="arrowMask"></div>
+          </div>
+        </div>
+        M({{(numBits - exponentBits - 1)}})
+      </div>
+    </div>
+    <div class="mobile_formatContainer" v-on:mousemove="sliderMouseMove">
+      <div class="mobile_sign">Sign(1)</div>
+      <div v-on:click="expandExponent" class="mobile_exponent">
+        Exponent({{exponentBits}}) &uarr;
+      </div>
+      <div v-on:click="expandFraction" class="mobile_fraction">
+        Mantisse({{(numBits - exponentBits - 1)}}) &darr;
+      </div>
+    </div>
     <h4>{{$t('generateEx')}}</h4>
     <div class="divMargin"/>
     <button v-on:click="generateExercise">{{$t('generate')}}</button>
@@ -45,8 +77,10 @@ export default {
   name: 'FloatingPointConversion',
   data() {
     return {
+      selectedFormat: '',
       mouseDown: false,
       solution: '',
+      generated: false,
       solutionObject: '',
       exponentBits: 5,
       numBits: 16,
@@ -60,6 +94,7 @@ export default {
       backE: '',
       propM: '',
       backM: '',
+      fp1: 0,
     };
   },
   computed: {
@@ -85,22 +120,29 @@ export default {
     });
   },
   methods: {
-    generateExercise() {
-      let number = (Math.floor(Math.random() * 100) + Math.random()).toFixed(4);
-      if (Math.random() < 0.5) {
-        number *= -1;
-      }
+    recalculate() {
       const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
-      converter.decToBin(number.toString());
+      converter.decToBin(this.fp1.toString());
       converter.binToIEEE(converter.result);
       this.solutionObject = getIEEEFromString(this.exponentBits, converter.result);
-      this.fp1 = number;
-      this.exerciseText = `\\( fp= \\text{${this.fp1}} \\)`;
+    },
+    drawExercise() {
+      this.exerciseText = `${this.$t('conversionExercise1')} \\( fp= \\text{${this.fp1}} \\) ${this.$t('conversionExercise2')} ${this.exponentBits}`;
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();
         }
       });
+    },
+    generateExercise() {
+      let number = (Math.floor(Math.random() * 100) + Math.random()).toFixed(4);
+      if (Math.random() < 0.5) {
+        number *= -1;
+      }
+      this.fp1 = number;
+      this.generated = true;
+      this.recalculate();
+      this.drawExercise();
     },
     checkSolution() {
       const checkSolution = new checker.CheckSolution(this.exponentBits);
@@ -167,11 +209,17 @@ export default {
     },
     expandFraction() {
       this.exponentBits -= 1;
-      this.recalculate();
+      if (this.generated) {
+        this.recalculate();
+        this.drawExercise();
+      }
     },
     expandExponent() {
       this.exponentBits += 1;
-      this.recalculate();
+      if (this.generated) {
+        this.recalculate();
+        this.drawExercise();
+      }
     },
   },
 };
