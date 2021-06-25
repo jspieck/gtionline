@@ -158,7 +158,6 @@ export default {
       this.watcher = watcher;
       this.solution = ieeeSolution.result;
       this.solutionObject = ieeeSolution.resultObject;
-
       const descr = new description.DescriptionSolution(
         this,
         this.exponentBits,

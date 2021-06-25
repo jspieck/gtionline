@@ -10039,7 +10039,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
         // Return n1
         var _result2 = new NumberIEEE(expBitNum, manBitNum, _toConsumableArray(n1.arr));
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'n2zero');
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'none');
         this.watcher = this.watcher.step('Result').saveVariable('result', _result2);
         return _result2;
       }

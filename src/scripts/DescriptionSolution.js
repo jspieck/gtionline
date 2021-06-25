@@ -126,7 +126,7 @@ export class DescriptionSolution {
         watcher.steps.Result.data.result.sign, ' ',
         watcher.steps.Result.data.result.exponentBits.join(''),
         watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-      ].join(''));
+      ].join(''), watcher.steps.ResultEdgecase.data.edgecase);
       const decSol = converter.result;
       this.result.push({
         name: this.imp.$t('solution'),
@@ -189,7 +189,7 @@ export class DescriptionSolution {
         watcher.steps.Result.data.result.sign, ' ',
         watcher.steps.Result.data.result.exponentBits.join(''),
         watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-      ].join(''));
+      ].join(''), watcher.steps.ResultEdgecase.data.edgecase);
       const decSol = converter.result;
       this.result.push({
         name: this.imp.$t('solution'),
@@ -300,7 +300,7 @@ export class DescriptionSolution {
         this.watcher.steps.Result.data.result.sign, ' ',
         this.watcher.steps.Result.data.result.exponentBits.join(''),
         this.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-      ].join(''));
+      ].join(''), this.watcher.steps.ResultEdgecase.data.edgecase);
       const decSol = converter.result;
       this.result.push({
         name: this.imp.$t('solution'),
@@ -538,7 +538,7 @@ export class DescriptionSolution {
       watcher.steps.Result.data.result.sign, ' ',
       watcher.steps.Result.data.result.exponentBits.join(''),
       watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-    ].join(''));
+    ].join(''), watcher.steps.ResultEdgecase.data.edgecase);
     const decSol = converter.result;
     this.result.push({
       name: this.imp.$t('solution'),
@@ -711,7 +711,7 @@ export class DescriptionSolution {
         addWatcher.steps.Result.data.result.sign, ' ',
         addWatcher.steps.Result.data.result.exponentBits.join(''),
         addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-      ].join(''));
+      ].join(''), addWatcher.steps.ResultEdgecase.data.edgecase);
       const decSol = converter.result;
       this.result.push({
         name: this.imp.$t('solution'),
@@ -774,7 +774,7 @@ export class DescriptionSolution {
         addWatcher.steps.Result.data.result.sign, ' ',
         addWatcher.steps.Result.data.result.exponentBits.join(''),
         addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-      ].join(''));
+      ].join(''), addWatcher.steps.ResultEdgecase.data.edgecase);
       const decSol = converter.result;
       this.result.push({
         name: this.imp.$t('solution'),
@@ -1011,7 +1011,7 @@ export class DescriptionSolution {
         addWatcher.steps.Result.data.result.exponentBits.join(''),
         addWatcher.steps.Result.data.result.mantissaBits.join('')
           .substring(1),
-      ].join(''));
+      ].join(''), addWatcher.steps.ResultEdgecase.data.edgecase);
       const decSol = converter.result;
       this.result.push({
         name: this.imp.$t('solution'),
@@ -1284,7 +1284,7 @@ export class DescriptionSolution {
       watcher.steps.Result.data.result.sign, ' ',
       watcher.steps.Result.data.result.exponentBits.join(''),
       watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-    ].join(''));
+    ].join(''), watcher.steps.ResultEdgecase.data.edgecase);
     const decSol = converter.result;
     this.result.push({
       name: this.imp.$t('solution'),

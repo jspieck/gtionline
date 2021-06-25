@@ -103,7 +103,25 @@ export class FormatConversions {
     this.result = `${sign}${preDecimal},${decimal}`;
   }
 
-  ieeeToDec(num) {
+  ieeeToDec(num, edgecase = '') {
+    if ((edgecase !== '') && (edgecase !== 'none')) {
+      switch (edgecase) {
+        case 'zero':
+          this.result = '0.0';
+          return;
+        case 'nan':
+          this.result = 'NaN';
+          return;
+        case 'inf':
+          if (num[0] === 0) {
+            this.result = 'Inf';
+          } else {
+            this.result = '-Inf';
+          }
+          return;
+        default:
+      }
+    }
     this.result = '';
     const ieeeWithoutSpace = num.replace(/\s/g, '');
     // get zero
@@ -128,28 +146,6 @@ export class FormatConversions {
     }
     if (isNan) {
       this.result = 'NaN';
-      return;
-    }
-    // get inf
-    let isInf = true;
-    for (const c of ieeeWithoutSpace.slice(1, this.exponentBits + 1)) {
-      if (c !== '1') {
-        isInf = false;
-        break;
-      }
-    }
-    for (const c of ieeeWithoutSpace.slice(this.exponentBits + 1, ieeeWithoutSpace.length)) {
-      if (c !== '0') {
-        isInf = false;
-        break;
-      }
-    }
-    if (isInf) {
-      if (ieeeWithoutSpace[0] === 0) {
-        this.result = 'Inf';
-      } else {
-        this.result = '-Inf';
-      }
       return;
     }
     if (ieeeWithoutSpace.length !== this.numBits) {
