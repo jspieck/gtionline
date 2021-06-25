@@ -38,7 +38,6 @@
 <script>
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
 import { getIEEEFromString } from '@/scripts/gti-tools';
-import * as randomIEEE from '../scripts/randomIEEE';
 import * as checker from '../scripts/checkSolution';
 import * as convertFormat from '../scripts/formatConversions';
 
@@ -87,12 +86,15 @@ export default {
   },
   methods: {
     generateExercise() {
-      const random = new randomIEEE.RandomIEEE(this.exponentBits, this.numBits);
-      random.generateRandomIEEE();
-      this.solutionObject = getIEEEFromString(this.exponentBits, random.result);
+      let number = (Math.floor(Math.random() * 100) + Math.random()).toFixed(4);
+      if (Math.random() < 0.5) {
+        number *= -1;
+      }
       const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
-      converter.ieeeToDec(random.result);
-      this.fp1 = converter.result;
+      converter.decToBin(number.toString());
+      converter.binToIEEE(converter.result);
+      this.solutionObject = getIEEEFromString(this.exponentBits, converter.result);
+      this.fp1 = number;
       this.exerciseText = `\\( fp= \\text{${this.fp1}} \\)`;
       this.$nextTick(() => {
         if (window.MathJax) {
