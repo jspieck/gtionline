@@ -658,6 +658,14 @@ export class DescriptionSolution {
             ].join(''),
           });
           break;
+        case 'zero':
+          this.result.push({
+            name: `${this.imp.$t('step')} ${actStep}`,
+            text: [
+              `${this.imp.$t('solutionIsZero')}`,
+            ].join(''),
+          });
+          break;
         default:
       }
       const converter = new convertFormat.FormatConversions(
