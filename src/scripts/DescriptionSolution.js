@@ -118,6 +118,104 @@ export class DescriptionSolution {
           `${this.imp.$t('addWithZero')}`,
         ].join(''),
       });
+      const converter = new convertFormat.FormatConversions(
+        this.exponentBits,
+        this.numBits,
+      );
+      converter.ieeeToDec([
+        watcher.steps.Result.data.result.sign, ' ',
+        watcher.steps.Result.data.result.exponentBits.join(''),
+        watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+      ].join(''));
+      const decSol = converter.result;
+      this.result.push({
+        name: this.imp.$t('solution'),
+        text: [
+          `${this.imp.$t('correctSolution')}: `,
+          watcher.steps.Result.data.result.sign, ' ',
+          watcher.steps.Result.data.result.exponentBits.join(''), ' ',
+          watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
+          '\\( \\implies \\)',
+          ` ${this.imp.$t('decimal')}: ${decSol}`,
+        ].join(''),
+        subpanels: [
+          {
+            name: `${this.imp.$t('sign')}: `,
+            text: watcher.steps.Result.data.result.sign,
+          },
+          {
+            name: `${this.imp.$t('exponent')}: `,
+            text: watcher.steps.Result.data.result.exponentBits.join(''),
+          },
+          {
+            name: `${this.imp.$t('mantissa')}: `,
+            text: watcher.steps.Result.data.result.mantissaBits.join(''),
+          },
+        ],
+      });
+    } else if (watcher.steps.ResultEdgecase.data.edgecase !== 'none') { // case: edgecase
+      switch (watcher.steps.ResultEdgecase.data.edgecase) {
+        case 'nan':
+          this.result.push({
+            name: `${this.imp.$t('step')} 2`,
+            text: [
+              `${this.imp.$t('solutionIsNan')}`,
+            ].join(''),
+          });
+          break;
+        case 'inf':
+          this.result.push({
+            name: `${this.imp.$t('step')} 2`,
+            text: [
+              `${this.imp.$t('solutionIsInf')}`,
+            ].join(''),
+          });
+          break;
+        case 'zero':
+          this.result.push({
+            name: `${this.imp.$t('step')} 2`,
+            text: [
+              `${this.imp.$t('solutionIsZero')}`,
+            ].join(''),
+          });
+          break;
+        default:
+      }
+      const converter = new convertFormat.FormatConversions(
+        this.exponentBits,
+        this.numBits,
+      );
+      converter.ieeeToDec([
+        watcher.steps.Result.data.result.sign, ' ',
+        watcher.steps.Result.data.result.exponentBits.join(''),
+        watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+      ].join(''));
+      const decSol = converter.result;
+      this.result.push({
+        name: this.imp.$t('solution'),
+        text: [
+          `${this.imp.$t('correctSolution')}: `,
+          watcher.steps.Result.data.result.sign, ' ',
+          watcher.steps.Result.data.result.exponentBits.join(''), ' ',
+          watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
+          '\\( \\implies \\)',
+          ` ${this.imp.$t('decimal')}: ${decSol}`,
+        ].join(''),
+        subpanels: [
+          {
+            name: `${this.imp.$t('sign')}: `,
+            text: watcher.steps.Result.data.result.sign,
+          },
+          {
+            name: `${this.imp.$t('exponent')}: `,
+            text: watcher.steps.Result.data.result.exponentBits.join(''),
+          },
+          {
+            name: `${this.imp.$t('mantissa')}: `,
+            text: watcher.steps.Result.data.result.mantissaBits.join(''),
+          },
+        ],
+      });
     } else {
       if (watcher.steps.CalculateDeltaE.data.deltaE === 0) {
         this.result.push({
@@ -197,39 +295,39 @@ export class DescriptionSolution {
           ],
         });
       }
-    }
-    const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
-    converter.ieeeToDec([
-      this.watcher.steps.Result.data.result.sign, ' ',
-      this.watcher.steps.Result.data.result.exponentBits.join(''),
-      this.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-    ].join(''));
-    const decSol = converter.result;
-    this.result.push({
-      name: this.imp.$t('solution'),
-      text: [
-        `${this.imp.$t('correctSolution')}: `,
+      const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
+      converter.ieeeToDec([
         this.watcher.steps.Result.data.result.sign, ' ',
-        this.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
-        this.watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
-        '\\( \\implies \\)',
-        ` ${this.imp.$t('decimal')}: ${decSol}`,
-      ].join(''),
-      subpanels: [
-        {
-          name: `${this.imp.$t('sign')}: `,
-          text: this.watcher.steps.Result.data.result.sign,
-        },
-        {
-          name: `${this.imp.$t('exponent')}: `,
-          text: this.watcher.steps.Result.data.result.exponentBits.join(''),
-        },
-        {
-          name: `${this.imp.$t('mantissa')}: `,
-          text: this.watcher.steps.Result.data.result.mantissaBits.join(''),
-        },
-      ],
-    });
+        this.watcher.steps.Result.data.result.exponentBits.join(''),
+        this.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+      ].join(''));
+      const decSol = converter.result;
+      this.result.push({
+        name: this.imp.$t('solution'),
+        text: [
+          `${this.imp.$t('correctSolution')}: `,
+          this.watcher.steps.Result.data.result.sign, ' ',
+          this.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
+          this.watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
+          '\\( \\implies \\)',
+          ` ${this.imp.$t('decimal')}: ${decSol}`,
+        ].join(''),
+        subpanels: [
+          {
+            name: `${this.imp.$t('sign')}: `,
+            text: this.watcher.steps.Result.data.result.sign,
+          },
+          {
+            name: `${this.imp.$t('exponent')}: `,
+            text: this.watcher.steps.Result.data.result.exponentBits.join(''),
+          },
+          {
+            name: `${this.imp.$t('mantissa')}: `,
+            text: this.watcher.steps.Result.data.result.mantissaBits.join(''),
+          },
+        ],
+      });
+    }
   }
 
   // =========================================================================================

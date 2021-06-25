@@ -116,6 +116,41 @@ export class FormatConversions {
     }
     if (isZero) {
       this.result = 0.0;
+      return;
+    }
+    // get nan
+    let isNan = true;
+    for (const c of ieeeWithoutSpace.substr(1)) {
+      if (c !== '1') {
+        isNan = false;
+        break;
+      }
+    }
+    if (isNan) {
+      this.result = 'NaN';
+      return;
+    }
+    // get inf
+    let isInf = true;
+    for (const c of ieeeWithoutSpace.slice(1, this.exponentBits + 1)) {
+      if (c !== '1') {
+        isInf = false;
+        break;
+      }
+    }
+    for (const c of ieeeWithoutSpace.slice(this.exponentBits + 1, ieeeWithoutSpace.length)) {
+      if (c !== '0') {
+        isInf = false;
+        break;
+      }
+    }
+    if (isInf) {
+      if (ieeeWithoutSpace[0] === 0) {
+        this.result = 'Inf';
+      } else {
+        this.result = '-Inf';
+      }
+      return;
     }
     if (ieeeWithoutSpace.length !== this.numBits) {
       this.result = 0;
