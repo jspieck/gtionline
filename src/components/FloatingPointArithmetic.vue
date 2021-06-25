@@ -11,6 +11,10 @@
     <h3 class="title">{{$t('freeCalculation')}}</h3>
     <fpf/>
   </div>
+  <div class="tab" v-if="currentTab === 'convert'">
+    <h3 class="title">{{$t('conversion')}}</h3>
+    <fpc/>
+  </div>
 </div>
 </template>
 
@@ -19,10 +23,12 @@
 import Tabs from 'vue-tabs-with-active-line';
 import FloatingPointFormat from './FloatingPointFormat.vue';
 import FloatingPointExercises from './FloatingPointExercises.vue';
+import FloatingPointConversion from './FloatingPointConversion.vue';
 
 export default {
   name: 'TinyTabs',
   components: {
+    fpc: FloatingPointConversion,
     fpe: FloatingPointExercises,
     fpf: FloatingPointFormat,
     tabs: Tabs,
@@ -42,6 +48,10 @@ export default {
         {
           title: this.$t('freeCalculation'),
           value: 'free',
+        },
+        {
+          title: this.$t('conversion'),
+          value: 'convert',
         },
       ];
     },

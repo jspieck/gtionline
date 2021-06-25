@@ -45,6 +45,7 @@ export const i18n = new VueI18n({
       values: 'Werte',
       // neu
       // general
+      conversion: 'Konvertierung',
       steps: 'Schritte',
       repeatMinuend: 'wiederhole\\ Minuend',
       doDivision: 'Divison durchführen',
@@ -158,6 +159,7 @@ export const i18n = new VueI18n({
       values: 'Values',
       // TODO: Übersetzen
       // general
+      conversion: 'conversion',
       steps: 'steps',
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
@@ -269,6 +271,7 @@ export const i18n = new VueI18n({
       values: 'Valeurs',
       // TODO: Übersetzen
       // general
+      conversion: 'conversion',
       steps: 'steps',
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
@@ -381,6 +384,7 @@ export const i18n = new VueI18n({
       values: 'valore',
       // TODO: Übersetzen
       // general
+      conversion: 'conversion',
       steps: 'steps',
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
@@ -493,6 +497,7 @@ export const i18n = new VueI18n({
       values: 'valōrēs',
       // TODO: Übersetzen
       // general
+      conversion: 'conversion',
       steps: 'steps',
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
