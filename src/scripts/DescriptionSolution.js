@@ -598,13 +598,68 @@ export class DescriptionSolution {
       ],
     });
     const addWatcher = watcher.steps.Addition.data.addition;
-    if (y1.isZero || y2.isZero) {
+    if (y1.isZero || y2.isZero) { // case: subtraction with zero
       this.result.push({
         name: `${this.imp.$t('step')} ${actStep}`,
         text: [
           `${this.imp.$t('subWithZero')}`,
         ].join(''),
       });
+      const converter = new convertFormat.FormatConversions(
+        this.exponentBits,
+        this.numBits,
+      );
+      converter.ieeeToDec([
+        addWatcher.steps.Result.data.result.sign, ' ',
+        addWatcher.steps.Result.data.result.exponentBits.join(''),
+        addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
+      ].join(''));
+      const decSol = converter.result;
+      this.result.push({
+        name: this.imp.$t('solution'),
+        text: [
+          `${this.imp.$t('correctSolution')}: `,
+          addWatcher.steps.Result.data.result.sign, ' ',
+          addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
+          addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
+          '\\( \\implies \\)',
+          ` ${this.imp.$t('decimal')}: ${decSol}`,
+        ].join(''),
+        subpanels: [
+          {
+            name: `${this.imp.$t('sign')}: `,
+            text: addWatcher.steps.Result.data.result.sign,
+          },
+          {
+            name: `${this.imp.$t('exponent')}: `,
+            text: addWatcher.steps.Result.data.result.exponentBits.join(''),
+          },
+          {
+            name: `${this.imp.$t('mantissa')}: `,
+            text: addWatcher.steps.Result.data.result.mantissaBits.join(''),
+          },
+        ],
+      });
+    } else if (addWatcher.steps.ResultEdgecase.data.edgecase !== 'none') { // case: edgecase
+      switch (addWatcher.steps.ResultEdgecase.data.edgecase) {
+        case 'nan':
+          this.result.push({
+            name: `${this.imp.$t('step')} ${actStep}`,
+            text: [
+              `${this.imp.$t('solutionIsNan')}`,
+            ].join(''),
+          });
+          break;
+        case 'inf':
+          this.result.push({
+            name: `${this.imp.$t('step')} ${actStep}`,
+            text: [
+              `${this.imp.$t('solutionIsInf')}`,
+            ].join(''),
+          });
+          break;
+        default:
+      }
       const converter = new convertFormat.FormatConversions(
         this.exponentBits,
         this.numBits,
@@ -1152,7 +1207,7 @@ export class DescriptionSolution {
     });
   }
 
-  makeDescription(num1, num2, solutionString, operator) {
+  makeDescriptionArithmetic(num1, num2, solutionString, operator) {
     if (num1 !== '' && num2 !== '' && num1 !== 'Falsches Format' && num2 !== 'Falsches Format') {
       const solution = tool.getIEEEFromString(this.exponentBits, solutionString);
       const y1 = tool.getIEEEFromString(this.exponentBits, num1);
@@ -1203,5 +1258,10 @@ export class DescriptionSolution {
     } else {
       this.result = null;
     }
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  makeDescriptionConversion(solution) {
+    this.result = null;
   }
 }

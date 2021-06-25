@@ -165,7 +165,7 @@ export default {
         this.numBits,
         watcher,
       );
-      descr.makeDescription(this.fp1, this.fp2, this.solution, this.selectedFormat[0]);
+      descr.makeDescriptionArithmetic(this.fp1, this.fp2, this.solution, this.selectedFormat[0]);
       this.solutionSteps = descr.result;
     },
   },

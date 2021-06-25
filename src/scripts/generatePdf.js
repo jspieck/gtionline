@@ -734,7 +734,7 @@ export class PdfDescription {
     this.getHeader(y2);
     this.getDisclaimer();
     this.getValues(y1, y2);
-    this.description.makeDescription(num1, num2, solutionString, actOperator);
+    this.description.makeDescriptionArithmetic(num1, num2, solutionString, actOperator);
     switch (actOperator) {
       case 'add':
         if (y1.sign === 0 && y2.sign === 0) {

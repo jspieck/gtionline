@@ -405,7 +405,12 @@ export default {
           ieeeSolution.watcher,
         );
         if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
-          descr.makeDescription(this.nums[0], this.nums[1], this.solution, this.selectedFormat[2]);
+          descr.makeDescriptionArithmetic(
+            this.nums[0],
+            this.nums[1],
+            this.solution,
+            this.selectedFormat[2],
+          );
         }
         this.solutionSteps = descr.result;
         this.solutionObject = ieeeSolution.resultObject;
