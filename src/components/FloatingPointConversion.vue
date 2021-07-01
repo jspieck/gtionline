@@ -141,8 +141,8 @@ export default {
         this.containerWidth = Math.min(500, window.innerWidth - 250);
       });
       if (this.default) {
-        this.drawExercise();
         this.recalculate();
+        this.drawExercise();
         this.generated = true;
       }
     });
