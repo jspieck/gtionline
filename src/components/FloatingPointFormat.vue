@@ -150,16 +150,6 @@ export default {
   },
   data() {
     let hasdefault = false;
-    let input1 = '';
-    if (this.$route.query.value1) {
-      input1 = this.$route.query.value1;
-      hasdefault = true;
-    }
-    let input2 = '';
-    if (this.$route.query.value2) {
-      input2 = this.$route.query.value2;
-      hasdefault = true;
-    }
     let operator = 'add';
     if (this.$route.query.operator) {
       operator = this.$route.query.operator;
@@ -175,6 +165,26 @@ export default {
       format2 = this.$route.query.format2;
       hasdefault = true;
     }
+    let input1 = '';
+    if (this.$route.query.value1) {
+      input1 = this.$route.query.value1;
+      hasdefault = true;
+    }
+    let input2 = '';
+    if (this.$route.query.value2) {
+      input2 = this.$route.query.value2;
+      hasdefault = true;
+    }
+    let expBits = 5;
+    if (this.$route.query.expBits) {
+      expBits = parseInt(this.$route.query.expBits, 10);
+      hasdefault = true;
+    }
+    let length = 16;
+    if (this.$route.query.numBits) {
+      length = parseInt(this.$route.query.numBits, 10);
+      hasdefault = true;
+    }
     return {
       selectedFormat: [format1, 'ieee', operator, format2, 'ieee', 'sixteen'], // 0: input left, 1: converted left, 2: operand, 3: input right, 4: converted right, 5: bit range
       mouseDown: false,
@@ -182,8 +192,8 @@ export default {
       solutionObject: '',
       inputNums: { 0: input1, 1: input2 },
       nums: { 0: '', 1: '' },
-      exponentBits: 5,
-      numBits: 16,
+      exponentBits: expBits,
+      numBits: length,
       falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
       solutionSteps: [],
@@ -237,12 +247,12 @@ export default {
       window.addEventListener('unload', () => {
         this.containerWidth = Math.min(500, window.innerWidth - 250);
       });
-      if (this.default) {
-        this.checkAndConvertFormat(0);
-        this.checkAndConvertFormat(1);
-        this.recalculate();
-      }
     });
+    if (this.default) {
+      this.checkAndConvertFormat(0);
+      this.checkAndConvertFormat(1);
+      this.recalculate();
+    }
   },
   methods: {
     recalculate() {
@@ -340,12 +350,12 @@ export default {
         this.watcher,
       );
       descr.generatePdf(
-        this.nums[0],
-        this.nums[1],
+        this.inputNums[0],
+        this.inputNums[1],
         this.solution,
         this.selectedFormat[2],
-        'ieee',
-        'ieee',
+        this.selectedFormat[0],
+        this.selectedFormat[3],
       );
     },
     convertFormat(num) {
