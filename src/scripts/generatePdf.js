@@ -726,7 +726,7 @@ export class PdfDescription {
     this.string = latex;
   }
 
-  generatePdf(inputNum1, inputNum2, solutionString, actOperator, actFormat1 = 'decimal', actFormat2 = 'decimal') {
+  generatePdf(inputNum1, inputNum2, solutionString, actOperator, actFormat1 = 'decimal', actFormat2 = 'decimal', returnSite = 'FloatingPointArithmetic') {
     let num1 = inputNum1;
     let num2 = inputNum2;
     if (actFormat1 === 'decimal') {
@@ -801,16 +801,7 @@ export class PdfDescription {
       default:
     }
     const html = this.string;
-    const actquery = {
-      value1: inputNum1,
-      value2: inputNum2,
-      operator: actOperator,
-      format1: actFormat1,
-      format2: actFormat2,
-      expBits: this.exponentBits,
-      numBits: this.numBits,
-    };
-    const returnRoute = router.resolve({ name: 'FloatingPointArithmetic', query: actquery });
+    const returnRoute = router.resolve({ name: returnSite });
     router.replace({ name: 'DescriptionPDF', params: { math: html, returnRoute: returnRoute.href } });
   }
 }

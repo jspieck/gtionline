@@ -151,38 +151,38 @@ export default {
   data() {
     let hasdefault = false;
     let operator = 'add';
-    if (this.$route.query.operator) {
-      operator = this.$route.query.operator;
+    if (window.sessionStorage.getItem('FPF_operator')) {
+      operator = window.sessionStorage.getItem('FPF_operator');
       hasdefault = true;
     }
     let format1 = 'decimal';
-    if (this.$route.query.format1) {
-      format1 = this.$route.query.format1;
+    if (window.sessionStorage.getItem('FPF_format1')) {
+      format1 = window.sessionStorage.getItem('FPF_format1');
       hasdefault = true;
     }
     let format2 = 'decimal';
-    if (this.$route.query.format2) {
-      format2 = this.$route.query.format2;
+    if (window.sessionStorage.getItem('FPF_format2')) {
+      format2 = window.sessionStorage.getItem('FPF_format2');
       hasdefault = true;
     }
     let input1 = '';
-    if (this.$route.query.value1) {
-      input1 = this.$route.query.value1;
+    if (window.sessionStorage.getItem('FPF_inputNums1')) {
+      input1 = window.sessionStorage.getItem('FPF_inputNums1');
       hasdefault = true;
     }
     let input2 = '';
-    if (this.$route.query.value2) {
-      input2 = this.$route.query.value2;
+    if (window.sessionStorage.getItem('FPF_inputNums2')) {
+      input2 = window.sessionStorage.getItem('FPF_inputNums2');
       hasdefault = true;
     }
     let expBits = 5;
-    if (this.$route.query.expBits) {
-      expBits = parseInt(this.$route.query.expBits, 10);
+    if (window.sessionStorage.getItem('FPF_expBits')) {
+      expBits = parseInt(window.sessionStorage.getItem('FPF_expBits'), 10);
       hasdefault = true;
     }
     let length = 16;
-    if (this.$route.query.numBits) {
-      length = parseInt(this.$route.query.numBits, 10);
+    if (window.sessionStorage.getItem('FPF_numBits')) {
+      length = parseInt(window.sessionStorage.getItem('FPF_numBits'), 10);
       hasdefault = true;
     }
     return {
@@ -254,8 +254,23 @@ export default {
       this.recalculate();
     }
   },
+  watch: {
+    input() {
+      this.saveVals();
+    },
+  },
   methods: {
+    saveVals() {
+      window.sessionStorage.setItem('FPF_operator', this.selectedFormat[2]);
+      window.sessionStorage.setItem('FPF_format1', this.selectedFormat[0]);
+      window.sessionStorage.setItem('FPF_format2', this.selectedFormat[3]);
+      window.sessionStorage.setItem('FPF_inputNums1', this.inputNums[0]);
+      window.sessionStorage.setItem('FPF_inputNums2', this.inputNums[1]);
+      window.sessionStorage.setItem('FPF_expBits', this.exponentBits);
+      window.sessionStorage.setItem('FPF_numBits', this.numBits);
+    },
     recalculate() {
+      this.saveVals();
       this.containerWidth = Math.min(500, window.innerWidth - 250);
       this.convertFormat(0);
       this.convertFormat(1);

@@ -88,6 +88,22 @@ export default {
     Accordion: SolutionAccordion,
   },
   data() {
+    let hasdefault = false;
+    let input = '';
+    if (window.sessionStorage.getItem('Conv_fp1')) {
+      input = window.sessionStorage.getItem('Conv_fp1');
+      hasdefault = true;
+    }
+    let expBits = 5;
+    if (window.sessionStorage.getItem('Conv_expBits')) {
+      expBits = parseInt(window.sessionStorage.getItem('Conv_expBits'), 10);
+      hasdefault = true;
+    }
+    let length = 16;
+    if (window.sessionStorage.getItem('Conv_numBits')) {
+      length = parseInt(window.sessionStorage.getItem('Conv_numBits'), 10);
+      hasdefault = true;
+    }
     return {
       selectedFormat: '',
       mouseDown: false,
@@ -95,8 +111,8 @@ export default {
       generated: false,
       solutionObject: '',
       solutionSteps: [],
-      exponentBits: 5,
-      numBits: 16,
+      exponentBits: expBits,
+      numBits: length,
       falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
       exerciseText: '',
@@ -107,7 +123,8 @@ export default {
       backE: '',
       propM: '',
       backM: '',
-      fp1: 0,
+      fp1: input,
+      default: hasdefault,
     };
   },
   computed: {
@@ -124,11 +141,18 @@ export default {
         this.containerWidth = Math.min(500, window.innerWidth - 250);
       });
       if (this.default) {
+        this.drawExercise();
         this.recalculate();
+        this.generated = true;
       }
     });
   },
   methods: {
+    saveVals() {
+      window.sessionStorage.setItem('Conv_fp1', this.fp1);
+      window.sessionStorage.setItem('Conv_expBits', this.exponentBits);
+      window.sessionStorage.setItem('Conv_numBits', this.numBits);
+    },
     recalculate() {
       const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
       converter.decToBin(this.fp1.toString());
@@ -155,6 +179,7 @@ export default {
       this.generated = true;
       this.recalculate();
       this.drawExercise();
+      this.saveVals();
     },
     checkSolution() {
       const checkSolution = new checker.CheckSolution(this.exponentBits);
@@ -224,6 +249,7 @@ export default {
       if (this.generated) {
         this.recalculate();
         this.drawExercise();
+        this.saveVals();
       }
     },
     expandExponent() {
@@ -231,6 +257,7 @@ export default {
       if (this.generated) {
         this.recalculate();
         this.drawExercise();
+        this.saveVals();
       }
     },
   },

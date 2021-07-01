@@ -62,11 +62,37 @@ export default {
     Accordion: SolutionAccordion,
   },
   data() {
+    let hasdefault = false;
+    let input1 = '';
+    if (window.sessionStorage.getItem('Exer_fp1')) {
+      input1 = window.sessionStorage.getItem('Exer_fp1');
+      hasdefault = true;
+    }
+    let input2 = '';
+    if (window.sessionStorage.getItem('Exer_fp2')) {
+      input2 = window.sessionStorage.getItem('Exer_fp2');
+      hasdefault = true;
+    }
+    let operator = 'add';
+    if (window.sessionStorage.getItem('Exer_operator')) {
+      operator = window.sessionStorage.getItem('Exer_operator');
+      hasdefault = true;
+    }
+    let expBits = 5;
+    if (window.sessionStorage.getItem('Exer_expBits')) {
+      expBits = parseInt(window.sessionStorage.getItem('Exer_expBits'), 10);
+      hasdefault = true;
+    }
+    let length = 16;
+    if (window.sessionStorage.getItem('Exer_numBits')) {
+      length = parseInt(window.sessionStorage.getItem('Exer_numBits'), 10);
+      hasdefault = true;
+    }
     return {
-      selectedFormat: ['add'],
+      selectedFormat: [operator],
       mouseDown: false,
-      exponentBits: 4,
-      numBits: 16,
+      exponentBits: expBits,
+      numBits: length,
       exerciseText: '',
       propVB: '',
       backVB: '',
@@ -79,8 +105,9 @@ export default {
       containerWidth: 500,
       watcher: '',
       solutionSteps: [],
-      fp1: '',
-      fp2: '',
+      fp1: input1,
+      fp2: input2,
+      default: hasdefault,
     };
   },
   computed: {
@@ -96,8 +123,30 @@ export default {
       return this.solutionSteps;
     },
   },
+  mounted() {
+    this.$nextTick(() => {
+      if (this.default) {
+        this.drawExercise();
+        this.computeSolution();
+      }
+    });
+  },
   methods: {
+    saveVals() {
+      window.sessionStorage.setItem('Exer_fp1', this.fp1);
+      window.sessionStorage.setItem('Exer_fp2', this.fp2);
+      window.sessionStorage.setItem('Exer_operator', this.selectedFormat[0]);
+      window.sessionStorage.setItem('Exer_expBits', this.exponentBits);
+      window.sessionStorage.setItem('Exer_numBits', this.numBits);
+    },
     downloadPdf() {
+      window.sessionStorage.setItem('FPF_operator', this.selectedFormat[0]);
+      window.sessionStorage.setItem('FPF_format1', 'ieee');
+      window.sessionStorage.setItem('FPF_format2', 'ieee');
+      window.sessionStorage.setItem('FPF_inputNums1', this.fp1);
+      window.sessionStorage.setItem('FPF_inputNums2', this.fp2);
+      window.sessionStorage.setItem('FPF_expBits', this.exponentBits);
+      window.sessionStorage.setItem('FPF_numBits', this.numBits);
       this.computeSolution();
       const descr = new pdf.PdfDescription(
         this,
@@ -114,7 +163,7 @@ export default {
       this.backE = checkSolution.backE;
       this.backM = checkSolution.backM;
     },
-    generateExercise() {
+    drawExercise() {
       const operation = this.selectedFormat[0];
       const opNames = {
         add: [this.$t('addition'), '+'],
@@ -122,11 +171,6 @@ export default {
         sub: [this.$t('subtraction'), '-'],
         div: [this.$t('division'), '/'],
       };
-      const random = new randomIEEE.RandomIEEE(this.exponentBits, this.numBits);
-      random.generateRandomIEEE();
-      this.fp1 = random.result;
-      random.generateRandomIEEE();
-      this.fp2 = random.result;
       this.exerciseText = `Es seien die Gleitkommazahlen \\( fp_1 \\) und \\( fp_2 \\) im 16 Bit Gleitkommaformat gegeben. Berechnen Sie die ${opNames[operation][0]} \\( fp_1 ${opNames[operation][1]} fp_2 \\) ohne die Binärdarstellung zu verlassen und geben Sie diese wieder als Gleitkommazahl an:
 
           \\( fp_1 = \\text{${this.fp1}} \\)\n
@@ -136,7 +180,16 @@ export default {
           window.MathJax.typeset();
         }
       });
+    },
+    generateExercise() {
+      const random = new randomIEEE.RandomIEEE(this.exponentBits, this.numBits);
+      random.generateRandomIEEE();
+      this.fp1 = random.result;
+      random.generateRandomIEEE();
+      this.fp2 = random.result;
+      this.drawExercise();
       this.computeSolution();
+      this.saveVals();
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();
