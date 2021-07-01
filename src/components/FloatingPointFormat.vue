@@ -107,11 +107,13 @@
       <div>
         <label class="attention" v-if="denominatorZero === false">{{$t('attSolve')}}</label>
         <label class="attention" v-if="negativeSummand">{{$t('negativeSummand')}}</label>
+        <label class="attention" v-if="negativeSubtrahend">{{$t('negativeSubtrahend')}}</label>
+        <label class="attention" v-if="denominatorZero">{{$t('zeroDivision')}}</label>
+      </div>
+      <div>
         <label class="attention" v-if="negativeMinuendSubtrahend">
           {{$t('negativeMinuendSubtrahend')}}
         </label>
-        <label class="attention" v-if="negativeSubtrahend">{{$t('negativeSubtrahend')}}</label>
-        <label class="attention" v-if="denominatorZero">{{$t('zeroDivision')}}</label>
       </div>
       <div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
