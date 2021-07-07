@@ -88,16 +88,31 @@
       <div class="solutionInput">
         <p>{{$t('signBit')}}</p>
         <input id="propVB" :class="backVB" v-model="propVB">
+        <div class="checkmark" v-if="backVB == 'correctInput'">
+          <svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
+            <polygon fill="#43A047" points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9"/>
+          </svg>
+        </div>
       </div>
       <div class="divMargin"/>
       <div class="solutionInput">
         <p>{{$t('exponentBits')}}</p>
         <input id="propE" :class="backE" v-model="propE">
+        <div class="checkmark" v-if="backE == 'correctInput'">
+          <svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
+            <polygon fill="#43A047" points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9"/>
+          </svg>
+        </div>
       </div>
       <div class="divMargin"/>
       <div class="solutionInput">
         <p>{{$t('fractionBits')}}</p>
         <input id="propM" :class="backM" v-model="propM">
+        <div class="checkmark" v-if="backM == 'correctInput'">
+          <svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
+            <polygon fill="#43A047" points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9"/>
+          </svg>
+        </div>
       </div>
       <div class="divMargin"/>
       <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
@@ -638,6 +653,20 @@ $arrow-size: 12px;
   position: relative;
   user-select: none;
   border-right: 1px solid white;
+}
+
+.checkmark {
+  height: 36px;
+  padding-left: 5px;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 36px;
+  margin-bottom: -5px;
+}
+
+.checkmark svg {
+  width: 20px;
+  height: 20px;
 }
 
 .fraction{

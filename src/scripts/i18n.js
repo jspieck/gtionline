@@ -25,7 +25,7 @@ export const i18n = new VueI18n({
       division: 'Division',
       ownSolution: 'Eigene Lösung',
       signBit: 'Vorzeichenbit',
-      correctSolution: 'Korrekte Lösung',
+      correctSolution: 'Lösungsweg',
       solution: 'Lösung',
       exponentBits: 'Exponent',
       fractionBits: 'Mantisse',
@@ -50,16 +50,16 @@ export const i18n = new VueI18n({
       repeatMinuend: 'wiederhole\\ Minuend',
       doDivision: 'Divison durchführen',
       doMultiplication: 'Multiplikation durchführen',
-      getDescription: 'Beschreibung',
+      getDescription: 'Drucken',
       approach: 'Lösungsweg',
       gti: 'Grundlagen der Technischen Informatik',
       disclaimer: 'Haftungsausschluss:<br>'
-        + 'Dies ist ein durch die GTI-Online-Webseite automatisch generierter Lösungsweg. Jedwehige'
-        + ' Ausgabe kann als Entwurf angesehen werden und ist somit <u>inoffiziell</u>.<br>'
-        + 'Wir geben uns große Mühe um für euch ein zuverlässiges und korrektes Hilfsmittel zu '
-        + 'entwickeln. Trotzdem kann es sein, dass der Lösungsweg oder die Lösung selbst Fehler enthalten. '
-        + 'Gründe hierfür sind unteranderem eine spezielle Browserversion. '
-        + 'Bitte überprüfen Sie den Inhalt bevor Sie diesen zum Beispiel in einer Klausur verwenden.',
+        + 'Dies ist ein durch die GTI-Online-Webseite automatisch generierter Lösungsweg.'
+        + 'Wir können keine Korrektheit garantieren und der Lösungsvorschlag ist somit <u>inoffiziell</u>.<br>'
+        + 'Wir geben uns große Mühe, um für euch ein zuverlässiges und korrektes Hilfsmittel zu entwickeln.'
+        + 'Trotzdem kann es sein, dass der Lösungsweg oder die Lösung per se Fehler enthalten. '
+        + 'Dies kann auch mit bestimmten Browserversionen zusammenhängen.'
+        + 'Bitte überprüfen Sie den Lösungsansatz, bevor Sie diesen zum Beispiel in einer Klausur verwenden.',
       example: 'Beispiel',
       composition: 'Zusammensetzung',
       negativeSummand: 'Eine Addition mit einem negativen Wert wird behandelt wie eine Subtraktion.',
@@ -140,7 +140,7 @@ export const i18n = new VueI18n({
       solution: 'Solution',
       ownSolution: 'Own Solution',
       signBit: 'Sign Bit',
-      correctSolution: 'Correct Solution',
+      correctSolution: 'Solution',
       exponentBits: 'Exponent',
       fractionBits: 'Fraction',
       attRound: 'Do not forget to round!',
@@ -164,7 +164,7 @@ export const i18n = new VueI18n({
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
       doMultiplication: 'execute multiplication',
-      getDescription: 'description',
+      getDescription: 'Print',
       approach: 'Approach',
       gti: 'Foundations of Computer Engineering',
       disclaimer: 'Disclaimer:<br>'
@@ -252,7 +252,7 @@ export const i18n = new VueI18n({
       solution: 'Solution',
       ownSolution: 'Propre Solution',
       signBit: 'Signe',
-      correctSolution: 'Solution Correcte',
+      correctSolution: 'Solution',
       exponentBits: 'Exposant',
       fractionBits: 'Mantisse',
       attRound: 'N\'oubliez pas d\'arrondir!',
@@ -276,7 +276,7 @@ export const i18n = new VueI18n({
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
       doMultiplication: 'execute multiplication',
-      getDescription: 'description',
+      getDescription: 'Print',
       approach: 'Approach',
       gti: 'Foundations of Computer Engineering',
       disclaimer: 'Disclaimer:<br>'
@@ -365,7 +365,7 @@ export const i18n = new VueI18n({
       solution: 'Solución',
       ownSolution: 'Solución propia',
       signBit: 'Bit de signo',
-      correctSolution: 'Solución Correcta',
+      correctSolution: 'Solución',
       exponentBits: 'Exponente',
       fractionBits: 'Significando',
       attRound: '¡No te olvides de redondear!',
@@ -389,7 +389,7 @@ export const i18n = new VueI18n({
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
       doMultiplication: 'execute multiplication',
-      getDescription: 'description',
+      getDescription: 'Print',
       approach: 'Approach',
       gti: 'Foundations of Computer Engineering',
       disclaimer: 'Disclaimer:<br>'
@@ -478,7 +478,7 @@ export const i18n = new VueI18n({
       solution: 'Solutio',
       ownSolution: 'Solutio propia',
       signBit: 'Signum',
-      correctSolution: 'Solutio recta',
+      correctSolution: 'Solutio',
       exponentBits: 'Exponens',
       fractionBits: 'Fractura',
       attRound: 'Habet enim praeteriti doloris secura recordatio delectationem.!',
@@ -502,15 +502,15 @@ export const i18n = new VueI18n({
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
       doMultiplication: 'execute multiplication',
-      getDescription: 'description',
+      getDescription: 'Print',
       approach: 'Approach',
       gti: 'Foundations of Computer Engineering',
       disclaimer: 'Disclaimer:<br>'
         + 'This is an automatically generated solution approach by the '
         + 'GTI-Online-Website. Every output is completely <u>unofficial</u> and in the drafts state.<br>'
         + 'We are making lots of efforts to build a correct and reliable tool for you. '
-        + 'Regardless, there may be failures in the solution or approach. That can especially '
-        + 'depend on your browser version. Please review before using it for instance in an exam.',
+        + 'Regardless, there may be failures in the solution or approach; in particular with certain '
+        + 'browsers. Please review the solution before using it; for instance, in an exam.',
       example: 'Example',
       composition: 'composition',
       negativeSummand: 'An addition with a negative value is similar to a subtraction.',

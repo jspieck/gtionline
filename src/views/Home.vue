@@ -1,6 +1,20 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
+    <div class="headerHome">
+      <h1 class="titleHome"><span class="red">GTI</span> ONLINE</h1>
+      <div class="textHome">
+        <p>Ziel dieser Webseite ist das Vertiefen der Kenntnisse aus der
+        Vorlesung und zugehörigen Übung zu ausgewählten Themenschwerpunkten.
+        Wählen Sie im Menü das Thema aus, zu dem sie Übungsaufgaben lösen möchten.</p>
+      </div>
+      <div class="linkHome">
+        <a href="/fparithmetic" class="link">
+          <div class="linkLabel">Los geht's</div>
+          <div class="linkButton"></div>
+        </a>
+      </div>
+      <img class="startImg" src="../assets/gtionline.svg"/>
+    </div>
   </div>
 </template>
 
@@ -9,3 +23,103 @@ export default {
   name: 'home',
 };
 </script>
+
+<style scoped>
+  #content .home {
+    padding: 0;
+    margin-top: -64px;
+  }
+
+  .startImg {
+    width: 611px;
+    height: 500px;
+    position: fixed;
+    right: 334px;
+    top: 241px;
+  }
+
+  #content {
+    padding-top: 0px;
+  }
+
+  .red {
+    /* color:#ff445c; */
+  }
+
+  .headerHome  {
+    background: #0d336f;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    flex-direction: column;
+    padding-left: 130px;
+    height: 100vh;
+    color: #ebedf0;
+    overflow-x: hidden;
+    background-attachment: fixed;
+    background-size: 35%, 1%;
+    background-position: right 0 top 110px, right 110px top 48px;
+  }
+
+  .titleHome {
+    margin-top: 50px;
+    font-size: 83px;
+    line-height: 86px;
+    letter-spacing: 1px;
+    color: #ebedf0;
+    max-width: 460px;
+    width: 100%;
+    z-index: 100;
+    text-align: left;
+  }
+
+  .textHome {
+    text-align: left;
+    font-size: 20px;
+    line-height: 45px;
+    color: #ebedf0;
+    max-width: 500px;
+    width: 100%;
+    z-index: 100;
+    margin: 40px 0 60px 0;
+  }
+
+  .linkHome {
+    color: #fff;
+    width: max-content;
+  }
+
+  .linkHome, .link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .linkLabel {
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: #f9fafb;
+    margin-right: 20px;
+    transition: all .2s ease;
+  }
+
+  .linkButton {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: #fff;
+    cursor: pointer;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAPCAYAAADtc08vAAAABmJLR0QA/wD/AP+gvaeTAAABL0lEQVQokZXOu0oDURSF4X/HENTCQi3MTJ7AYGttJYIgBLTKZLAKgoWVIEFMRCzsxDIgQi4iiu9hL2KjXS5WCiJ4IZllFfBCJpPdrrW+cyD0ZElPW05e4/0asbC543FkxjHvXKfXlBgaiEEZeAKWXsa4YkHxoYBGzR5iAYvAM2LFTXFGSb82oQBAo263FrAMvMnwnEdOhgIAmnW7wcgAn8Cm46nYy2wyq4nREQpRICBNwDIGgo121cqW8uUGohER+HldwVz8I85r4oudKAsZ8yYyGBhst6p2b1GfS3oqmHEIBEC+VbVTgEiAm9Ou4ADoYvitip33soGAk9MesA90gFyrahc/81DA8VVCFIGOiWyzZpd/O30B19eUxB0wLWO9XbHaoN/+u5msZl1fq2Gdb/tRYHOxlf28AAAAAElFTkSuQmCC);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    transition: all .2s ease;
+  }
+
+  @media screen and (min-width: 1600px)
+  .textHome {
+    font-size: 20px;
+    max-width: 520px;
+    line-height: 38px;
+  }
+</style>

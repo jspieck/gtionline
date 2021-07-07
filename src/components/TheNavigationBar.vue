@@ -1,6 +1,6 @@
 <template>
   <div class="navbar">
-    <img id="logo" src="../assets/logo.svg"/>
+    <a href="/" ><img id="logo" src="../assets/logo.svg"></a>
     <input class="menu-btn" type="checkbox" id="menu-btn" />
     <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
     <ul class="menu">

@@ -17,6 +17,7 @@ module.exports = {
     'no-restricted-syntax': 'off',
     'import/prefer-default-export': 'off',
     'prefer-destructuring': 'off',
+    'max-len': 'off'
   },
   "parserOptions": {
     parser: 'babel-eslint',
