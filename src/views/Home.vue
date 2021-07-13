@@ -13,6 +13,8 @@
           <div class="linkButton"></div>
         </a>
       </div>
+    </div>
+    <div class="imageContainer">
       <img class="startImg" src="../assets/gtionline.svg"/>
     </div>
   </div>
@@ -31,11 +33,13 @@ export default {
   }
 
   .startImg {
-    width: 611px;
-    height: 500px;
-    position: fixed;
-    right: 334px;
-    top: 241px;
+    width: 40%;
+    height: 40%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    overflow: visible;
+    transform: translateY(-50%);
   }
 
   #content {
@@ -46,8 +50,17 @@ export default {
     /* color:#ff445c; */
   }
 
-  .headerHome  {
+  .home {
+    display: flex;
+    flex-direction: row;
     background: #0d336f;
+  }
+
+  .imageContainer {
+    flex: 1;
+  }
+
+  .headerHome {
     display: flex;
     position: relative;
     justify-content: center;
@@ -116,10 +129,24 @@ export default {
     transition: all .2s ease;
   }
 
-  @media screen and (min-width: 1600px)
-  .textHome {
-    font-size: 20px;
-    max-width: 520px;
-    line-height: 38px;
+  @media screen and (min-width: 1600px) {
+    .textHome {
+      font-size: 20px;
+      max-width: 520px;
+      line-height: 38px;
+    }
+  }
+
+  @media(max-width: 750px){
+    .headerHome{
+      padding: 20px;
+      padding-left: 20px;
+    }
+  }
+
+  @media(max-width: 1300px){
+    .startImg{
+      display: none;
+    }
   }
 </style>
