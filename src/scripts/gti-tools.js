@@ -11596,4 +11596,162 @@ var AdditionIEEEToLatex = /*#__PURE__*/function () {
   return AdditionIEEEToLatex;
 }();
 
-export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, DivisionBaseNSigned, DivisionIEEE, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, TextCMOS, getBaseNComplementFromString, getIEEEFromString, getNumFromString, parseBooleanFunction, roundArray, toLaTeX };
+// Representation of a number respective a given power
+var NumberPolyadic = /*#__PURE__*/function () {
+  function NumberPolyadic(power, representation) {
+    _classCallCheck(this, NumberPolyadic);
+
+    if (power <= 1) {
+      console.log('Polyadic Number: Invalid power given, has to be greater 1.');
+    }
+
+    this.power = power;
+
+    this._checkArray(representation);
+
+    this.arr = _toConsumableArray(representation);
+    this.value = this._getValue();
+    this.bitString = _toConsumableArray(this.arr);
+    this.valueString = this._constructValString();
+  }
+
+  _createClass(NumberPolyadic, [{
+    key: "_checkArray",
+    value: function _checkArray(arr) {
+      var commas = 0;
+
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] < 0 || arr[i] >= this.power) {
+          return false;
+        }
+
+        if (arr[i] === ',') {
+          this.comma = i;
+          commas += 1;
+
+          if (commas > 1) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+  }, {
+    key: "_getValue",
+    value: function _getValue() {
+      return parseFloat(this.arr, this.power);
+    }
+  }, {
+    key: "_constructValString",
+    value: function _constructValString() {
+      return "".concat(this.value);
+    }
+  }]);
+
+  return NumberPolyadic;
+}();
+
+var ConversionPolyadicNumbers = /*#__PURE__*/function () {
+  function ConversionPolyadicNumbers(n, power) {
+    _classCallCheck(this, ConversionPolyadicNumbers);
+
+    if (n.power === power) {
+      console.log('ConversionPolyadicNumbers(Number, Int): Source and destination power is equal.');
+    }
+
+    this.watcher = new Algorithm();
+
+    if (power === 10) {
+      this.watcher = this.watcher.step('Modus').saveVariable('modus', 'PowerTo10');
+      this.solution = this._convertPowerTo10(n, power);
+    } else {
+      this.watcher = this.watcher.step('Modus').saveVariable('modus', '10ToPower');
+      this.solution = this._convert10toPower(n, power);
+    }
+  }
+
+  _createClass(ConversionPolyadicNumbers, [{
+    key: "_convertPowerTo10",
+    value: function _convertPowerTo10(n, power) {
+      this.watcher = this.watcher.step('Input').saveVariable('number', n).saveVariable('power', power);
+      var firstNum = 0;
+
+      if (n.arr[0] === '-') {
+        this.sign = '-';
+        firstNum = 1;
+      } else if (n.arr[0] === '+') {
+        this.sign = '+';
+        firstNum = 1;
+      } else {
+        this.sign = '+';
+      }
+
+      this.watcher = this.watcher.step('ConstructNumber').saveVariable('sign', this.sign);
+      var val = 0;
+      var count = 1;
+
+      for (var i = n.comma - 1; i >= firstNum; i -= 1) {
+        val += n.arr[i] * Math.pow(this.power, count);
+        this.watcher = this.watcher.step('ConstructNumber').saveVariable("beforeComma".concat(count), val);
+        count += 1;
+      }
+
+      count = 1;
+
+      for (var _i = n.comma + 1; _i < n.arr.length; _i += 1) {
+        val += n.arr[_i] * Math.pow(1 / n.power, count);
+        this.watcher = this.watcher.step('ConstructNumber').saveVariable("afterComma".concat(count), val);
+        count += 1;
+      }
+
+      if (this.sign === '-') {
+        var _result = NumberPolyadic(10, (-val).toString());
+
+        this.watcher = this.watcher.step('Result').saveVariable('resultValue', -val).saveVariable('resultNumber', _result);
+        return _result;
+      }
+
+      var result = NumberPolyadic(10, val.toString());
+      this.watcher = this.watcher.step('Result').saveVariable('resultValue', val).saveVariable('resultNumber', result);
+      return result;
+    }
+  }, {
+    key: "_convert10toPower",
+    value: function _convert10toPower(n, power) {
+      this.watcher = this.watcher.step('Input').saveVariable('number', n).saveVariable('power', power);
+      var nbc = Math.floor(n.value);
+      var val = '';
+      var count = 0;
+      var act = [1, 1];
+
+      while (act[0] !== 0) {
+        act = this._divisionWithRemain(nbc, power, 10);
+        this.watcher = this.watcher.step('ConstructNumber').saveVariable("beforeComma".concat(count, "Div"), act[0]).saveVariable("beforeComma".concat(count, "Remain"), act[1]);
+        count += 1;
+        val += act[1].toString;
+      }
+
+      var result = NumberPolyadic(power, val.toString());
+      this.watcher = this.watcher.step('Result').saveVariable('resultValue', val).saveVariable('resultNumber', result);
+      return result;
+    }
+  }, {
+    key: "_divisionWithRemain",
+    value: function _divisionWithRemain(n1, n2, power) {
+      var i = 0;
+      var r = 0;
+
+      while (parseInt((i * n2).toString(10), power) <= n1) {
+        r = parseInt((n1 - parseInt((i * n2).toString(10), power)).toString(10), power);
+        i += 1;
+      }
+
+      return [i - 1, r];
+    }
+  }]);
+
+  return ConversionPolyadicNumbers;
+}();
+
+export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, ConversionPolyadicNumbers, DivisionBaseNSigned, DivisionIEEE, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, NumberPolyadic, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, TextCMOS, getBaseNComplementFromString, getIEEEFromString, getNumFromString, parseBooleanFunction, roundArray, toLaTeX };
