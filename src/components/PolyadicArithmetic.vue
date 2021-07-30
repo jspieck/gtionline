@@ -1,5 +1,5 @@
 <template>
-<div class="floatingPoint">
+<div class="polyadic">
   <tabs :tabs="tabs" :currentTab="currentTab" @onClick="handleClick" updated="this.$t('exercises')"
   :wrapper-class="'default-tabs'" :tab-class="'default-tabs__item'"
   :tab-active-class="'default-tabs__item_active'" :line-class="'default-tabs__active-line'"/>

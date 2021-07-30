@@ -124,6 +124,13 @@ export const i18n = new VueI18n({
       shift: 'Shift',
       considerRepresentation: 'Darstellung beachten',
       consider1comma: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
+      // polydic
+      ternary: 'Ternärzahl',
+      octal: 'Oktalzahl',
+      hexadecimal: 'Hexadezimal',
+      input: 'Eingabe',
+      firstFormat: 'Ausgangsformat',
+      secondFormat: 'Zielformat',
     },
     en: {
       numVarInput: 'Number of variables',

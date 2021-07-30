@@ -2,102 +2,34 @@
   <!--v-on:mouseenter="sliderMouseUp" v-on:mouseleave="sliderMouseUp"
   v-on:mouseup="sliderMouseUp"-->
   <div class="fp-arithmetic">
-    <h4>{{$t('fpformat')}}</h4>
-    <FSelect class="bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
-             :options="bitrangeOptions">
-    </FSelect>
-    <FSelect class="mobile_bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
-             :options="bitrangeOptions">
-    </FSelect>
-    <div class="formatContainer" v-on:mousemove="sliderMouseMove">
-      <div class="sign">VB</div>
-      <div class="exponent" :style="{ width:
-        (60 + this.exponentBits * (this.containerWidth / (this.numBits - 1)))+ 'px' }">
-        <div v-on:click="expandFraction" class="expandExponent">
-          <div class="arrowLeft">
-            <div class='arrowMask'></div>
-          </div>
-        </div>
-        E({{exponentBits}})
-        <div v-on:mousedown="sliderMouseDown" class="slider"/>
-      </div>
-      <div class="fraction" :style="{ width: (60 + (this.numBits - this.exponentBits - 1) *
-        (this.containerWidth / (this.numBits - 1))) + 'px' }">
-        <div v-on:click="expandExponent" class="expandFraction">
-          <div class="arrowRight">
-            <div class="arrowMask"></div>
-          </div>
-        </div>
-        M({{(numBits - exponentBits - 1)}})
-      </div>
-    </div>
-    <div class="mobile_formatContainer" v-on:mousemove="sliderMouseMove">
-      <div class="mobile_sign">Sign(1)</div>
-      <div v-on:click="expandExponent" class="mobile_exponent">
-        Exponent({{exponentBits}}) &uarr;
-      </div>
-      <div v-on:click="expandFraction" class="mobile_fraction">
-        Mantisse({{(numBits - exponentBits - 1)}}) &darr;
-      </div>
-    </div>
-    <h4>{{$t('operationSelect')}}</h4>
     <div id="fpOperationTable" class="fpOperationTable">
       <div class="container">
-        <div>{{$t('firstFloatingPoint')}}</div>
-        <table id="fpfTable1" class="floatingPointInput">
+        <table id="fpfTable1" class="numberInput">
           <tr>
             <td>
+              <div>{{$t('input')}}</div>
               <input id="fpfInput0" v-model="inputNums[0]" :placeholder="this.$t('inputNumber') "
                      @input="checkAndConvertFormat(0)"/>
             </td>
-            <td><FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
-                         :options="formatOptions"/></td>
-          </tr>
-          <tr>
-            <td><input id="fpfInput1" v-model="nums[0]" disabled></td>
-            <td><FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal" :isDisabled="true"
-                         :options="formatOptions"/></td>
-          </tr>
-        </table>
-      </div>
-      <div class="container">
-        <div>{{$t('operand')}}</div>
-        <div class="operand">
-          <FSelect :num="2" :sel="selectedFormat[2]" @input="selectOp"
-                   :options="operationOptions"/>
-        </div>
-      </div>
-      <div class="container">
-        <div>{{$t('secondFloatingPoint')}}</div>
-        <table id="fpfTable2" class="floatingPointInput">
-          <tr>
-            <td><input id="fpfInput2" v-model="inputNums[1]" :placeholder="this.$t('inputNumber')"
-                       @input="checkAndConvertFormat(1)"></td>
-            <td><FSelect :num="3" :sel="selectedFormat[3]" @input="selectVal"
-                         :options="formatOptions"/></td>
-          </tr>
-          <tr>
-            <td><input id="fpfInput3" v-model="nums[1]" disabled></td>
-            <td><FSelect :num="4" :sel="selectedFormat[4]" @input="selectVal" :isDisabled="true"
-                         :options="formatOptions"/></td>
+            <td>
+              <div>{{$t('firstFormat')}}</div>
+              <FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
+                         :options="formatOptions"/>
+            </td>
+            <td>
+              <div>{{$t('Zielformat')}}</div>
+              <FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
+                         :options="formatOptions"/>
+            </td>
           </tr>
         </table>
       </div>
     </div>
     <div class="solutionArea">
-      <div class="solutionInput">
-        <p>{{$t('signBit')}}</p>
-        <input id="propVB" :class="backVB" v-model="propVB">
-      </div>
       <div class="divMargin"/>
       <div class="solutionInput">
-        <p>{{$t('exponentBits')}}</p>
-        <input id="propE" :class="backE" v-model="propE">
-      </div>
-      <div class="divMargin"/>
-      <div class="solutionInput">
-        <p>{{$t('fractionBits')}}</p>
-        <input id="propM" :class="backM" v-model="propM">
+        <p>{{$t('ownSolution')}}</p>
+        <input id="propM" :class="backSol" v-model="propSol">
       </div>
       <div class="divMargin"/>
       <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
@@ -105,15 +37,7 @@
     <h4>{{$t('correctSolution')}}</h4>
     <div style="position: relative">
       <div>
-        <label class="attention" v-if="denominatorZero === false">{{$t('attSolve')}}</label>
-        <label class="attention" v-if="negativeSummand">{{$t('negativeSummand')}}</label>
-        <label class="attention" v-if="negativeSubtrahend">{{$t('negativeSubtrahend')}}</label>
-        <label class="attention" v-if="denominatorZero">{{$t('zeroDivision')}}</label>
-      </div>
-      <div>
-        <label class="attention" v-if="negativeMinuendSubtrahend">
-          {{$t('negativeMinuendSubtrahend')}}
-        </label>
+        <label class="attention">{{$t('attSolve')}}</label>
       </div>
       <div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
@@ -135,13 +59,12 @@
 </template>
 
 <script>
-/* eslint no-useless-escape: 0  no-case-declarations: 0 */
+/* eslint-disable */
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
 import * as description from '../scripts/DescriptionSolution';
 import * as checker from '../scripts/checkSolution';
 import * as pdf from '../scripts/generatePdf';
-import * as convertFormat from '../scripts/formatConversions';
 import * as solution from '../scripts/ieeeSolution';
 
 export default {
@@ -152,107 +75,53 @@ export default {
   },
   data() {
     let hasdefault = false;
-    let operator = 'add';
-    if (window.sessionStorage.getItem('FPF_operator')) {
-      operator = window.sessionStorage.getItem('FPF_operator');
-      hasdefault = true;
-    }
     let format1 = 'decimal';
-    if (window.sessionStorage.getItem('FPF_format1')) {
-      format1 = window.sessionStorage.getItem('FPF_format1');
+    if (window.sessionStorage.getItem('PF_format1')) {
+      format1 = window.sessionStorage.getItem('PF_format1');
       hasdefault = true;
     }
     let format2 = 'decimal';
-    if (window.sessionStorage.getItem('FPF_format2')) {
-      format2 = window.sessionStorage.getItem('FPF_format2');
+    if (window.sessionStorage.getItem('PF_format2')) {
+      format2 = window.sessionStorage.getItem('PF_format2');
       hasdefault = true;
     }
-    let input1 = '';
-    if (window.sessionStorage.getItem('FPF_inputNums1')) {
-      input1 = window.sessionStorage.getItem('FPF_inputNums1');
-      hasdefault = true;
-    }
-    let input2 = '';
-    if (window.sessionStorage.getItem('FPF_inputNums2')) {
-      input2 = window.sessionStorage.getItem('FPF_inputNums2');
-      hasdefault = true;
-    }
-    let expBits = 5;
-    if (window.sessionStorage.getItem('FPF_expBits')) {
-      expBits = parseInt(window.sessionStorage.getItem('FPF_expBits'), 10);
-      hasdefault = true;
-    }
-    let length = 16;
-    if (window.sessionStorage.getItem('FPF_numBits')) {
-      length = parseInt(window.sessionStorage.getItem('FPF_numBits'), 10);
+    let input = '';
+    if (window.sessionStorage.getItem('PF_inputNum')) {
+      input = window.sessionStorage.getItem('PF_inputNum');
       hasdefault = true;
     }
     return {
-      selectedFormat: [format1, 'ieee', operator, format2, 'ieee', 'sixteen'], // 0: input left, 1: converted left, 2: operand, 3: input right, 4: converted right, 5: bit range
+      selectedFormat: [format1, format2], // 0: input left, 1: converted left, 3: input right, 4: converted right, 5: bit range
       mouseDown: false,
       solution: '',
       solutionObject: '',
-      inputNums: { 0: input1, 1: input2 },
-      nums: { 0: '', 1: '' },
-      exponentBits: expBits,
-      numBits: length,
+      inputNums: { 0: input },
+      nums: { 0: '' },
       falseFormatOutput: 'Falsches Format!',
-      containerWidth: 500,
       solutionSteps: [],
-      negativeSummand: false,
-      negativeSubtrahend: false,
-      negativeMinuendSubtrahend: false,
-      denominatorZero: false,
       default: hasdefault,
       watcher: '',
-      propVB: '',
-      backVB: '',
-      propE: '',
-      backE: '',
-      propM: '',
-      backM: '',
+      propSol: '',
+      backSol: '',
     };
   },
   computed: {
     solDescr() {
       return this.solutionSteps;
     },
-    operationOptions() {
-      return {
-        add: `${this.$t('addition')} (+)`,
-        sub: `${this.$t('subtraction')} (-)`,
-        mul: `${this.$t('multiplication')} (*)`,
-        div: `${this.$t('division')} (/)`,
-      };
-    },
     formatOptions() {
       return {
-        decimal: `${this.$t('decimal')} (42,14)`,
-        binary: `${this.$t('binary')}  (1,0011)`,
-        ieee: 'IEEE (1 0101 1101)',
-      };
-    },
-    bitrangeOptions() {
-      return {
-        eight: '8 bit',
-        sixteen: '16 bit',
-        thirtytwo: '32 bit',
-        // sixtyfour: '64 bit',
+        decimal: `${this.$t('decimal')} (92,14)`,
+        binary: `${this.$t('binary')} (1,0011)`,
+        ternary: `${this.$t('ternary')} (2122,01)`,
+        octal: `${this.$t('octal')} (6373,01)`,
+        hex: `${this.$t('hexadecimal')} (A53F0,08)`,
       };
     },
   },
   mounted() {
-    this.$nextTick(() => {
-      window.addEventListener('resize', () => {
-        this.containerWidth = Math.min(500, window.innerWidth - 250);
-      });
-      window.addEventListener('unload', () => {
-        this.containerWidth = Math.min(500, window.innerWidth - 250);
-      });
-    });
     if (this.default) {
       this.checkAndConvertFormat(0);
-      this.checkAndConvertFormat(1);
       this.recalculate();
     }
   },
@@ -263,19 +132,12 @@ export default {
   },
   methods: {
     saveVals() {
-      window.sessionStorage.setItem('FPF_operator', this.selectedFormat[2]);
-      window.sessionStorage.setItem('FPF_format1', this.selectedFormat[0]);
-      window.sessionStorage.setItem('FPF_format2', this.selectedFormat[3]);
-      window.sessionStorage.setItem('FPF_inputNums1', this.inputNums[0]);
-      window.sessionStorage.setItem('FPF_inputNums2', this.inputNums[1]);
-      window.sessionStorage.setItem('FPF_expBits', this.exponentBits);
-      window.sessionStorage.setItem('FPF_numBits', this.numBits);
+      window.sessionStorage.setItem('PF_format1', this.selectedFormat[0]);
+      window.sessionStorage.setItem('PF_format2', this.selectedFormat[1]);
+      window.sessionStorage.setItem('PF_inputNum', this.inputNums[0]);
     },
     recalculate() {
       this.saveVals();
-      this.containerWidth = Math.min(500, window.innerWidth - 250);
-      this.convertFormat(0);
-      this.convertFormat(1);
       this.computeSolution();
       this.$nextTick(() => {
         if (window.MathJax) {
@@ -283,43 +145,11 @@ export default {
         }
       });
     },
-    selectBitRange(num, val) {
-      this.selectedFormat[num] = val;
-      if (val === 'eight') {
-        this.numBits = 8;
-        this.exponentBits = 3;
-      } else if (val === 'sixteen') {
-        this.numBits = 16;
-        this.exponentBits = 5;
-      } else if (val === 'thirtytwo') {
-        this.numBits = 32;
-        this.exponentBits = 8;
-      }
-      this.recalculate();
-    },
-    selectVal(num, val) {
-      this.selectedFormat[num] = val;
-      const nnum = num > 2 ? 1 : 0;
-      this.checkAndConvertFormat(nnum);
-    },
-    selectOp(num, val) {
-      this.selectedFormat[num] = val;
-      this.recalculate();
-    },
     checkFormat(format, conv) {
-      let commaOccured = false;
       const convert = conv.replace(/\s/g, '');
-      if (format === 'ieee' && convert.length !== this.numBits) {
-        return false;
-      }
       for (let i = 0; i < convert.length; i += 1) {
         if (format === 'binary') {
           if (!(['0', '1', ',', '.', '-', '+'].includes(convert[i]))) {
-            return false;
-          }
-        }
-        if (format === 'ieee') {
-          if (convert[i] !== '0' && convert[i] !== '1') {
             return false;
           }
         }
@@ -334,31 +164,10 @@ export default {
             return false;
           }
         }
-        if (convert[i] === ',') {
-          if (commaOccured) {
-            return false;
-          }
-          commaOccured = true;
-        }
       }
       return true;
     },
-    checkAndConvertFormat(num) {
-      const firstFormat = this.selectedFormat[num * 3];
-      const toConvert = this.inputNums[num];
-      if (!this.checkFormat(firstFormat, toConvert)) {
-        this.nums[num] = this.falseFormatOutput;
-        return;
-      }
-      this.convertFormat(num);
-      this.computeSolution();
-      this.$nextTick(() => {
-        if (window.MathJax) {
-          window.MathJax.typeset();
-        }
-      });
-    },
-    downloadPdf() {
+    /* downloadPdf() {
       this.recalculate();
       const descr = new pdf.PdfDescription(
         this,
@@ -366,63 +175,20 @@ export default {
         this.numBits,
         this.watcher,
       );
-      descr.generatePdf(
+      descr.generatePolyadicPdf(
         this.inputNums[0],
         this.inputNums[1],
         this.solution,
         this.selectedFormat[2],
         this.selectedFormat[0],
-        this.selectedFormat[3],
       );
-    },
-    convertFormat(num) {
-      const firstFormat = this.selectedFormat[num * 3];
-      const secondFormat = this.selectedFormat[num * 3 + 1];
-      const toConvert = this.inputNums[num];
-      const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
-      if (toConvert.length === 0) {
-        return;
-      }
-      let converted = toConvert;
-      if (firstFormat === 'binary') {
-        if (secondFormat === 'decimal') { // dead code
-          converter.binToDec(toConvert);
-          converted = converter.result;
-        } else if (secondFormat === 'ieee') {
-          converter.binToIEEE(toConvert);
-          converted = converter.result;
-        }
-      } else if (firstFormat === 'decimal') {
-        if (secondFormat === 'binary') { // dead code
-          converter.decToBin(toConvert);
-          converted = converter.result;
-        } else if (secondFormat === 'ieee') {
-          converter.decToBin(toConvert);
-          converter.binToIEEE(converter.result);
-          converted = converter.result;
-        }
-      } else if (firstFormat === 'ieee') {
-        if (secondFormat === 'binary') { // dead code
-          converter.ieeeToBin(toConvert);
-          converted = converter.result;
-        } else if (secondFormat === 'decimal') { // dead code
-          converter.ieeeToBin(toConvert);
-          converter.binToDec(converter.result);
-          converted = converter.result;
-        }
-      }
-      this.nums[num] = converted;
-    },
+    }, */
     computeSolution() {
       const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
       if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
         ieeeSolution.computeSolution(this.nums[0], this.nums[1], this.selectedFormat[2]);
       }
       this.watcher = JSON.parse(JSON.stringify(ieeeSolution.watcher));
-      this.negativeMinuendSubtrahend = ieeeSolution.negativeMinuendSubtrahend;
-      this.negativeSubtrahend = ieeeSolution.negativeSubtrahend;
-      this.negativeSummand = ieeeSolution.negativeSummand;
-      this.denominatorZero = ieeeSolution.denominatorZero;
       if (!this.denominatorZero) {
         this.solution = ieeeSolution.result;
         const descr = new description.DescriptionSolution(
@@ -446,9 +212,7 @@ export default {
     checkSolution() {
       const checkSolution = new checker.CheckSolution(this.exponentBits);
       checkSolution.checkSolution(this.solutionObject, this.propVB, this.propE, this.propM);
-      this.backVB = checkSolution.backVB;
-      this.backE = checkSolution.backE;
-      this.backM = checkSolution.backM;
+      this.backSol = checkSolution.backSol;
     },
     preventGlobalMouseEvents() {
       document.body.style['pointer-events'] = 'none';
@@ -474,45 +238,6 @@ export default {
       this.mouseDown = true;
       this.xCoord = e.pageX;
       this.captureMouseEvents(e);
-    },
-    sliderMouseMove(e) {
-      if (this.mouseDown) {
-        const blockSize = (this.containerWidth / (this.numBits - 1));
-        if (e.pageX - this.xCoord > blockSize) {
-          this.xCoord += blockSize;
-          if (this.exponentBits + 1 < this.numBits - 1) {
-            this.exponentBits += 1;
-            if (this.nums[0] !== this.falseFormatOutput) {
-              this.convertFormat(0);
-            }
-            if (this.nums[1] !== this.falseFormatOutput) {
-              this.convertFormat(1);
-            }
-            this.computeSolution();
-          }
-        }
-        if (this.xCoord - e.pageX > blockSize) {
-          this.xCoord -= blockSize;
-          if (this.exponentBits > 1) {
-            this.exponentBits -= 1;
-            if (this.nums[0] !== this.falseFormatOutput) {
-              this.convertFormat(0);
-            }
-            if (this.nums[1] !== this.falseFormatOutput) {
-              this.convertFormat(1);
-            }
-            this.computeSolution();
-          }
-        }
-      }
-    },
-    expandFraction() {
-      this.exponentBits -= 1;
-      this.recalculate();
-    },
-    expandExponent() {
-      this.exponentBits += 1;
-      this.recalculate();
     },
   },
 };
@@ -552,7 +277,8 @@ $arrow-size: 12px;
   flex-grow: 1;
 }
 
-.floatingPointInput{
+.numberInput{
+  line-height: 2;
   margin: 10px;
   display: inline-block;
   padding: 10px;
@@ -560,6 +286,25 @@ $arrow-size: 12px;
   border: none;
   background: $transparentWhite;
   position: relative;
+}
+
+.numberInput tr td{
+  padding: 5px 7.5px;
+  line-height: 2;
+  margin: 10px;
+  display: inline-block;
+  border-radius: 10px;
+  border: none;
+  background: $transparentWhite;
+  position: relative;
+}
+
+.numberInput tr td:first-child {
+  padding-left: 0;
+}
+
+.numberInput tr td:last-child {
+  padding-right: 0;
 }
 
 .formatContainer {
