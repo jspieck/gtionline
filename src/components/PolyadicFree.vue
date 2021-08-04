@@ -4,21 +4,23 @@
   <div class="fp-arithmetic">
     <div id="fpOperationTable" class="fpOperationTable">
       <div class="container">
-        <table id="fpfTable1" class="numberInput">
+        <table>
           <tr>
             <td>
-              <div>{{$t('input')}}</div>
-              <input id="fpfInput0" v-model="inputNums[0]" :placeholder="this.$t('inputNumber') "
-                     @input="checkAndConvertFormat(0)"/>
+              <div class="solutionInput">
+              <p>{{$t('input')}}</p>
+              <input id="InputNumber" v-model="inputNums[0]" :placeholder="this.$t('inputNumber') "
+                     @input="checkFormat($event.target.value)" :class="backFormat"/>
+              </div>
             </td>
             <td>
-              <div>{{$t('firstFormat')}}</div>
-              <FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
+              <p>{{$t('firstFormat')}}</p>
+              <FSelect :num="0" :sel="selectedFormat[0]" @input="selectFormat"
                          :options="formatOptions"/>
             </td>
             <td>
-              <div>{{$t('Zielformat')}}</div>
-              <FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
+              <p>{{$t('secondFormat')}}</p>
+              <FSelect :num="1" :sel="selectedFormat[0]" @input="selectFormat"
                          :options="formatOptions"/>
             </td>
           </tr>
@@ -29,7 +31,7 @@
       <div class="divMargin"/>
       <div class="solutionInput">
         <p>{{$t('ownSolution')}}</p>
-        <input id="propM" :class="backSol" v-model="propSol">
+        <input id="propSol" :class="backSol" v-model="propSol">
       </div>
       <div class="divMargin"/>
       <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
@@ -39,12 +41,12 @@
       <div>
         <label class="attention">{{$t('attSolve')}}</label>
       </div>
-      <div class="pdfGen">
+      <!-- <div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
       </div>
       <div class="mobile_pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
-      </div>
+      </div> -->
     </div>
     <div id="solution">
       <Accordion :solutionDescription="solDescr">
@@ -65,7 +67,7 @@ import SolutionAccordion from './SolutionAccordion.vue';
 import * as description from '../scripts/DescriptionSolution';
 import * as checker from '../scripts/checkSolution';
 import * as pdf from '../scripts/generatePdf';
-import * as solution from '../scripts/ieeeSolution';
+import * as solution from '../scripts/polyadicSolution';
 
 export default {
   name: 'PolyadicFree',
@@ -91,7 +93,7 @@ export default {
       hasdefault = true;
     }
     return {
-      selectedFormat: [format1, format2], // 0: input left, 1: converted left, 3: input right, 4: converted right, 5: bit range
+      selectedFormat: [format1, format2], // 0: in format, 1: out format
       mouseDown: false,
       solution: '',
       solutionObject: '',
@@ -103,6 +105,7 @@ export default {
       watcher: '',
       propSol: '',
       backSol: '',
+      backFormat: '',
     };
   },
   computed: {
@@ -121,7 +124,6 @@ export default {
   },
   mounted() {
     if (this.default) {
-      this.checkAndConvertFormat(0);
       this.recalculate();
     }
   },
@@ -145,22 +147,33 @@ export default {
         }
       });
     },
-    checkFormat(format, conv) {
+    selectFormat(num, val) {
+      this.selectedFormat[num] = val;
+      if (this.checkFormat(this.inputNums[0])) {
+        this.recalculate();
+      }
+    },
+    checkFormat(conv) {
+      this.backFormat = '';
+      const format = this.selectedFormat[0];
       const convert = conv.replace(/\s/g, '');
       for (let i = 0; i < convert.length; i += 1) {
         if (format === 'binary') {
           if (!(['0', '1', ',', '.', '-', '+'].includes(convert[i]))) {
+            this.backFormat = 'incorrectInput';
             return false;
           }
         }
         if (format === 'decimal') {
           if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
             ',', '.', '-', '+'].includes(convert[i]))) {
+            this.backFormat = 'incorrectInput';
             return false;
           }
         }
         if (format === 'binary' || format === 'decimal') {
           if ((convert[i] === '+' || convert[i] === '-') && i > 1) {
+            this.backFormat = 'incorrectInput';
             return false;
           }
         }
@@ -184,30 +197,26 @@ export default {
       );
     }, */
     computeSolution() {
-      const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
-      if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
-        ieeeSolution.computeSolution(this.nums[0], this.nums[1], this.selectedFormat[2]);
-      }
-      this.watcher = JSON.parse(JSON.stringify(ieeeSolution.watcher));
-      if (!this.denominatorZero) {
-        this.solution = ieeeSolution.result;
-        const descr = new description.DescriptionSolution(
-          this,
-          this.exponentBits,
-          this.numBits,
-          ieeeSolution.watcher,
-        );
-        if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
-          descr.makeDescriptionArithmetic(
-            this.nums[0],
-            this.nums[1],
-            this.solution,
-            this.selectedFormat[2],
-          );
-        }
-        this.solutionSteps = descr.result;
-        this.solutionObject = ieeeSolution.resultObject;
-      }
+      console.log('compute');
+      const polyadicSolution = new solution.PolyadicSolution();
+      polyadicSolution.convertFormat(this.inputNums[0], this.selectedFormat[0], this.selectedFormat[1]);
+      this.watcher = JSON.parse(JSON.stringify(polyadicSolution.watcher));
+      this.solution = polyadicSolution.result;
+      /* const descr = new description.DescriptionSolution(
+        this,
+        this.exponentBits,
+        this.numBits,
+        ieeeSolution.watcher,
+      );
+      descr.makeDescriptionArithmetic(
+        this.nums[0],
+        this.nums[1],
+        this.solution,
+        this.selectedFormat[2],
+      );
+      this.solutionSteps = descr.result; */
+      this.solutionSteps = this.solution;
+      this.solutionObject = polyadicSolution.resultObject;
     },
     checkSolution() {
       const checkSolution = new checker.CheckSolution(this.exponentBits);
@@ -324,18 +333,6 @@ $arrow-size: 12px;
   font-size: 14px;
 }
 
-.slider{
-  display: block;
-  position: absolute;
-  right: -6px;
-  top: 0px;
-  width: 12px;
-  height: 100%;
-  z-index: 1;
-  background: none;
-  cursor: ew-resize;
-}
-
 .bits {
   position: relative;
   margin: 10px;
@@ -396,132 +393,6 @@ $arrow-size: 12px;
   border-right: 1px solid white;
 }
 
-.exponent{
-  height: 40px;
-  line-height: 40px;
-  background: $freshBlue;
-  color: white;
-  position: relative;
-  user-select: none;
-  border-right: 1px solid white;
-}
-
-.mobile_exponent{
-  height: 40px;
-  width: 80%;
-  line-height: 40px;
-  background: $freshBlue;
-  color: white;
-  position: relative;
-  user-select: none;
-  border-right: 1px solid white;
-}
-
-.fraction{
-  height: 40px;
-  line-height: 40px;
-  background: $freshBlue;
-  color: white;
-  position: relative;
-  user-select: none;
-}
-
-.mobile_fraction{
-  height: 40px;
-  width: 80%;
-  line-height: 40px;
-  background: $freshBlue;
-  color: white;
-  position: relative;
-  user-select: none;
-  border-right: 1px solid white;
-}
-
-.expandExponent{
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  display: block;
-  right: 0px;
-  top: 0px;
-  line-height: 40px;
-  &:hover{
-    cursor: pointer;
-  }
-}
-
-.mobile_expandExponent{
-  height: 40px;
-  width: 80%;
-  line-height: 40px;
-  background: $freshBlue;
-  color: white;
-  position: relative;
-  user-select: none;
-  border-right: 1px solid white;
-  &:hover{
-    cursor: pointer;
-  }
-}
-
-.expandFraction{
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  display: block;
-  left: 0px;
-  top: 0px;
-  line-height: 40px;
-  &:hover{
-    cursor: pointer;
-  }
-}
-
-.mobile_expandFraction{
-  height: 40px;
-  width: 80%;
-  line-height: 40px;
-  background: $freshBlue;
-  color: white;
-  position: relative;
-  user-select: none;
-  border-right: 1px solid white;
-  &:hover{
-    cursor: pointer;
-  }
-}
-
-.arrowRight {
-  width: $arrow-size;
-  height: $arrow-size;
-  background-color: white;
-  position: absolute;
-  top: 50%;
-  left: 35%;
-  transform: translate(-50%, -50%) rotate(225deg);
-}
-
-.arrowLeft {
-  width: $arrow-size;
-  height: $arrow-size;
-  background-color: white;
-  position: absolute;
-  top: 50%;
-  left: 65%;
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.arrowMask {
-  width: 100%;
-  height: 100%;
-  background-color: $freshBlue;
-  position: absolute;
-  left: 15%;
-  top: -15%;
-  right: 0%;
-  bottom: 0%;
-}
-
 .pdfGen{
   margin-left: 0;
   display: inline-flex;
@@ -568,57 +439,12 @@ $arrow-size: 12px;
   .formatContainer{
     display: none;
   };
-  .slider{
-    display: none;
-  };
-  .bits{
-    display: none;
-  };
-  .sign{
-    display: none;
-  };
-  .exponent{
-    display: none;
-  };
-  .fraction{
-    display: none;
-  };
-  .expandExponent{
-    display: none;
-  };
-  .expandFraction{
-    display: none;
-  };
-  .arrowMask{
-    display: none;
-  }
   .pdfGen {
     display: none;
   }
 }
 @media(min-width: 751px){
   .mobile_formatContainer{
-    display: none;
-  };
-  .mobile_slider{
-    display: none;
-  };
-  .mobile_bits{
-    display: none;
-  };
-  .mobile_sign{
-    display: none;
-  };
-  .mobile_exponent{
-    display: none;
-  };
-  .mobile_fraction{
-    display: none;
-  };
-  .mobile_expandExponent{
-    display: none;
-  };
-  .mobile_expandFraction{
     display: none;
   };
   .mobile_pdfGen{
