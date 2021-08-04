@@ -94,6 +94,7 @@ export default {
     }
     return {
       selectedFormat: [format1, format2], // 0: in format, 1: out format
+      power: [10, 10],
       mouseDown: false,
       solution: '',
       solutionObject: '',
@@ -149,6 +150,17 @@ export default {
     },
     selectFormat(num, val) {
       this.selectedFormat[num] = val;
+      if (val === 'decimal') {
+        this.power[num] = 10;
+      } else if (val === 'binary') {
+        this.power[num] = 2;
+      } else if (val === 'ternary') {
+        this.power[num] = 3;
+      } else if (val === 'octal') {
+        this.power[num] = 8;
+      } else if (val === 'hex') {
+        this.power[num] = 16;
+      }
       if (this.checkFormat(this.inputNums[0])) {
         this.recalculate();
       }
@@ -157,22 +169,45 @@ export default {
       this.backFormat = '';
       const format = this.selectedFormat[0];
       const convert = conv.replace(/\s/g, '');
+      let commaFound = false;
       for (let i = 0; i < convert.length; i += 1) {
         if (format === 'binary') {
           if (!(['0', '1', ',', '.', '-', '+'].includes(convert[i]))) {
             this.backFormat = 'incorrectInput';
             return false;
           }
-        }
-        if (format === 'decimal') {
+        } else if (format === 'decimal') {
           if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
             ',', '.', '-', '+'].includes(convert[i]))) {
             this.backFormat = 'incorrectInput';
             return false;
           }
+        } else if (format === 'ternary') {
+          if (!(['0', '1', '2', ',', '.', '-', '+'].includes(convert[i]))) {
+            this.backFormat = 'incorrectInput';
+            return false;
+          }
+        } else if (format === 'octal') {
+          if (!(['0', '1', '2', '3', '4', '5', '6', '7', ',', '.', '-',
+            '+'].includes(convert[i]))) {
+            this.backFormat = 'incorrectInput';
+            return false;
+          }
+        } else if (format === 'hex') {
+          if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+            ',', '.', '-', '+'].includes(convert[i]))) {
+            this.backFormat = 'incorrectInput';
+            return false;
+          }
         }
-        if (format === 'binary' || format === 'decimal') {
-          if ((convert[i] === '+' || convert[i] === '-') && i > 1) {
+        if ((convert[i] === '+' || convert[i] === '-') && i > 1) {
+          this.backFormat = 'incorrectInput';
+          return false;
+        }
+        if (convert[i] === '.' || convert[i] === ',') {
+          if (commaFound === false) {
+            commaFound = true;
+          } else {
             this.backFormat = 'incorrectInput';
             return false;
           }
@@ -199,7 +234,7 @@ export default {
     computeSolution() {
       console.log('compute');
       const polyadicSolution = new solution.PolyadicSolution();
-      polyadicSolution.convertFormat(this.inputNums[0], this.selectedFormat[0], this.selectedFormat[1]);
+      polyadicSolution.convertFormat(this.inputNums[0], this.power[0], this.power[1]);
       this.watcher = JSON.parse(JSON.stringify(polyadicSolution.watcher));
       this.solution = polyadicSolution.result;
       /* const descr = new description.DescriptionSolution(

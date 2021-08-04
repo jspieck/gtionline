@@ -11640,7 +11640,37 @@ var NumberPolyadic = /*#__PURE__*/function () {
   }, {
     key: "_getValue",
     value: function _getValue() {
-      return parseFloat(this.arr, this.power);
+      var firstNum = 0;
+
+      if (this.arr[0] === '-') {
+        this.sign = '-';
+        firstNum = 1;
+      } else if (this.arr[0] === '+') {
+        this.sign = '+';
+        firstNum = 1;
+      } else {
+        this.sign = '+';
+      }
+
+      var val = 0;
+      var count = 1;
+
+      for (var i = this.comma - 1; i >= firstNum; i -= 1) {
+        val += this.arr[i] * Math.pow(this.power, count);
+        count += 1;
+      }
+
+      count = 1;
+
+      for (var _i = this.comma + 1; _i < this.arr.length; _i += 1) {
+        val += this.arr[_i] * Math.pow(1 / this.power, count);
+      }
+
+      if (this.sign === '-') {
+        return -val;
+      }
+
+      return val;
     }
   }, {
     key: "_constructValString",
@@ -11706,13 +11736,13 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
       }
 
       if (this.sign === '-') {
-        var _result = NumberPolyadic(10, (-val).toString());
+        var _result = new NumberPolyadic(10, (-val).toString());
 
         this.watcher = this.watcher.step('Result').saveVariable('resultValue', -val).saveVariable('resultNumber', _result);
         return _result;
       }
 
-      var result = NumberPolyadic(10, val.toString());
+      var result = new NumberPolyadic(10, val.toString());
       this.watcher = this.watcher.step('Result').saveVariable('resultValue', val).saveVariable('resultNumber', result);
       return result;
     }
@@ -11723,18 +11753,18 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
       var nbc = Math.floor(n.value);
       var val = '';
       var count = 0;
-      var act = [1, 1];
+      var act = [nbc, 1];
 
-      while (act[0] !== 0) {
-        act = this._divisionWithRemain(nbc, power, 10);
+      while (act[0] > 0) {
+        act = this._divisionWithRemain(act[0], power, 10);
         this.watcher = this.watcher.step('ConstructNumber').saveVariable("beforeComma".concat(count, "Div"), act[0]).saveVariable("beforeComma".concat(count, "Remain"), act[1]);
         count += 1;
-        val += act[1].toString;
+        val += act[1];
       }
 
-      var result = NumberPolyadic(power, val.toString());
+      var result = new NumberPolyadic(power, val.toString());
       this.watcher = this.watcher.step('Result').saveVariable('resultValue', val).saveVariable('resultNumber', result);
-      return result;
+      return result; // TODO after comma is missing
     }
   }, {
     key: "_divisionWithRemain",

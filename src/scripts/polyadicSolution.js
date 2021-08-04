@@ -19,16 +19,12 @@ export class PolyadicSolution {
 
   convertFormat(num1, format1, format2) {
     if (num1 !== '') {
-      const number = new tool.NumberPolyadic(format1, num1);
-      console.log(number.arr);
-      console.log(number.value);
-      console.log(number.power);
-      console.log(format2);
-      // const converter = new tool.ConversionPolyadicNumbers(number, format2);
-      // this.result = converter.solution;
-      // this.watcher = converter.watcher;
-      this.result = 'test';
-      this.watcher = '';
+      const number = new tool.NumberPolyadic(format1, num1.toString());
+      const converter = new tool.ConversionPolyadicNumbers(number, format2);
+      this.result = converter.solution;
+      this.watcher = converter.watcher;
+      console.log(`Solution ${this.result}`);
+      console.log(this.watcher);
     }
   }
 }
