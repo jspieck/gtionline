@@ -1,19 +1,15 @@
 <template>
-<div class="floatingPoint">
+<div class="polyadic">
   <tabs :tabs="tabs" :currentTab="currentTab" @onClick="handleClick" updated="this.$t('exercises')"
   :wrapper-class="'default-tabs'" :tab-class="'default-tabs__item'"
   :tab-active-class="'default-tabs__item_active'" :line-class="'default-tabs__active-line'"/>
-  <div class="tab" v-if="currentTab === 'exercises'">
-    <h3 class="title">{{$t('exercises')}}</h3>
-    <fpe/>
-  </div>
-  <div class="tab" v-if="currentTab === 'free'">
-    <h3 class="title">{{$t('freeCalculation')}}</h3>
-    <fpf/>
-  </div>
   <div class="tab" v-if="currentTab === 'convert'">
     <h3 class="title">{{$t('conversion')}}</h3>
-    <fpc/>
+    <pc/>
+  </div>
+  <div class="tab" v-if="currentTab === 'free'">
+    <h3 class="title">{{$t('conversion')}}</h3>
+    <pf/>
   </div>
 </div>
 </template>
@@ -21,16 +17,14 @@
 <script>
 // eslint-disable-next-line
 import Tabs from 'vue-tabs-with-active-line';
-import FloatingPointFormat from './FloatingPointFormat.vue';
-import FloatingPointExercises from './FloatingPointExercises.vue';
-import FloatingPointConversion from './FloatingPointConversion.vue';
+import PolyadicConversion from './PolyadicConversion.vue';
+import PolyadicFree from './PolyadicFree.vue';
 
 export default {
   name: 'TinyTabs',
   components: {
-    fpc: FloatingPointConversion,
-    fpe: FloatingPointExercises,
-    fpf: FloatingPointFormat,
+    pc: PolyadicConversion,
+    pf: PolyadicFree,
     tabs: Tabs,
   },
   data() {
@@ -44,10 +38,6 @@ export default {
         {
           title: this.$t('conversion'),
           value: 'convert',
-        },
-        {
-          title: this.$t('exercises'),
-          value: 'exercises',
         },
         {
           title: this.$t('freeCalculation'),

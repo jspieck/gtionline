@@ -255,7 +255,7 @@ export class PdfDescription {
     }
     latex += '<ul>';
     latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
-    const converter = new convertFormat.FormatConversions(this.imp.exponentBits, this.imp.numBits);
+    const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
     converter.ieeeToDec([
       watcher.steps.Result.data.result.sign, ' ',
       watcher.steps.Result.data.result.exponentBits.join(''),
@@ -473,7 +473,7 @@ export class PdfDescription {
     latex += `<div id="header2">${this.imp.$t('step')} ${actStep} </div>`;
     latex += '<ul>';
     latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
-    const converter = new convertFormat.FormatConversions(this.imp.exponentBits, this.imp.numBits);
+    const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
     converter.ieeeToDec([
       watcher.steps.Result.data.result.sign, ' ',
       watcher.steps.Result.data.result.exponentBits.join(''),
@@ -539,8 +539,8 @@ export class PdfDescription {
       latex += '<ul>';
       latex += `<div id="txt">${this.imp.$t('adjustExponents')} `;
       const converter = new convertFormat.FormatConversions(
-        this.imp.exponentBits,
-        this.imp.numBits,
+        this.exponentBits,
+        this.numBits,
       );
       converter.binToDec(y1.exponentBits.join(''));
       const leftVal = converter.result;
@@ -577,7 +577,7 @@ export class PdfDescription {
     }
     latex += '<ul>';
     latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
-    const converter = new convertFormat.FormatConversions(this.imp.exponentBits, this.imp.numBits);
+    const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
     converter.ieeeToDec([
       watcher.steps.Result.data.result.sign, ' ',
       watcher.steps.Result.data.result.exponentBits.join(''),
@@ -643,8 +643,8 @@ export class PdfDescription {
       latex += '<ul>';
       latex += `<div id="txt">${this.imp.$t('adjustExponents')} `;
       const converter = new convertFormat.FormatConversions(
-        this.imp.exponentBits,
-        this.imp.numBits,
+        this.exponentBits,
+        this.numBits,
       );
       converter.binToDec(y1.exponentBits.join(''));
       const leftVal = converter.result;
@@ -684,7 +684,7 @@ export class PdfDescription {
     }
     latex += '<ul>';
     latex += `<li><div id="header3">${this.imp.$t('solution')} :</div>`;
-    const converter = new convertFormat.FormatConversions(this.imp.exponentBits, this.imp.numBits);
+    const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
     converter.ieeeToDec([
       watcher.steps.Result.data.result.sign, ' ',
       watcher.steps.Result.data.result.exponentBits.join(''),
@@ -726,7 +726,29 @@ export class PdfDescription {
     this.string = latex;
   }
 
-  generatePdf(num1, num2, solutionString, actOperator, actFormat1 = 'decimal', actFormat2 = 'decimal') {
+  generatePdf(inputNum1, inputNum2, solutionString, actOperator, actFormat1 = 'decimal', actFormat2 = 'decimal', returnSite = 'FloatingPointArithmetic') {
+    let num1 = inputNum1;
+    let num2 = inputNum2;
+    if (actFormat1 === 'decimal') {
+      const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
+      converter.decToBin(num1);
+      converter.binToIEEE(converter.result);
+      num1 = converter.result;
+    } else if (actFormat1 === 'binary') {
+      const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
+      converter.binToIEEE(num1);
+      num1 = converter.result;
+    }
+    if (actFormat2 === 'decimal') {
+      const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
+      converter.decToBin(num2);
+      converter.binToIEEE(converter.result);
+      num2 = converter.result;
+    } else if (actFormat2 === 'binary') {
+      const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
+      converter.binToIEEE(num2);
+      num1 = converter.result;
+    }
     const solution = tool.getIEEEFromString(this.exponentBits, solutionString);
     const y1 = tool.getIEEEFromString(this.exponentBits, num1);
     const y2 = tool.getIEEEFromString(this.exponentBits, num2);
@@ -734,7 +756,7 @@ export class PdfDescription {
     this.getHeader(y2);
     this.getDisclaimer();
     this.getValues(y1, y2);
-    this.description.makeDescription(num1, num2, solutionString, actOperator);
+    this.description.makeDescriptionArithmetic(num1, num2, solutionString, actOperator);
     switch (actOperator) {
       case 'add':
         if (y1.sign === 0 && y2.sign === 0) {
@@ -779,14 +801,7 @@ export class PdfDescription {
       default:
     }
     const html = this.string;
-    const actquery = {
-      value1: num1,
-      value2: num2,
-      operator: actOperator,
-      format1: actFormat1,
-      format2: actFormat2,
-    };
-    const returnRoute = router.resolve({ name: 'FloatingPointArithmetic', query: actquery });
+    const returnRoute = router.resolve({ name: returnSite });
     router.replace({ name: 'DescriptionPDF', params: { math: html, returnRoute: returnRoute.href } });
   }
 }

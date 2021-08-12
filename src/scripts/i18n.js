@@ -46,6 +46,8 @@ export const i18n = new VueI18n({
       // neu
       // general
       conversion: 'Konvertierung',
+      conversionExercise1: 'Konvertiere: ',
+      conversionExercise2: 'in eine IEEE-Flieskommazahl einer Exponenten-Länge von: ',
       steps: 'Schritte',
       repeatMinuend: 'wiederhole\\ Minuend',
       doDivision: 'Divison durchführen',
@@ -97,6 +99,8 @@ export const i18n = new VueI18n({
       // mantissa
       mantissa: 'Mantisse',
       solutionIsNan: 'Die Mantisse muss nicht berechnet werden, da das Ergebnis sicher NaN ist.',
+      solutionIsInf: 'Die Mantisse muss nicht berechnet werden, da das Ergebnis sicher unendlich ist.',
+      solutionIsZero: 'Die Mantisse muss nicht berechnet werden, da das Ergebnis sicher 0 ist.',
       mulMantissa: 'Die Mantissen beider Zahlen müssen multipliziert werden.',
       addMantissa: 'Die Mantissen beider Zahlen müssen addiert werden.',
       divMantissa: 'Die Mantissen beider Zahlen müssen dividiert werden.',
@@ -120,6 +124,13 @@ export const i18n = new VueI18n({
       shift: 'Shift',
       considerRepresentation: 'Darstellung beachten',
       consider1comma: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
+      // polydic
+      ternary: 'Ternärzahl',
+      octal: 'Oktalzahl',
+      hexadecimal: 'Hexadezimal',
+      input: 'Eingabe',
+      firstFormat: 'Ausgangsformat',
+      secondFormat: 'Zielformat',
     },
     en: {
       numVarInput: 'Number of variables',
@@ -159,7 +170,9 @@ export const i18n = new VueI18n({
       values: 'Values',
       // TODO: Übersetzen
       // general
-      conversion: 'conversion',
+      conversion: 'Conversion',
+      conversionExercise1: 'Convert: ',
+      conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
       steps: 'steps',
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
@@ -210,6 +223,8 @@ export const i18n = new VueI18n({
       mantissa: 'mantissa',
       mulMantissa: 'The mantissa of both numbers must be multiplied.',
       solutionIsNan: 'The mantissa can not be calculated because the input leads to NaN.',
+      solutionIsInf: 'The mantissa can not be calculated because the input leads to infinity.',
+      solutionIsZero: 'The mantissa can not be calculated because the input leads to zero.',
       addMantissa: 'The mantissa of both numbers must be added.',
       divMantissa: 'The mantissa of both numbers must be divided.',
       newMantissa: 'new mantissa',
@@ -271,7 +286,9 @@ export const i18n = new VueI18n({
       values: 'Valeurs',
       // TODO: Übersetzen
       // general
-      conversion: 'conversion',
+      conversion: 'Conversion',
+      conversionExercise1: 'Convert: ',
+      conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
       steps: 'steps',
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
@@ -323,6 +340,8 @@ export const i18n = new VueI18n({
       mantissa: 'mantissa',
       mulMantissa: 'The mantissa of both numbers must be multiplied.',
       solutionIsNan: 'The mantissa can not be calculated because the input leads to NaN.',
+      solutionIsInf: 'The mantissa can not be calculated because the input leads to infinity.',
+      solutionIsZero: 'The mantissa can not be calculated because the input leads to zero.',
       addMantissa: 'The mantissa of both numbers must be added.',
       divMantissa: 'The mantissa of both numbers must be divided.',
       newMantissa: 'new mantissa',
@@ -384,7 +403,9 @@ export const i18n = new VueI18n({
       values: 'valore',
       // TODO: Übersetzen
       // general
-      conversion: 'conversion',
+      conversion: 'Conversion',
+      conversionExercise1: 'Convert: ',
+      conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
       steps: 'steps',
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
@@ -436,6 +457,8 @@ export const i18n = new VueI18n({
       mantissa: 'mantissa',
       mulMantissa: 'The mantissa of both numbers must be multiplied.',
       solutionIsNan: 'The mantissa can not be calculated because the input leads to NaN.',
+      solutionIsInf: 'The mantissa can not be calculated because the input leads to infinity.',
+      solutionIsZero: 'The mantissa can not be calculated because the input leads to zero.',
       addMantissa: 'The mantissa of both numbers must be added.',
       divMantissa: 'The mantissa of both numbers must be divided.',
       newMantissa: 'new mantissa',
@@ -497,7 +520,9 @@ export const i18n = new VueI18n({
       values: 'valōrēs',
       // TODO: Übersetzen
       // general
-      conversion: 'conversion',
+      conversion: 'Conversion',
+      conversionExercise1: 'Convert: ',
+      conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
       steps: 'steps',
       repeatMinuend: 'repeat\\ minuend',
       doDivision: 'execute division',
@@ -549,6 +574,8 @@ export const i18n = new VueI18n({
       mantissa: 'mantissa',
       mulMantissa: 'The mantissa of both numbers must be multiplied.',
       solutionIsNan: 'The mantissa can not be calculated because the input leads to NaN.',
+      solutionIsInf: 'The mantissa can not be calculated because the input leads to infinity.',
+      solutionIsZero: 'The mantissa can not be calculated because the input leads to zero.',
       addMantissa: 'The mantissa of both numbers must be added.',
       divMantissa: 'The mantissa of both numbers must be divided.',
       newMantissa: 'new mantissa',

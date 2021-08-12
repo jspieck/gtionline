@@ -83,7 +83,7 @@ import * as description from '../scripts/DescriptionSolution';
 import SolutionAccordion from './SolutionAccordion.vue';
 
 export default {
-  name: 'FloatingPointConversion',
+  name: 'PolyadicConversion',
   components: {
     Accordion: SolutionAccordion,
   },
