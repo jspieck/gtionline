@@ -149,7 +149,7 @@ export class DescriptionSolution {
           },
           {
             name: `${this.imp.$t('mantissa')}: `,
-            text: watcher.steps.Result.data.result.mantissaBits.join(''),
+            text: watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
           },
         ],
       });
@@ -212,7 +212,7 @@ export class DescriptionSolution {
           },
           {
             name: `${this.imp.$t('mantissa')}: `,
-            text: watcher.steps.Result.data.result.mantissaBits.join(''),
+            text: watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
           },
         ],
       });
@@ -323,7 +323,7 @@ export class DescriptionSolution {
           },
           {
             name: `${this.imp.$t('mantissa')}: `,
-            text: this.watcher.steps.Result.data.result.mantissaBits.join(''),
+            text: this.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
           },
         ],
       });
@@ -561,7 +561,7 @@ export class DescriptionSolution {
         },
         {
           name: `${this.imp.$t('mantissa')}: `,
-          text: watcher.steps.Result.data.result.mantissaBits.join(''),
+          text: watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
         },
       ],
     });
@@ -734,7 +734,7 @@ export class DescriptionSolution {
           },
           {
             name: `${this.imp.$t('mantissa')}: `,
-            text: addWatcher.steps.Result.data.result.mantissaBits.join(''),
+            text: addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
           },
         ],
       });
@@ -797,7 +797,7 @@ export class DescriptionSolution {
           },
           {
             name: `${this.imp.$t('mantissa')}: `,
-            text: addWatcher.steps.Result.data.result.mantissaBits.join(''),
+            text: addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
           },
         ],
       });
@@ -1035,7 +1035,7 @@ export class DescriptionSolution {
           },
           {
             name: `${this.imp.$t('mantissa')}: `,
-            text: addWatcher.steps.Result.data.result.mantissaBits.join(''),
+            text: addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
           },
         ],
       });
@@ -1307,7 +1307,7 @@ export class DescriptionSolution {
         },
         {
           name: `${this.imp.$t('mantissa')}: `,
-          text: watcher.steps.Result.data.result.mantissaBits.join(''),
+          text: watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
         },
       ],
     });
