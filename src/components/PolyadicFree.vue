@@ -254,9 +254,11 @@ export default {
       this.solutionObject = polyadicSolution.resultObject;
     },
     checkSolution() {
-      const checkSolution = new checker.CheckSolution(this.exponentBits);
-      checkSolution.checkSolution(this.solutionObject, this.propVB, this.propE, this.propM);
-      this.backSol = checkSolution.backSol;
+      if (this.solution === this.propSol) {
+        this.backSol = 'correctInput';
+      } else {
+        this.backSol = 'incorrectInput';
+      }
     },
     preventGlobalMouseEvents() {
       document.body.style['pointer-events'] = 'none';

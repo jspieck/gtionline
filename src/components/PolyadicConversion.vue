@@ -40,19 +40,8 @@
     <div class="solutionArea">
       <div class="solutionInput">
         <p>{{$t('signBit')}}</p>
-        <input id="propVB" :class="backVB" v-model="propVB">
+        <input id="prop" :class="back" v-model="prop">
       </div>
-      <div class="divMargin"/>
-      <div class="solutionInput">
-        <p>{{$t('exponentBits')}}</p>
-        <input id="propE" :class="backE" v-model="propE">
-      </div>
-      <div class="divMargin"/>
-      <div class="solutionInput">
-        <p>{{$t('fractionBits')}}</p>
-        <input id="propM" :class="backM" v-model="propM">
-      </div>
-      <div class="divMargin"/>
       <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
     </div>
     <h4>{{$t('correctSolution')}}</h4>
@@ -76,11 +65,9 @@
 
 <script>
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
-import { getIEEEFromString } from '@/scripts/gti-tools';
-import * as checker from '../scripts/checkSolution';
-import * as convertFormat from '../scripts/formatConversions';
 import * as description from '../scripts/DescriptionSolution';
 import SolutionAccordion from './SolutionAccordion.vue';
+import * as solution from '../scripts/polyadicSolution';
 
 export default {
   name: 'PolyadicConversion',
@@ -89,40 +76,34 @@ export default {
   },
   data() {
     let hasdefault = false;
+    let format1 = 'decimal';
+    if (window.sessionStorage.getItem('PC_format1')) {
+      format1 = window.sessionStorage.getItem('PF_format1');
+      hasdefault = true;
+    }
+    let format2 = 'decimal';
+    if (window.sessionStorage.getItem('PC_format2')) {
+      format2 = window.sessionStorage.getItem('PF_format2');
+      hasdefault = true;
+    }
     let input = '';
-    if (window.sessionStorage.getItem('Conv_fp1')) {
-      input = window.sessionStorage.getItem('Conv_fp1');
-      hasdefault = true;
-    }
-    let expBits = 5;
-    if (window.sessionStorage.getItem('Conv_expBits')) {
-      expBits = parseInt(window.sessionStorage.getItem('Conv_expBits'), 10);
-      hasdefault = true;
-    }
-    let length = 16;
-    if (window.sessionStorage.getItem('Conv_numBits')) {
-      length = parseInt(window.sessionStorage.getItem('Conv_numBits'), 10);
+    if (window.sessionStorage.getItem('PC_inputNum')) {
+      input = window.sessionStorage.getItem('PF_inputNum');
       hasdefault = true;
     }
     return {
-      selectedFormat: '',
+      selectedFormat: [format1, format2], // 0: in format, 1: out format
       mouseDown: false,
       solution: '',
       generated: false,
       solutionObject: '',
       solutionSteps: [],
-      exponentBits: expBits,
-      numBits: length,
       falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
       exerciseText: '',
       watcher: '',
-      propVB: '',
-      backVB: '',
-      propE: '',
-      backE: '',
-      propM: '',
-      backM: '',
+      prop: '',
+      back: '',
       fp1: input,
       default: hasdefault,
     };
@@ -154,10 +135,13 @@ export default {
       window.sessionStorage.setItem('Conv_numBits', this.numBits);
     },
     recalculate() {
-      const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
-      converter.decToBin(this.fp1.toString());
-      converter.binToIEEE(converter.result);
-      this.solutionObject = getIEEEFromString(this.exponentBits, converter.result);
+      this.saveVals();
+      this.computeSolution();
+      this.$nextTick(() => {
+        if (window.MathJax) {
+          window.MathJax.typeset(); // https://github.com/mathjax/MathJax/issues/2557
+        }
+      });
     },
     drawExercise() {
       this.exerciseText = `${this.$t('conversionExercise1')} \\( fp= \\text{${this.fp1}} \\) ${this.$t('conversionExercise2')} ${this.exponentBits}`;
@@ -181,12 +165,35 @@ export default {
       this.drawExercise();
       this.saveVals();
     },
+    computeSolution() {
+      console.log('compute');
+      const polyadicSolution = new solution.PolyadicSolution();
+      polyadicSolution.convertFormat(this.inputNums[0], this.power[0], this.power[1]);
+      this.watcher = JSON.parse(JSON.stringify(polyadicSolution.watcher));
+      this.solution = polyadicSolution.result;
+      /* const descr = new description.DescriptionSolution(
+        this,
+        this.exponentBits,
+        this.numBits,
+        ieeeSolution.watcher,
+      );
+      descr.makeDescriptionArithmetic(
+        this.nums[0],
+        this.nums[1],
+        this.solution,
+        this.selectedFormat[2],
+      );
+      this.solutionSteps = descr.result; */
+      this.solutionSteps = this.solution;
+      this.solutionObject = polyadicSolution.resultObject;
+      console.log(this.solutionObject);
+    },
     checkSolution() {
-      const checkSolution = new checker.CheckSolution(this.exponentBits);
-      checkSolution.checkSolution(this.solutionObject, this.propVB, this.propE, this.propM);
-      this.backVB = checkSolution.backVB;
-      this.backE = checkSolution.backE;
-      this.backM = checkSolution.backM;
+      if (this.solutionObject.bitStrint === this.propSol) {
+        this.backSol = 'correctInput';
+      } else {
+        this.backSol = 'incorrectInput';
+      }
     },
     preventGlobalMouseEvents() {
       document.body.style['pointer-events'] = 'none';
@@ -242,22 +249,6 @@ export default {
             this.computeSolution();
           }
         }
-      }
-    },
-    expandFraction() {
-      this.exponentBits -= 1;
-      if (this.generated) {
-        this.recalculate();
-        this.drawExercise();
-        this.saveVals();
-      }
-    },
-    expandExponent() {
-      this.exponentBits += 1;
-      if (this.generated) {
-        this.recalculate();
-        this.drawExercise();
-        this.saveVals();
       }
     },
   },

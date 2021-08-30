@@ -21,10 +21,16 @@ export class PolyadicSolution {
     if (num1 !== '') {
       const number = new tool.NumberPolyadic(format1, num1.toString());
       const converter = new tool.ConversionPolyadicNumbers(number, format2);
-      this.result = converter.solution;
+      this.result = converter.solution.bitString;
       this.watcher = converter.watcher;
+      if (Array.isArray(this.watcher)) {
+        this.resultObject = this.watcher[1].steps.Result.data.resultNumber;
+      } else {
+        this.resultObject = this.watcher.steps.Result.data.resultNumber;
+      }
       console.log(`Solution ${this.result}`);
       console.log(this.watcher);
+      console.log(this.resultObject);
     }
   }
 }
