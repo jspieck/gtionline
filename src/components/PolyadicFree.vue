@@ -237,20 +237,9 @@ export default {
       polyadicSolution.convertFormat(this.inputNums[0], this.power[0], this.power[1]);
       this.watcher = JSON.parse(JSON.stringify(polyadicSolution.watcher));
       this.solution = polyadicSolution.result;
-      /* const descr = new description.DescriptionSolution(
-        this,
-        this.exponentBits,
-        this.numBits,
-        ieeeSolution.watcher,
-      );
-      descr.makeDescriptionArithmetic(
-        this.nums[0],
-        this.nums[1],
-        this.solution,
-        this.selectedFormat[2],
-      );
-      this.solutionSteps = descr.result; */
-      this.solutionSteps = this.solution;
+      const descr = new description.DescriptionSolution(this, 0, 0, this.watcher);
+      descr.makeDescriptionConversion();
+      this.solutionSteps = descr.result;
       this.solutionObject = polyadicSolution.resultObject;
     },
     checkSolution() {
