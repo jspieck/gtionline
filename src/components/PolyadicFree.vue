@@ -161,9 +161,7 @@ export default {
       } else if (val === 'hex') {
         this.power[num] = 16;
       }
-      if (this.checkFormat(this.inputNums[0])) {
-        this.recalculate();
-      }
+      this.checkFormat(this.inputNums[0])
     },
     checkFormat(conv) {
       this.backFormat = '';
@@ -213,6 +211,7 @@ export default {
           }
         }
       }
+      this.recalculate();
       return true;
     },
     /* downloadPdf() {
