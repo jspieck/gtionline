@@ -11818,6 +11818,9 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
 
       count = 0;
       act = [Math.abs(n.value) - nbc, 1];
+      var vals = [act[0]]; // list of calculated values for periodicity
+
+      this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('periodicStart', 0).saveVariable('periodicEnd', 9);
 
       while (act[0] > 0 && count < 9) {
         act = this._multiplicationStepFrom10(act[0], power);
@@ -11827,7 +11830,16 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
           act[1] = act[1].toString(16).toUpperCase();
         }
 
+        var indexVal = vals.indexOf(act[0]);
         val2 += act[1];
+
+        if (indexVal > 0) {
+          // perodicity found, no further calculation
+          this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('periodicStart', indexVal).saveVariable('periodicEnd', count);
+          count += 1;
+          break;
+        }
+
         count += 1;
       }
 
@@ -11961,7 +11973,7 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
       if (posComma !== binArray.length) {
         var actLength = binArray.length;
         binArray = binArray.padStart(actLength + posComma % 4, '0');
-        binArray = binArray.padEnd(binArray + (actLength - posComma) % 4, '0');
+        binArray = binArray.padEnd(binArray.length + (actLength - posComma) % 4, '0');
       } else {
         binArray.padStart(binArray.length % 4, '0');
       } // conversion cycle
