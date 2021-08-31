@@ -11699,6 +11699,8 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
   function ConversionPolyadicNumbers(n, power) {
     _classCallCheck(this, ConversionPolyadicNumbers);
 
+    this.modus = '';
+
     if (n.power === power) {
       console.log('ConversionPolyadicNumbers(Number, Int): Source and destination power is equal.');
     }
@@ -11707,36 +11709,39 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
       // Applying Shortcut Methods
       this.watcher = new Algorithm();
       this.watcher = this.watcher.step('Modus').saveVariable('modus', 'ShortcutHexToBin');
+      this.modus = 'ShortcutHexToBin';
       this.solution = this._shortcutHexToBin(n);
     } else if (n.power === 2 && power === 16) {
       this.watcher = new Algorithm();
       this.watcher = this.watcher.step('Modus').saveVariable('modus', 'ShortcutBinToHex');
+      this.modus = 'ShortcutBinToHex';
       this.solution = this._shortcutBinToHex(n);
     } else {
       this.watcher = [new Algorithm(), new Algorithm()];
 
       if (power === 10) {
-        this.watcher[0] = this.watcher[0].step('Modus').saveVariable('modus', 'PowerTo10');
-        this.solution = this._convertPowerTo10(n);
+        this.watcher[0] = this.watcher[0].step('Modus').saveVariable('modus', 'PowerToTen');
+        this.modus = 'PowerToTen';
+        this.solution = this._convertPowerToTen(n);
       } else if (n.power === 10) {
-        this.watcher[1] = this.watcher[1].step('Modus').saveVariable('modus', '10ToPower');
-        this.solution = this._convert10toPower(n, power);
+        this.watcher[1] = this.watcher[1].step('Modus').saveVariable('modus', 'TenToPower');
+        this.modus = 'TenToPower';
+        this.solution = this._convertTenToPower(n, power);
       } else {
         this.watcher[0] = this.watcher[0].step('Modus').saveVariable('modus', 'PowerToPower');
+        this.modus = 'PowerToPower';
         this.watcher[1] = this.watcher[1].step('Modus').saveVariable('modus', 'PowerToPower');
 
-        var powerTo10 = this._convertPowerTo10(n);
+        var PowerToTen = this._convertPowerToTen(n);
 
-        this.solution = this._convert10toPower(powerTo10, power);
+        this.solution = this._convertTenToPower(PowerToTen, power);
       }
     }
-
-    console.log(this.solution);
   }
 
   _createClass(ConversionPolyadicNumbers, [{
-    key: "_convertPowerTo10",
-    value: function _convertPowerTo10(n) {
+    key: "_convertPowerToTen",
+    value: function _convertPowerToTen(n) {
       this.watcher[0] = this.watcher[0].step('Input').saveVariable('number', n);
       var firstNum = 0; // Determine sign
 
@@ -11783,8 +11788,8 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
       return result;
     }
   }, {
-    key: "_convert10toPower",
-    value: function _convert10toPower(n, power) {
+    key: "_convertTenToPower",
+    value: function _convertTenToPower(n, power) {
       this.watcher[1] = this.watcher[1].step('Input').saveVariable('number', n).saveVariable('power', power);
       this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('sign', n.sign);
       var nbc = Math.floor(Math.abs(n.value)); // separate |nbc.xxx|

@@ -64,7 +64,7 @@
 /* eslint-disable */
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
-import * as description from '../scripts/DescriptionSolution';
+import * as description from '../scripts/DescriptionPolyadicConversion';
 import * as checker from '../scripts/checkSolution';
 import * as pdf from '../scripts/generatePdf';
 import * as solution from '../scripts/polyadicSolution';
@@ -233,12 +233,14 @@ export default {
     }, */
     computeSolution() {
       console.log('compute');
+      // calc solution
       const polyadicSolution = new solution.PolyadicSolution();
       polyadicSolution.convertFormat(this.inputNums[0], this.power[0], this.power[1]);
       this.watcher = JSON.parse(JSON.stringify(polyadicSolution.watcher));
       this.solution = polyadicSolution.result;
-      const descr = new description.DescriptionSolution(this, 0, 0, this.watcher);
-      descr.makeDescriptionConversion();
+      // construct description
+      const descr = new description.DescriptionPolyadicConversion(this, this.watcher);
+      descr.makeDescription(polyadicSolution.modus, this.selectedFormat);
       this.solutionSteps = descr.result;
       this.solutionObject = polyadicSolution.resultObject;
     },
