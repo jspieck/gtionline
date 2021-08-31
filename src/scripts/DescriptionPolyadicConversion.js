@@ -91,8 +91,6 @@ export class DescriptionPolyadicConversion {
     const stepsAfterComma = this.watcher[0].steps.ConstructNumber.data.stepsAfterComma;
     const resultVal = this.watcher[0].steps.Result.data.resultValue;
     const steps = stepsAfterComma + stepsBeforeComma;
-    console.log(stepsBeforeComma);
-    console.log(stepsAfterComma);
     const tabdef = ['{c'];
     if (sign === '-') {
       tabdef.push('c');
@@ -183,10 +181,6 @@ export class DescriptionPolyadicConversion {
       solution = this.watcher.steps.Result.data.resultNumber;
       number = this.watcher.steps.Input.data.number;
     }
-    console.log(`Solution Value: ${solution.value}`);
-    console.log(`Modus: ${modus}`);
-    console.log(`Input: ${number}`);
-
 
     this.result.push({
       name: `${this.imp.$t('values')}`,
@@ -234,13 +228,12 @@ export class DescriptionPolyadicConversion {
       });
     } else if (modus === 'PowerToTen') {
       this.getTablePowerToTen();
-      console.log(this.tablePowerToTen);
       this.result.push({
         name: `${this.imp.$t('conversion')}`,
         text: `${this.imp.$t('PowerToTen')}`,
         subpanels: [
           {
-            name: `${this.imp.$t('doConversion')}`,
+            name: `${this.imp.$t('summation')}`,
             text: `\\(${this.tablePowerToTen}\\)`,
           },
         ],
@@ -266,6 +259,24 @@ export class DescriptionPolyadicConversion {
       this.getTablePowerToTen();
       this.getTableTenToPowerBeforeComma();
       this.getTableTenToPowerAfterComma();
+      this.result.push({
+        name: `${this.imp.$t('conversion')}`,
+        text: `${this.imp.$t('PowerToPower')}`,
+        subpanels: [
+          {
+            name: `${this.imp.$t('summation')}`,
+            text: `\\(${this.tablePowerToTen}\\)`,
+          },
+          {
+            name: `${this.imp.$t('divisionAlgorithm')}`,
+            text: `\\(${this.tableTenToPowerBeforeComma}\\)`,
+          },
+          {
+            name: `${this.imp.$t('multiplicationAlgorithm')}`,
+            text: `\\(${this.tableTenToPowerAfterComma}\\)`,
+          },
+        ],
+      });
     } else {
       console.log('FAILURE: Not implemented Modus!');
     }
@@ -273,9 +284,8 @@ export class DescriptionPolyadicConversion {
       name: this.imp.$t('solution'),
       text: [
         `${this.imp.$t('correctSolution')}: `,
-        solution.sign, ' ',
-        solution.bitString, ' ',
-        `${this.imp.$t('value')}: ${solution.value}`,
+        `\\(${solution.bitString}\\) `,
+        `${this.imp.$t('value')}: \t \\(${solution.value}\\)`,
       ].join(''),
     });
   }

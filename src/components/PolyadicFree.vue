@@ -140,8 +140,8 @@ export default {
       window.sessionStorage.setItem('PF_inputNum', this.inputNums[0]);
     },
     recalculate() {
-      this.saveVals();
       this.computeSolution();
+      this.saveVals();
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset(); // https://github.com/mathjax/MathJax/issues/2557
