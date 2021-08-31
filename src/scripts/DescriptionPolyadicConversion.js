@@ -30,7 +30,7 @@ export class DescriptionPolyadicConversion {
     table.push(`${this.imp.$t('numerator')}&:&${this.imp.$t('newBasis')}`);
     table.push(`&=&${this.imp.$t('quotient')}&+&${this.imp.$t('remainder')}\\\\ \\hline`); // header
 
-    let number = this.watcher[1].steps.Input.data.number.value;
+    let number = this.watcher[1].steps.ConstructNumber.data.beforeCommaVal;
     const power = this.watcher[1].steps.Input.data.power;
     let div = this.watcher[1].steps.ConstructNumber.data.beforeComma0Div;
     let remain = this.watcher[1].steps.ConstructNumber.data.beforeComma0Remain;
@@ -49,7 +49,39 @@ export class DescriptionPolyadicConversion {
 
 
   getTableTenToPowerAfterComma() {
-    this.tableTenToPowerAfterComma = '';
+    const tabdef = '{ccccccc}';
+    const table = [];
+    const isPeriodic = this.watcher[1].steps.ConstructNumber.data.isPeriodic;
+    const periodicStart = this.watcher[1].steps.ConstructNumber.data.periodicStart;
+    const periodicEnd = this.watcher[1].steps.ConstructNumber.data.periodicEnd;
+    const steps = Math.min(
+      this.watcher[1].steps.ConstructNumber.data.stepsAfterComma,
+      periodicEnd,
+    );
+
+    table.push(`\\begin{array} ${tabdef}`);
+    table.push(`${this.imp.$t('factor')}&*&${this.imp.$t('newBasis')}`);
+    table.push(`&=&${this.imp.$t('quotient')}&+&${this.imp.$t('remainder')}\\\\ \\hline`); // header
+
+    let number = this.watcher[1].steps.ConstructNumber.data.afterCommaVal;
+    const power = this.watcher[1].steps.Input.data.power;
+    let mul = this.watcher[1].steps.ConstructNumber.data.afterComma0Mul;
+    let remain = this.watcher[1].steps.ConstructNumber.data.afterComma0Remain;
+    table.push(`${number}&*&${power}&=&${mul}&+&${remain}\\\\`);
+    number = mul;
+    for (let i = 1; i < steps; i += 1) {
+      mul = this.watcher[1].steps.ConstructNumber.data[`afterComma${i}Mul`];
+      remain = this.watcher[1].steps.ConstructNumber.data[`afterComma${i}Remain`];
+      if (isPeriodic && (i >= periodicStart)) {
+        table.push(`${number}&*&${power}&=&${mul}&+&\\overline{${remain}}\\\\`);
+      } else {
+        table.push(`${number}&*&${power}&=&${mul}&+&${remain}\\\\`);
+      }
+      number = mul;
+    }
+
+    table.push('\\end{array}');
+    this.tableTenToPowerAfterComma = table.join('');
   }
 
 

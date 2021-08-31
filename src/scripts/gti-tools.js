@@ -11800,6 +11800,8 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
       var count = 0;
       var act = [nbc, 1]; // [divisor, remain]
 
+      this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('beforeCommaVal', nbc);
+
       while (act[0] > 0) {
         act = this._divisionWithRemain(act[0], power, 10);
         this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable("beforeComma".concat(count, "Div"), act[0]).saveVariable("beforeComma".concat(count, "Remain"), act[1]);
@@ -11817,30 +11819,35 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
       var val2 = ''; // result string after comma
 
       count = 0;
-      act = [Math.abs(n.value) - nbc, 1];
-      var vals = [act[0]]; // list of calculated values for periodicity
 
-      this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('periodicStart', 0).saveVariable('periodicEnd', 9);
+      if (n.value.toString().indexOf('.') >= 0) {
+        var limitAfterComma = n.value.toString().split('.')[1].length; // crop value after comma by ignoring floating point arithmetic
 
-      while (act[0] > 0 && count < 9) {
-        act = this._multiplicationStepFrom10(act[0], power);
-        this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable("afterComma".concat(count, "Mul"), act[0]).saveVariable("afterComma".concat(count, "Remain"), act[1]);
+        act = [(Math.abs(n.value) - nbc).toFixed(limitAfterComma), 1];
+        var vals = [act[0]]; // list of calculated values for periodicity
 
-        if (power === 16) {
-          act[1] = act[1].toString(16).toUpperCase();
-        }
+        this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('isPeriodic', false).saveVariable('periodicStart', 0).saveVariable('periodicEnd', 9).saveVariable('afterCommaVal', act[0]);
 
-        var indexVal = vals.indexOf(act[0]);
-        val2 += act[1];
+        while (act[0] > 0 && count < 9) {
+          act = this._multiplicationStepFrom10(act[0], power, limitAfterComma);
+          this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable("afterComma".concat(count, "Mul"), act[0]).saveVariable("afterComma".concat(count, "Remain"), act[1]);
 
-        if (indexVal > 0) {
-          // perodicity found, no further calculation
-          this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('periodicStart', indexVal).saveVariable('periodicEnd', count);
+          if (power === 16) {
+            act[1] = act[1].toString(16).toUpperCase();
+          }
+
+          var indexVal = vals.indexOf(act[0]);
+          val2 += act[1];
+
+          if (indexVal > 0) {
+            // perodicity found, no further calculation
+            this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('isPeriodic', true).saveVariable('periodicStart', indexVal).saveVariable('periodicEnd', count);
+            count += 1;
+            break;
+          }
+
           count += 1;
-          break;
         }
-
-        count += 1;
       }
 
       this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('stepsAfterComma', count); // Make result
@@ -11878,11 +11885,11 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
 
   }, {
     key: "_multiplicationStepFrom10",
-    value: function _multiplicationStepFrom10(n1, n2) {
-      var res = parseFloat(n1) * parseFloat(n2);
+    value: function _multiplicationStepFrom10(n1, n2, limit) {
+      var res = parseFloat((parseFloat(n1) * parseFloat(n2)).toFixed(limit));
 
       if (res >= 1) {
-        return [res - Math.floor(res), Math.floor(res)];
+        return [parseFloat((res - Math.floor(res)).toFixed(limit)), Math.floor(res)];
       } else {
         return [res, 0]; // Result, Remain
       }
