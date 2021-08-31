@@ -22,7 +22,29 @@ export class DescriptionPolyadicConversion {
   // =========================================================================================
   // Polyadic Conversion
   getTableTenToPowerBeforeComma() {
-    this.tableTenToPowerBeforeComma = '';
+    const tabdef = '{ccccccc}';
+    const table = [];
+    const steps = this.watcher[1].steps.ConstructNumber.data.stepsBeforeComma;
+
+    table.push(`\\begin{array} ${tabdef}`);
+    table.push(`${this.imp.$t('numerator')}&:&${this.imp.$t('newBasis')}`);
+    table.push(`&=&${this.imp.$t('quotient')}&+&${this.imp.$t('remainder')}\\\\ \\hline`); // header
+
+    let number = this.watcher[1].steps.Input.data.number.value;
+    const power = this.watcher[1].steps.Input.data.power;
+    let div = this.watcher[1].steps.ConstructNumber.data.beforeComma0Div;
+    let remain = this.watcher[1].steps.ConstructNumber.data.beforeComma0Remain;
+    table.push(`${number}&:&${power}&=&${div}&+&${remain}\\\\`);
+    number = div;
+    for (let i = 1; i < steps; i += 1) {
+      div = this.watcher[1].steps.ConstructNumber.data[`beforeComma${i}Div`];
+      remain = this.watcher[1].steps.ConstructNumber.data[`beforeComma${i}Remain`];
+      table.push(`${number}&:&${power}&=&${div}&+&${remain}\\\\`);
+      number = div;
+    }
+
+    table.push('\\end{array}');
+    this.tableTenToPowerBeforeComma = table.join('');
   }
 
 

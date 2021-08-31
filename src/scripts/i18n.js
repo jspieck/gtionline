@@ -146,6 +146,9 @@ export const i18n = new VueI18n({
       shortcutHexToBin: 'Bei der Konvertierung von Hex nach Binär können die Werte direkt abgelesen werden.',
       divisionAlgorithm: 'Divisions-Algorithmus',
       multiplicationAlgorithm: 'Multiplikations-Algorithmus',
+      quotient: 'Quotient',
+      remainder: 'Rest',
+      newBasis: 'neue Basis',
     },
     en: {
       numVarInput: 'Number of variables',
