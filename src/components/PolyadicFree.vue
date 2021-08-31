@@ -20,7 +20,7 @@
             </td>
             <td>
               <p>{{$t('secondFormat')}}</p>
-              <FSelect :num="1" :sel="selectedFormat[0]" @input="selectFormat"
+              <FSelect :num="1" :sel="selectedFormat[1]" @input="selectFormat"
                          :options="formatOptions"/>
             </td>
           </tr>

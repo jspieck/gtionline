@@ -128,6 +128,7 @@ export const i18n = new VueI18n({
       ternary: 'Ternärzahl',
       octal: 'Oktalzahl',
       hexadecimal: 'Hexadezimal',
+      hex: 'Hexadezimal',
       input: 'Eingabe',
       number: 'Nummer',
       representation: 'Representation im Ausgangsformat',

@@ -11760,8 +11760,9 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
       var count = 0;
 
       for (var i = n.comma - 1; i >= firstNum; i -= 1) {
-        val += parseInt(n.arr[i], n.power) * Math.pow(n.power, count);
-        this.watcher[0] = this.watcher[0].step('ConstructNumber').saveVariable("beforeComma".concat(count), val);
+        var act = parseInt(n.arr[i], n.power) * Math.pow(n.power, count);
+        val += act;
+        this.watcher[0] = this.watcher[0].step('ConstructNumber').saveVariable("beforeComma".concat(count, "In"), n.arr[i]).saveVariable("beforeComma".concat(count, "Res"), act);
         count += 1;
       }
 
@@ -11769,8 +11770,10 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
       count = 1;
 
       for (var _i = n.comma + 1; _i < n.arr.length; _i += 1) {
-        val += parseInt(n.arr[_i], n.power) * Math.pow(1 / n.power, count);
-        this.watcher[0] = this.watcher[0].step('ConstructNumber').saveVariable("afterComma".concat(count - 1), val);
+        var _act = parseInt(n.arr[_i], n.power) * Math.pow(1 / n.power, count);
+
+        val += _act;
+        this.watcher[0] = this.watcher[0].step('ConstructNumber').saveVariable("afterComma".concat(count - 1, "In"), n.arr[_i]).saveVariable("afterComma".concat(count - 1, "Res"), _act);
         count += 1;
       }
 

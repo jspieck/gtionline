@@ -12,8 +12,7 @@ export class DescriptionPolyadicConversion {
     this.imp = imp;
     this.tableTenToPowerBeforeComma = '';
     this.tableTenToPowerAfterComma = '';
-    this.tablePowerToTenBeforeComma = '';
-    this.tablePowerToTenAfterComma = '';
+    this.tablePowerToTen = '';
     this.tableShortcut = '';
     this.result = [];
     this.watcher = watcher;
@@ -85,13 +84,79 @@ export class DescriptionPolyadicConversion {
   }
 
 
-  getTablePowerToTenBeforeComma() {
-    this.tablePowerToTenBeforeComma = '';
-  }
+  getTablePowerToTen() {
+    const power = this.watcher[0].steps.Input.data.number.power;
+    const sign = this.watcher[0].steps.ConstructNumber.data.sign;
+    const stepsBeforeComma = this.watcher[0].steps.ConstructNumber.data.stepsBeforeComma;
+    const stepsAfterComma = this.watcher[0].steps.ConstructNumber.data.stepsAfterComma;
+    const resultVal = this.watcher[0].steps.Result.data.resultValue;
+    const steps = stepsAfterComma + stepsBeforeComma;
+    console.log(stepsBeforeComma);
+    console.log(stepsAfterComma);
+    const tabdef = ['{c'];
+    if (sign === '-') {
+      tabdef.push('c');
+    }
+    for (let i = 0; i < steps; i += 1) {
+      tabdef.push('cc');
+    }
+    tabdef.push('c}');
 
+    const table = [];
+    table.push(`\\begin{array} ${tabdef.join('')}`);
 
-  getTablePowerToTenAfterComma() {
-    this.tablePowerToTenAfterComma = '';
+    // first row, calculation
+    const row1 = [];
+    row1.push('&');
+    if (sign === '-') {
+      row1.push('- \\Big(&');
+    }
+    for (let i = stepsBeforeComma - 1; i >= 0; i -= 1) {
+      row1.push([
+        this.watcher[0].steps.ConstructNumber.data[`beforeComma${i}In`],
+        `* ${power}^${i} &+&`,
+      ].join(''));
+    }
+    for (let i = 0; i < stepsAfterComma; i += 1) {
+      row1.push([
+        this.watcher[0].steps.ConstructNumber.data[`afterComma${i}In`],
+        `* \\frac{1}{${power}^${i + 1}} &+&`,
+      ].join(''));
+    }
+    row1[row1.length - 1] = row1[row1.length - 1].substring(0, row1[row1.length - 1].length - 2);
+    if (sign === '-') {
+      row1.push('\\Big)');
+    }
+    row1.push('&\\\\ \\hline \\hline');
+    table.push(row1.join(''));
+
+    // second row, result
+    const row2 = ['\\Sigma'];
+    row2.push('&');
+    if (sign === '-') {
+      row2.push('- \\Big(&');
+    }
+    for (let i = stepsBeforeComma - 1; i >= 0; i -= 1) {
+      row2.push([
+        this.watcher[0].steps.ConstructNumber.data[`beforeComma${i}Res`],
+        '&+&',
+      ].join(''));
+    }
+    for (let i = 0; i < stepsAfterComma; i += 1) {
+      row2.push([
+        this.watcher[0].steps.ConstructNumber.data[`afterComma${i}Res`],
+        '&+&',
+      ].join(''));
+    }
+    row2[row2.length - 1] = row2[row2.length - 1].substring(0, row2[row2.length - 1].length - 2);
+    if (sign === '-') {
+      row2.push('\\Big)');
+    }
+    row2.push(`& = ${resultVal}\\\\`);
+    table.push(row2.join(''));
+
+    table.push('\\end{array}');
+    this.tablePowerToTen = table.join('');
   }
 
   getTableShortcut2ToHex() {
@@ -168,8 +233,18 @@ export class DescriptionPolyadicConversion {
         ],
       });
     } else if (modus === 'PowerToTen') {
-      this.getTablePowerToTenBeforeComma();
-      this.getTablePowerToTenAfterComma();
+      this.getTablePowerToTen();
+      console.log(this.tablePowerToTen);
+      this.result.push({
+        name: `${this.imp.$t('conversion')}`,
+        text: `${this.imp.$t('PowerToTen')}`,
+        subpanels: [
+          {
+            name: `${this.imp.$t('doConversion')}`,
+            text: `\\(${this.tablePowerToTen}\\)`,
+          },
+        ],
+      });
     } else if (modus === 'TenToPower') {
       this.getTableTenToPowerBeforeComma();
       this.getTableTenToPowerAfterComma();
@@ -188,8 +263,7 @@ export class DescriptionPolyadicConversion {
         ],
       });
     } else if (modus === 'PowerToPower') {
-      this.getTablePowerToTenBeforeComma();
-      this.getTablePowerToTenAfterComma();
+      this.getTablePowerToTen();
       this.getTableTenToPowerBeforeComma();
       this.getTableTenToPowerAfterComma();
     } else {
