@@ -86,72 +86,41 @@ export class DescriptionPolyadicConversion {
 
   getTablePowerToTen() {
     const power = this.watcher[0].steps.Input.data.number.power;
-    const sign = this.watcher[0].steps.ConstructNumber.data.sign;
     const stepsBeforeComma = this.watcher[0].steps.ConstructNumber.data.stepsBeforeComma;
     const stepsAfterComma = this.watcher[0].steps.ConstructNumber.data.stepsAfterComma;
     const resultVal = this.watcher[0].steps.Result.data.resultValue;
-    const steps = stepsAfterComma + stepsBeforeComma;
-    const tabdef = ['{c'];
-    if (sign === '-') {
-      tabdef.push('c');
-    }
-    for (let i = 0; i < steps; i += 1) {
-      tabdef.push('cc');
-    }
-    tabdef.push('c}');
-
+    const tabdef = '{c|cc}';
     const table = [];
-    table.push(`\\begin{array} ${tabdef.join('')}`);
 
-    // first row, calculation
-    const row1 = [];
-    row1.push('&');
-    if (sign === '-') {
-      row1.push('- \\Big(&');
-    }
+    table.push(`\\begin{array} ${tabdef}`);
+    table.push(`${this.imp.$t('calcStep')}&&${this.imp.$t('summands')}\\\\ \\hline`); // header
+
     for (let i = stepsBeforeComma - 1; i >= 0; i -= 1) {
-      row1.push([
+      const calc = [
         this.watcher[0].steps.ConstructNumber.data[`beforeComma${i}In`],
-        `* ${power}^${i} &+&`,
-      ].join(''));
+        `* ${power}^${i}`,
+      ].join('');
+      const res = `${this.watcher[0].steps.ConstructNumber.data[`beforeComma${i}Res`]}`;
+      if ((i === 0) && (stepsAfterComma === 0)) {
+        table.push(`${calc}&+&${res}\\\\`);
+      } else {
+        table.push(`${calc}&&${res}\\\\`);
+      }
     }
     for (let i = 0; i < stepsAfterComma; i += 1) {
-      row1.push([
+      const calc = [
         this.watcher[0].steps.ConstructNumber.data[`afterComma${i}In`],
-        `* \\frac{1}{${power}^${i + 1}} &+&`,
-      ].join(''));
+        `* \\frac{1}{${power}^${i + 1}}`,
+      ].join('');
+      const res = `${this.watcher[0].steps.ConstructNumber.data[`afterComma${i}Res`]}`;
+      if (i !== stepsAfterComma - 1) {
+        table.push(`${calc}&&${res}\\\\`);
+      } else {
+        table.push(`${calc}&+&${res}\\\\`);
+      }
     }
-    row1[row1.length - 1] = row1[row1.length - 1].substring(0, row1[row1.length - 1].length - 2);
-    if (sign === '-') {
-      row1.push('\\Big)');
-    }
-    row1.push('&\\\\ \\hline \\hline');
-    table.push(row1.join(''));
-
-    // second row, result
-    const row2 = ['\\Sigma'];
-    row2.push('&');
-    if (sign === '-') {
-      row2.push('- \\Big(&');
-    }
-    for (let i = stepsBeforeComma - 1; i >= 0; i -= 1) {
-      row2.push([
-        this.watcher[0].steps.ConstructNumber.data[`beforeComma${i}Res`],
-        '&+&',
-      ].join(''));
-    }
-    for (let i = 0; i < stepsAfterComma; i += 1) {
-      row2.push([
-        this.watcher[0].steps.ConstructNumber.data[`afterComma${i}Res`],
-        '&+&',
-      ].join(''));
-    }
-    row2[row2.length - 1] = row2[row2.length - 1].substring(0, row2[row2.length - 1].length - 2);
-    if (sign === '-') {
-      row2.push('\\Big)');
-    }
-    row2.push(`& = ${resultVal}\\\\`);
-    table.push(row2.join(''));
+    table.push('\\hline');
+    table.push(`&&${resultVal}`);
 
     table.push('\\end{array}');
     this.tablePowerToTen = table.join('');

@@ -152,6 +152,8 @@ export const i18n = new VueI18n({
       quotient: 'Quotient',
       remainder: 'Rest',
       newBasis: 'neue Basis',
+      calcStep: 'Rechenschritt',
+      summands: 'Summanden',
     },
     en: {
       numVarInput: 'Number of variables',
