@@ -11987,12 +11987,42 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
       } // Padding if before or after comma some zeros missing
 
 
-      if (posComma !== binArray.length) {
+      if (posComma < binArray.length - 1) {
+        // case has comma
         var actLength = binArray.length;
-        binArray = binArray.padStart(actLength + posComma % 4, '0');
-        binArray = binArray.padEnd(binArray.length + (actLength - posComma) % 4, '0');
+        var lenBeforeComma = posComma;
+        var lenAfterComma = actLength - posComma - 1; // binArray = binArray.padStart(actLength + (lenBeforeComma % 4), '0');
+        // binArray = binArray.padEnd(binArray.length + (lenAfterComma % 4), '0');
+
+        var padStart = '';
+
+        if (lenBeforeComma % 4 !== 0) {
+          for (var _i2 = 0; _i2 < 4 - lenBeforeComma % 4; _i2 += 1) {
+            padStart += '0';
+          }
+        }
+
+        var padEnd = '';
+
+        if (lenAfterComma % 4 !== 0) {
+          for (var _i3 = 0; _i3 < 4 - lenAfterComma % 4; _i3 += 1) {
+            padEnd += '0';
+          }
+        }
+
+        binArray = padStart + binArray + padEnd;
       } else {
-        binArray.padStart(binArray.length % 4, '0');
+        // has no comma -> only front padding
+        // binArray = binArray.padStart(binArray.length + (binArray.length % 4), '0');
+        var _padStart = '';
+
+        if (binArray % 4 !== 0) {
+          for (var _i4 = 0; _i4 < 4 - binArray % 4; _i4 += 1) {
+            _padStart += '0';
+          }
+        }
+
+        binArray = _padStart + binArray;
       } // conversion cycle
 
 
@@ -12007,7 +12037,7 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
           // set up 4 digits to conversion
           act += binArray[i];
           i += 1;
-        } else if (act.length !== 4 && binArray[i] === '.') {
+        } else if (act.length === 0 && binArray[i] === '.') {
           // handle comma
           resultVal += '.';
           afterComma = true;
@@ -12021,10 +12051,10 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
 
           if (afterComma) {
             // after comma
-            this.watcher = this.watcher.step('ConstructNumber').saveVariable("afterComma".concat(count), hex);
+            this.watcher = this.watcher.step('ConstructNumber').saveVariable("afterComma".concat(count, "Bin"), act).saveVariable("afterComma".concat(count, "Hex"), hex);
           } else {
             // before comma
-            this.watcher = this.watcher.step('ConstructNumber').saveVariable("beforeComma".concat(count), hex);
+            this.watcher = this.watcher.step('ConstructNumber').saveVariable("beforeComma".concat(count, "Bin"), act).saveVariable("beforeComma".concat(count, "Hex"), hex);
           }
 
           act = '';
@@ -12032,7 +12062,12 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
         }
       }
 
-      this.watcher = this.watcher.step('ConstructNumber').saveVariable('stepsAfterComma', count); // make result
+      if (afterComma) {
+        this.watcher = this.watcher.step('ConstructNumber').saveVariable('stepsAfterComma', count);
+      } else {
+        this.watcher = this.watcher.step('ConstructNumber').saveVariable('stepsBeforeComma', count).saveVariable('stepsAfterComma', 0);
+      } // make result
+
 
       if (this.sign === '-') {
         resultVal = "-".concat(resultVal);

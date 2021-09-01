@@ -234,18 +234,103 @@ export class DescriptionPolyadicConversion {
 
     table.push('\\end{array}');
     this.tableShortcut = table.join('');
-    console.log(this.tableShortcut);
   }
 
   getTableShortcutBinToHex() {
-    this.tableShortcut = '';
+    const stepsBeforeComma = this.watcher.steps.ConstructNumber.data.stepsBeforeComma;
+    const stepsAfterComma = this.watcher.steps.ConstructNumber.data.stepsAfterComma;
+    const sign = this.watcher.steps.ConstructNumber.data.sign;
+
+    console.log(this.watcher.steps.Input.data.number.bitString);
+    console.log(this.watcher.steps.Input.data.number.bitString.length);
+    console.log(this.watcher.steps.Input.data.number.comma);
+    console.log(stepsBeforeComma);
+    console.log(stepsAfterComma);
+
+
+    const tabdef = ['{'];
+    if (sign === '-') {
+      tabdef.push('c');
+    }
+    for (let i = 0; i < stepsBeforeComma; i += 1) {
+      tabdef.push('c|');
+    }
+    if (stepsAfterComma > 0) {
+      tabdef.push('c|');
+      for (let i = 0; i < stepsAfterComma; i += 1) {
+        tabdef.push('c|');
+      }
+    }
+    tabdef[tabdef.length - 1] = tabdef[tabdef.length - 1].substring(
+      0, tabdef[tabdef.length - 1].length - 1,
+    );
+    tabdef.push('}');
+
+    const table = [];
+    table.push(`\\begin{array} ${tabdef.join('')}`);
+
+    // first row, calculation
+    const row1 = [];
+    if (sign === '-') {
+      row1.push('- \\Big(&');
+    }
+    for (let i = 0; i < stepsBeforeComma; i += 1) {
+      row1.push([
+        this.watcher.steps.ConstructNumber.data[`beforeComma${i}Bin`],
+        '&',
+      ].join(''));
+    }
+    if (stepsAfterComma > 0) {
+      row1.push('.&');
+      for (let i = 0; i < stepsAfterComma; i += 1) {
+        row1.push([
+          this.watcher.steps.ConstructNumber.data[`afterComma${i}Bin`],
+          '&',
+        ].join(''));
+      }
+    }
+    row1[row1.length - 1] = row1[row1.length - 1].substring(0, row1[row1.length - 1].length - 1);
+    if (sign === '-') {
+      row1.push('\\Big)');
+    }
+    row1.push('\\\\ \\hline ');
+    table.push(row1.join(''));
+
+    // second row, result
+    const row2 = [];
+    if (sign === '-') {
+      row2.push('- \\Big(&');
+    }
+    for (let i = 0; i < stepsBeforeComma; i += 1) {
+      row2.push([
+        this.watcher.steps.ConstructNumber.data[`beforeComma${i}Hex`],
+        '&',
+      ].join(''));
+    }
+    if (stepsAfterComma > 0) {
+      row2.push('.&');
+      for (let i = 0; i < stepsAfterComma; i += 1) {
+        row2.push([
+          this.watcher.steps.ConstructNumber.data[`afterComma${i}Hex`],
+          '&',
+        ].join(''));
+      }
+    }
+    row2[row2.length - 1] = row2[row2.length - 1].substring(0, row2[row2.length - 1].length - 1);
+    if (sign === '-') {
+      row2.push('\\Big)');
+    }
+    table.push(row2.join(''));
+
+    table.push('\\end{array}');
+    this.tableShortcut = table.join('');
+    console.log(this.tableShortcut);
   }
 
   // eslint-disable-next-line no-unused-vars
   makeDescription(modus, format) {
     let solution;
     let number;
-    console.log(modus);
     if (Array.isArray(this.watcher)) {
       if (modus === 'PowerToTen') {
         solution = this.watcher[0].steps.Result.data.resultNumber;
@@ -291,8 +376,8 @@ export class DescriptionPolyadicConversion {
           },
         ],
       });
-    } else if (modus === 'ShortcutHexToBin') {
-      this.getTableShortcutHexTo2();
+    } else if (modus === 'ShortcutBinToHex') {
+      this.getTableShortcutBinToHex();
       this.result.push({
         name: `${this.imp.$t('conversion')}`,
         text: `${this.imp.$t('shortcutBinToHex')}`,

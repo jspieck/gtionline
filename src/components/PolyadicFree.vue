@@ -88,10 +88,10 @@ export default {
       hasdefault = true;
     } */
     let input = '';
-    /* if (window.sessionStorage.getItem('PF_inputNum')) {
+    if (window.sessionStorage.getItem('PF_inputNum')) {
       input = window.sessionStorage.getItem('PF_inputNum');
       hasdefault = true;
-    } */
+    }
     return {
       selectedFormat: [format1, format2], // 0: in format, 1: out format
       power: [10, 10],
