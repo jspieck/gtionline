@@ -241,13 +241,6 @@ export class DescriptionPolyadicConversion {
     const stepsAfterComma = this.watcher.steps.ConstructNumber.data.stepsAfterComma;
     const sign = this.watcher.steps.ConstructNumber.data.sign;
 
-    console.log(this.watcher.steps.Input.data.number.bitString);
-    console.log(this.watcher.steps.Input.data.number.bitString.length);
-    console.log(this.watcher.steps.Input.data.number.comma);
-    console.log(stepsBeforeComma);
-    console.log(stepsAfterComma);
-
-
     const tabdef = ['{'];
     if (sign === '-') {
       tabdef.push('c');
@@ -324,7 +317,6 @@ export class DescriptionPolyadicConversion {
 
     table.push('\\end{array}');
     this.tableShortcut = table.join('');
-    console.log(this.tableShortcut);
   }
 
   // eslint-disable-next-line no-unused-vars

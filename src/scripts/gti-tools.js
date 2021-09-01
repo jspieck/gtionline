@@ -11991,9 +11991,7 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
         // case has comma
         var actLength = binArray.length;
         var lenBeforeComma = posComma;
-        var lenAfterComma = actLength - posComma - 1; // binArray = binArray.padStart(actLength + (lenBeforeComma % 4), '0');
-        // binArray = binArray.padEnd(binArray.length + (lenAfterComma % 4), '0');
-
+        var lenAfterComma = actLength - posComma - 1;
         var padStart = '';
 
         if (lenBeforeComma % 4 !== 0) {
@@ -12013,11 +12011,10 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
         binArray = padStart + binArray + padEnd;
       } else {
         // has no comma -> only front padding
-        // binArray = binArray.padStart(binArray.length + (binArray.length % 4), '0');
         var _padStart = '';
 
-        if (binArray % 4 !== 0) {
-          for (var _i4 = 0; _i4 < 4 - binArray % 4; _i4 += 1) {
+        if (posComma % 4 !== 0) {
+          for (var _i4 = 0; _i4 < 4 - posComma % 4; _i4 += 1) {
             _padStart += '0';
           }
         }

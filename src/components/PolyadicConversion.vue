@@ -166,7 +166,6 @@ export default {
       this.saveVals();
     },
     computeSolution() {
-      console.log('compute');
       const polyadicSolution = new solution.PolyadicSolution();
       polyadicSolution.convertFormat(this.inputNums[0], this.power[0], this.power[1]);
       this.watcher = JSON.parse(JSON.stringify(polyadicSolution.watcher));
@@ -186,7 +185,6 @@ export default {
       this.solutionSteps = descr.result; */
       this.solutionSteps = this.solution;
       this.solutionObject = polyadicSolution.resultObject;
-      console.log(this.solutionObject);
     },
     checkSolution() {
       if (this.solutionObject.bitStrint === this.propSol) {

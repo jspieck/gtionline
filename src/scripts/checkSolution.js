@@ -2,8 +2,6 @@
 
 function classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
-    console.log(instance);
-    console.log(Constructor);
     throw new TypeError('Cannot call a class as a function');
   }
 }

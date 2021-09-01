@@ -231,7 +231,6 @@ export default {
       );
     }, */
     computeSolution() {
-      console.log('compute');
       // calc solution
       const polyadicSolution = new solution.PolyadicSolution();
       polyadicSolution.convertFormat(this.inputNums[0], this.power[0], this.power[1]);
