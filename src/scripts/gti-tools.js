@@ -11839,16 +11839,16 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
             act[1] = act[1].toString(16).toUpperCase();
           }
 
-          var indexVal = vals.indexOf(act[0]);
           val2 += act[1];
+          var indexVal = vals.indexOf(act[0].toString());
 
-          if (indexVal > 0) {
+          if (indexVal >= 0) {
             // perodicity found, no further calculation
             this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('isPeriodic', true).saveVariable('periodicStart', indexVal).saveVariable('periodicEnd', count);
             count += 1;
             break;
           } else {
-            vals.push(act[0]);
+            vals.push(act[0].toString());
           }
 
           count += 1;

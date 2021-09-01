@@ -64,13 +64,9 @@ export class DescriptionPolyadicConversion {
 
     let number = this.watcher[1].steps.ConstructNumber.data.afterCommaVal;
     const power = this.watcher[1].steps.Input.data.power;
-    let mul = this.watcher[1].steps.ConstructNumber.data.afterComma0Mul;
-    let remain = this.watcher[1].steps.ConstructNumber.data.afterComma0Remain;
-    table.push(`${number}&*&${power}&=&${mul}&+&${remain}\\\\`);
-    number = mul;
-    for (let i = 1; i < steps; i += 1) {
-      mul = this.watcher[1].steps.ConstructNumber.data[`afterComma${i}Mul`];
-      remain = this.watcher[1].steps.ConstructNumber.data[`afterComma${i}Remain`];
+    for (let i = 0; i <= steps; i += 1) {
+      const mul = this.watcher[1].steps.ConstructNumber.data[`afterComma${i}Mul`];
+      const remain = this.watcher[1].steps.ConstructNumber.data[`afterComma${i}Remain`];
       if (isPeriodic && (i >= periodicStart)) {
         table.push(`${number}&*&${power}&=&${mul}&+&\\overline{${remain}}\\\\`);
       } else {
@@ -403,11 +399,30 @@ export class DescriptionPolyadicConversion {
     } else {
       console.log('FAILURE: Not implemented Modus!');
     }
+    let solutionString = solution.bitString;
+    if ((modus === 'PowerToPower') || (modus === 'TenToPower')) {
+      const isPeriodic = this.watcher[1].steps.ConstructNumber.data.isPeriodic;
+      if (isPeriodic) {
+        const periodicStart = this.watcher[1].steps.ConstructNumber.data.periodicStart;
+        const periodicEnd = this.watcher[1].steps.ConstructNumber.data.periodicEnd;
+        const splitted = solutionString.split('.');
+        let newSolution = `${splitted[0]}.`;
+        for (let i = 0; i < periodicStart; i += 1) {
+          newSolution += splitted[1][i];
+        }
+        newSolution += '\\overline{';
+        for (let i = periodicStart; i <= periodicEnd; i += 1) {
+          newSolution += splitted[1][i];
+        }
+        newSolution += '}';
+        solutionString = newSolution;
+      }
+    }
     this.result.push({
       name: this.imp.$t('solution'),
       text: [
         `${this.imp.$t('correctSolution')}: `,
-        `\\(${solution.bitString}\\) `,
+        `\\(${solutionString}\\) `,
         `\\(\\hspace{2cm} \\)${this.imp.$t('value')}: \\(${solution.value}\\)`,
       ].join(''),
     });
