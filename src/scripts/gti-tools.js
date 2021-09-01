@@ -11911,8 +11911,9 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
         this.sign = '+';
       } else {
         this.sign = '+';
-      } // shift out -/+ sign
+      }
 
+      this.watcher = this.watcher.step('ConstructNumber').saveVariable('sign', this.sign); // shift out -/+ sign
 
       var hexArray = n.arr;
 
@@ -11947,7 +11948,13 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
           count += 1;
         }
       });
-      this.watcher = this.watcher.step('ConstructNumber').saveVariable('stepsAfterComma', count); // make result
+
+      if (afterComma) {
+        this.watcher = this.watcher.step('ConstructNumber').saveVariable('stepsAfterComma', count);
+      } else {
+        this.watcher = this.watcher.step('ConstructNumber').saveVariable('stepsBeforeComma', count).saveVariable('stepsAfterComma', 0);
+      } // make result
+
 
       if (this.sign === '-') {
         resultVal = "-".concat(resultVal);
