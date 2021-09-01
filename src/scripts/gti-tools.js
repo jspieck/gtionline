@@ -11847,6 +11847,8 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
             this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('isPeriodic', true).saveVariable('periodicStart', indexVal).saveVariable('periodicEnd', count);
             count += 1;
             break;
+          } else {
+            vals.push(act[0]);
           }
 
           count += 1;
