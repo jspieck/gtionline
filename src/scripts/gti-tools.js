@@ -11817,7 +11817,12 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
         val = act[1] + val;
       }
 
-      this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('stepsBeforeComma', count); // Multiplication Algorithm after Comma
+      this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('stepsBeforeComma', count);
+
+      if (count === 0) {
+        val = '0';
+      } // Multiplication Algorithm after Comma
+
 
       var val2 = ''; // result string after comma
 

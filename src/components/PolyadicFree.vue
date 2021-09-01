@@ -78,15 +78,15 @@ export default {
   data() {
     let hasdefault = false;
     let format1 = 'decimal';
-    if (window.sessionStorage.getItem('PF_format1')) {
+    /*if (window.sessionStorage.getItem('PF_format1')) {
       format1 = window.sessionStorage.getItem('PF_format1');
       hasdefault = true;
-    }
+    }*/
     let format2 = 'decimal';
-    if (window.sessionStorage.getItem('PF_format2')) {
+    /*if (window.sessionStorage.getItem('PF_format2')) {
       format2 = window.sessionStorage.getItem('PF_format2');
       hasdefault = true;
-    }
+    }*/
     let input = '';
     if (window.sessionStorage.getItem('PF_inputNum')) {
       input = window.sessionStorage.getItem('PF_inputNum');

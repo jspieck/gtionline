@@ -141,6 +141,8 @@ export const i18n = new VueI18n({
       TenToPower: 'Bei der Konvertierung vom Dezimalsystem in ein beliebiges anders muss vor dem Komma der Divisions- und nach dem Komma der Multiplikationsalgorithmus angewendet werden.',
       PowerToTen: 'Die Konvertierung eines beliebigen Systems in das Dezimalsystem läuft durch Summierung der potenzierten Stellen.',
       PowerToPower: 'Die Konvertierung eines beliebigen Zahlensystems in ein beliebiges (nicht dezimal), erfolgt durch zweiteilige Konvertierung über das Dezimalsystem. Zuerst wird von dem ursprünglichen System durch Aufsummieren eine Dezimalzahl erzeugt. Als zweiter Schritt wird dann mittels des Divisions- und des Multiplikationsalgorithmus die Zahl im Zielsystem konstruhiert.',
+      noValuesBeforeComma: 'Keine Werte vor dem Komma. Der Divisionsalgorithmus kann weggelassen werden',
+      noValuesAfterComma: 'Keine Werte nach dem Komma. Der Multiplikationssalgorithmus kann weggelassen werden',
       firstToTen: '1. Summieren der potenzierten Stellen',
       secondToPower: '2. Konvertierung mittels Divisions- und Multiplikationsalgorithmus',
       shortcutBinToHex: 'Bei der Konvertierung von Binär nach Hex können die Werte direkt abgelesen werden.',
