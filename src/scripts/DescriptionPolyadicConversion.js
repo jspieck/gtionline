@@ -135,7 +135,7 @@ export class DescriptionPolyadicConversion {
     const stepsBeforeComma = this.watcher.steps.ConstructNumber.data.stepsBeforeComma;
     const stepsAfterComma = this.watcher.steps.ConstructNumber.data.stepsAfterComma;
     const sign = this.watcher.steps.ConstructNumber.data.sign;
-    const valueString = this.watcher.steps.Input.data.number.bitString;
+    let valueString = this.watcher.steps.Input.data.number.bitString;
 
 
     const tabdef = ['{'];
@@ -163,6 +163,7 @@ export class DescriptionPolyadicConversion {
     const row1 = [];
     if (sign === '-') {
       row1.push('- \\Big(&');
+      valueString = valueString.substring(1);
     }
     for (let i = 0; i < stepsBeforeComma; i += 1) {
       row1.push(`${valueString[i]}&`);

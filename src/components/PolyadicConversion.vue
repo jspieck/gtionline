@@ -1,37 +1,5 @@
 <template>
   <div class="fp-exercise">
-    <h4>{{$t('fpformat')}}</h4>
-    <div class="formatContainer" v-on:mousemove="sliderMouseMove">
-      <div class="sign">VB</div>
-      <div class="exponent" :style="{ width:
-        (60 + this.exponentBits * (this.containerWidth / (this.numBits - 1)))+ 'px' }">
-        <div v-on:click="expandFraction" class="expandExponent">
-          <div class="arrowLeft">
-            <div class='arrowMask'></div>
-          </div>
-        </div>
-        E({{exponentBits}})
-        <div v-on:mousedown="sliderMouseDown" class="slider"/>
-      </div>
-      <div class="fraction" :style="{ width: (60 + (this.numBits - this.exponentBits - 1) *
-        (this.containerWidth / (this.numBits - 1))) + 'px' }">
-        <div v-on:click="expandExponent" class="expandFraction">
-          <div class="arrowRight">
-            <div class="arrowMask"></div>
-          </div>
-        </div>
-        M({{(numBits - exponentBits - 1)}})
-      </div>
-    </div>
-    <div class="mobile_formatContainer" v-on:mousemove="sliderMouseMove">
-      <div class="mobile_sign">Sign(1)</div>
-      <div v-on:click="expandExponent" class="mobile_exponent">
-        Exponent({{exponentBits}}) &uarr;
-      </div>
-      <div v-on:click="expandFraction" class="mobile_fraction">
-        Mantisse({{(numBits - exponentBits - 1)}}) &darr;
-      </div>
-    </div>
     <h4>{{$t('generateEx')}}</h4>
     <div class="divMargin"/>
     <button v-on:click="generateExercise">{{$t('generate')}}</button>
@@ -49,9 +17,9 @@
       <div>
         <label class="attention">{{$t('attSolve')}}</label>
       </div>
-      <div class="pdfGen">
+      <!-- <div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
-      </div>
+      </div> -->
     </div><div id="solution">
     <Accordion :solutionDescription="solDescr">
       <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
@@ -65,9 +33,9 @@
 
 <script>
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
-import * as description from '../scripts/DescriptionSolution';
 import SolutionAccordion from './SolutionAccordion.vue';
 import * as solution from '../scripts/polyadicSolution';
+import * as description from '../scripts/DescriptionPolyadicConversion';
 
 export default {
   name: 'PolyadicConversion',
@@ -93,6 +61,7 @@ export default {
     }
     return {
       selectedFormat: [format1, format2], // 0: in format, 1: out format
+      power: [10, 10],
       mouseDown: false,
       solution: '',
       generated: false,
@@ -111,6 +80,15 @@ export default {
   computed: {
     solDescr() {
       return this.solutionSteps;
+    },
+    formatOptions() {
+      return {
+        decimal: `${this.$t('decimal')} (92,14)`,
+        binary: `${this.$t('binary')} (1,0011)`,
+        ternary: `${this.$t('ternary')} (2122,01)`,
+        octal: `${this.$t('octal')} (6373,01)`,
+        hex: `${this.$t('hexadecimal')} (A53F0,08)`,
+      };
     },
   },
   mounted() {
@@ -144,20 +122,72 @@ export default {
       });
     },
     drawExercise() {
-      this.exerciseText = `${this.$t('conversionExercise1')} \\( fp= \\text{${this.fp1}} \\) ${this.$t('conversionExercise2')} ${this.exponentBits}`;
+      this.exerciseText = `${this.$t('polyadicExercise1')} ${this.fp1} ${this.$t('polyadicExercise2')} ${this.formatOptions[this.selectedFormat[0]]} ${this.$t('polyadicExercise3')} "${this.formatOptions[this.selectedFormat[1]]}".`;
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();
         }
       });
-      const descr = new description.DescriptionSolution(this, this.exponentBits, this.numBits, '');
-      descr.makeDescriptionConversion(this.solutionObject);
-      this.solutionSteps = descr.result;
     },
     generateExercise() {
-      let number = (Math.floor(Math.random() * 100) + Math.random()).toFixed(4);
-      if (Math.random() < 0.5) {
-        number *= -1;
+      // choose formats
+      const formats = Object.keys(this.formatOptions);
+      const format1 = formats[Math.floor(Math.random() * formats.length)];
+      const indexFormat1 = formats.indexOf(format1);
+      if (indexFormat1 > -1) {
+        formats.splice(indexFormat1, 1);
+      }
+      const format2 = formats[Math.floor(Math.random() * formats.length)];
+      this.selectedFormat = [format1, format2];
+      // generate input number
+      let number = '';
+      const digitsBeforeComma = Math.floor(Math.random() * 8);
+      const digitsAfterComma = Math.floor(Math.random() * 8);
+      let digitValues = [];
+      if (format1 === 'decimal') {
+        digitValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        this.power[0] = 10;
+      } else if (format1 === 'binary') {
+        digitValues = ['0', '1'];
+        this.power[0] = 2;
+      } else if (format1 === 'ternary') {
+        digitValues = ['0', '1', '2'];
+        this.power[0] = 3;
+      } else if (format1 === 'octal') {
+        digitValues = ['0', '1', '2', '3', '4', '5', '6', '7'];
+        this.power[0] = 8;
+      } else {
+        digitValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+        this.power[0] = 16;
+      }
+      if (format2 === 'decimal') {
+        this.power[1] = 10;
+      } else if (format2 === 'binary') {
+        this.power[1] = 2;
+      } else if (format2 === 'ternary') {
+        this.power[1] = 3;
+      } else if (format2 === 'octal') {
+        this.power[1] = 8;
+      } else {
+        this.power[1] = 16;
+      }
+
+      if (digitsBeforeComma > 0) {
+        for (let i = 0; i < digitsBeforeComma; i += 1) {
+          number += digitValues[Math.floor(Math.random() * digitValues.length)];
+        }
+      } else {
+        number = '0';
+      }
+      if (digitsAfterComma > 0) {
+        number += '.';
+        for (let i = 0; i < digitsAfterComma; i += 1) {
+          number += digitValues[Math.floor(Math.random() * digitValues.length)];
+        }
+      }
+
+      if (((digitsBeforeComma > 0) || (digitsAfterComma > 0)) && (Math.random() < 0.5)) {
+        number = `-${number}`;
       }
       this.fp1 = number;
       this.generated = true;
@@ -166,24 +196,15 @@ export default {
       this.saveVals();
     },
     computeSolution() {
+      // calc solution
       const polyadicSolution = new solution.PolyadicSolution();
-      polyadicSolution.convertFormat(this.inputNums[0], this.power[0], this.power[1]);
+      polyadicSolution.convertFormat(this.fp1, this.power[0], this.power[1]);
       this.watcher = JSON.parse(JSON.stringify(polyadicSolution.watcher));
       this.solution = polyadicSolution.result;
-      /* const descr = new description.DescriptionSolution(
-        this,
-        this.exponentBits,
-        this.numBits,
-        ieeeSolution.watcher,
-      );
-      descr.makeDescriptionArithmetic(
-        this.nums[0],
-        this.nums[1],
-        this.solution,
-        this.selectedFormat[2],
-      );
-      this.solutionSteps = descr.result; */
-      this.solutionSteps = this.solution;
+      // construct description
+      const descr = new description.DescriptionPolyadicConversion(this, this.watcher);
+      descr.makeDescription(polyadicSolution.modus, this.selectedFormat);
+      this.solutionSteps = descr.result;
       this.solutionObject = polyadicSolution.resultObject;
     },
     checkSolution() {

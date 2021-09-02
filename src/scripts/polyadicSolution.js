@@ -18,7 +18,7 @@ export class PolyadicSolution {
 
   convertFormat(num1, format1, format2) {
     if (num1 !== '') {
-      const number = new tool.NumberPolyadic(format1, num1.toString());
+      const number = new tool.NumberPolyadic(format1, num1.toString(format1));
       const converter = new tool.ConversionPolyadicNumbers(number, format2);
       this.modus = converter.modus;
       this.result = converter.solution.bitString;

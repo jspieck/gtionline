@@ -61,12 +61,11 @@
 </template>
 
 <script>
-/* eslint-disable */
+/* eslint no-useless-escape: 0  no-case-declarations: 0 */
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
 import * as description from '../scripts/DescriptionPolyadicConversion';
-import * as checker from '../scripts/checkSolution';
-import * as pdf from '../scripts/generatePdf';
+// import * as pdf from '../scripts/generatePdf';
 import * as solution from '../scripts/polyadicSolution';
 
 export default {
@@ -77,16 +76,16 @@ export default {
   },
   data() {
     let hasdefault = false;
-    let format1 = 'decimal';
-    /*if (window.sessionStorage.getItem('PF_format1')) {
+    const format1 = 'decimal';
+    /* if (window.sessionStorage.getItem('PF_format1')) {
       format1 = window.sessionStorage.getItem('PF_format1');
       hasdefault = true;
-    }*/
-    let format2 = 'decimal';
-    /*if (window.sessionStorage.getItem('PF_format2')) {
+    } */
+    const format2 = 'decimal';
+    /* if (window.sessionStorage.getItem('PF_format2')) {
       format2 = window.sessionStorage.getItem('PF_format2');
       hasdefault = true;
-    }*/
+    } */
     let input = '';
     if (window.sessionStorage.getItem('PF_inputNum')) {
       input = window.sessionStorage.getItem('PF_inputNum');
@@ -161,7 +160,7 @@ export default {
       } else if (val === 'hex') {
         this.power[num] = 16;
       }
-      this.checkFormat(this.inputNums[0])
+      this.checkFormat(this.inputNums[0]);
     },
     checkFormat(conv) {
       this.backFormat = '';

@@ -156,6 +156,9 @@ export const i18n = new VueI18n({
       newBasis: 'neue Basis',
       calcStep: 'Rechenschritt',
       summands: 'Summanden',
+      polyadicExercise1: 'Konvertiere den Wert:',
+      polyadicExercise2: 'aus dem Ausgangsformat: ',
+      polyadicExercise3: 'in das Zielformat:',
     },
     en: {
       numVarInput: 'Number of variables',
