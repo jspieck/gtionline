@@ -66,7 +66,7 @@ export class PdfDescription {
   getHeader() {
     let header = '';
     header += `<div id="header1">${this.imp.$t('gti')}</div>`;
-    header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('Conversion')} \\( ${this.imp.fp1} \\) ${this.imp.$t(`${this.imp.selectedFormat[0]}`)} \\rightarrow ${this.imp.$t(`${this.imp.selectedFormat[1]}`)}</ctr>`;
+    header += `<ctr>${this.imp.$t('example')} ${this.imp.$t('approach')}: ${this.imp.$t('conversion')} \\( ${this.imp.inputNum} \\) ${this.imp.$t(`${this.imp.selectedFormat[0]}`)} \\(\\rightarrow\\) ${this.imp.$t(`${this.imp.selectedFormat[1]}`)}</ctr>`;
     this.header = header;
   }
 
@@ -76,7 +76,7 @@ export class PdfDescription {
     this.disclaimer = disclaimer;
   }
 
-  getValues(number) {
+  getValues() {
     // values
     let values = '';
     values += `<div id="header2">${this.imp.$t('values')}</div>`;
@@ -84,12 +84,12 @@ export class PdfDescription {
     // headings
     values += '<tr>';
     values += '<th></th>';
-    values += `<th>${this.imp.$t('firstSummand')}</th>`;
+    values += `<th>${this.imp.$t('values')}</th>`;
     values += '</tr>';
     // content
     values += '<tr>';
     values += `<td>${this.imp.$t('number')}</td>`;
-    values += `<td>${number.bitString}</td>`;
+    values += `<td>${this.imp.inputNum}</td>`;
     values += '</tr>';
     values += '<tr>';
     values += `<td>${this.imp.$t('firstFormat')}</td>`;
@@ -105,23 +105,19 @@ export class PdfDescription {
 
   generatePdf(returnSite = 'PolyadicArithmetic') {
     let solution;
-    let number;
     if (Array.isArray(this.imp.watcher)) {
       if (this.modus === 'PowerToTen') {
         solution = this.imp.watcher[0].steps.Result.data.resultNumber;
-        number = this.imp.watcher[0].steps.Input.data.number;
       } else {
         solution = this.imp.watcher[1].steps.Result.data.resultNumber;
-        number = this.imp.watcher[1].steps.Input.data.number;
       }
     } else {
       solution = this.imp.watcher.steps.Result.data.resultNumber;
-      number = this.imp.watcher.steps.Input.data.number;
     }
     this.getStyle();
     this.getHeader();
     this.getDisclaimer();
-    this.getValues(number);
+    this.getValues();
     let latex = '<style scoped>#scoped-content { width:100%; justify-content: center; }</style>';
     latex += '<div id="scoped-content">';
     // style
@@ -179,7 +175,7 @@ export class PdfDescription {
       latex += '</li>';
       latex += `<li><div id="header3">${this.imp.$t('divisionAlgorithm')} :</div>`;
       latex += '<div id="ctr">\\(';
-      latex += this.description.tableTenToPowerAfterComma;
+      latex += this.description.tableTenToPowerBeforeComma;
       latex += '\\)</div>';
       latex += '</li>';
       latex += `<li><div id="header3">${this.imp.$t('multiplicationAlgorithm')} :</div>`;

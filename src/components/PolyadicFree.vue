@@ -9,7 +9,7 @@
             <td>
               <div class="solutionInput">
               <p>{{$t('input')}}</p>
-              <input id="InputNumber" v-model="inputNums[0]" :placeholder="this.$t('inputNumber') "
+              <input id="InputNumber" v-model="inputNum" :placeholder="this.$t('inputNumber') "
                      @input="checkFormat($event.target.value)" :class="backFormat"/>
               </div>
             </td>
@@ -97,8 +97,7 @@ export default {
       mouseDown: false,
       solution: '',
       solutionObject: '',
-      inputNums: { 0: input },
-      nums: { 0: '' },
+      inputNum: input,
       falseFormatOutput: 'Falsches Format!',
       solutionSteps: [],
       default: hasdefault,
@@ -137,7 +136,7 @@ export default {
     saveVals() {
       window.sessionStorage.setItem('PF_format1', this.selectedFormat[0]);
       window.sessionStorage.setItem('PF_format2', this.selectedFormat[1]);
-      window.sessionStorage.setItem('PF_inputNum', this.inputNums[0]);
+      window.sessionStorage.setItem('PF_inputNum', this.inputNum);
     },
     recalculate() {
       this.computeSolution();
@@ -161,7 +160,7 @@ export default {
       } else if (val === 'hex') {
         this.power[num] = 16;
       }
-      this.checkFormat(this.inputNums[0]);
+      this.checkFormat(this.inputNum);
     },
     checkFormat(conv) {
       this.backFormat = '';
@@ -222,7 +221,7 @@ export default {
     computeSolution() {
       // calc solution
       const polyadicSolution = new solution.PolyadicSolution();
-      polyadicSolution.convertFormat(this.inputNums[0], this.power[0], this.power[1]);
+      polyadicSolution.convertFormat(this.inputNum, this.power[0], this.power[1]);
       this.watcher = JSON.parse(JSON.stringify(polyadicSolution.watcher));
       this.solution = polyadicSolution.result;
       // construct description
