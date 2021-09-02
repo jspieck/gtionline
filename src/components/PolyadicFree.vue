@@ -41,12 +41,12 @@
       <div>
         <label class="attention">{{$t('attSolve')}}</label>
       </div>
-      <!-- <div class="pdfGen">
+      <div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
       </div>
       <div class="mobile_pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
-      </div> -->
+      </div>
     </div>
     <div id="solution">
       <Accordion :solutionDescription="solDescr">
@@ -65,7 +65,7 @@
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
 import * as description from '../scripts/DescriptionPolyadicConversion';
-// import * as pdf from '../scripts/generatePdf';
+import * as pdf from '../scripts/generatePdfPolyadicConversion';
 import * as solution from '../scripts/polyadicSolution';
 
 export default {
@@ -106,6 +106,7 @@ export default {
       propSol: '',
       backSol: '',
       backFormat: '',
+      modus: '',
     };
   },
   computed: {
@@ -213,22 +214,11 @@ export default {
       this.recalculate();
       return true;
     },
-    /* downloadPdf() {
+    downloadPdf() {
       this.recalculate();
-      const descr = new pdf.PdfDescription(
-        this,
-        this.exponentBits,
-        this.numBits,
-        this.watcher,
-      );
-      descr.generatePolyadicPdf(
-        this.inputNums[0],
-        this.inputNums[1],
-        this.solution,
-        this.selectedFormat[2],
-        this.selectedFormat[0],
-      );
-    }, */
+      const descr = new pdf.PdfDescription(this, this.watcher);
+      descr.generatePdf();
+    },
     computeSolution() {
       // calc solution
       const polyadicSolution = new solution.PolyadicSolution();
@@ -240,6 +230,7 @@ export default {
       descr.makeDescription(polyadicSolution.modus, this.selectedFormat);
       this.solutionSteps = descr.result;
       this.solutionObject = polyadicSolution.resultObject;
+      this.modus = polyadicSolution.modus;
     },
     checkSolution() {
       if (this.solution === this.propSol) {
