@@ -117,7 +117,12 @@ export default {
         decimal: `${this.$t('decimal')} (92,14)`,
         binary: `${this.$t('binary')} (1,0011)`,
         ternary: `${this.$t('ternary')} (2122,01)`,
+        quaternary: `${this.$t('quaternary')} (2132,03)`,
+        quinary: `${this.$t('quinary')} (4322,41)`,
+        senary: `${this.$t('senary')} (2523,04)`,
+        septenary: `${this.$t('septenary')} (6162,51)`,
         octal: `${this.$t('octal')} (6373,01)`,
+        novenary: `${this.$t('novenary')} (8823,65)`,
         hex: `${this.$t('hexadecimal')} (A53F0,08)`,
       };
     },
@@ -149,16 +154,38 @@ export default {
     },
     selectFormat(num, val) {
       this.selectedFormat[num] = val;
-      if (val === 'decimal') {
-        this.power[num] = 10;
-      } else if (val === 'binary') {
-        this.power[num] = 2;
-      } else if (val === 'ternary') {
-        this.power[num] = 3;
-      } else if (val === 'octal') {
-        this.power[num] = 8;
-      } else if (val === 'hex') {
-        this.power[num] = 16;
+      switch (val) {
+        case 'binary':
+          this.power[num] = 2;
+          break;
+        case 'ternary':
+          this.power[num] = 3;
+          break;
+        case 'quaternary':
+          this.power[num] = 4;
+          break;
+        case 'quinary':
+          this.power[num] = 5;
+          break;
+        case 'senary':
+          this.power[num] = 6;
+          break;
+        case 'septenary':
+          this.power[num] = 7;
+          break;
+        case 'octal':
+          this.power[num] = 8;
+          break;
+        case 'novenary':
+          this.power[num] = 9;
+          break;
+        case 'decimal':
+          this.power[num] = 10;
+          break;
+        case 'hex':
+          this.power[num] = 16;
+          break;
+        default:
       }
       this.checkFormat(this.inputNum);
     },
@@ -168,34 +195,73 @@ export default {
       const convert = conv.replace(/\s/g, '');
       let commaFound = false;
       for (let i = 0; i < convert.length; i += 1) {
-        if (format === 'binary') {
-          if (!(['0', '1', ',', '.', '-', '+'].includes(convert[i]))) {
-            this.backFormat = 'incorrectInput';
-            return false;
-          }
-        } else if (format === 'decimal') {
-          if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-            ',', '.', '-', '+'].includes(convert[i]))) {
-            this.backFormat = 'incorrectInput';
-            return false;
-          }
-        } else if (format === 'ternary') {
-          if (!(['0', '1', '2', ',', '.', '-', '+'].includes(convert[i]))) {
-            this.backFormat = 'incorrectInput';
-            return false;
-          }
-        } else if (format === 'octal') {
-          if (!(['0', '1', '2', '3', '4', '5', '6', '7', ',', '.', '-',
-            '+'].includes(convert[i]))) {
-            this.backFormat = 'incorrectInput';
-            return false;
-          }
-        } else if (format === 'hex') {
-          if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
-            ',', '.', '-', '+'].includes(convert[i]))) {
-            this.backFormat = 'incorrectInput';
-            return false;
-          }
+        switch (format) {
+          case 'binary':
+            if (!(['0', '1', ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'ternary':
+            if (!(['0', '1', '2', ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'quaternary':
+            if (!(['0', '1', '2', '3', ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'quinary':
+            if (!(['0', '1', '2', '3', '4', ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'senary':
+            if (!(['0', '1', '2', '3', '4', '5', ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'septenary':
+            if (!(['0', '1', '2', '3', '4', '5', '6', ',', '.', '-',
+              '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'octal':
+            if (!(['0', '1', '2', '3', '4', '5', '6', '7', ',', '.', '-',
+              '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'novenary':
+            if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8',
+              ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'decimal':
+            if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+              ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'hex':
+            if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+              ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          default:
         }
         if ((convert[i] === '+' || convert[i] === '-') && i > 1) {
           this.backFormat = 'incorrectInput';

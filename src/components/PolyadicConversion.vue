@@ -71,7 +71,12 @@ export default {
         decimal: `${this.$t('decimal')} (92,14)`,
         binary: `${this.$t('binary')} (1,0011)`,
         ternary: `${this.$t('ternary')} (2122,01)`,
+        quaternary: `${this.$t('quaternary')} (2132,03)`,
+        quinary: `${this.$t('quinary')} (4322,41)`,
+        senary: `${this.$t('senary')} (2523,04)`,
+        septary: `${this.$t('septenary')} (6162,51)`,
         octal: `${this.$t('octal')} (6373,01)`,
+        novenary: `${this.$t('novenary')} (8823,65)`,
         hex: `${this.$t('hexadecimal')} (A53F0,08)`,
       };
     },
@@ -123,32 +128,81 @@ export default {
       const digitsBeforeComma = Math.floor(Math.random() * 8);
       const digitsAfterComma = Math.floor(Math.random() * 8);
       let digitValues = [];
-      if (format1 === 'decimal') {
-        digitValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-        this.power[0] = 10;
-      } else if (format1 === 'binary') {
-        digitValues = ['0', '1'];
-        this.power[0] = 2;
-      } else if (format1 === 'ternary') {
-        digitValues = ['0', '1', '2'];
-        this.power[0] = 3;
-      } else if (format1 === 'octal') {
-        digitValues = ['0', '1', '2', '3', '4', '5', '6', '7'];
-        this.power[0] = 8;
-      } else {
-        digitValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
-        this.power[0] = 16;
+      switch (format1) {
+        case 'binary':
+          this.power[0] = 2;
+          digitValues = ['0', '1'];
+          break;
+        case 'ternary':
+          this.power[0] = 3;
+          digitValues = ['0', '1', '2'];
+          break;
+        case 'quaternary':
+          this.power[0] = 4;
+          digitValues = ['0', '1', '2', '3'];
+          break;
+        case 'quinary':
+          this.power[0] = 5;
+          digitValues = ['0', '1', '2', '3', '4'];
+          break;
+        case 'senary':
+          this.power[0] = 6;
+          digitValues = ['0', '1', '2', '3', '4', '5'];
+          break;
+        case 'septenary':
+          this.power[0] = 7;
+          digitValues = ['0', '1', '2', '3', '4', '5', '6'];
+          break;
+        case 'octal':
+          this.power[0] = 8;
+          digitValues = ['0', '1', '2', '3', '4', '5', '6', '7'];
+          break;
+        case 'novenary':
+          this.power[0] = 9;
+          digitValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8'];
+          break;
+        case 'decimal':
+          this.power[0] = 10;
+          digitValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+          break;
+        case 'hex':
+          this.power[0] = 16;
+          digitValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+          break;
+        default:
       }
-      if (format2 === 'decimal') {
-        this.power[1] = 10;
-      } else if (format2 === 'binary') {
-        this.power[1] = 2;
-      } else if (format2 === 'ternary') {
-        this.power[1] = 3;
-      } else if (format2 === 'octal') {
-        this.power[1] = 8;
-      } else {
-        this.power[1] = 16;
+      switch (format2) {
+        case 'binary':
+          this.power[1] = 2;
+          break;
+        case 'ternary':
+          this.power[1] = 3;
+          break;
+        case 'quaternary':
+          this.power[1] = 4;
+          break;
+        case 'quinary':
+          this.power[1] = 5;
+          break;
+        case 'senary':
+          this.power[1] = 6;
+          break;
+        case 'septenary':
+          this.power[1] = 7;
+          break;
+        case 'octal':
+          this.power[1] = 8;
+          break;
+        case 'novenary':
+          this.power[1] = 9;
+          break;
+        case 'decimal':
+          this.power[1] = 10;
+          break;
+        case 'hex':
+          this.power[1] = 16;
+          break;
+        default:
       }
 
       if (digitsBeforeComma > 0) {
