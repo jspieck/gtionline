@@ -36,6 +36,7 @@
 import SolutionAccordion from './SolutionAccordion.vue';
 import * as solution from '../scripts/polyadicSolution';
 import * as description from '../scripts/DescriptionPolyadicConversion';
+import * as pdf from '../scripts/generatePdfPolyadicConversion';
 
 export default {
   name: 'PolyadicConversion',
@@ -43,24 +44,8 @@ export default {
     Accordion: SolutionAccordion,
   },
   data() {
-    let hasdefault = false;
-    let format1 = 'decimal';
-    if (window.sessionStorage.getItem('PC_format1')) {
-      format1 = window.sessionStorage.getItem('PF_format1');
-      hasdefault = true;
-    }
-    let format2 = 'decimal';
-    if (window.sessionStorage.getItem('PC_format2')) {
-      format2 = window.sessionStorage.getItem('PF_format2');
-      hasdefault = true;
-    }
-    let input = '';
-    if (window.sessionStorage.getItem('PC_inputNum')) {
-      input = window.sessionStorage.getItem('PF_inputNum');
-      hasdefault = true;
-    }
     return {
-      selectedFormat: [format1, format2], // 0: in format, 1: out format
+      selectedFormat: ['decimal', 'binary'], // 0: in format, 1: out format
       power: [10, 10],
       mouseDown: false,
       solution: '',
@@ -73,8 +58,8 @@ export default {
       watcher: '',
       prop: '',
       back: '',
-      fp1: input,
-      default: hasdefault,
+      inputNum: '',
+      modus: '',
     };
   },
   computed: {
@@ -107,13 +92,7 @@ export default {
     });
   },
   methods: {
-    saveVals() {
-      window.sessionStorage.setItem('Conv_fp1', this.fp1);
-      window.sessionStorage.setItem('Conv_expBits', this.exponentBits);
-      window.sessionStorage.setItem('Conv_numBits', this.numBits);
-    },
     recalculate() {
-      this.saveVals();
       this.computeSolution();
       this.$nextTick(() => {
         if (window.MathJax) {
@@ -122,7 +101,7 @@ export default {
       });
     },
     drawExercise() {
-      this.exerciseText = `${this.$t('polyadicExercise1')} ${this.fp1} ${this.$t('polyadicExercise2')} ${this.formatOptions[this.selectedFormat[0]]} ${this.$t('polyadicExercise3')} "${this.formatOptions[this.selectedFormat[1]]}".`;
+      this.exerciseText = `${this.$t('polyadicExercise1')} ${this.inputNum} ${this.$t('polyadicExercise2')} ${this.formatOptions[this.selectedFormat[0]]} ${this.$t('polyadicExercise3')} "${this.formatOptions[this.selectedFormat[1]]}".`;
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();
@@ -189,16 +168,21 @@ export default {
       if (((digitsBeforeComma > 0) || (digitsAfterComma > 0)) && (Math.random() < 0.5)) {
         number = `-${number}`;
       }
-      this.fp1 = number;
+      this.inputNum = number;
       this.generated = true;
       this.recalculate();
       this.drawExercise();
       this.saveVals();
     },
+    downloadPdf() {
+      this.recalculate();
+      const descr = new pdf.PdfDescription(this, this.watcher);
+      descr.generatePdf();
+    },
     computeSolution() {
       // calc solution
       const polyadicSolution = new solution.PolyadicSolution();
-      polyadicSolution.convertFormat(this.fp1, this.power[0], this.power[1]);
+      polyadicSolution.convertFormat(this.inputNum, this.power[0], this.power[1]);
       this.watcher = JSON.parse(JSON.stringify(polyadicSolution.watcher));
       this.solution = polyadicSolution.result;
       // construct description
@@ -206,6 +190,7 @@ export default {
       descr.makeDescription(polyadicSolution.modus, this.selectedFormat);
       this.solutionSteps = descr.result;
       this.solutionObject = polyadicSolution.resultObject;
+      this.modus = polyadicSolution.modus;
     },
     checkSolution() {
       if (this.solutionObject.bitStrint === this.propSol) {
@@ -233,42 +218,6 @@ export default {
       document.addEventListener('mousemove', this.sliderMouseMove, { capture: true });
       e.preventDefault();
       e.stopPropagation();
-    },
-    sliderMouseDown(e) {
-      this.mouseDown = true;
-      this.xCoord = e.pageX;
-      this.captureMouseEvents(e);
-    },
-    sliderMouseMove(e) {
-      if (this.mouseDown) {
-        const blockSize = (this.containerWidth / (this.numBits - 1));
-        if (e.pageX - this.xCoord > blockSize) {
-          this.xCoord += blockSize;
-          if (this.exponentBits + 1 < this.numBits - 1) {
-            this.exponentBits += 1;
-            if (this.nums[0] !== this.falseFormatOutput) {
-              this.convertFormat(0);
-            }
-            if (this.nums[1] !== this.falseFormatOutput) {
-              this.convertFormat(1);
-            }
-            this.computeSolution();
-          }
-        }
-        if (this.xCoord - e.pageX > blockSize) {
-          this.xCoord -= blockSize;
-          if (this.exponentBits > 1) {
-            this.exponentBits -= 1;
-            if (this.nums[0] !== this.falseFormatOutput) {
-              this.convertFormat(0);
-            }
-            if (this.nums[1] !== this.falseFormatOutput) {
-              this.convertFormat(1);
-            }
-            this.computeSolution();
-          }
-        }
-      }
     },
   },
 };
@@ -400,45 +349,6 @@ $arrow-size: 12px;
   color: white !important;
 }
 
-.sign {
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  color: white;
-  background: $freshBlue;
-  border-right: 1px solid white;
-}
-
-.mobile_sign {
-  width: 80%;
-  height: 40px;
-  line-height: 40px;
-  color: white;
-  background: $freshBlue;
-  border-right: 1px solid white;
-}
-
-.exponent{
-  height: 40px;
-  line-height: 40px;
-  background: $freshBlue;
-  color: white;
-  position: relative;
-  user-select: none;
-  border-right: 1px solid white;
-}
-
-.mobile_exponent{
-  height: 40px;
-  width: 80%;
-  line-height: 40px;
-  background: $freshBlue;
-  color: white;
-  position: relative;
-  user-select: none;
-  border-right: 1px solid white;
-}
-
 .fraction{
   height: 40px;
   line-height: 40px;
@@ -446,102 +356,6 @@ $arrow-size: 12px;
   color: white;
   position: relative;
   user-select: none;
-}
-
-.mobile_fraction{
-  height: 40px;
-  width: 80%;
-  line-height: 40px;
-  background: $freshBlue;
-  color: white;
-  position: relative;
-  user-select: none;
-  border-right: 1px solid white;
-}
-
-.expandExponent{
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  display: block;
-  right: 0px;
-  top: 0px;
-  line-height: 40px;
-  &:hover{
-    cursor: pointer;
-  }
-}
-
-.mobile_expandExponent{
-  height: 40px;
-  width: 80%;
-  line-height: 40px;
-  background: $freshBlue;
-  color: white;
-  position: relative;
-  user-select: none;
-  border-right: 1px solid white;
-  &:hover{
-    cursor: pointer;
-  }
-}
-
-.expandFraction{
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  display: block;
-  left: 0px;
-  top: 0px;
-  line-height: 40px;
-  &:hover{
-    cursor: pointer;
-  }
-}
-
-.mobile_expandFraction{
-  height: 40px;
-  width: 80%;
-  line-height: 40px;
-  background: $freshBlue;
-  color: white;
-  position: relative;
-  user-select: none;
-  border-right: 1px solid white;
-  &:hover{
-    cursor: pointer;
-  }
-}
-
-.arrowRight {
-  width: $arrow-size;
-  height: $arrow-size;
-  background-color: white;
-  position: absolute;
-  top: 50%;
-  left: 35%;
-  transform: translate(-50%, -50%) rotate(225deg);
-}
-
-.arrowLeft {
-  width: $arrow-size;
-  height: $arrow-size;
-  background-color: white;
-  position: absolute;
-  top: 50%;
-  left: 65%;
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.arrowMask {
-  width: 100%;
-  height: 100%;
-  background-color: $freshBlue;
-  position: absolute;
-  left: 15%;
-  top: -15%;
-  right: 0%;
-  bottom: 0%;
 }
 
 .pdfGen{
@@ -599,21 +413,6 @@ $arrow-size: 12px;
   .sign{
     display: none;
   };
-  .exponent{
-    display: none;
-  };
-  .fraction{
-    display: none;
-  };
-  .expandExponent{
-    display: none;
-  };
-  .expandFraction{
-    display: none;
-  };
-  .arrowMask{
-    display: none;
-  }
   .pdfGen {
     display: none;
   }
@@ -626,21 +425,6 @@ $arrow-size: 12px;
     display: none;
   };
   .mobile_bits{
-    display: none;
-  };
-  .mobile_sign{
-    display: none;
-  };
-  .mobile_exponent{
-    display: none;
-  };
-  .mobile_fraction{
-    display: none;
-  };
-  .mobile_expandExponent{
-    display: none;
-  };
-  .mobile_expandFraction{
     display: none;
   };
   .mobile_pdfGen{
