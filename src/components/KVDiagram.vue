@@ -1,6 +1,6 @@
 <template>
   <div class="kvDiagram">
-    <h2>{{$t('kvDiagram')}}</h2>
+    <!-- <h3>{{$t('kvDiagram')}}</h3> -->
     <div>
       <label>{{$t('numVarInput')}}:</label>
       <div class="divMargin"/>
@@ -9,6 +9,7 @@
       <div class="divMargin"/>
       <button @click="setNumVar()">{{$t('confirm')}}</button>
     </div>
+
     <div class="mtop">
       <label>{{$t('varNaming')}}:</label>
       <div class="divMargin"/>
@@ -17,6 +18,7 @@
         <p class="mj" ref="radios" v-html="toSvg(radio.name)"/>
       </p-radio>
     </div>
+
     <svg id="kvContainer" :width="svgWidth" :height="svgHeight">
       <g v-for="(d, i) in diagram" v-bind:key="`cell_${i}`"
       :transform="`translate(${getX(i)}, ${getY(i)})`">
@@ -39,6 +41,7 @@
 </template>
 
 <script>
+import { KVDiagram } from '@/scripts/gti-tools';
 import FormatSelect from './FormatSelect.vue';
 
 export default {
@@ -63,12 +66,14 @@ export default {
         { value: 'abc', name: 'a, b, \\dots' },
         { value: 'xyz', name: 'x, y, \\dots' },
         { value: 'x', name: 'x_0, x_1, \\dots' },
+        { value: 'x1', name: 'x_1, x_2, \\dots' },
       ],
       varNamingScheme: 'abc',
       varNames: {
         abc: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
         xyz: ['x', 'y', 'z', 'u', 'v', 'w', 'q'],
         x: ['x_0', 'x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6'],
+        x1: ['x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6', 'x_7'],
       },
     };
   },
@@ -76,7 +81,9 @@ export default {
     for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
       this.diagram.push({ number: 0 });
     }
-    window.MathJax.typeset();
+    if (window.MathJax) {
+      window.MathJax.typeset();
+    }
   },
   computed: {
     cellsHorizontal() {
@@ -190,7 +197,9 @@ export default {
             y = this.paddingVertical + interval[0] * this.blockWidth;
             textX = (c.varIndex + 1) % 4 === 0 ? x + 9 : x - 13;
             textY = y + height / 2 - 5;
-            if (this.varNamingScheme === 'x' && (c.varIndex + 1) % 4 !== 0) {
+            // varNamingScheme using 'x_0'... and 'x_1'... need more horizontal space
+            // if placed to the left of the KVDiagram
+            if ((this.varNamingScheme === 'x' || this.varNamingScheme === 'x1') && (c.varIndex + 1) % 4 !== 0) {
               textX -= 7;
             }
           }
@@ -203,6 +212,46 @@ export default {
     },
   },
   methods: {
+    /**
+     * Returns JS / KVDiagram representation of this filled diagram.
+     * see gti-tools
+     */
+    getKVDiagram() {
+      // compute js representation of KVDiagram
+      const diagramFlat = [];
+      for (let row = 0; row < this.cellsVertical; row += 1) {
+        diagramFlat[row] = [];
+        for (let col = 0; col < this.cellsHorizontal; col += 1) {
+          diagramFlat[row][col] = this.legitStates[this.diagram[(row * this.cellsHorizontal) + col].number];
+        }
+      }
+      // const kvdiagram = new KVDiagram(
+      //   [
+      //     ['1', '0', '1', '0'],
+      //     ['1', '1', '1', '0'],
+      //   ], 3,
+      // );
+      const kvdiagram = new KVDiagram(diagramFlat, this.numVariables);
+      return kvdiagram;
+    },
+    setKVDiagram(kvdiagram) {
+      // console.log('setting is not yet implemented in KVDiagram component');
+      // change num vars
+      this.selectOp(0, kvdiagram.getAmountLiterals()); // update components data
+      this.setNumVar(); // -> press the accept button
+
+      // copy values over
+      const values = kvdiagram.getValues();
+      for (let y = 0; y < values.length; y += 1) {
+        for (let x = 0; x < values[y].length; x += 1) {
+          const flatPos = y * this.cellsHorizontal + x;
+          this.$set(this.diagram[flatPos], 'number', this.legitStates.indexOf(values[y][x]));
+        }
+      }
+    },
+    getSelectedVarNames() {
+      return this.varNames[this.varNamingScheme];
+    },
     selectOp(num, val) {
       this.selectedFormat[num] = val;
     },
@@ -217,7 +266,8 @@ export default {
     },
     setNumVar() {
       // const numVarsBefore = this.numVariables;
-      const [numVar] = this.selectedFormat[0];
+      // const [numVar] = this.selectedFormat[0];
+      const numVar = this.selectedFormat[0];
       this.numVariables = parseInt(numVar, 10);
       this.diagram = [];
       for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
@@ -240,6 +290,10 @@ export default {
 </script>
 
 <style lang="scss">
+.kvDiagram {
+  max-width: -webkit-fill-available;
+  overflow: auto;
+}
 .unclickable {
   pointer-events: none;
 }
@@ -263,6 +317,16 @@ export default {
 }
 #kvContainer {
   margin-top: 20px;
+
+  cursor: pointer;
+  // overflow: auto;
+  // display: block !important;
+
+  /* Makes KVDiagram entries unselectable */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 }
 .pretty {
   height: 1em;
