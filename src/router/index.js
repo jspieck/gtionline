@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import PrettyCheckbox from 'pretty-checkbox-vue';
 import FloatingPointArithmetic from '@/components/FloatingPointArithmetic.vue';
+import BooleanFunctionMinimizer from '@/components/BooleanFunctionMinimizer.vue';
 import KVDiagram from '@/components/KVDiagram.vue';
 import DescriptionPDF from '@/components/DescriptionPDF.vue';
 import Home from '../views/Home.vue';
@@ -32,6 +33,11 @@ const routes = [
     path: '/kvdiagram',
     name: 'KVDiagram',
     component: KVDiagram,
+  },
+  {
+    path: '/bfminimizer',
+    name: 'BooleanFunctionMinimizer',
+    component: BooleanFunctionMinimizer,
   },
   {
     path: '/descriptionpdf',
