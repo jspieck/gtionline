@@ -2,6 +2,36 @@ import { KVDiagram } from './gti-tools';
 
 const bfArchivedExecises = [
   {
+    title: 'Blatt 5: 1a) i)',
+    data: new KVDiagram([
+      ['0', '1'],
+      ['1', '0'],
+    ], 2),
+  },
+  {
+    title: 'Blatt 5: 1a) ii)',
+    data: new KVDiagram([
+      ['0', '0', '1', '0'],
+      ['0', '0', '1', '1'],
+    ], 3),
+  },
+  {
+    title: 'Blatt 5: 1a) iii)',
+    data: new KVDiagram([
+      ['0', '0', '0', '0'],
+      ['1', '1', '0', '0'],
+    ], 3),
+  },
+  {
+    title: 'Blatt 5: 1c)',
+    data: new KVDiagram([
+      ['1', '0', '1', '0'],
+      ['0', '1', '0', '1'],
+      ['1', '0', '1', '0'],
+      ['0', '1', '0', '1'],
+    ], 4),
+  },
+  {
     title: 'Blatt 5: 1d)',
     data: new KVDiagram([
       ['1', '0', '0', '1'],
@@ -9,6 +39,20 @@ const bfArchivedExecises = [
       ['0', '1', '1', '0'],
       ['1', '0', '0', '1'],
     ], 4),
+  },
+  {
+    title: 'Blatt 6: 2a) i)',
+    data: new KVDiagram([
+      ['0', '0', '1', '1'],
+      ['1', '0', '1', '1'],
+    ], 3),
+  },
+  {
+    title: 'Blatt 6: 2a) ii)',
+    data: new KVDiagram([
+      ['0', '1', '0', '1'],
+      ['0', '1', '1', '0'],
+    ], 3),
   },
   {
     title: 'Blatt 7: 1b)',
