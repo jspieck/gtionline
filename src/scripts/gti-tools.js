@@ -12392,4 +12392,116 @@ var ConversionPolyadicNumbers = /*#__PURE__*/function () {
   return ConversionPolyadicNumbers;
 }();
 
-export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, ConversionPolyadicNumbers, DivisionBaseNSigned, DivisionIEEE, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, NumberPolyadic, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, TextCMOS, getBaseNComplementFromString, getIEEEFromString, getNumFromString, parseBooleanFunction, roundArray, toLaTeX };
+var AdditionPolyadic = /*#__PURE__*/function () {
+  function AdditionPolyadic(n1, n2) {
+    _classCallCheck(this, AdditionPolyadic);
+
+    if (n1.power !== n2.power) {
+      console.log("AdditionPolyadic(Number, Number): power of n1(".concat(n1.power, ")\n            and power of n2(").concat(n2.power, ") not compatible."));
+      process.exit(1);
+    }
+
+    this.result = this._add(n1, n2);
+  }
+
+  _createClass(AdditionPolyadic, [{
+    key: "_add",
+    value: function _add(n1, n2) {
+      var result = '';
+
+      if (n1.sign === '+' && n2.sign === '+') {
+        // (+) + (+)
+        result = new NumberPolyadic(n1.power, n1.bitString);
+
+        result._additionFloat(n2.bitString);
+      } else if (n1.sign === '+' && n2.sign === '-') {
+        // (+) + (-) => (+) - (+)
+        result = new NumberPolyadic(n1.power, n1.bitString);
+        var bitString = n2.bitString;
+        bitString.shift();
+
+        result._subtractionFloat(bitString);
+      } else if (n1.sign === '-' && n2.sign === '+') {
+        // (-) + (-) => - ((+) + (+))
+        var bitString1 = n2.bitString;
+        bitString1.shift();
+        var bitString2 = n2.bitString;
+        bitString2.shift();
+        var intermidiate = new NumberPolyadic(n1.power, bitString1);
+
+        intermidiate._additionFloat(bitString2);
+
+        var resultBitString = intermidiate.bitString;
+        resultBitString = "-".concat(resultBitString);
+        result = new NumberPolyadic(n1.power, resultBitString);
+      }
+
+      return result;
+    }
+  }, {
+    key: "getResult",
+    value: function getResult() {
+      return this.result;
+    }
+  }]);
+
+  return AdditionPolyadic;
+}();
+
+var SubtractionPolyadic = /*#__PURE__*/function () {
+  function SubtractionPolyadic(n1, n2) {
+    _classCallCheck(this, SubtractionPolyadic);
+
+    if (n1.power !== n2.power) {
+      console.log("SubtractionPolyadic(Number, Number): power of n1(".concat(n1.power, ")\n            and power of n2(").concat(n2.power, ") not compatible."));
+      process.exit(1);
+    }
+
+    this.result = this._sub(n1, n2);
+  }
+
+  _createClass(SubtractionPolyadic, [{
+    key: "_sub",
+    value: function _sub(n1, n2) {
+      var result;
+
+      if (n1.sign === '+' && n2.sign === '+') {
+        // (+) - (+)
+        result = new NumberPolyadic(n1.power, n1.bitString);
+
+        result._subtractionFloat(n2.bitString);
+      } else if (n1.sign === '+' && n2.sign === '-') {
+        // (+) - (-) => (+) + (+)
+        result = new NumberPolyadic(n1.power, n1.bitString);
+        var bitString = n2.bitString;
+        bitString.shift();
+
+        result._additionFloat(bitString);
+      } else if (n1.sign === '-' && n2.sign === '+') {
+        // (-) - (+) => - ((+) + (+))
+        var bitString1 = n2.bitString;
+        bitString1.shift();
+        var bitString2 = n2.bitString;
+        bitString2.shift();
+        var intermidiate = new NumberPolyadic(n1.power, bitString1);
+
+        intermidiate._additionFloat(bitString2);
+
+        var resultBitString = intermidiate.bitString;
+        resultBitString = "-".concat(resultBitString);
+        result = new NumberPolyadic(n1.power, resultBitString);
+      }
+
+      return result;
+    }
+  }, {
+    key: "getResult",
+    value: function getResult() {
+      return this.result;
+    }
+  }]);
+
+  return SubtractionPolyadic;
+}();
+
+export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, AdditionPolyadic, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, ConversionPolyadicNumbers, DivisionBaseNSigned, DivisionIEEE, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, NumberPolyadic, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, SubtractionPolyadic, TextCMOS, getBaseNComplementFromString, getIEEEFromString, getNumFromString, parseBooleanFunction, roundArray, toLaTeX };

@@ -74,7 +74,7 @@ export default {
         quaternary: `${this.$t('quaternary')} (2132,03)`,
         quinary: `${this.$t('quinary')} (4322,41)`,
         senary: `${this.$t('senary')} (2523,04)`,
-        septary: `${this.$t('septenary')} (6162,51)`,
+        septenary: `${this.$t('septenary')} (6162,51)`,
         octal: `${this.$t('octal')} (6373,01)`,
         novenary: `${this.$t('novenary')} (8823,65)`,
         hex: `${this.$t('hexadecimal')} (A53F0,08)`,
@@ -226,7 +226,6 @@ export default {
       this.generated = true;
       this.recalculate();
       this.drawExercise();
-      this.saveVals();
     },
     downloadPdf() {
       this.recalculate();

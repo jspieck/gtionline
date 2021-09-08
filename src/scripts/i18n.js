@@ -45,6 +45,7 @@ export const i18n = new VueI18n({
       values: 'Werte',
       // neu
       // general
+      arithmetic: 'Arithmetik',
       conversion: 'Konvertierung',
       conversionExercise1: 'Konvertiere: ',
       conversionExercise2: 'in eine IEEE-Flieskommazahl einer Exponenten-Länge von: ',
@@ -72,6 +73,8 @@ export const i18n = new VueI18n({
       divWithZero: 'Bei einer Division mit 0 im Zähler ist das Ergebnis immer 0.',
       mulWithZero: 'Bei einer Multiplikation mit 0 ist das Ergebnis immer 0.',
       zeroDivision: 'Eine Division durch 0 ist nicht möglich!',
+      arithmeticFree: 'Freie Arithmetik',
+      conversionFree: 'Freie Konvertierung',
       // values
       value: 'Wert',
       givenValues: 'Werte der übertragenen Zahlen',
@@ -203,6 +206,7 @@ export const i18n = new VueI18n({
       values: 'Values',
       // TODO: Übersetzen
       // general
+      arithmetic: 'Arithmetic',
       conversion: 'Conversion',
       conversionExercise1: 'Convert: ',
       conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
@@ -228,6 +232,8 @@ export const i18n = new VueI18n({
       subWithZero: 'A subtraction with 0 results in the other value',
       mulWithZero: 'A multiplication with 0 results always 0.',
       zeroDivision: 'A division by 0 is illegal!',
+      arithmeticFree: 'Free arithmetic',
+      conversionFree: 'Free conversion',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -359,6 +365,7 @@ export const i18n = new VueI18n({
       values: 'Valeurs',
       // TODO: Übersetzen
       // general
+      arithmetic: 'Arithmetic',
       conversion: 'Conversion',
       conversionExercise1: 'Convert: ',
       conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
@@ -385,6 +392,8 @@ export const i18n = new VueI18n({
       mulWithZero: 'A multiplication with 0 results always 0.',
       divWithZero: 'A division with 0 in the numerator results always 0.',
       zeroDivision: 'A division by 0 is illegal!',
+      arithmeticFree: 'Free arithmetic',
+      conversionFree: 'Free conversion',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -503,6 +512,7 @@ export const i18n = new VueI18n({
       values: 'valore',
       // TODO: Übersetzen
       // general
+      arithmetic: 'Arithmetic',
       conversion: 'Conversion',
       conversionExercise1: 'Convert: ',
       conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
@@ -529,6 +539,8 @@ export const i18n = new VueI18n({
       mulWithZero: 'A multiplication with 0 results always 0.',
       divWithZero: 'A division with 0 in the numerator results always 0.',
       zeroDivision: 'A division by 0 is illegal!',
+      arithmeticFree: 'Free arithmetic',
+      conversionFree: 'Free conversion',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -660,6 +672,7 @@ export const i18n = new VueI18n({
       values: 'valōrēs',
       // TODO: Übersetzen
       // general
+      arithmetic: 'Arithmetic',
       conversion: 'Conversion',
       conversionExercise1: 'Convert: ',
       conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
@@ -686,6 +699,8 @@ export const i18n = new VueI18n({
       mulWithZero: 'A multiplication with 0 results always 0.',
       divWithZero: 'A division with 0 in the numerator results always 0.',
       zeroDivision: 'A division by 0 is illegal!',
+      arithmeticFree: 'Free arithmetic',
+      conversionFree: 'Free conversion',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',

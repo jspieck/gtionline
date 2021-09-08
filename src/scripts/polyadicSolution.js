@@ -34,4 +34,24 @@ export class PolyadicSolution {
       }
     }
   }
+
+  calcArithmeticSolution(num1, num2, format, operator) {
+    const number1 = new tool.NumberPolyadic(format, num1.toString(format));
+    const number2 = new tool.NumberPolyadic(format, num2.toString(format));
+    switch (operator) {
+      case 'add':
+        const addition = new tool.AdditionPolyadic(number1, number2);
+        this.result = addition.result.bitString;
+        this.resultObject = addition.result;
+        this.watcher = ''; // TODO
+        break;
+      case 'sub':
+        const subtraction = new tool.SubtractionPolyadic(number1, number2);
+        this.result = subtraction.result.bitString;
+        this.resultObject = subtraction.result;
+        this.watcher = ''; // TODO
+        break;
+      default:
+    }
+  }
 }
