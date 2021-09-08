@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import PrettyCheckbox from 'pretty-checkbox-vue';
 import FloatingPointArithmetic from '@/components/FloatingPointArithmetic.vue';
-import PolyadicArithmetic from '@/components/PolyadicArithmetic.vue';
+import PolyadicNumbers from '@/components/PolyadicNumbers.vue';
 import KVDiagram from '@/components/KVDiagram.vue';
 import DescriptionPDF from '@/components/DescriptionPDF.vue';
 import Home from '../views/Home.vue';
@@ -31,8 +31,8 @@ const routes = [
   },
   {
     path: '/polyadic',
-    name: 'PolyadicArithmetic',
-    component: PolyadicArithmetic,
+    name: 'PolyadicNumbers',
+    component: PolyadicNumbers,
   },
   {
     path: '/kvdiagram',

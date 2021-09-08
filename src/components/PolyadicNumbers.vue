@@ -17,14 +17,14 @@
 <script>
 // eslint-disable-next-line
 import Tabs from 'vue-tabs-with-active-line';
-import PolyadicConversion from './PolyadicConversion.vue';
-import PolyadicFree from './PolyadicFree.vue';
+import PolyadicConversionExercise from './PolyadicConversionExercise.vue';
+import PolyadicConversionFree from './PolyadicConversionFree.vue';
 
 export default {
   name: 'TinyTabs',
   components: {
-    pc: PolyadicConversion,
-    pf: PolyadicFree,
+    pc: PolyadicConversionExercise,
+    pf: PolyadicConversionFree,
     tabs: Tabs,
   },
   data() {

@@ -103,7 +103,7 @@ export class PdfDescription {
     this.values = values;
   }
 
-  generatePdf(returnSite = 'PolyadicArithmetic') {
+  generatePdf(returnSite = 'PolyadicNumbers') {
     let solution;
     if (Array.isArray(this.imp.watcher)) {
       if (this.modus === 'PowerToTen') {

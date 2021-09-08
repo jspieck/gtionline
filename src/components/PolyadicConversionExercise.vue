@@ -39,7 +39,7 @@ import * as description from '../scripts/DescriptionPolyadicConversion';
 import * as pdf from '../scripts/generatePdfPolyadicConversion';
 
 export default {
-  name: 'PolyadicConversion',
+  name: 'PolyadicConversionExercise',
   components: {
     Accordion: SolutionAccordion,
   },

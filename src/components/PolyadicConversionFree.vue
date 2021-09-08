@@ -69,7 +69,7 @@ import * as pdf from '../scripts/generatePdfPolyadicConversion';
 import * as solution from '../scripts/polyadicSolution';
 
 export default {
-  name: 'PolyadicFree',
+  name: 'PolyadicConversionFree',
   components: {
     FSelect: FormatSelect,
     Accordion: SolutionAccordion,

@@ -11618,14 +11618,23 @@ var NumberPolyadic = /*#__PURE__*/function () {
     }
 
     this.arr = _toConsumableArray(representation);
-    this.value = this._getValue();
-    this.bitString = this.arr.join('');
-    this.valueString = this._constructValString();
+
+    this._actualizeValues();
   }
 
   _createClass(NumberPolyadic, [{
+    key: "_actualizeValues",
+    value: function _actualizeValues() {
+      this._checkArray(this.arr);
+
+      this.value = this._getValue();
+      this.bitString = this.arr.join('');
+      this.valueString = this._constructValString();
+    }
+  }, {
     key: "_checkArray",
     value: function _checkArray(arr) {
+      this.comma = arr.length;
       var commas = 0;
 
       for (var i = 0; i < arr.length; i++) {
@@ -11689,6 +11698,303 @@ var NumberPolyadic = /*#__PURE__*/function () {
     key: "_constructValString",
     value: function _constructValString() {
       return "".concat(this.value);
+    } // arithmetical methods for direct conversion and polyadic arithmetic
+
+    /** !!Internal method!!
+     * Add a single digit to the actual number.
+     * @param {*} digit : Int, single digit number.
+     * @param {*} exp : Int, optional position in the array.
+     */
+
+  }, {
+    key: "_additionOneDigit",
+    value: function _additionOneDigit(digit) {
+      var exp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var splitted = this.arr.join('').split('.');
+      var numBeforeComma = [];
+      var numAfterComma = [];
+
+      if (Array.isArray(splitted) && splitted.length === 2) {
+        numBeforeComma = splitted[0].split('');
+        numAfterComma = splitted[1].split('');
+      } else {
+        numBeforeComma = splitted[0].split('');
+      }
+
+      var overflow = 0;
+      var act = digit;
+      var breakAfterComma = false;
+
+      if (exp < 0) {
+        for (var i = 0; i < Math.abs(exp) + 1 - numAfterComma.length; i += 1) {
+          // left padding
+          numAfterComma.push('0');
+        }
+
+        for (var _i2 = Math.abs(exp) - 1; _i2 >= 0; _i2 -= 1) {
+          var res = 0;
+
+          if (this.power === 16) {
+            res = parseInt(numAfterComma[_i2], 16) + parseInt(act, 16);
+          } else {
+            res = parseInt(numAfterComma[_i2], 10) + parseInt(act, 10);
+          }
+
+          if (res >= this.power) {
+            overflow = res - this.power;
+            numAfterComma[_i2] = overflow.toString(this.power).toUpperCase();
+            act = 1;
+          } else {
+            numAfterComma[_i2] = res.toString(this.power).toUpperCase();
+            breakAfterComma = true;
+            break;
+          }
+        }
+      }
+
+      if (!breakAfterComma || exp >= 0) {
+        var start = numBeforeComma.length - 1;
+
+        if (exp >= 0) {
+          for (var _i3 = 0; _i3 < exp + 1 - numBeforeComma.length; _i3 += 1) {
+            // left padding
+            numBeforeComma.unshift('0');
+          }
+
+          start = numBeforeComma.length - 1 - exp;
+        }
+
+        for (var _i4 = start; _i4 >= 0; _i4 -= 1) {
+          var _res = 0;
+
+          if (this.power === 16) {
+            _res = parseInt(numBeforeComma[_i4], 16) + parseInt(act, 16);
+          } else {
+            _res = parseInt(numBeforeComma[_i4], 10) + parseInt(act, 10);
+          }
+
+          if (_res >= this.power) {
+            overflow = _res - this.power;
+            numBeforeComma[_i4] = overflow.toString(this.power).toUpperCase();
+            act = 1;
+
+            if (_i4 === 0) {
+              numBeforeComma.unshift('1');
+            }
+          } else {
+            numBeforeComma[_i4] = _res.toString(this.power).toUpperCase();
+            break;
+          }
+        }
+      }
+
+      var resultArray = [];
+      numBeforeComma.map(function (a) {
+        return resultArray.push(a);
+      });
+
+      if (Array.isArray(splitted) && splitted.length === 2) {
+        resultArray.push('.');
+        numAfterComma.map(function (a) {
+          return resultArray.push(a);
+        });
+      }
+
+      this.arr = resultArray;
+    }
+    /** !!Internal method!!
+     * Subtract a single digit to the actual number.
+     * @param {*} digit : Int, single digit number.
+     * @param {*} exp : Int, optional position in the array.
+     */
+
+  }, {
+    key: "_subtractOneDigit",
+    value: function _subtractOneDigit(digit) {
+      var exp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var splitted = this.arr.join('').split('.');
+      var numBeforeComma = [];
+      var numAfterComma = [];
+
+      if (Array.isArray(splitted) && splitted.length === 2) {
+        numBeforeComma = splitted[0].split('');
+        numAfterComma = splitted[1].split('');
+      } else {
+        numBeforeComma = splitted[0].split('');
+      }
+
+      var underflow = 0;
+      var act = digit;
+      var isNegative = false; // Check if result must be negative
+
+      if (exp >= 0 && numBeforeComma.length < exp + 1) {
+        isNegative = true;
+
+        for (var i = 0; i < exp + 1 - numBeforeComma.length; i += 1) {
+          // left padding
+          numBeforeComma.unshift('0');
+        }
+      } else if (exp >= 0 && numBeforeComma.length === exp + 1 && parseInt(numBeforeComma[exp], this.power) - parseInt(act, this.power) < 0) {
+        isNegative = true; // act = (parseInt(numBeforeComma[exp], this.power) -
+        //   parseInt(act, this.power)).toString(this.power).toUpperCase();
+      } else if (exp < 0 && numBeforeComma.length === 0 && numAfterComma.length + exp < 0) {
+        isNegative = true;
+      } // calc result
+
+
+      var breakAfterComma = false;
+
+      if (exp < 0) {
+        for (var _i5 = 0; _i5 < Math.abs(exp) - numAfterComma.length; _i5 += 1) {
+          // left padding
+          numAfterComma.push('0');
+        }
+
+        for (var _i6 = Math.abs(exp) - 1; _i6 >= 0; _i6 -= 1) {
+          var res = 0;
+
+          if (this.power === 16) {
+            res = parseInt(numAfterComma[_i6], 16) - parseInt(act, 16);
+          } else {
+            res = parseInt(numAfterComma[_i6], 10) - parseInt(act, 10);
+          }
+
+          if (res < 0) {
+            underflow = Math.abs(res);
+            numAfterComma[_i6] = (this.power - underflow).toString(this.power).toUpperCase();
+            act = 1;
+          } else {
+            numAfterComma[_i6] = res.toString(this.power).toUpperCase();
+            breakAfterComma = true;
+            break;
+          }
+        }
+      }
+
+      if (!breakAfterComma || exp >= 0) {
+        var start = numBeforeComma.length - 1;
+
+        if (exp >= 0) {
+          for (var _i7 = 0; _i7 < exp + 1 - numBeforeComma.length; _i7 += 1) {
+            // left padding
+            numBeforeComma.unshift('0');
+          }
+
+          start = numBeforeComma.length - 1 - exp;
+        }
+
+        for (var j = start; j >= 0; j -= 1) {
+          var _res2 = 0;
+
+          if (this.power === 16) {
+            _res2 = parseInt(numBeforeComma[j], 16) - parseInt(act, 16);
+          } else {
+            _res2 = parseInt(numBeforeComma[j], 10) - parseInt(act, 10);
+          }
+
+          if (_res2 < 0) {
+            underflow = Math.abs(_res2);
+            numBeforeComma[j] = (this.power - underflow).toString(this.power).toUpperCase();
+            act = 1;
+          } else {
+            numBeforeComma[j] = _res2.toString(this.power).toUpperCase();
+            break;
+          }
+        }
+      }
+
+      var resultArray = [];
+      numBeforeComma.map(function (a) {
+        return resultArray.push(a);
+      });
+
+      if (Array.isArray(splitted) && splitted.length === 2) {
+        resultArray.push('.');
+        numAfterComma.map(function (a) {
+          return resultArray.push(a);
+        });
+      }
+
+      if (isNegative) {
+        resultArray[resultArray.length - 1] = (parseInt(resultArray[resultArray.length - 1], this.power) - 1).toString(this.power).toUpperCase();
+
+        for (var _i8 = 0; _i8 < resultArray.length; _i8 += 1) {
+          var a = resultArray[_i8];
+
+          if (a !== '-' && a !== '.' && a !== ',') {
+            resultArray[_i8] = (this.power - parseInt(a, this.power) - 1).toString(this.power).toUpperCase();
+          }
+        }
+
+        this.arr = resultArray;
+        this.arr.unshift('-');
+      } else {
+        this.arr = resultArray;
+      }
+    }
+    /**
+     * Add a float to the actual polydic
+     * @param {*} input : String, Float to add
+     */
+
+  }, {
+    key: "_additionFloat",
+    value: function _additionFloat(input) {
+      var val = input.split('.');
+
+      if (Array.isArray(val) && val.length === 2) {
+        var afterComma = val[1].split('');
+
+        for (var i = afterComma.length - 1; i >= 0; i -= 1) {
+          this._additionOneDigit(afterComma[i], -i - 1);
+        }
+
+        var beforeComma = val[0].split('').reverse();
+
+        for (var _i9 = 0; _i9 < beforeComma.length; _i9 += 1) {
+          this._additionOneDigit(beforeComma[_i9], _i9);
+        }
+      } else {
+        var _beforeComma = val[0].split('').reverse();
+
+        for (var _i10 = 0; _i10 < _beforeComma.length; _i10 += 1) {
+          this._additionOneDigit(_beforeComma[_i10], _i10);
+        }
+      }
+
+      this._actualizeValues();
+    }
+    /**
+     * Subtract a float to the actual polydic
+     * @param {*} input : String, Float to subtract
+     */
+
+  }, {
+    key: "_subtractionFloat",
+    value: function _subtractionFloat(input) {
+      var val = input.toString().split('.');
+
+      if (Array.isArray(val) && val.length === 2) {
+        var afterComma = val[1].split('');
+
+        for (var i = afterComma.length - 1; i >= 0; i -= 1) {
+          this._subtractOneDigit(afterComma[i], -i - 1);
+        }
+
+        var beforeComma = val[0].split('').reverse();
+
+        for (var _i11 = 0; _i11 < beforeComma.length; _i11 += 1) {
+          this._subtractOneDigit(beforeComma[_i11], _i11);
+        }
+      } else {
+        var _beforeComma2 = val[0].split('').reverse();
+
+        for (var _i12 = 0; _i12 < _beforeComma2.length; _i12 += 1) {
+          this._subtractOneDigit(_beforeComma2[_i12], _i12);
+        }
+      }
+
+      this._actualizeValues();
     }
   }]);
 
