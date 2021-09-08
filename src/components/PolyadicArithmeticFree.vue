@@ -10,14 +10,14 @@
               <div class="solutionInput">
               <p>{{$t('input')}} 1</p>
               <input id="InputNumber1" v-model="inputNums[0]" :placeholder="this.$t('inputNumber') "
-                     :num="0" :sel="selectedFormat[0]" @input="selectVal" :class="backFormat[0]"/>
+                     @input="selectVal(0, $event.target.value)" :class="backFormat"/>
               </div>
             </td>
             <td>
               <div class="solutionInput">
               <p>{{$t('input')}} 2</p>
               <input id="InputNumber2" v-model="inputNums[1]" :placeholder="this.$t('inputNumber') "
-                     :num="0" :sel="selectedFormat[1]" @input="selectVal" :class="backFormat[1]"/>
+                     @input="selectVal(1, $event.target.value)" :class="backFormat"/>
               </div>
             </td>
             <td>
@@ -83,9 +83,9 @@ export default {
   },
   data() {
     let hasdefault = false;
-    let format1 = 'decimal';
+    let format = 'decimal';
     if (window.sessionStorage.getItem('PAF_format')) {
-      format1 = window.sessionStorage.getItem('PAF_format');
+      format = window.sessionStorage.getItem('PAF_format');
       hasdefault = true;
     }
     let input1 = '';
@@ -104,7 +104,7 @@ export default {
       hasdefault = true;
     }
     return {
-      selectedFormat: format1,
+      selectedFormat: format,
       operator: op,
       power: 10,
       mouseDown: false,
@@ -161,26 +161,35 @@ export default {
   methods: {
     saveVals() {
       window.sessionStorage.setItem('PAF_format', this.selectedFormat);
-      window.sessionStorage.setItem('PAF_inputNums1', this.inputNums[1]);
-      window.sessionStorage.setItem('PAF_inputNums2', this.inputNums[2]);
+      window.sessionStorage.setItem('PAF_inputNums1', this.inputNums[0]);
+      window.sessionStorage.setItem('PAF_inputNums2', this.inputNums[1]);
       window.sessionStorage.setItem('PAF_operator', this.operator);
     },
     recalculate() {
       this.computeSolution();
       this.saveVals();
+      console.log('+++++++++++++++++');
+      console.log(this.selectedFormat);
+      console.log(this.inputNums[0]);
+      console.log(this.inputNums[1]);
+      console.log(this.operator);
+      console.log(this.solution);
+      console.log(this.solutionObject);
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset(); // https://github.com/mathjax/MathJax/issues/2557
         }
       });
     },
-    selectOperator(op) {
-      this.operator = op;
+    // eslint-disable-next-line no-unused-vars
+    selectOperator(num, val) {
+      this.operator = val;
       this.recalculate();
     },
-    selectFormat(val) {
+    // eslint-disable-next-line no-unused-vars
+    selectFormat(num, val) {
       this.selectedFormat = val;
-      switch (val) {
+      switch (this.selectedFormat) {
         case 'binary':
           this.power = 2;
           break;
@@ -213,18 +222,18 @@ export default {
           break;
         default:
       }
-      if (this.checkFormat(0, this.inputNums[0]) && this.checkFormat(1, this.inputNums[1])) {
+      if (this.checkFormat(this.inputNums[0]) && this.checkFormat(this.inputNums[1])) {
         this.recalculate();
       }
     },
     selectVal(num, val) {
-      if (this.checkFormat(num, val)) {
-        this.inputNums[num] = val;
+      this.inputNums[num] = val;
+      if (this.checkFormat(this.inputNums[num])) {
         this.recalculate();
       }
     },
-    checkFormat(num, conv) {
-      this.backFormat[num] = '';
+    checkFormat(conv) {
+      this.backFormat = '';
       const format = this.selectedFormat;
       const convert = conv.replace(/\s/g, '');
       let commaFound = false;
@@ -232,80 +241,80 @@ export default {
         switch (format) {
           case 'binary':
             if (!(['0', '1', ',', '.', '-', '+'].includes(convert[i]))) {
-              this.backFormat[num] = 'incorrectInput';
+              this.backFormat = 'incorrectInput';
               return false;
             }
             break;
           case 'ternary':
             if (!(['0', '1', '2', ',', '.', '-', '+'].includes(convert[i]))) {
-              this.backFormat[num] = 'incorrectInput';
+              this.backFormat = 'incorrectInput';
               return false;
             }
             break;
           case 'quaternary':
             if (!(['0', '1', '2', '3', ',', '.', '-', '+'].includes(convert[i]))) {
-              this.backFormat[num] = 'incorrectInput';
+              this.backFormat = 'incorrectInput';
               return false;
             }
             break;
           case 'quinary':
             if (!(['0', '1', '2', '3', '4', ',', '.', '-', '+'].includes(convert[i]))) {
-              this.backFormat[num] = 'incorrectInput';
+              this.backFormat = 'incorrectInput';
               return false;
             }
             break;
           case 'senary':
             if (!(['0', '1', '2', '3', '4', '5', ',', '.', '-', '+'].includes(convert[i]))) {
-              this.backFormat[num] = 'incorrectInput';
+              this.backFormat = 'incorrectInput';
               return false;
             }
             break;
           case 'septenary':
             if (!(['0', '1', '2', '3', '4', '5', '6', ',', '.', '-',
               '+'].includes(convert[i]))) {
-              this.backFormat[num] = 'incorrectInput';
+              this.backFormat = 'incorrectInput';
               return false;
             }
             break;
           case 'octal':
             if (!(['0', '1', '2', '3', '4', '5', '6', '7', ',', '.', '-',
               '+'].includes(convert[i]))) {
-              this.backFormat[num] = 'incorrectInput';
+              this.backFormat = 'incorrectInput';
               return false;
             }
             break;
           case 'novenary':
             if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8',
               ',', '.', '-', '+'].includes(convert[i]))) {
-              this.backFormat[num] = 'incorrectInput';
+              this.backFormat = 'incorrectInput';
               return false;
             }
             break;
           case 'decimal':
             if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
               ',', '.', '-', '+'].includes(convert[i]))) {
-              this.backFormat[num] = 'incorrectInput';
+              this.backFormat = 'incorrectInput';
               return false;
             }
             break;
           case 'hex':
             if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
               ',', '.', '-', '+'].includes(convert[i]))) {
-              this.backFormat[num] = 'incorrectInput';
+              this.backFormat = 'incorrectInput';
               return false;
             }
             break;
           default:
         }
         if ((convert[i] === '+' || convert[i] === '-') && i > 1) {
-          this.backFormat[num] = 'incorrectInput';
+          this.backFormat = 'incorrectInput';
           return false;
         }
         if (convert[i] === '.' || convert[i] === ',') {
           if (commaFound === false) {
             commaFound = true;
           } else {
-            this.backFormat[num] = 'incorrectInput';
+            this.backFormat = 'incorrectInput';
             return false;
           }
         }
