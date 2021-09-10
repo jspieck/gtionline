@@ -120,6 +120,61 @@ export const i18n = new VueI18n({
       shift: 'Shift',
       considerRepresentation: 'Darstellung beachten',
       consider1comma: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
+
+      exerciseArchive: 'Aufgabenarchiv',
+      randomExercise: 'Zufällige Aufgabe',
+      doCalculation: 'Berechnen',
+      colorCoding: 'Farbkodierung',
+      mathDistribution: 'Distribuierung',
+      easy: 'einfach',
+      difficultyMiddle: 'mittel',
+      difficultyHard: 'schwer',
+      sheet: 'Blatt',
+
+      // Boolean Function Minimization
+      bf_infotext_or_interact_with_kv: 'Oder interagiere direkt mit dem KV-Diagramm',
+      bf_infotext_kv_must_not_be_empty: 'Das KV-Diagram muss Einsen und Nullen enthalten',
+      bf_infotest_click_on_hidden_areas_to_make_visible: 'Klicke auf die versteckten Bereiche um sie aufzudecken',
+      bf_normal_forms: 'Normalformen',
+      bf_quineMCCluskeyClasses: 'Quine MC Cluskey Klassen',
+      bf_primeTerms: 'Primterme',
+      bf_primeImplicants: 'Primimplikanten',
+      bf_primeImplicates: 'Primimplikate',
+      bf_primeCoverTable: 'Überdeckungstabelle', // prime implicant chart
+      bf_petrickExpression: 'Petrick Ausdruck',
+      bf_minimalForms: 'Minimalformen',
+      bf_tableWithCyclicRest: 'Zyklische Resttabelle',
+
+      bf_covertable_step_description_initial: '<h4>Initialer Schritt:</h4>'
+        + 'Trage spaltenweise alle Basisterme (Einsstellen) und reihenweise alle Primimplikanten (PI) in die Tabelle ein. '
+        + 'Überdeckt ein Primterm eine Einstelle, markiere jene Zelle mit einem X. '
+        + 'Die Kosten c eines Primterms sind die Anzahl seiner Literale. Je höher, desto aufwändiger (teurer) die Umsetzung in Hardware. '
+        + '<br>Tipp:<br>'
+        + 'Ein Primimplikant überdeckt eine Einstelle genau dann, wenn alle Literale des Primterms auch genauso im Basisterm vorkommen',
+      bf_covertable_step_description_core_found: '<h4>Kern gefunden:</h4>'
+        + 'Der einzige Primterm, der die Einstelle {columnName} überdeckt, ist Term {rowName}. '
+        + 'Dieser Primterm muss also unbedingt in unserer Schaltfunktion vorkommen! '
+        + 'Markiere die Zeile als Kern und streiche die Spalte heraus.',
+      bf_covertable_step_description_cross_column_bc_covered: '<h4>Spalte bereits abgedeckt:</h4>'
+        + 'Die Spalte {columnName} wird bereits vom Primterm {rowName} überdeckt. '
+        + 'Streiche die Spalte heraus.',
+      bf_covertable_step_description_cross_row_bc_covered: '<h4>Reihe bereits bereits vollständig abgedeckt:</h4>'
+        + 'Alles X\'e der Reihe {rowName} werden bereits abgedeckt. '
+        + 'Streiche die Reihe heraus.',
+      bf_covertable_step_description_row_domination: '<h4>Zeilendominanz:</h4>'
+        + 'Die Reihe {dominatorName} dominiert die Zeile {dominatedName}; '
+        + 'd.h. {dominatorName} besitzt überall da Markierungen, wo Zeile {dominatedName} auch welche besitzt (und vielleicht sogar mehr!). '
+        + '=> Streiche die dominieRTE Zeile {dominatedName}. '
+        + '<br>Beachte, dass die Zeilendominanz nur anwendbar ist, da die Zeile {dominatorName} weniger oder genauso viel kostet wie {dominatedName}; '
+        + 'bzw. weil es keine andere Zeile gibt, die die zusätzlichen Einstellen von {dominatorName} überdeckt und weniger als {dominatorName} - {dominatedName} kostet.',
+      bf_covertable_step_description_column_domination: '<h4>Spaltendominanz:</h4>'
+        + 'Die Spalte {dominatorName} dominiert die Spalte {dominatedName}; '
+        + 'd.h. {dominatorName} besitzt überall da Markierungen, wo Spalte {dominatedName} auch welche besitzt (und vielleicht sogar mehr!). '
+        + '=> Streiche die dominieRENDE Spalte {dominatorName}'
+        + '<br>Im Gegensatz zur Zeilendominanz muss bei der Spaltendominanz überhaupt nicht auf Kosten geachtet werden (/▽＼)',
+      bf_covertable_step_description_cyclic_rest: '<h4>Zyklischer Rest:</h4>'
+        + 'Keine Regel der Überdeckungstabelle ist anwendbar. Man spricht hierbei von einem \'Zyklischem Rest\'.'
+        + '<br>Um nun dennoch eine Minimalform der Schaltfunktion bestimmen zu können, bietet sich eine Aufstellung des Petrick Ausdrucks an.',
     },
     en: {
       numVarInput: 'Number of variables',
@@ -232,6 +287,62 @@ export const i18n = new VueI18n({
       shift: 'shift',
       considerRepresentation: 'consider representation',
       consider1comma: 'The mantissa begins with an 1 in the standard form.',
+
+      exerciseArchive: 'Exercise Archive',
+      randomExercise: 'Random Exercise',
+      doCalculation: 'Calculate',
+      colorCoding: 'color coding',
+      mathDistribution: 'Distribution',
+      easy: 'easy',
+      difficultyMiddle: 'middle',
+      difficultyHard: 'hard',
+      sheet: 'sheet',
+
+
+      // Boolean Function Minimization
+      bf_infotext_or_interact_with_kv: 'Or directly interact with the KV-Diagram',
+      bf_infotext_kv_must_not_be_empty: 'The KV-Diagram must contains 1s and 0s',
+      bf_infotest_click_on_hidden_areas_to_make_visible: 'Click on hidden areas to reveal them',
+      bf_normal_forms: 'Normal Forms',
+      bf_quineMCCluskeyClasses: 'Quine MC Cluskey classes',
+      bf_primeTerms: 'Primeterms',
+      bf_primeImplicants: 'Primeimplicants',
+      bf_primeImplicates: 'Primeimplikates',
+      bf_primeCoverTable: 'Prime implicant chart / \'Cover Table\'', // prime implicant chart
+      bf_petrickExpression: 'Petrick Expression',
+      bf_minimalForms: 'Minimal Forms',
+      bf_tableWithCyclicRest: 'Table with cyclic rest',
+
+      bf_covertable_step_description_initial: '<h4>Initial step:</h4>'
+          + 'Enter all base terms (ones) in the columns and all prime implicants (PI) in the rows of the table. '
+          + 'If a prime term covers a \'one\', mark that cell with an X. '
+          + 'The cost c of a primeterm is the number of its literals. The higher, the more complex (i.e. costly) the implementation in hardware. '
+          + '<br>Tip:<br>'
+          + 'A prime implicant covers a \'one\' exactly if all literals of the primeterm also occur in the same way in the base term.',
+      bf_covertable_step_description_core_found: '<h4>Core found:</h4>'
+        + 'The only primeterm that covers column {columnName} is term {rowName}. '
+        + 'Hence this primterm must definitely appear in our resulting function! '
+        + 'Mark the row as a \'core\' (Kern) and strike out the column.',
+      bf_covertable_step_description_cross_column_bc_covered: '<h4>Column already covered:</h4>'
+        + 'Column {columnName} is already being covered by primeterm {rowName}. '
+        + 'Strike out the column',
+      bf_covertable_step_description_cross_row_bc_covered: '<h4>Row already covered:</h4>'
+        + 'All X\'s of row {rowName} are already covered. '
+        + 'Cross out the row',
+      bf_covertable_step_description_row_domination: '<h4>Row dominance / Reihendominanz:</h4>'
+        + 'Row {dominatorName} dominates row {dominatedName}; '
+        + 'i.e. row {dominatorName} has markers wherever row {dominatedName} does as well (and possibly more!). '
+        + '=> cross the dominaTED row {dominatedName}. '
+        + '<br>Note that row dominance is only applicable, because row {dominatorName} costs less than, or the same as {dominatedName}; '
+        + 'or because there is no other row that covers the additional markers of {dominatorName} and costs less than {dominatorName} - {dominatedName}.',
+      bf_covertable_step_description_column_domination: '<h4>Column dominance / Spaltendominanz:</h4>'
+        + 'Column {dominatorName} dominates column {dominatedName}; '
+        + 'i.e. column {dominatorName} has markers wherever column {dominatedName} does as well (and possibly more!). '
+        + '=> Cross the dominaTING column {dominatorName}'
+        + '<br>Unlike with row dominance, column dominance doesn\'t require you to consider costs at all (/▽＼)',
+      bf_covertable_step_description_cyclic_rest: '<h4>Cyclic rest:</h4>'
+        + 'No rule of the prime table algorithm is applicable. This is referred to as a \'cyclic rest\' (ger: \'Zyklischer Rest\').'
+        + '<br>By setting up the Petrick-Expression (ger: Petrick Ausdruck) for the rest table, one is still able to determine a minimal form of the original function.',
     },
     fr: {
       numVarInput: 'Nombre de Variables',

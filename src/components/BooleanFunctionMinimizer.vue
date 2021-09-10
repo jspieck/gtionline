@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="tab">
-      <h3>Funktionsminimierung</h3>
+      <h3>{{$t('functionMin')}}</h3>
       <div class="boolean-function-input-container">
         <div>
           <div class="exercise-selection-container">
-            <div class="exercive-selection-container-tooltip">Aufgabenarchiv:</div>
+            <div class="exercive-selection-container-tooltip">{{$t('exerciseArchive')}}:</div>
             <div>
               <FSelect :options="archivedExerciseTitles"
                 @input="selectArchivedExercise"/>
@@ -13,7 +13,7 @@
             </div>
           </div>
           <div class="exercise-selection-container">
-            <div class="exercive-selection-container-tooltip">Zufällige Aufgabe:</div>
+            <div class="exercive-selection-container-tooltip">{{$t('randomExercise')}}:</div>
             <div>
               <FSelect :options="randomExercisesDifficulties"
                 @input="selectRandomExerciseDifficulty"/>
@@ -22,19 +22,19 @@
           </div>
         </div>
 
-        <p class="boolean-function-input-container-divider">Oder interagiere direkt mit dem KV-Diagramm:</p>
+        <p class="boolean-function-input-container-divider">{{$t('bf_infotext_or_interact_with_kv')}}:</p>
 
         <div>
           <KVDiagr class="kvdiagram" ref="childKVDiagram" />
         </div>
 
-        <button class="boolean-function-button-optimize" @click="optimize()">Berechnen</button>
+        <button class="boolean-function-button-optimize" @click="optimize()">{{$t('doCalculation')}}</button>
       </div>
 
       <div class="horizontalbar"></div>
 
       <span v-if="this.showMsgKVDiagramMustNotBeEmptyOrFull === true">
-        Das KV-Diagram darf nicht vollständig leer oder gefüllt sein.
+        {{$t('bf_infotext_kv_must_not_be_empty')}}
       </span>
       <!-- <div v-else-if="this.someOptimizationsFinished === false"> -->
       <span v-else-if="this.someOptimizationsFinished === false">
@@ -55,7 +55,7 @@
           </AccordionItem> -->
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              Normalformen
+              {{$t('bf_normal_forms')}}
             </template>
             <template v-slot:accordion-item-body>
               <Accordion>
@@ -81,16 +81,16 @@
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              Quine MC Cluskey Klassen
+              {{$t('bf_quineMCCluskeyClasses')}}
             </template>
             <template v-slot:accordion-item-body>
               <span>
                 <ToggleSwitch v-on:toggle="changeQuineClassesDisplayStyle" checkedDefault=true />
                 <span style="padding-top:3px">
-                  Farbkodierung
+                  {{$t('colorCoding')}}
                 </span>
               </span>
-              <div class="small-info-text">Klicke auf die versteckten Bereiche um sie aufzudecken.</div>
+              <div class="small-info-text">{{$t('bf_infotest_click_on_hidden_areas_to_make_visible')}}</div>
               <!-- Quine Cluskey classes have been reversed in script section for easy access here -->
               <!-- loop through Q_X -->
               <div v-for="(qlayer, qi) in quineClassesMin" :key="`quineClassLayerMin_${qi}`">
@@ -148,13 +148,13 @@
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              Primterme
+              {{$t('bf_primeTerms')}}
             </template>
             <template v-slot:accordion-item-body>
               <Accordion>
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
-                    Primimplikanten
+                    {{$t('bf_primeImplicants')}}
                   </template>
                   <template v-slot:accordion-item-body>
                     <span v-for="i in primeTermsMin.length" :key="`primeTermMinID_${i}`">
@@ -165,7 +165,7 @@
                 </AccordionItem>
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
-                    Primimplikate
+                    {{$t('bf_primeImplicates')}}
                   </template>
                   <template v-slot:accordion-item-body>
                     <span v-for="i in primeTermsMax.length" :key="`primeTermMaxID_${i}`">
@@ -180,7 +180,7 @@
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              Überdeckungstabelle:
+              {{$t('bf_primeCoverTable')}}:
             </template>
             <template v-slot:accordion-item-body>
               <table class="bf-primetable">
@@ -243,7 +243,7 @@
                 <button @click='primetableStepBackward' :disabled="primetableCurrentStepIndex === 0">
                   &larr;
                 </button>
-                Schritt
+                {{$t('step')}}
                 <span>{{primetableCurrentStepIndex}} / {{primetableStepsAmount}}</span>
                 <button @click='primetableStepForward' :disabled="primetableCurrentStepIndex === primetableStepsAmount">
                   &rarr;
@@ -255,14 +255,14 @@
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              Petrick Ausdruck:
+              {{$t('bf_petrickExpression')}}:
             </template>
             <template v-slot:accordion-item-body>
               <!-- <div>{{ petrickStatementMin.expressionDirectStr }}</div> -->
               <div><span v-html="toSvg(petrickStatementMin.expressionDirectStr + '=1')"/><span> | Absorption + Idempotenz</span></div>
               <!-- <div>{{ petrickStatementMin.expressionAbsorbedStr }}</div> -->
               <!-- <div v-html="toSvg(petrickStatementMin.expressionAbsorbedStr + '=1 \\ \\ \\text{| Ausdistribuieren}')"/> -->
-              <div><span v-html="toSvg(petrickStatementMin.expressionAbsorbedStr + '=1')"/><span> | Ausdistribuieren</span></div>
+              <div><span v-html="toSvg(petrickStatementMin.expressionAbsorbedStr + '=1')"/><span> | {{$t('mathDistribution')}}</span></div>
               <!-- <div>{{ petrickStatementMin.expressionExpandedStr }}</div> -->
               <!-- <div v-html="toSvg(petrickStatementMin.expressionExpandedStr + '=1 \\ \\ \\text{| Absorption + Idempotenz}')"/> -->
               <div><span v-html="toSvg(petrickStatementMin.expressionExpandedStr + '=1')"/><span> | Absorption + Idempotenz</span></div>
@@ -274,7 +274,7 @@
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              Minimalformen
+              {{$t('bf_minimalForms')}}
             </template>
             <template v-slot:accordion-item-body>
               <Accordion>
@@ -382,9 +382,9 @@ export default {
   computed: {
     randomExercisesDifficulties() {
       return [
-        'leicht',
-        'mittel',
-        'schwierig',
+        this.$t('easy'),
+        this.$t('difficultyMiddle'),
+        this.$t('difficultyHard'),
       ];
     },
     /**
@@ -485,47 +485,68 @@ export default {
       const primetableObj = this.primeTableMin;
 
       if (this.primetableCurrentStepIndex === 0) {
-        return '<h4>Initialer Schritt:</h4>'
-          + 'Trage spaltenweise alle Basisterme (Einsstellen) und reihenweise alle Primimplikanten (PI) in die Tabelle ein. '
-          + 'Überdeckt ein Primterm eine Einstelle, markiere jene Zelle mit einem X. '
-          + 'Die Kosten c eines Primterms sind die Anzahl seiner Literale. Je höher, desto aufwändiger (teurer) die Umsetzung in Hardware. '
-          + '<br>Tipp:<br>'
-          + 'Ein Primimplikant überdeckt eine Einstelle genau dann, wenn alle Literale des Primterms auch genauso im Basisterm vorkommen';
+        // return '<h4>Initialer Schritt:</h4>'
+        //   + 'Trage spaltenweise alle Basisterme (Einsstellen) und reihenweise alle Primimplikanten (PI) in die Tabelle ein. '
+        //   + 'Überdeckt ein Primterm eine Einstelle, markiere jene Zelle mit einem X. '
+        //   + 'Die Kosten c eines Primterms sind die Anzahl seiner Literale. Je höher, desto aufwändiger (teurer) die Umsetzung in Hardware. '
+        //   + '<br>Tipp:<br>'
+        //   + 'Ein Primimplikant überdeckt eine Einstelle genau dann, wenn alle Literale des Primterms auch genauso im Basisterm vorkommen';
+        return this.$t('bf_covertable_step_description_initial');
       }
       const step = primetableObj.steps[this.primetableCurrentStepIndex - 1];
       switch (step.actionType) {
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE:
-          return '<h4>Kern gefunden:</h4>'
-            + `Der einzige Primterm, der die Einstelle ${this.primeTableBaseTermIndices[step.column]} überdeckt, ist Term ${this.nthLetter(step.core + 1)}. `
-            + 'Dieser Primterm muss also unbedingt in unserer Schaltfunktion vorkommen! '
-            + 'Markiere die Zeile als Kern und streiche die Spalte heraus.';
+          // return '<h4>Kern gefunden:</h4>'
+          //   + `Der einzige Primterm, der die Einstelle ${this.primeTableBaseTermIndices[step.column]} überdeckt, ist Term ${this.nthLetter(step.core + 1)}. `
+          //   + 'Dieser Primterm muss also unbedingt in unserer Schaltfunktion vorkommen! '
+          //   + 'Markiere die Zeile als Kern und streiche die Spalte heraus.';
+          return this.$t('bf_covertable_step_description_core_found', {
+            columnName: this.primeTableBaseTermIndices[step.column],
+            rowName: this.nthLetter(step.core + 1),
+          });
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED:
-          return '<h4>Spalte bereits abgedeckt:</h4>'
-            + `Die Spalte ${this.primeTableBaseTermIndices[step.column]} wird bereits vom Primterm ${this.nthLetter(step.coveredBy + 1)} überdeckt. `
-            + 'Streiche die Spalte heraus.';
+          // return '<h4>Spalte bereits abgedeckt:</h4>'
+          //   + `Die Spalte ${this.primeTableBaseTermIndices[step.column]} wird bereits vom Primterm ${this.nthLetter(step.coveredBy + 1)} überdeckt. `
+          //   + 'Streiche die Spalte heraus.';
+          return this.$t('bf_covertable_step_description_cross_column_bc_covered', {
+            columnName: this.primeTableBaseTermIndices[step.column],
+            rowName: this.nthLetter(step.coveredBy + 1),
+          });
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED:
-          return '<h4>Reihe bereits bereits vollständig abgedeckt:</h4>'
-            + `Alles X'e der Reihe ${this.nthLetter(step.coveredBy + 1)} werden bereits abgedeckt. `
-            + 'Streiche die Reihe heraus.';
+          // return '<h4>Reihe bereits bereits vollständig abgedeckt:</h4>'
+          //   + `Alles X'e der Reihe ${this.nthLetter(step.row + 1)} werden bereits abgedeckt. `
+          //   + 'Streiche die Reihe heraus.';
+          return this.$t('bf_covertable_step_description_cross_row_bc_covered', {
+            rowName: this.nthLetter(step.row + 1),
+          });
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION:
-          return '<h4>Zeilendominanz:</h4>'
-            + `Die Reihe ${this.nthLetter(step.dominator + 1)} dominiert die Zeile ${this.nthLetter(step.dominated + 1)}; `
-            + `d.h. ${this.nthLetter(step.dominator + 1)} besitzt überall da Markierungen, wo Zeile ${this.nthLetter(step.dominated + 1)} auch welche besitzt (und vielleicht sogar mehr!). `
-            + `=> Streiche die dominieRTE Zeile ${this.nthLetter(step.dominated + 1)}. `
-            + `<br>Beachte, dass die Zeilendominanz nur anwendbar ist, da die Zeile ${this.nthLetter(step.dominator + 1)} weniger oder genauso viel kostet wie ${this.nthLetter(step.dominated + 1)}; `
-            + `bzw. weil es keine andere Zeile gibt, die die zusätzlichen Einstellen von ${this.nthLetter(step.dominator + 1)} überdeckt und weniger als ${this.nthLetter(step.dominator + 1)} - ${this.nthLetter(step.dominated + 1)} kostet.`;
+          // return '<h4>Zeilendominanz:</h4>'
+          //   + `Die Reihe ${this.nthLetter(step.dominator + 1)} dominiert die Zeile ${this.nthLetter(step.dominated + 1)}; `
+          //   + `d.h. ${this.nthLetter(step.dominator + 1)} besitzt überall da Markierungen, wo Zeile ${this.nthLetter(step.dominated + 1)} auch welche besitzt (und vielleicht sogar mehr!). `
+          //   + `=> Streiche die dominieRTE Zeile ${this.nthLetter(step.dominated + 1)}. `
+          //   + `<br>Beachte, dass die Zeilendominanz nur anwendbar ist, da die Zeile ${this.nthLetter(step.dominator + 1)} weniger oder genauso viel kostet wie ${this.nthLetter(step.dominated + 1)}; `
+          //   + `bzw. weil es keine andere Zeile gibt, die die zusätzlichen Einstellen von ${this.nthLetter(step.dominator + 1)} überdeckt und weniger als ${this.nthLetter(step.dominator + 1)} - ${this.nthLetter(step.dominated + 1)} kostet.`;
+          return this.$t('bf_covertable_step_description_row_domination', {
+            dominatorName: this.nthLetter(step.dominator + 1),
+            dominatedName: this.nthLetter(step.dominated + 1),
+          });
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION:
-          return '<h4>Spaltendominanz:</h4>'
-            + `Die Spalte ${this.primeTableBaseTermIndices[step.dominator]} dominiert die Spalte ${this.primeTableBaseTermIndices[step.dominated]}; `
-            + `d.h. ${this.primeTableBaseTermIndices[step.dominator]} besitzt überall da Markierungen, wo Spalte ${this.primeTableBaseTermIndices[step.dominated]} auch welche besitzt (und vielleicht sogar mehr!). `
-            + `=> Streiche die dominieRENDE Spalte ${this.primeTableBaseTermIndices[step.dominator]}`
-            + '<br>Im Gegensatz zur Zeilendominanz muss bei der Spaltendominanz überhaupt nicht auf Kosten geachtet werden (/▽＼)';
+          // return '<h4>Spaltendominanz:</h4>'
+          //   + `Die Spalte ${this.primeTableBaseTermIndices[step.dominator]} dominiert die Spalte ${this.primeTableBaseTermIndices[step.dominated]}; `
+          //   + `d.h. ${this.primeTableBaseTermIndices[step.dominator]} besitzt überall da Markierungen, wo Spalte ${this.primeTableBaseTermIndices[step.dominated]} auch welche besitzt (und vielleicht sogar mehr!). `
+          //   + `=> Streiche die dominieRENDE Spalte ${this.primeTableBaseTermIndices[step.dominator]}`
+          //   + '<br>Im Gegensatz zur Zeilendominanz muss bei der Spaltendominanz überhaupt nicht auf Kosten geachtet werden (/▽＼)';
+          return this.$t('bf_covertable_step_description_column_domination', {
+            dominatorName: this.primeTableBaseTermIndices[step.dominator],
+            dominatedName: this.primeTableBaseTermIndices[step.dominated],
+          });
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST:
-          return '<h4>Zyklischer Rest:</h4>'
-            + 'Keine Regel der Überdeckungstabelle ist anwendbar. Man spricht hierbei von einem \'Zyklischem Rest\'.'
-            + '<br>Um nun dennoch eine Minimalform der Schaltfunktion bestimmen zu können, bietet sich eine Aufstellung des Petrick Ausdrucks an.';
+          // return '<h4>Zyklischer Rest:</h4>'
+          //   + 'Keine Regel der Überdeckungstabelle ist anwendbar. Man spricht hierbei von einem \'Zyklischem Rest\'.'
+          //   + '<br>Um nun dennoch eine Minimalform der Schaltfunktion bestimmen zu können, bietet sich eine Aufstellung des Petrick Ausdrucks an.';
+          return this.$t('bf_covertable_step_description_cyclic_rest');
         default:
-          return `actionType of Step obj unknown: '${step.actionType}'`;
+          return `CoverTable: actionType of Step obj unknown: '${step.actionType}'`;
       }
     },
     primeTableBaseTermIndices() {
@@ -562,7 +583,7 @@ export default {
       } catch (e) {
         this.showMsgKVDiagramMustNotBeEmptyOrFull = true;
         this.someOptimizationsFinished = false;
-        console.log(e);
+        // console.log(e);
         return;
       }
       this.showMsgKVDiagramMustNotBeEmptyOrFull = false;
@@ -768,9 +789,6 @@ export default {
   }
   .termcollection {
     padding-right: .5em;
-  }
-  .quine-classes-reduced-term-crossed {
-    // text-decoration: line-through;
   }
   .quine-classes-reduced-term-colored {
     color: rgba(gray, .8);
