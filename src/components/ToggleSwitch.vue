@@ -1,0 +1,120 @@
+<!--
+Very much inspired by w3schools: 'https://www.w3schools.com/howto/howto_css_switch.asp'
+ -->
+
+<template>
+  <label class="switch">
+    <input type="checkbox" @click="event => toggle(event)" ref="checkbox">
+    <span class="slider round"></span>
+  </label>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      checked: false,
+    };
+  },
+  props: ['checkedDefault'],
+  mounted() {
+    this.checked = (this.checkedDefault === 'true');
+
+    // console.log(this.checked);
+    // console.log(typeof (this.checked));
+    this.$refs.checkbox.checked = this.checked;
+    this.$emit('toggle', this.checked);
+  },
+  methods: {
+    toggle(event) {
+      const checkbox = event.target;
+      this.checked = checkbox.checked;
+
+      // send event to parent component
+      this.$emit('toggle', this.checked);
+    },
+  },
+};
+</script>
+
+<style scoped lang="scss">
+
+// the central dependency all other measurements are calculated from:
+$toggleswitch-travel: 1.4em;
+
+$toggleswitch-width: ($toggleswitch-travel/26)*60;
+$toggleswitch-height: ($toggleswitch-travel/26)*34;
+$toggleswitch-knob-bottomleft-pos: ($toggleswitch-travel/26)*4;
+$toggleswitch-top-displacement: ($toggleswitch-travel/26)*4;
+
+// initial values:
+// $toggleswitch-travel: 26px;
+// $toggleswitch-width: 60px;
+// $toggleswitch-height: 34px;
+
+// $toggleswitch-travel: 26px;
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: $toggleswitch-width;
+  height: $toggleswitch-height;
+  top: -$toggleswitch-top-displacement;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .3s;
+  transition: .3s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: $toggleswitch-travel;
+  width: $toggleswitch-travel;
+  left: $toggleswitch-knob-bottomleft-pos;
+  bottom: $toggleswitch-knob-bottomleft-pos;
+  background-color: white;
+  -webkit-transition: .3s;
+  transition: .3s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX($toggleswitch-travel);
+  -ms-transform: translateX($toggleswitch-travel);
+  transform: translateX($toggleswitch-travel);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: $toggleswitch-height; // orig:34px
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
