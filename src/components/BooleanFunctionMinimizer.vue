@@ -2,7 +2,6 @@
   <div>
     <div class="tab">
       <h3>Funktionsminimierung</h3>
-
       <div class="boolean-function-input-container">
         <div>
           <div class="exercise-selection-container">
@@ -45,7 +44,7 @@
 
       <div v-else class="bf-main-accordion-container">
         <Accordion>
-          <AccordionItem>
+          <!-- <AccordionItem>
             <template v-slot:accordion-item-title>
               Normalformen
             </template>
@@ -53,10 +52,10 @@
               <div> DNF: <span class="svg-text" v-html="toSvg(dnf)"></span> </div>
               <div> KNF: <span class="svg-text" v-html="toSvg(knf)"></span> </div>
             </template>
-          </AccordionItem>
+          </AccordionItem> -->
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              Normalformen (doppel Accordion)
+              Normalformen
             </template>
             <template v-slot:accordion-item-body>
               <Accordion>
@@ -82,26 +81,39 @@
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              Quine MC Cluskey Klassen (mit Mintermen)
+              Quine MC Cluskey Klassen
             </template>
             <template v-slot:accordion-item-body>
-
+              <span>
+                <ToggleSwitch v-on:toggle="changeQuineClassesDisplayStyle" checkedDefault=true />
+                <span style="padding-top:3px">
+                  Farbkodierung
+                </span>
+              </span>
+              <div class="small-info-text">Klicke auf die versteckten Bereiche um sie aufzudecken.</div>
               <!-- Quine Cluskey classes have been reversed in script section for easy access here -->
               <!-- loop through Q_X -->
               <div v-for="(qlayer, qi) in quineClassesMin" :key="`quineClassLayerMin_${qi}`">
                 <!-- loop through Q_._X -->
-                <div class="blurred" @mouseenter="unblurDOM" @click="unblurDOM">
+                <div v-if="qi < quineClassesMin.length - 1" class="blurred" @mousedown="unblurDOM"> <!-- @mouseenter="unblurDOM" -->
                   <div v-for="(qlayerInner, qqi) in quineClassesMin[qi]" :key="`quineClassLayerInnerMin_${qqi}`"
                       class="quine-class-single-class-container">
                     <!-- Q{{quineClassesMin.length-qi-1}}_{{quineClassesMin[qi].length-qqi-1}}: { -->
-                    <span class="svg-text" v-html="toSvg(`Q _{${quineClassesMin.length-qi-1}} \\_ _{${quineClassesMin[qi].length-qqi-1}}:\\{`)"></span>
+                    <span class="svg-text" v-html="toSvg(`Q _{${quineClassesMin.length-qi-1},\\ ${quineClassesMin[qi].length-qqi-1}}:\\{`)"></span>
 
                     <span class="termcollection">
                       <!-- loop through all terms in Q_x_y -->
                       <span v-for="(qterm, ti) in quineClassesMin[qi][qqi]" :key="`quineClassTermMin_${ti}`">
-                        <!-- cross out term if it was absorbed -->
-                        <span v-if="!quineClassesMin[qi][qqi][ti][1]" class="svg-text term" v-html="toSvg(quineClassesMin[qi][qqi][ti][0])"/>
-                        <span v-if=" quineClassesMin[qi][qqi][ti][1]" class="svg-text term" v-html="toSvg('\\cancel{' + quineClassesMin[qi][qqi][ti][0] + '}')"/>
+                        <!-- non-reduced term -->
+                        <template v-if="!quineClassesMin[qi][qqi][ti][1]">
+                          <span class="svg-text term" v-html="toSvg(quineClassesMin[qi][qqi][ti][0])"/>
+                        </template>
+                        <!-- reduced term -->
+                        <template v-else>
+                          <span v-if="!quineClassesColorfulDisplayStyle" class="svg-text term .quine-classes-reduced-term-crossed" v-html="toSvg('\\cancel{' + quineClassesMin[qi][qqi][ti][0] + '}')"/>
+                          <!-- <span v-if="!quineClassesColorfulDisplayStyle" class="svg-text term quine-classes-reduced-term-crossed" v-html="toSvg(quineClassesMin[qi][qqi][ti][0])"/> -->
+                          <span v-else class="svg-text term quine-classes-reduced-term-colored" v-html="toSvg(quineClassesMin[qi][qqi][ti][0])"/>
+                        </template>
 
                         <span v-if="ti < quineClassesMin[qi][qqi].length - 1" v-html="toSvg(',')"/>
                       </span>
@@ -110,13 +122,13 @@
                     <span class="svg-text" v-html="toSvg('\\}')"></span>
                   </div>
                 </div>
-                <div class="horizontalbar" v-if="qi < quineClassesMin.length - 1"></div>
+                <div class="horizontalbar" v-if="qi < quineClassesMin.length - 2"></div>
               </div>
 
             </template>
           </AccordionItem>
 
-          <AccordionItem>
+          <!-- <AccordionItem>
             <template v-slot:accordion-item-title>
               Primterme
             </template>
@@ -132,11 +144,11 @@
                 </div>
               </div>
             </template>
-          </AccordionItem>
+          </AccordionItem> -->
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              Primterme (doppel Accordion)
+              Primterme
             </template>
             <template v-slot:accordion-item-body>
               <Accordion>
@@ -168,7 +180,7 @@
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              Ueberdeckungstabelle: (mit Primimplikanten)
+              Überdeckungstabelle:
             </template>
             <template v-slot:accordion-item-body>
               <table class="bf-primetable">
@@ -176,7 +188,7 @@
                 <tr>
                   <!-- Empty cells in top left -->
                   <td></td>
-                  <td :class="primeTableColorMatrixObj.matrix[0][0]" />
+                  <td :class="primeTableColorMatrixObj.matrix[0][0]"> PI </td>
 
                   <!-- Base terms -->
                   <!-- <th v-for="(bt, col) in primeTableMin.baseTerms" :key="`primeTableMinTR_${col}`"
@@ -237,13 +249,13 @@
                   &rarr;
                 </button>
               </div>
-              <div v-html="primeTableCurrentExplanation"></div>
+              <div class="bf-primetable-step-explanation" v-html="primeTableCurrentExplanation"></div>
             </template>
           </AccordionItem>
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              Petrick Ausdruck: (mit Primimplikanten)
+              Petrick Ausdruck:
             </template>
             <template v-slot:accordion-item-body>
               <!-- <div>{{ petrickStatementMin.expressionDirectStr }}</div> -->
@@ -304,6 +316,7 @@ import KVDiagram from './KVDiagram.vue';
 import Accordion from './EmbeddedAccordion.vue';
 import AccordionItem from './EmbeddedAccordionItem.vue';
 import FormatSelect from './FormatSelect.vue';
+import ToggleSwitch from './ToggleSwitch.vue';
 
 export default {
   name: 'BooleanFunctionMinimizer',
@@ -312,6 +325,7 @@ export default {
     Accordion,
     AccordionItem,
     FSelect: FormatSelect,
+    ToggleSwitch,
   },
   data() {
     return {
@@ -337,11 +351,34 @@ export default {
       someOptimizationsFinished: false,
       showMsgKVDiagramMustNotBeEmptyOrFull: false,
 
+      quineClassesColorfulDisplayStyle: false,
+
       primetableStepsAmount: 0,
       primetableCurrentStepIndex: 0,
     };
   },
-
+  created() {
+    if (window.MathJax) {
+      window.MathJax.typeset();
+    }
+    if (window.MathJax) {
+      // console.log('loading library');
+      // Loading a library that is needed only in this component:
+      // Telling Mathjax to load this library before loading the MathJax
+      // script globally did not work, perhaps the current implementation
+      // could also be indeterministic in regards to Vue components executing
+      // MathJax commands, before the MathJax script has been downloaded.
+      // Perhaps adding another library to download at the beginning
+      // made for a too big delay, such only initializing MathJax after vue
+      // had started rendering components.
+      // But honestly this solution is pretty sleek and this lazy loading is cool.
+      try {
+        this.toSvg('(\\require{cancel})');
+      } catch (_) {} // eslint-disable-line no-empty
+    } else {
+      console.error('Upon created() call of BooleanFunctionMinimizer comp. MathJax was not yet initialized.');
+    }
+  },
   computed: {
     randomExercisesDifficulties() {
       return [
@@ -449,39 +486,39 @@ export default {
 
       if (this.primetableCurrentStepIndex === 0) {
         return '<h4>Initialer Schritt:</h4>'
-          + 'Trage spaltenweise alle Basisterme(Einsstellen) und reihenweise alle Primimplikanten in die Tabelle ein.'
-          + '<br>Überdeckt ein Primterm eine Einstelle, markiere jene Zelle mit einem X.'
-          + '<br>Die Kosten c eines Primterms sind die Anzahl seiner Literale. Je mehr, desto teurer die Umsetzung in Hardware.'
-          + '<br><br>Tipp:'
-          + '<br>Ein Primimplikant(/at) überdeckt eine Einstelle(/Nullstelle) genau dann, wenn alle Literale des Primterms auch genauso im Basisterm vorkommen';
+          + 'Trage spaltenweise alle Basisterme (Einsstellen) und reihenweise alle Primimplikanten (PI) in die Tabelle ein. '
+          + 'Überdeckt ein Primterm eine Einstelle, markiere jene Zelle mit einem X. '
+          + 'Die Kosten c eines Primterms sind die Anzahl seiner Literale. Je höher, desto aufwändiger (teurer) die Umsetzung in Hardware. '
+          + '<br>Tipp:<br>'
+          + 'Ein Primimplikant überdeckt eine Einstelle genau dann, wenn alle Literale des Primterms auch genauso im Basisterm vorkommen';
       }
       const step = primetableObj.steps[this.primetableCurrentStepIndex - 1];
       switch (step.actionType) {
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE:
           return '<h4>Kern gefunden:</h4>'
-            + `Der einzige Primterm, der die Einstelle ${this.primeTableBaseTermIndices[step.column]} überdeckt, ist Term ${this.nthLetter(step.core + 1)}.`
-            + '<br>Dieser Primterm muss also unbedingt in unserer Schaltfunktion vorkommen!'
-            + '<br>Markiere die Zeile als Kern und streiche die Spalte heraus.';
+            + `Der einzige Primterm, der die Einstelle ${this.primeTableBaseTermIndices[step.column]} überdeckt, ist Term ${this.nthLetter(step.core + 1)}. `
+            + 'Dieser Primterm muss also unbedingt in unserer Schaltfunktion vorkommen! '
+            + 'Markiere die Zeile als Kern und streiche die Spalte heraus.';
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED:
           return '<h4>Spalte bereits abgedeckt:</h4>'
-            + `Die Spalte ${this.primeTableBaseTermIndices[step.column]} wird bereits vom Primterm ${this.nthLetter(step.coveredBy + 1)} überdeckt.`
-            + '<br>Streiche die Spalte heraus.';
+            + `Die Spalte ${this.primeTableBaseTermIndices[step.column]} wird bereits vom Primterm ${this.nthLetter(step.coveredBy + 1)} überdeckt. `
+            + 'Streiche die Spalte heraus.';
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED:
           return '<h4>Reihe bereits bereits vollständig abgedeckt:</h4>'
-            + `Alles X'e der Reihe ${this.nthLetter(step.coveredBy + 1)} werden bereits abgedeckt.`
-            + '<br>Streiche die Reihe heraus.';
+            + `Alles X'e der Reihe ${this.nthLetter(step.coveredBy + 1)} werden bereits abgedeckt. `
+            + 'Streiche die Reihe heraus.';
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION:
           return '<h4>Zeilendominanz:</h4>'
-            + `Die Reihe ${this.nthLetter(step.dominator + 1)} dominiert die Zeile ${this.nthLetter(step.dominated + 1)};`
-            + `<br>d.h. ${this.nthLetter(step.dominator + 1)} besitzt überall da Markierungen, wo Zeile ${this.nthLetter(step.dominated + 1)} auch welche besitzt (und vielleicht sogar mehr!).`
-            + `<br>=> Streiche die dominieRTE Zeile ${this.nthLetter(step.dominated + 1)}.`
+            + `Die Reihe ${this.nthLetter(step.dominator + 1)} dominiert die Zeile ${this.nthLetter(step.dominated + 1)}; `
+            + `d.h. ${this.nthLetter(step.dominator + 1)} besitzt überall da Markierungen, wo Zeile ${this.nthLetter(step.dominated + 1)} auch welche besitzt (und vielleicht sogar mehr!). `
+            + `=> Streiche die dominieRTE Zeile ${this.nthLetter(step.dominated + 1)}. `
             + `<br>Beachte, dass die Zeilendominanz nur anwendbar ist, da die Zeile ${this.nthLetter(step.dominator + 1)} weniger oder genauso viel kostet wie ${this.nthLetter(step.dominated + 1)}; `
-            + `bzw. weil es keine andere Zeile gibt, die die zusätzlichen Einstellen von ${this.nthLetter(step.dominator + 1)} überdeckt und weniger als ${this.nthLetter(step.dominator + 1)} - ${this.nthLetter(step.dominated + 1)} kosten.`;
+            + `bzw. weil es keine andere Zeile gibt, die die zusätzlichen Einstellen von ${this.nthLetter(step.dominator + 1)} überdeckt und weniger als ${this.nthLetter(step.dominator + 1)} - ${this.nthLetter(step.dominated + 1)} kostet.`;
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION:
           return '<h4>Spaltendominanz:</h4>'
-            + `Die Spalte ${this.primeTableBaseTermIndices[step.dominator]} dominiert die Spalte ${this.primeTableBaseTermIndices[step.dominated]};`
-            + `<br>d.h. ${this.primeTableBaseTermIndices[step.dominator]} besitzt überall da Markierungen, wo Spalte ${this.primeTableBaseTermIndices[step.dominated]} auch welche besitzt (und vielleicht sogar mehr!).`
-            + `<br>=> Streiche die dominieRENDE Spalte ${step.dominator}`
+            + `Die Spalte ${this.primeTableBaseTermIndices[step.dominator]} dominiert die Spalte ${this.primeTableBaseTermIndices[step.dominated]}; `
+            + `d.h. ${this.primeTableBaseTermIndices[step.dominator]} besitzt überall da Markierungen, wo Spalte ${this.primeTableBaseTermIndices[step.dominated]} auch welche besitzt (und vielleicht sogar mehr!). `
+            + `=> Streiche die dominieRENDE Spalte ${this.primeTableBaseTermIndices[step.dominator]}`
             + '<br>Im Gegensatz zur Zeilendominanz muss bei der Spaltendominanz überhaupt nicht auf Kosten geachtet werden (/▽＼)';
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST:
           return '<h4>Zyklischer Rest:</h4>'
@@ -506,11 +543,6 @@ export default {
     },
   },
   methods: {
-    created() {
-      if (window.MathJax) {
-        window.MathJax.typeset();
-      }
-    },
     selectArchivedExercise(num, exerciseIndex) {
       this.archivedExerciseSelectedIndex = exerciseIndex;
     },
@@ -574,6 +606,9 @@ export default {
 
       this.someOptimizationsFinished = true;
     },
+    changeQuineClassesDisplayStyle(isToggleSwitchChecked) {
+      this.quineClassesColorfulDisplayStyle = isToggleSwitchChecked;
+    },
     resetPrimeTable() {
       this.primetableCurrentStepIndex = 0;
       this.primetableStepsAmount = this.primeTableMin.steps.length;
@@ -605,7 +640,8 @@ export default {
         bfLoadArchivedExercise(index).data,
       );
 
-      this.optimize();
+      this.someOptimizationsFinished = false;
+      // this.optimize();
     },
     generateRandomExercise() {
       let primetermsMin;
@@ -651,8 +687,10 @@ export default {
       this.someOptimizationsFinished = false;
     },
     unblurDOM(event) {
-      event.target.classList.remove('blurred');
-      // console.log(event.target)
+      // console.log(event.target);
+      if (event.target.classList.contains('blurred')) {
+        event.target.classList.remove('blurred');
+      }
     },
     nthLetter(n) {
       // 1 -> A
@@ -731,6 +769,12 @@ export default {
   .termcollection {
     padding-right: .5em;
   }
+  .quine-classes-reduced-term-crossed {
+    // text-decoration: line-through;
+  }
+  .quine-classes-reduced-term-colored {
+    color: rgba(gray, .8);
+  }
   .bf-primetable {
     margin-left: auto;
     margin-right: auto;
@@ -744,6 +788,7 @@ export default {
       border-width: 1px;
       // padding: 2px 3px 2px 3px;
       width: 1.1em;
+      font-size: 1.2em
     }
 
     .primetable-cell-core {
@@ -773,6 +818,9 @@ export default {
       background-color: $lightBlue;
     }
   }
+  .bf-primetable-step-explanation {
+    text-align: justify;
+  }
 
   .blurred {
     filter: blur(1em);
@@ -781,6 +829,7 @@ export default {
 
   .quine-class-single-class-container {
     text-align: left;
+    pointer-events: none;
   }
 
   .horizontalbar {
@@ -788,5 +837,14 @@ export default {
     margin: 1.5em auto 1.5em auto;
     height: 1px;
     background-color: rgba($lightBlue, 0.5);
+  }
+
+  .small-info-text {
+    text-align: left;
+    font-size: 0.9em;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: .3em;
+    padding-bottom: .5em;
+    color: rgba(gray, .9);
   }
 </style>
