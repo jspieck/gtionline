@@ -140,7 +140,7 @@ export const i18n = new VueI18n({
       input: 'Eingabe',
       number: 'Nummer',
       representation: 'Representation im Ausgangsformat',
-      // polydic conversion
+      // polyadic conversion
       firstFormat: 'Ausgangsformat',
       secondFormat: 'Zielformat',
       doConversion: 'Konvertierung durchführen:',

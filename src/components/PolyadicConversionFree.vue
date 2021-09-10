@@ -144,8 +144,8 @@ export default {
       window.sessionStorage.setItem('PCF_inputNum', this.inputNum);
     },
     recalculate() {
-      this.computeSolution();
       this.saveVals();
+      this.computeSolution();
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset(); // https://github.com/mathjax/MathJax/issues/2557

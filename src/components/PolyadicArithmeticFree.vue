@@ -71,7 +71,7 @@
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
-// import * as description from '../scripts/DescriptionPolyadicConversion';
+import * as description from '../scripts/DescriptionPolyadicSolution';
 import * as pdf from '../scripts/generatePdfPolyadicConversion';
 import * as solution from '../scripts/polyadicSolution';
 
@@ -166,15 +166,8 @@ export default {
       window.sessionStorage.setItem('PAF_operator', this.operator);
     },
     recalculate() {
-      this.computeSolution();
       this.saveVals();
-      console.log('+++++++++++++++++');
-      console.log(this.selectedFormat);
-      console.log(this.inputNums[0]);
-      console.log(this.inputNums[1]);
-      console.log(this.operator);
-      console.log(this.solution);
-      console.log(this.solutionObject);
+      this.computeSolution();
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset(); // https://github.com/mathjax/MathJax/issues/2557
@@ -338,12 +331,21 @@ export default {
       this.watcher = JSON.parse(JSON.stringify(polyadicSolution.watcher));
       this.solution = polyadicSolution.result;
       // construct description
-      // const descr = new description.DescriptionPolyadicConversion(this, this.watcher);
-      // descr.makeDescription(polyadicSolution.modus, this.selectedFormat[0]);
-      // this.solutionSteps = descr.result;
-      this.solutionSteps = '';
+      const descr = new description.DescriptionPolyadicSolution(this, this.watcher);
+      descr.makeDescription(
+        this.inputNums[0],
+        this.inputNums[1],
+        this.power,
+        this.operator,
+      );
+      this.solutionSteps = descr.result;
       this.solutionObject = polyadicSolution.resultObject;
       this.modus = polyadicSolution.modus;
+      this.$nextTick(() => {
+        if (window.MathJax) {
+          window.MathJax.typeset(); // https://github.com/mathjax/MathJax/issues/2557
+        }
+      });
     },
     checkSolution() {
       if (this.solution === this.propSol) {

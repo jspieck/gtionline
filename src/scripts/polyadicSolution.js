@@ -43,13 +43,13 @@ export class PolyadicSolution {
         const addition = new tool.AdditionPolyadic(number1, number2);
         this.result = addition.result.bitString;
         this.resultObject = addition.result;
-        this.watcher = ''; // TODO
+        this.watcher = JSON.parse(JSON.stringify(addition.watcher));
         break;
       case 'sub':
         const subtraction = new tool.SubtractionPolyadic(number1, number2);
         this.result = subtraction.result.bitString;
         this.resultObject = subtraction.result;
-        this.watcher = ''; // TODO
+        this.watcher = JSON.parse(JSON.stringify(subtraction.watcher));
         break;
       default:
     }
