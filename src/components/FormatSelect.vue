@@ -21,7 +21,7 @@ export default {
     };
   },
   watch: {
-    value: {
+    sel: { // handler was never called, changing this to sel makes it responsive
       immediate: true,
       handler(newValue) {
         this.selectedOption = newValue;

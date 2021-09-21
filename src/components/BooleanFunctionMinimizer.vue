@@ -270,10 +270,14 @@
               <div><span v-html="toSvg(petrickStatementMin.expressionStr + '=1')"/></div> -->
               <div class="bf-petrick-statement-container">
                 <div v-for="(step, s) in petrickStatementMin.steps" :key="s" class="bf-petrick-statement-subcontainer">
-                  <span v-html="toSvg(step.bf.toLatex('ABCDEFGHIJKLMNOPQRSTUVPXYZ'.split(''), false))"></span>
+                  <span v-html="toSvg(step.bf.toLatex('ABCDEFGHIJKLMNOPQRSTUVPXYZ'.split(''), false) + ' = 1')"></span>
                   <span v-if="s < petrickStatementMin.steps.length - 1">
-                    {{ getTextFromPetrickStatementActionType(petrickStatementMin.steps[s+1].actionType) }}
+                    | {{ getTextFromPetrickStatementActionType(petrickStatementMin.steps[s+1].actionType) }}
                   </span>
+
+                  <!-- Math explanations also rendered as svg: -->
+                  <!-- <span v-html="toSvg(step.bf.toLatex('ABCDEFGHIJKLMNOPQRSTUVPXYZ'.split(''), false) + ' = 1')"></span>
+                  <span v-if="s < petrickStatementMin.steps.length - 1" v-html="toSvg(' | ' + getTextFromPetrickStatementActionType(petrickStatementMin.steps[s+1].actionType) )" /> -->
                 </div>
               </div>
             </template>
@@ -923,7 +927,6 @@ export default {
       );
 
       this.someOptimizationsFinished = false;
-      // }, 500);
     },
     getTextFromPetrickStatementActionType(actionType) {
       switch (actionType) {
