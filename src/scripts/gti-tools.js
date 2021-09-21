@@ -11645,7 +11645,13 @@ var BooleanFunctionLiteral = /*#__PURE__*/function () {
   }, {
     key: "equals",
     value: function equals(other) {
+      //TODO add type comparison
       return this.getId() == other.getId() && this.isNegated() == other.isNegated();
+    }
+  }, {
+    key: "amountLiterals",
+    value: function amountLiterals() {
+      return 1;
     }
   }]);
 
@@ -11706,6 +11712,11 @@ var BooleanFunction$1 = /*#__PURE__*/function () {
     key: "getTerms",
     value: function getTerms() {
       return this._terms;
+    }
+  }, {
+    key: "spliceTerms",
+    value: function spliceTerms(a, b) {
+      this._terms.splice(a, b);
     }
     /**
      * @returns Returns the logical operator which concatenates
@@ -11839,7 +11850,8 @@ var BooleanFunction$1 = /*#__PURE__*/function () {
     key: "toLatex",
     value: function toLatex() {
       var literalNames = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ['x0', 'x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7'];
-      return this.computeString(literalNames, "+", "", "\\overline{", "}", "\\left(", "\\right)", true);
+      var reverseOrder = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+      return this.computeString(literalNames, "+", "", "\\overline{", "}", "\\left(", "\\right)", reverseOrder);
     }
     /**
      * @returns Returns deep cloned version of this BooleanFunction.
@@ -11856,6 +11868,18 @@ var BooleanFunction$1 = /*#__PURE__*/function () {
       }
 
       return new BooleanFunction(this._logicOperator, termsCloned);
+    }
+  }, {
+    key: "amountLiterals",
+    value: function amountLiterals() {
+      //TODO doc
+      var sum = 0;
+
+      this._terms.forEach(function (term) {
+        return sum += term.amountLiterals();
+      });
+
+      return sum;
     }
   }]);
 
@@ -12352,6 +12376,35 @@ var BooleanFunctionUtil = /*#__PURE__*/function () {
 
       return bf;
     }
+  }, {
+    key: "extractCheapestSolutionFromPetrickStatementObj",
+    value: function extractCheapestSolutionFromPetrickStatementObj(petrickStatementObj, booleanFunctionOpTopLevel) {
+      // TODO doc
+      var primeTerms = petrickStatementObj.primeTerms;
+      var lastStep = petrickStatementObj.steps[petrickStatementObj.steps.length - 1];
+      var cheapestSolution = lastStep.bf.getTerms()[0].getTerms()[petrickStatementObj.cheapestSolution];
+      console.log(lastStep, lastStep.bf);
+      var out = new BooleanFunction$1(booleanFunctionOpTopLevel, []);
+
+      for (var l = 0; l < cheapestSolution.getTerms().length; l++) {
+        var primeTermi = cheapestSolution.getTerms()[l].getId();
+        out.addTerm(primeTerms[primeTermi].clone());
+      } // for (let t0i = 0; t0i < psClone.getTerms().length; t0i++) {
+      //     const t0 = psClone.getTerms()[t0i];
+      //     for (let t1i = 0; t1i < t0.getTerms().length; t1i++) {
+      //         const t1 = t0.getTerms()[t1i];
+      //         for (let t2i = 0; t2i < t1.getTerms().length; t2i++) {
+      //             const t2 = t1.getTerms()[t2i];
+      //             t1.getTerms()[t2i] = primeTerms[t2.getId()];
+      //             // TODO clone the primeTerms before inserting?
+      //         }
+      //     }
+      // }
+      // return psClone;
+
+
+      return out;
+    }
     /**
      * Returns a sorted version of the given array of Baseterms by their
      * respective KVDiagram-Index.
@@ -12433,6 +12486,30 @@ var BooleanFunctionUtil = /*#__PURE__*/function () {
       }
 
       return maxTerms;
+    }
+  }, {
+    key: "booleanFunctionContainsAnother",
+    value: function booleanFunctionContainsAnother(bfLeft, bfRight) {
+      var _loop2 = function _loop2(r) {
+        var subTermRight = bfRight.getTerms()[r];
+
+        if (bfLeft.getTerms().find(function (l) {
+          return l.equals(subTermRight);
+        }) === undefined) {
+          return {
+            v: false
+          };
+        }
+      };
+
+      // TODO doc checks if left fully contains rights literals
+      for (var r = 0; r < bfRight.getTerms().length; r++) {
+        var _ret2 = _loop2(r);
+
+        if (_typeof(_ret2) === "object") return _ret2.v;
+      }
+
+      return true;
     }
   }]);
 
@@ -13247,6 +13324,11 @@ function Step(actionType, _ref) {
   this.dominated = dominated;
 };
 
+var BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_INITIAL = 'bf-ps-initial';
+var BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_DISTRIBUTION = 'bf-ps-distribution';
+var BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE = 'bf-ps-idempotence';
+var BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION = 'bf-ps-absorption';
+var BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING = 'bf-ps-sorting';
 /**
  * Computes the petrick statement (obj) e.g. containing the cheapest solution
  * and different snapshots of solving the statement mathematically one by one.
@@ -13264,63 +13346,123 @@ function Step(actionType, _ref) {
 
 function computePetrickStatement(primeTableObj) {
   return {
-    'min-terms': _computePetrickStatement(primeTableObj['min-terms']),
-    'max-terms': _computePetrickStatement(primeTableObj['max-terms'])
+    'min-terms': _computePetrickStatementBF(primeTableObj['min-terms']),
+    'max-terms': _computePetrickStatementBF(primeTableObj['max-terms'])
   };
 }
-/**
- * NOTE: This algorithm heavily uses strings to compute the petrick statement.
- * As a future //t o d o, the same could be done by using the object representation
- * of BooleanFunctions. Maybe even implementing mathematical functions like
- * absorption(..) or distribution(..) as member methods in the BooleanFunction
- * class.
- * @param {{}} primeTableObjMinORMax single variant of the prime table obj as returned
- * by _computePrimeTable(..) or computePrimeTable(..)[<SINGLE VARIANT>] or
- * computePrimeTableFromKV(..)[<SINGLE VARIANT>].
- * @returns { {
- *      expressionDirect: [String],     expressionDirectStr: String,
- *      expressionAbsorbed: [String],   expressionAbsorbedStr: String,
- *      expressionExpanded: [String],   expressionExpandedStr: String,
- *      expression: [String],           expressionStr: String,
- *      cheapestSolution: String,
- *      cheapestSolutionIndex: number,
- *      PRIMETERM_SYMBOL_BASE_CHAR_CODE: number,
- *      primeTerms: [BooleanFunction]
- * } } Petrick statement obj variant
- */
 
-function _computePetrickStatement(primeTableObjMinORMax) {
-  var PRIMETERM_SYMBOL_BASE_CHAR_CODE = 'A'.charCodeAt(0);
-  var util = new BooleanFunctionUtil(); //build petrickterm
-
+function _computePetrickStatementBF(primeTableObjMinORMax) {
+  //build petrickterm
   var petrickTable = primeTableObjMinORMax.coverTable; // create basic Petrickterm without any simplifications
 
-  var constellationDirect = [];
+  var bfPetrickTerm = new BooleanFunction$1(BooleanFunctionOperator_AND, []); // ' = 1'
 
   for (var col = 0; col < petrickTable.length; col++) {
-    constellationDirect[col] = "";
+    bfPetrickTerm.addTerm(new BooleanFunction$1(BooleanFunctionOperator_OR, []));
 
     for (var row = 0; row < petrickTable[0].length; row++) {
-      if (petrickTable[col][row]) constellationDirect[col] += String.fromCharCode(PRIMETERM_SYMBOL_BASE_CHAR_CODE + row); // => i.e. 'A' + row
+      if (petrickTable[col][row]) {
+        bfPetrickTerm.getTerms()[col].addTerm(new BooleanFunction$1(BooleanFunctionOperator_AND, [new BooleanFunctionLiteral(row, false)])); // console.log(col, row);
+      } // constellationDirect[col] += String.fromCharCode(PRIMETERM_SYMBOL_BASE_CHAR_CODE + row); // => i.e. 'A' + row
+
     }
-  } // console.log(constellationDirect);
-  // console.log("ABOVE GETS:     | Absorption + Idempotenz");
-  // absorption
+  }
+
+  var util = new BooleanFunctionUtil();
+  var returnObj = {
+    steps: [new PetrickStatementStep(bfPetrickTerm, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_INITIAL)],
+    // NOTE: having primeTerms here is a bit heselig, but its not hurting anyone
+    primeTerms: util.cloneBooleanFunctionArray(primeTableObjMinORMax.primeTerms)
+  };
+
+  function __registerStep(stepObj) {
+    returnObj.steps.push(stepObj);
+  }
+
+  function __getLastStep() {
+    return returnObj.steps[returnObj.steps.length - 1];
+  } // some preparations to make the algorithm sleeker:
+  // sort terms by literal count (accending)
 
 
-  var constellationAbsorbed = _absorption(constellationDirect); // console.log(constellationAbsorbed);
-  // console.log("ABOVE GETS:     | Ausdistribuieren");
-  // distribution
-  // distributedTerms = [];
-  // const constellationDistributed = _distribute("", 0,constellationAbsorbed);
+  bfPetrickTerm.getTerms().sort(function (a, b) {
+    return a.amountLiterals() - b.amountLiterals();
+  });
+
+  if (!bfPetrickTerm.equals(__getLastStep().bf, true, true)) {
+    // > if some change occured
+    __registerStep(new PetrickStatementStep(bfPetrickTerm, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING));
+  } // multi-term absorption
 
 
-  var constellationDistributed = _distribute(constellationAbsorbed); // console.log(constellationDistributed);
-  // console.log("ABOVE GETS:     | Absorption + Idempotenz + Sortierung");
-  // absorption (II)
+  var track_amountBeforeAbsorption0 = bfPetrickTerm.getTerms().length;
+
+  _absorbBF(bfPetrickTerm);
+
+  var track_amountAfterAbsorption0 = bfPetrickTerm.getTerms().length;
+
+  if (track_amountAfterAbsorption0 !== track_amountBeforeAbsorption0) {
+    __registerStep(new PetrickStatementStep(bfPetrickTerm, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION));
+  } // sort terms by literal count (descending)
 
 
-  var constellationFinal = _absorption(constellationDistributed); // console.log(constellationFinal);
+  bfPetrickTerm.getTerms().sort(function (a, b) {
+    return b.amountLiterals() - a.amountLiterals();
+  });
+
+  if (!bfPetrickTerm.equals(__getLastStep().bf, true, true)) {
+    // > if some change occured
+    __registerStep(new PetrickStatementStep(bfPetrickTerm, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING));
+  } // repeat until the main konjunctive term only consists of one single subterm:
+  // 1: distribute the leftmost subterm with its neighbour
+  // 2: 'Idempotenz + absorption' between the newly created objects
+  // 3: This addition of konjunctions (subsubterms) will be treated as the new 'leftmost'
+  // (4:) Shift all terms except the leftmost one to the left in the main BF 
+  // console.log("whole term before: ");
+  // console.log(require('util').inspect(bfPetrickTerm, true, null, true /* enable colors */));
+
+
+  while (bfPetrickTerm.getTerms().length > 1) {
+    // console.log();
+    // console.log("-loop cycle start-");
+    // 1: Distribute leftmost subterm with its neighbour on the right
+    bfPetrickTerm.getTerms()[0] = _distributeBF(bfPetrickTerm.getTerms()[0], bfPetrickTerm.getTerms()[1]);
+    bfPetrickTerm.getTerms().splice(1, 1); // remove second term and shift righter ones to the left
+
+    __registerStep(new PetrickStatementStep(bfPetrickTerm, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_DISTRIBUTION)); // console.log("whole term after first distribution: ");
+    // console.log(require('util').inspect(bfPetrickTerm, true, null, true /* enable colors */));
+    // 2. a) Simplify the newly created terms (all inside of the first disjunction / subterm)
+
+
+    var subterms = bfPetrickTerm.getTerms()[0].getTerms();
+    var changeBySelectUniqueTerms = false;
+
+    for (var i = 0; i < subterms.length; i++) {
+      var lengthBefore = subterms[i].getTerms().length;
+      subterms[i] = new BooleanFunction$1(BooleanFunctionOperator_AND, _selectUniqueTermsBF(subterms[i].getTerms()));
+      var lengthAfter = subterms[i].getTerms().length;
+      if (lengthBefore !== lengthAfter) changeBySelectUniqueTerms = true;
+    }
+
+    if (changeBySelectUniqueTerms) {
+      __registerStep(new PetrickStatementStep(bfPetrickTerm, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE));
+    } // console.log("whole term after first reduction: ");
+    // console.log(require('util').inspect(bfPetrickTerm, true, null, true /* enable colors */));
+    // 2. b) Some of those sub parts will now be able to be absorbed. Remove them
+
+
+    var track_lengthBeforeAbsorption = bfPetrickTerm.getTerms()[0].getTerms().length;
+
+    _absorbBF(bfPetrickTerm.getTerms()[0]);
+
+    var track_lengthAfterAbsorption = bfPetrickTerm.getTerms()[0].getTerms().length;
+
+    if (track_lengthBeforeAbsorption !== track_lengthAfterAbsorption) {
+      __registerStep(new PetrickStatementStep(bfPetrickTerm, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION));
+    } // console.log("Whole term after absorption of subterms of first BF: ");
+    // console.log(require('util').inspect(bfPetrickTerm, true, null, true /* enable colors */));
+
+  } // find cheapest solution
   // compute cost of each individual prime term
 
 
@@ -13328,213 +13470,151 @@ function _computePetrickStatement(primeTableObjMinORMax) {
   var costPrimeTerms = [];
 
   for (var t = 0; t < primeTerms.length; t++) {
-    costPrimeTerms[t] = primeTerms[t].getTerms();
+    costPrimeTerms[t] = primeTerms[t].getTerms().length;
   } // compute cost of each possible solution
 
 
   var costSolution = [];
+  var solutions = bfPetrickTerm.getTerms()[0].getTerms();
+  var amountSolutions = solutions.length;
 
-  for (var s = 0; s < constellationFinal.length; s++) {
+  for (var s = 0; s < amountSolutions; s++) {
     costSolution[s] = 0;
-    var solution = constellationFinal[s]; // add cost of each individual prime term in it
+    var solution = solutions[s]; // add cost of each individual prime term in it
 
-    for (var _t = 0; _t < solution.length; _t++) {
+    for (var _t2 = 0; _t2 < solution.getTerms().length; _t2++) {
       // e.g. 'C' - 'A' = 2:
-      var primeTermi = solution.charCodeAt(_t) - PRIMETERM_SYMBOL_BASE_CHAR_CODE;
+      var primeTermi = solution.getTerms()[_t2].getId();
+
       costSolution[s] += costPrimeTerms[primeTermi];
     } // add amount of primeterms to the cost
 
 
-    costSolution[s] += constellationFinal[s].length;
+    costSolution[s] += solution.getTerms().length;
   } // get solution with lowest cost
 
 
   var costSolutionMin = costSolution[0];
   var costSolutionMinIndex = 0;
 
-  for (var i = 0; i < costSolution.length; i++) {
-    if (costSolution[i] < costSolutionMin) {
-      costSolutionMin = costSolution[i];
-      costSolutionMinIndex = i;
+  for (var _i2 = 0; _i2 < costSolution.length; _i2++) {
+    if (costSolution[_i2] < costSolutionMin) {
+      costSolutionMin = costSolution[_i2];
+      costSolutionMinIndex = _i2;
     }
   }
 
-  var returnObj = {
-    expressionDirect: constellationDirect,
-    expressionDirectStr: _constellationToString(constellationDirect, '*', '+', true),
-    expressionAbsorbed: constellationAbsorbed,
-    expressionAbsorbedStr: _constellationToString(constellationAbsorbed, '*', '+', true),
-    expressionExpanded: constellationDistributed,
-    expressionExpandedStr: _constellationToString(constellationDistributed, '+', '', false),
-    expression: constellationFinal,
-    expressionStr: _constellationToString(constellationFinal, '+', '', false),
-    cheapestSolutionIndex: costSolutionMinIndex,
-    cheapestSolution: constellationFinal[costSolutionMinIndex],
-    PRIMETERM_SYMBOL_BASE_CHAR_CODE: PRIMETERM_SYMBOL_BASE_CHAR_CODE,
-    primeTerms: util.cloneBooleanFunctionArray(primeTableObjMinORMax.primeTerms)
-  };
+  returnObj.cheapestSolution = costSolutionMinIndex;
   return returnObj;
 }
-/**
- * Converts a given constellation into a mathematically correct human readable
- * string representation as returned in the petrick statement obj. \
- * i.e. ["ABC", "ABD", "BD"] -> "(A+B+C)*(A+B+D)*(B+D)"
- * @param {[String]} constellation 
- * @param {String} symbolTopLevel Symbol that will be interjected between members
- * of the array.
- * @param {String} symbolSubLevel Symbol that will be interjected between individual
- * chars in the Strings.
- * @param {Boolean} printBrackets Defaults to true
- * @returns {String}
- */
 
+function _distributeBF(termLeft, termRight) {
+  // TODO short doc (in place!!! (well kind of not tho))
+  // termLeft and termRight are both disjunctions of conjunctions
+  // console.log("term left: ");
+  // console.log(require('util').inspect(termLeft, true, null, true /* enable colors */));
+  // console.log("term right: ");
+  // console.log(require('util').inspect(termRight, true, null, true /* enable colors */));
+  // cross match
+  var bfMatchCollection = new BooleanFunction$1(BooleanFunctionOperator_OR, []);
 
-function _constellationToString(constellation, symbolTopLevel, symbolSubLevel) {
-  var printBrackets = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
-  var str = "";
+  for (var i = 0; i < termLeft.getTerms().length; i++) {
+    for (var j = 0; j < termRight.getTerms().length; j++) {
+      // match conjunctions i and j (combine their literals)
+      var leftConjunction = termLeft.getTerms()[i].clone();
+      var rightConjunction = termRight.getTerms()[j]; // console.log('left: ', leftConjunction, '; right: ', rightConjunction);
+      // add all literals of rightConjunction to leftConjunction
+      // if they are not yet contained (not (yet) implemented, as seeing the
+      // process step by step from a students perspective might be better)
 
-  for (var t = 0; t < constellation.length; t++) {
-    if (printBrackets) {
-      str += "(";
+      for (var rightLiteralI = 0; rightLiteralI < rightConjunction.getTerms().length; rightLiteralI++) {
+        var rightLiteral = rightConjunction.getTerms()[rightLiteralI]; // 
+        // if (leftConjunction.getTerms().find(literalLeft => literalLeft.getId() === rightLiteral.getId()) === undefined)
+
+        leftConjunction.addTerm(rightLiteral);
+      }
+
+      bfMatchCollection.addTerm(leftConjunction);
     }
+  } // console.log("After: ");
+  // console.log(require('util').inspect(bfMatchCollection, true, null, true /* enable colors */));
 
-    for (var c = 0; c < constellation[t].length; c++) {
-      str += constellation[t][c];
 
-      if (c < constellation[t].length - 1) {
-        str += symbolSubLevel;
+  return bfMatchCollection;
+}
+
+function _selectUniqueTermsBF(terms) {
+  var uniqueTerms = [];
+
+  for (var t = terms.length - 1; t >= 0; t--) {
+    var term = terms[t];
+    var termUnique = true;
+
+    for (var c = 0; c < t; c++) {
+      if (term.equals(terms[c])) {
+        termUnique = false;
+        break;
       }
     }
 
-    if (printBrackets) {
-      str += ")";
-    }
-
-    if (t < constellation.length - 1) {
-      str += symbolTopLevel;
-    }
+    if (!termUnique) continue;
+    uniqueTerms.push(term);
   }
 
-  return str;
+  return uniqueTerms;
 }
-/**
- * Performes multi term absorption on given constellation of terms. \
- * Example: \
- * [ 'C', 'C', 'B', 'BC', 'CE', 'AE' ] -> [ 'C', 'B', 'AE' ]
- * @param {[String]} terms
- * @returns {[String]} Constellation of absorbed terms
- */
 
+function _absorbBF(bfTerm) {
+  // NOTE: there must not be identical literals in any SINGLE BooleanFunction!
+  // for every sub term, check if it fully contains another subterm (literal-wise)
+  var util = new BooleanFunctionUtil();
+  var amountSubTermsBefore = bfTerm.getTerms().length;
+  var absorbedRegister = [];
 
-function _absorption(terms) {
-  var wasTermAbsorbed = [];
-
-  for (var i = 0; i < terms.length; i++) {
-    wasTermAbsorbed[i] = false; //sort term
-
-    terms[i] = terms[i].split('').sort(_cmpInString).join(''); //eliminate duplicate chars
-
-    terms[i] = _collectUniqueCharacters(terms[i]);
+  function __absorb(i) {
+    absorbedRegister[i] = true;
   }
+
+  var terms = bfTerm.getTerms();
 
   for (var t = 0; t < terms.length; t++) {
-    for (var o = 0; o < terms.length; o++) {
-      if (t == o || wasTermAbsorbed[o] == true) continue;
+    var term = terms[t]; // compare against
 
-      if (terms[o].length > terms[t].length) {
-        //check if all characters of <t> are in <o>
-        var containsAll = true;
+    for (var compi = 0; compi < terms.length; compi++) {
+      if (compi === t) continue;
+      if (absorbedRegister[compi] === true) continue; // prevents two identical terms from absorbing each other and fading out of existance completely
 
-        for (var c = 0; c < terms[t].length; c++) {
-          //Error in Safari: undefined is not a function
-          //if(!terms[o].includes(terms[t].charAt(c))){
-          if (terms[o].indexOf(terms[t].charAt(c)) == -1) {
-            containsAll = false;
-            break;
-          }
-        }
+      var comp = terms[compi];
+      if (term.getTerms().length < comp.getTerms().length) continue; // term can not contain comp
 
-        if (containsAll) wasTermAbsorbed[o] = true;
+      if (util.booleanFunctionContainsAnother(term, comp)) {
+        // console.log("absorbed term ", t, " bc of term ", compi);
+        __absorb(t); // since literals of comp are a subset of term's
+
+
+        break;
       }
     }
-  } //get all not absorbed strings
+  } // bfTerm.clearTerms();
 
 
-  var termsNotAbsorbed = []; //check for idempotence
-
-  var seen = {};
-
-  for (var _t2 = 0; _t2 < terms.length; _t2++) {
-    if (!wasTermAbsorbed[_t2]) {
-      if (seen[terms[_t2]] !== 1) {
-        seen[terms[_t2]] = 1;
-        termsNotAbsorbed.push(terms[_t2]);
-      }
+  for (var _t4 = amountSubTermsBefore - 1; _t4 >= 0; _t4--) {
+    if (absorbedRegister[_t4] === true) {
+      bfTerm.spliceTerms(_t4, 1); // remove that term from the BF
     }
-  }
+  } // console.log("absorbed reg: ", absorbedRegister);
+  // console.log("After absorption of subterms: ");
+  // console.log(require('util').inspect(bfTerm, true, null, true /* enable colors */))
 
-  return termsNotAbsorbed;
 }
-/**
- * used by absorption(..) to sort constellation alphabetically.
- * Intended to be used in char comparison
- */
 
+var PetrickStatementStep = //TODO doc. e.g. that this.bf is the result of this step/action
+function PetrickStatementStep(booleanFunctionObj, actionType) {
+  _classCallCheck(this, PetrickStatementStep);
 
-function _cmpInString(x, y) {
-  return x > y ? 1 : x < y ? -1 : 0;
-}
-/**
- * used by absorption(..)
- * @param {String}
- * @returns {String}
- */
-
-
-function _collectUniqueCharacters(str) {
-  var unique = '';
-
-  for (var i = 0; i < str.length; i++) {
-    if (unique.lastIndexOf(str[i]) == -1) {
-      unique += str[i];
-    }
-  }
-
-  return unique;
-}
-/**
- * Recursively distributes a given constellation of terms with eachother.
- * Used internally by the Petrickstatement algorithm. \
- * NOTE: The latter three argument are used for internal recursion. \
- * Example:\
- * [ 'A', 'C', 'BD' ] -> [ 'ACB', 'ACD' ]
- * Calling this method with _distribute(<terms>:[String]); is completely acceptable and
- * intended.
- * @param {[String]} terms
- * @returns {[String]} Distributed terms
- */
-
-
-function _distribute(terms) {
-  var _termResult = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
-
-  var _i = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-
-  var _distributedTerms = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
-
-  // Base case
-  if (_i == terms.length) {
-    _distributedTerms.push(_termResult);
-
-    return;
-  }
-
-  for (var i = 0; i < terms[_i].length; i++) {
-    _distribute(terms, _termResult + terms[_i].charAt(i), _i + 1, _distributedTerms);
-  }
-
-  return _distributedTerms;
-}
+  this.bf = booleanFunctionObj.clone();
+  this.actionType = actionType;
+};
 
 /**
  * Directly computes DMF from given petrick statement obj as returned by 
@@ -13551,8 +13631,19 @@ function _distribute(terms) {
  */
 
 function computeDMF(petrickStatementObj) {
-  var util = new BooleanFunctionUtil();
-  return util.convertFinalPetrickSolutionToBooleanFunction(petrickStatementObj['min-terms'], BooleanFunctionOperator_OR);
+  var util = new BooleanFunctionUtil(); // return util.convertFinalPetrickSolutionToBooleanFunction(
+  //     petrickStatementObj['min-terms'],
+  //     BooleanFunctionOperator_OR
+  // );
+  // const lastStep = petrickStatementObj['min-terms'].steps[
+  //     petrickStatementObj['min-terms'].steps.length - 1
+  // ];
+  // return util.convertPetrickStatementBFToFullBF(
+  //     lastStep.bf,
+  //     petrickStatementObj['min-terms'].primeTerms
+  // );
+
+  return util.extractCheapestSolutionFromPetrickStatementObj(petrickStatementObj['min-terms'], BooleanFunctionOperator_OR);
 }
 /**
  * Directly computes KMF from given petrick statement obj as returned by 
@@ -13569,8 +13660,12 @@ function computeDMF(petrickStatementObj) {
  */
 
 function computeKMF(petrickStatementObj) {
-  var util = new BooleanFunctionUtil();
-  return util.convertFinalPetrickSolutionToBooleanFunction(petrickStatementObj['max-terms'], BooleanFunctionOperator_AND);
+  var util = new BooleanFunctionUtil(); // return util.convertFinalPetrickSolutionToBooleanFunction(
+  //     petrickStatementObj['max-terms'],
+  //     BooleanFunctionOperator_AND
+  // );
+
+  return util.extractCheapestSolutionFromPetrickStatementObj(petrickStatementObj['max-terms'], BooleanFunctionOperator_AND);
 }
 
 var BooleanFunctionNF = /*#__PURE__*/function () {
@@ -13695,12 +13790,18 @@ function optimizeBooleanFunction(kvdiagram) {
 
   var primes = computePrimes(quineClasses, dontCareMinTerms, dontCareMaxTerms); // Ueberdeckungstabelle
 
-  var primeTableObj = computePrimeTable(minTerms, maxTerms, primes, true); // Petrick Ausdruck
+  var primeTableObj = computePrimeTable(minTerms, maxTerms, primes, true);
+  console.log('computeing petrick statement'); //TODO remove
+  // Petrick Ausdruck
 
-  var petrickStatement = computePetrickStatement(primeTableObj); // Minimal forms
+  var petrickStatement = computePetrickStatement(primeTableObj);
+  console.log('computing minimal forms'); //TODO remove
+  // Minimal forms
 
   var dmf = computeDMF(petrickStatement);
   var kmf = computeKMF(petrickStatement);
+  console.log('packing object together'); // TODO remove
+
   return {
     dnf: dnf,
     // BooleanFunction
@@ -13717,4 +13818,4 @@ function optimizeBooleanFunction(kvdiagram) {
   };
 }
 
-export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION, BooleanFunction$1 as BooleanFunction, BooleanFunctionLiteral, BooleanFunctionOperator_AND, BooleanFunctionOperator_OR, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, DivisionBaseNSigned, DivisionIEEE, KVDiagram, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, TextCMOS, computePrimesFromKV, generateRandomKVDiagram, getBaseNComplementFromString, getIEEEFromString, getNumFromString, optimizeBooleanFunction, parseBooleanFunction, roundArray, toLaTeX };
+export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_DISTRIBUTION, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_INITIAL, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION, BooleanFunction$1 as BooleanFunction, BooleanFunctionLiteral, BooleanFunctionOperator_AND, BooleanFunctionOperator_OR, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, DivisionBaseNSigned, DivisionIEEE, KVDiagram, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, TextCMOS, computePrimesFromKV, generateRandomKVDiagram, getBaseNComplementFromString, getIEEEFromString, getNumFromString, optimizeBooleanFunction, parseBooleanFunction, roundArray, toLaTeX };

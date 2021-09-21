@@ -5,8 +5,11 @@
       <slot name="accordion-item-title"></slot>
     </div>
     <!-- Item body -->
-    <div class="accordion-item-body" v-if="this.expanded === true">
-      <slot name="accordion-item-body"></slot>
+    <div class="accordion-item-body" v-if="this.expanded === true" ref="accordion_item_body">
+      <button v-if="this.expandableSideways" class="accordion-item-expand-sideways-toggle ion-md-expand"
+          @click="toggleExpandSideways">
+      </button>
+      <slot name="accordion-item-body" ></slot>
     </div>
 
   </div>
@@ -14,9 +17,11 @@
 
 <script>
 export default {
+  props: ['expandableSideways'],
   data() {
     return {
       expanded: false,
+      expandedSideways: true,
     };
   },
   methods: {
@@ -27,6 +32,18 @@ export default {
         e.target.classList.toggle('active');
       }
       e.preventDefault();
+    },
+    toggleExpandSideways(e) {
+      this.expandedSideways = !this.expandedSideways;
+      console.log('target: ', e.target);
+
+      if (e.target.classList.contains('accordion-item-expand-sideways-toggle')) {
+        // e.target.classList.toggle('active');
+        console.log('toggle requested!');
+        this.$refs.accordion_item_body.classList.toggle(
+          'accordion-item-body-expanded-sideways',
+        );
+      }
     },
   },
 };
@@ -79,6 +96,34 @@ export default {
     padding: 1em;
 
     overflow-x: auto;
+
+    .accordion-item-expand-sideways-toggle {
+      // content: "&#xf386;";
+      // font-family: IonIcons;
+
+      // content: "\f3d0";
+      // font-family: IonIcons;
+      // background-color: pink;
+
+      float: right;
+      font-size: 1.4em;
+
+      padding-top: .1em;
+      background-color: rgba($brightBlue, 0.5);
+      // background-color: transparent;
+      // color: $brightBlue;
+    }
+  }
+
+  .accordion-item-body-expanded-sideways {
+    position: relative;
+    width: 96vw;
+    left: 50%;
+    margin-left: -49vw;
+
+    border-style: solid;
+    border-width: 1px;
+
   }
 
   .accordion-item:first-child {

@@ -130,12 +130,18 @@ export const i18n = new VueI18n({
       difficultyMiddle: 'mittel',
       difficultyHard: 'schwer',
       sheet: 'Blatt',
+      goal: 'Ziel',
+      difficultyUC: 'Schwierigkeit',
 
       // Boolean Function Minimization
       bf_infotext_or_interact_with_kv: 'Oder interagiere direkt mit dem KV-Diagramm',
       bf_infotext_kv_must_not_be_empty: 'Das KV-Diagram muss Einsen und Nullen enthalten',
       bf_infotest_click_on_hidden_areas_to_make_visible: 'Klicke auf die versteckten Bereiche um sie aufzudecken',
       bf_normal_forms: 'Normalformen',
+      bf_disjunctiveNormalForm: 'Disjunktive Normalform',
+      bf_conjunctiveNormalForm: 'Konjunktive Normalform',
+      bf_disjunctiveMinimalForm: 'Disjunktive Minimalform',
+      bf_conjunctiveMinimalForm: 'Konjunktive Minimalform',
       bf_quineMCCluskeyClasses: 'Quine MC Cluskey Klassen',
       bf_primeTerms: 'Primterme',
       bf_primeImplicants: 'Primimplikanten',
@@ -175,6 +181,11 @@ export const i18n = new VueI18n({
       bf_covertable_step_description_cyclic_rest: '<h4>Zyklischer Rest:</h4>'
         + 'Keine Regel der Überdeckungstabelle ist anwendbar. Man spricht hierbei von einem \'Zyklischem Rest\'.'
         + '<br>Um nun dennoch eine Minimalform der Schaltfunktion bestimmen zu können, bietet sich eine Aufstellung des Petrick Ausdrucks an.',
+
+      bf_distributionUC: 'Distribution',
+      bf_idempotenceUC: 'Idempotenz',
+      bf_absorptionUC: 'Absorption',
+      bf_sortingUC: 'Sortierung',
     },
     en: {
       numVarInput: 'Number of variables',
@@ -297,13 +308,18 @@ export const i18n = new VueI18n({
       difficultyMiddle: 'middle',
       difficultyHard: 'hard',
       sheet: 'sheet',
-
+      goal: 'Goal',
+      difficultyUC: 'Difficulty',
 
       // Boolean Function Minimization
       bf_infotext_or_interact_with_kv: 'Or directly interact with the KV-Diagram',
       bf_infotext_kv_must_not_be_empty: 'The KV-Diagram must contains 1s and 0s',
       bf_infotest_click_on_hidden_areas_to_make_visible: 'Click on hidden areas to reveal them',
       bf_normal_forms: 'Normal Forms',
+      bf_disjunctiveNormalForm: 'Disjunctive normal form',
+      bf_conjunctiveNormalForm: 'Conjunctive normal form',
+      bf_disjunctiveMinimalForm: 'Disjunctive minimal form',
+      bf_conjunctiveMinimalForm: 'Conjunctive minimal form',
       bf_quineMCCluskeyClasses: 'Quine MC Cluskey classes',
       bf_primeTerms: 'Primeterms',
       bf_primeImplicants: 'Primeimplicants',
@@ -343,6 +359,11 @@ export const i18n = new VueI18n({
       bf_covertable_step_description_cyclic_rest: '<h4>Cyclic rest:</h4>'
         + 'No rule of the prime table algorithm is applicable. This is referred to as a \'cyclic rest\' (ger: \'Zyklischer Rest\').'
         + '<br>By setting up the Petrick-Expression (ger: Petrick Ausdruck) for the rest table, one is still able to determine a minimal form of the original function.',
+
+      bf_distributionUC: 'Distribution',
+      bf_idempotenceUC: 'Idempotence',
+      bf_absorptionUC: 'Absorption',
+      bf_sortingUC: 'Sorting',
     },
     fr: {
       numVarInput: 'Nombre de Variables',

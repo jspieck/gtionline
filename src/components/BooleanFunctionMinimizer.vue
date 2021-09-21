@@ -5,7 +5,7 @@
       <div class="boolean-function-input-container">
         <div>
           <div class="exercise-selection-container">
-            <div class="exercive-selection-container-tooltip">{{$t('exerciseArchive')}}:</div>
+            <div class="exercise-selection-container-tooltip">{{$t('exerciseArchive')}}:</div>
             <div>
               <FSelect :options="archivedExerciseTitles"
                 @input="selectArchivedExercise"/>
@@ -13,9 +13,15 @@
             </div>
           </div>
           <div class="exercise-selection-container">
-            <div class="exercive-selection-container-tooltip">{{$t('randomExercise')}}:</div>
+            <div class="exercise-selection-container-tooltip">{{$t('randomExercise')}}:</div>
+            <div class="exercise-selection-container-subsection">
+              {{$t('goal')}}:
+              <FSelect :options="randomExercisesGoalsTitles" :sel="0"
+                @input="selectRandomExerciseGoal"/>
+            </div>
             <div>
-              <FSelect :options="randomExercisesDifficulties"
+              {{$t('difficultyUC')}}:
+              <FSelect :options="randomExercisesDifficulties" :sel="0"
                 @input="selectRandomExerciseDifficulty"/>
               <button @click="generateRandomExercise">Load</button>
             </div>
@@ -61,7 +67,7 @@
               <Accordion>
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
-                    DNF
+                    {{$t('bf_disjunctiveNormalForm')}} (DNF)
                   </template>
                   <template v-slot:accordion-item-body>
                     <span class="svg-text" v-html="toSvg(dnf)"></span>
@@ -69,7 +75,7 @@
                 </AccordionItem>
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
-                    KNF
+                    {{$t('bf_conjunctiveNormalForm')}} (KNF)
                   </template>
                   <template v-slot:accordion-item-body>
                     <span class="svg-text" v-html="toSvg(knf)"></span>
@@ -253,22 +259,23 @@
             </template>
           </AccordionItem>
 
-          <AccordionItem>
+          <AccordionItem :expandableSideways="true">
             <template v-slot:accordion-item-title>
               {{$t('bf_petrickExpression')}}:
             </template>
             <template v-slot:accordion-item-body>
-              <!-- <div>{{ petrickStatementMin.expressionDirectStr }}</div> -->
-              <div><span v-html="toSvg(petrickStatementMin.expressionDirectStr + '=1')"/><span> | Absorption + Idempotenz</span></div>
-              <!-- <div>{{ petrickStatementMin.expressionAbsorbedStr }}</div> -->
-              <!-- <div v-html="toSvg(petrickStatementMin.expressionAbsorbedStr + '=1 \\ \\ \\text{| Ausdistribuieren}')"/> -->
+              <!-- <div><span v-html="toSvg(petrickStatementMin.expressionDirectStr + '=1')"/><span> | Absorption + Idempotenz</span></div>
               <div><span v-html="toSvg(petrickStatementMin.expressionAbsorbedStr + '=1')"/><span> | {{$t('mathDistribution')}}</span></div>
-              <!-- <div>{{ petrickStatementMin.expressionExpandedStr }}</div> -->
-              <!-- <div v-html="toSvg(petrickStatementMin.expressionExpandedStr + '=1 \\ \\ \\text{| Absorption + Idempotenz}')"/> -->
               <div><span v-html="toSvg(petrickStatementMin.expressionExpandedStr + '=1')"/><span> | Absorption + Idempotenz</span></div>
-              <!-- <div>{{ petrickStatementMin.expressionStr }}</div> -->
-              <!-- <div v-html="toSvg(petrickStatementMin.expressionStr + '=1')"/> -->
-              <div><span v-html="toSvg(petrickStatementMin.expressionStr + '=1')"/></div>
+              <div><span v-html="toSvg(petrickStatementMin.expressionStr + '=1')"/></div> -->
+              <div class="bf-petrick-statement-container">
+                <div v-for="(step, s) in petrickStatementMin.steps" :key="s" class="bf-petrick-statement-subcontainer">
+                  <span v-html="toSvg(step.bf.toLatex('ABCDEFGHIJKLMNOPQRSTUVPXYZ'.split(''), false))"></span>
+                  <span v-if="s < petrickStatementMin.steps.length - 1">
+                    {{ getTextFromPetrickStatementActionType(petrickStatementMin.steps[s+1].actionType) }}
+                  </span>
+                </div>
+              </div>
             </template>
           </AccordionItem>
 
@@ -280,7 +287,7 @@
               <Accordion>
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
-                    DMF
+                    {{$t('bf_disjunctiveMinimalForm')}} (DMF)
                   </template>
                   <template v-slot:accordion-item-body>
                     <span class="svg-text" v-html="toSvg(dmf)"></span>
@@ -288,7 +295,7 @@
                 </AccordionItem>
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
-                    KMF
+                    {{$t('bf_conjunctiveMinimalForm')}} (KMF)
                   </template>
                   <template v-slot:accordion-item-body>
                     <span class="svg-text" v-html="toSvg(kmf)"></span>
@@ -306,10 +313,13 @@
 
 <script>
 import {
-  optimizeBooleanFunction, generateRandomKVDiagram, computePrimesFromKV,
+  optimizeBooleanFunction, generateRandomKVDiagram, // computePrimesFromKV,
   BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED,
   BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION,
   BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST,
+  BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_INITIAL, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_DISTRIBUTION,
+  BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION,
+  BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING,
 } from '@/scripts/gti-tools';
 import { bfLoadArchivedExercise, bfGetArchivedExerciseTitles } from '@/scripts/bfArchivedExercises';
 import KVDiagram from './KVDiagram.vue';
@@ -333,6 +343,7 @@ export default {
       archivedExerciseSelectedIndex: -1,
 
       randomExerciseDifficultySelectedIndex: 0,
+      randomExerciseGoalSelectedIndex: 0,
 
       dnf: '',
       knf: '',
@@ -386,6 +397,123 @@ export default {
         this.$t('difficultyMiddle'),
         this.$t('difficultyHard'),
       ];
+    },
+    randomExercisesGoalsMetrics() {
+      // TODO: translation
+      return [
+        {
+          title: 'Egal',
+          difficulties: [
+            {
+              numVars: 2,
+            },
+            {
+              numVars: 3,
+              numMintermsMin: 3,
+              numMaxtermsMin: 3,
+            },
+            {
+              numVarsMin: 4,
+              numVarsMax: 5,
+              numMintermsMin: 5,
+              numMaxtermsMin: 5,
+            },
+          ],
+        },
+        {
+          title: 'DNF bestimmen',
+          difficulties: [
+            {
+              numVarsMin: 2,
+              numVarsMax: 3,
+              numMintermsMin: 2,
+              numMintermsMax: 4,
+            },
+            {
+              numVarsMin: 3,
+              numVarsMax: 4,
+              numMintermsMin: 4,
+              numMintermsMax: 7,
+            },
+            {
+              numVarsMin: 4,
+              numVarsMax: 5,
+              numMintermsMin: 6,
+            },
+          ],
+        },
+        {
+          title: 'KNF bestimmen',
+          difficulties: [
+            {
+              numVarsMin: 2,
+              numVarsMax: 3,
+              numMaxtermsMin: 2,
+              numMaxtermsMax: 4,
+            },
+            {
+              numVarsMin: 3,
+              numVarsMax: 4,
+              numMaxtermsMin: 4,
+              numMaxtermsMax: 7,
+            },
+            {
+              numVarsMin: 4,
+              numVarsMax: 5,
+              numMaxtermsMin: 6,
+            },
+          ],
+        },
+        {
+          title: 'Primimplikanten bestimmen',
+          difficulties: [
+            {
+              numVarsMin: 2,
+              numVarsMax: 3,
+              numPrimeimplicantsMin: 1,
+              numPrimeimplicantsMax: 2,
+            },
+            {
+              numVarsMin: 3,
+              numVarsMax: 4,
+              numPrimeimplicantsMin: 2,
+              numPrimeimplicantsMax: 4,
+            },
+            {
+              numVarsMin: 4,
+              numVarsMax: 5,
+              numMintermsMin: 7,
+              numPrimeimplicantsMin: 3,
+            },
+          ],
+        },
+        {
+          title: 'Primimplikaten bestimmen',
+          difficulties: [
+            {
+              numVarsMin: 2,
+              numVarsMax: 3,
+              numPrimeimplicatesMin: 1,
+              numPrimeimplicatesMax: 2,
+            },
+            {
+              numVarsMin: 3,
+              numVarsMax: 4,
+              numPrimeimplicatesMin: 2,
+              numPrimeimplicatesMax: 4,
+            },
+            {
+              numVarsMin: 4,
+              numVarsMax: 5,
+              numMaxtermsMin: 7,
+              numPrimeimplicatesMin: 3,
+            },
+          ],
+        },
+      ];
+    },
+    randomExercisesGoalsTitles() {
+      return this.randomExercisesGoalsMetrics.map(goal => goal.title);
     },
     /**
      * Computes current color matrix of the cover table. Cells of
@@ -570,6 +698,9 @@ export default {
     selectRandomExerciseDifficulty(num, difficultyIndex) {
       this.randomExerciseDifficultySelectedIndex = difficultyIndex;
     },
+    selectRandomExerciseGoal(num, goalIndex) {
+      this.randomExerciseGoalSelectedIndex = goalIndex;
+    },
     optimize() {
       const kvdiagramVue = this.$refs.childKVDiagram;
       const kvdiagram = kvdiagramVue.getKVDiagram();
@@ -665,40 +796,126 @@ export default {
       // this.optimize();
     },
     generateRandomExercise() {
-      let primetermsMin;
-      let primetermsMax;
-      let numvars;
+      // let primetermsMin;
+      // let primetermsMax;
+      // let numvars;
 
-      switch (parseInt(this.randomExerciseDifficultySelectedIndex, 10)) {
-        case 2:
-          primetermsMin = 3;
-          primetermsMax = 4;
-          numvars = 4;
-          break;
-        case 1:
-          primetermsMin = 2;
-          primetermsMax = 2;
-          numvars = 4;
-          break;
-        case 0:
-        default:
-          primetermsMin = 1;
-          primetermsMax = 2;
-          numvars = 3;
-          break;
+      // switch (parseInt(this.randomExerciseDifficultySelectedIndex, 10)) {
+      //   case 2:
+      //     primetermsMin = 3;
+      //     primetermsMax = 4;
+      //     numvars = 5;
+      //     break;
+      //   case 1:
+      //     primetermsMin = 2;
+      //     primetermsMax = 2;
+      //     numvars = 4;
+      //     break;
+      //   case 0:
+      //   default:
+      //     primetermsMin = 1;
+      //     primetermsMax = 2;
+      //     numvars = 3;
+      //     break;
+      // }
+      function kvdiagramFitsRequirements(kvdiagram, requirements, bfOptimization) {
+        // Minterms amount
+        if (requirements.numMinterms !== undefined
+            && bfOptimization.dnf.getTerms().length !== requirements.numMinterms) {
+          return false;
+        }
+        // console.log('numMintermsMin: ', requirements.numMintermsMin);
+        if (requirements.numMintermsMin !== undefined
+            && bfOptimization.dnf.getTerms().length < requirements.numMintermsMin) {
+          return false;
+        }
+        if (requirements.numMintermsMax !== undefined
+            && bfOptimization.dnf.getTerms().length > requirements.numMintermsMax) {
+          return false;
+        }
+
+        // Maxterms amount
+        if (requirements.numMaxterms !== undefined
+            && bfOptimization.knf.getTerms().length !== requirements.numMaxterms) {
+          return false;
+        }
+        if (requirements.numMaxtermsMin !== undefined
+            && bfOptimization.knf.getTerms().length < requirements.numMaxtermsMin) {
+          return false;
+        }
+        if (requirements.numMaxtermsMax !== undefined
+            && bfOptimization.knf.getTerms().length > requirements.numMaxtermsMax) {
+          return false;
+        }
+
+        // Primeimplicants amount
+        if (requirements.numPrimeimplicants !== undefined
+            && bfOptimization.primes['min-terms'].length !== requirements.numPrimeimplicants) {
+          return false;
+        }
+        // console.log('numMintermsMin: ', requirements.numMintermsMin);
+        if (requirements.numPrimeimplicantsMin !== undefined
+            && bfOptimization.primes['min-terms'].length < requirements.numPrimeimplicantsMin) {
+          return false;
+        }
+        if (requirements.numPrimeimplicantsMax !== undefined
+            && bfOptimization.primes['min-terms'].length > requirements.numPrimeimplicantsMax) {
+          return false;
+        }
+
+        // Primeimplicates amount
+        if (requirements.numPrimeimplicates !== undefined
+            && bfOptimization.primes['max-terms'].length !== requirements.numPrimeimplicates) {
+          return false;
+        }
+        if (requirements.numPrimeimplicatesMin !== undefined
+            && bfOptimization.primes['max-terms'].length < requirements.numPrimeimplicatesMin) {
+          return false;
+        }
+        if (requirements.numPrimeimplicatesMax !== undefined
+            && bfOptimization.primes['max-terms'].length > requirements.numPrimeimplicatesMax) {
+          return false;
+        }
+
+        return true;
       }
 
+      const selectedGoalIndex = parseInt(this.randomExerciseGoalSelectedIndex, 10);
+      const selectedDifficultyIndex = parseInt(this.randomExerciseDifficultySelectedIndex, 10);
+      const requirements = this.randomExercisesGoalsMetrics[selectedGoalIndex].difficulties[selectedDifficultyIndex];
+
+      let numVars = requirements.numVars;
+      if (numVars === undefined) {
+        const numVarsMin = requirements.numVarsMin || 1;
+        const numVarsMax = requirements.numVarsMax || 7;
+        // console.log(numVarsMin, numVarsMax, (Math.random() * (numVarsMax - numVarsMin + 1)));
+        numVars = Math.floor((Math.random() * (numVarsMax - numVarsMin + 1))) + numVarsMin;
+      }
+
+      // TODO clean up this mess
+      // console.log('numVars:', numVars);
+      // setTimeout(() => {
       // console.log(primetermsMin, primetermsMax, numvars);
       // TODO put the entire criteria checking into the backend as well
       // generate random KVDiagrams until one fits the criteria
       let kvdiagram;
-      let primesArray;
+      let doesKVDiagramFitRequirements;
+      // let primesArray;
       do {
-        kvdiagram = generateRandomKVDiagram(numvars, true);
+        // NOTE: sometimes it seems as backend bf optimizations get stuck somewhere
+        // freezing the entire site.
+        // console.log('generating random kv');
+        kvdiagram = generateRandomKVDiagram(numVars, true);
         // console.log(kvdiagram);
         // console.log(computePrimesFromKV(kvdiagram));
-        primesArray = computePrimesFromKV(kvdiagram)['min-terms'];
-      } while (primesArray.length < primetermsMin || primesArray.length > primetermsMax);
+        // primesArray = computePrimesFromKV(kvdiagram)['min-terms'];
+        // } while (primesArray.length < primetermsMin || primesArray.length > primetermsMax);
+        // console.log('optimizing bf');
+        const optimizations = optimizeBooleanFunction(kvdiagram);
+        // console.log('checking requirements');
+        doesKVDiagramFitRequirements = kvdiagramFitsRequirements(kvdiagram, requirements, optimizations);
+        // console.log(doesKVDiagramFitRequirements);
+      } while (!doesKVDiagramFitRequirements);
 
       const kvdiagramVue = this.$refs.childKVDiagram;
       kvdiagramVue.setKVDiagram(
@@ -706,6 +923,25 @@ export default {
       );
 
       this.someOptimizationsFinished = false;
+      // }, 500);
+    },
+    getTextFromPetrickStatementActionType(actionType) {
+      switch (actionType) {
+        case BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_INITIAL:
+          return '';
+        case BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_DISTRIBUTION:
+          return this.$t('bf_distributionUC');
+        case BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION:
+          return this.$t('bf_absorptionUC');
+        case BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE:
+          return this.$t('bf_idempotenceUC');
+        case BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING:
+          return this.$t('bf_sortingUC');
+        default:
+          console.log('unrecognized actionType of Petrick statement step:');
+          console.log(actionType);
+          return actionType;
+      }
     },
     unblurDOM(event) {
       // console.log(event.target);
@@ -764,8 +1000,16 @@ export default {
     }
 
     .exercise-selection-container {
-      .exercive-selection-container-tooltip {
+      .exercise-selection-container-tooltip {
+        margin-bottom: .8em;
+      }
+
+      .exercise-selection-container-subsection {
         margin-bottom: .5em;
+      }
+
+      button {
+        margin-left: .5em;
       }
     }
 
@@ -838,6 +1082,17 @@ export default {
   }
   .bf-primetable-step-explanation {
     text-align: justify;
+  }
+
+  .bf-petrick-statement-container {
+    // NOTE: holds all Petrick statement alg. lines
+    white-space: nowrap; // forces svg + mathematical expl. int the same line
+    font-size: 1.1em;
+  }
+
+  .bf-petrick-statement-subcontainer {
+    // NOTE: holds a single petrick expression line + math expl.
+    margin: .4em;
   }
 
   .blurred {
