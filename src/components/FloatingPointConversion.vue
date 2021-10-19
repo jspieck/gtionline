@@ -1,5 +1,37 @@
 <template>
   <div class="fp-exercise">
+    <h4>{{$t('fpformat')}}</h4>
+    <div class="formatContainer" v-on:mousemove="sliderMouseMove">
+      <div class="sign">VB</div>
+      <div class="exponent" :style="{ width:
+        (60 + this.exponentBits * (this.containerWidth / (this.numBits - 1)))+ 'px' }">
+        <div v-on:click="expandFraction" class="expandExponent">
+          <div class="arrowLeft">
+            <div class='arrowMask'></div>
+          </div>
+        </div>
+        E({{exponentBits}})
+        <div v-on:mousedown="sliderMouseDown" class="slider"/>
+      </div>
+      <div class="fraction" :style="{ width: (60 + (this.numBits - this.exponentBits - 1) *
+        (this.containerWidth / (this.numBits - 1))) + 'px' }">
+        <div v-on:click="expandExponent" class="expandFraction">
+          <div class="arrowRight">
+            <div class="arrowMask"></div>
+          </div>
+        </div>
+        M({{(numBits - exponentBits - 1)}})
+      </div>
+    </div>
+    <div class="mobile_formatContainer" v-on:mousemove="sliderMouseMove">
+      <div class="mobile_sign">Sign(1)</div>
+      <div v-on:click="expandExponent" class="mobile_exponent">
+        Exponent({{exponentBits}}) &uarr;
+      </div>
+      <div v-on:click="expandFraction" class="mobile_fraction">
+        Mantisse({{(numBits - exponentBits - 1)}}) &darr;
+      </div>
+    </div>
     <h4>{{$t('generateEx')}}</h4>
     <div class="divMargin"/>
     <button v-on:click="generateExercise">{{$t('generate')}}</button>
@@ -31,26 +63,56 @@
       <div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
       </div>
-    </div>
+    </div><div id="solution">
+    <Accordion :solutionDescription="solDescr">
+      <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
+        {{panel.text}}
+        <span v-if="index === solDescr.length - 1">{{solution}}</span>
+      </p>
+    </Accordion>
+  </div>
   </div>
 </template>
 
 <script>
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
 import { getIEEEFromString } from '@/scripts/gti-tools';
-import * as randomIEEE from '../scripts/randomIEEE';
 import * as checker from '../scripts/checkSolution';
 import * as convertFormat from '../scripts/formatConversions';
+import * as description from '../scripts/DescriptionSolution';
+import SolutionAccordion from './SolutionAccordion.vue';
 
 export default {
   name: 'FloatingPointConversion',
+  components: {
+    Accordion: SolutionAccordion,
+  },
   data() {
+    let hasdefault = false;
+    let input = '';
+    if (window.sessionStorage.getItem('Conv_fp1')) {
+      input = window.sessionStorage.getItem('Conv_fp1');
+      hasdefault = true;
+    }
+    let expBits = 5;
+    if (window.sessionStorage.getItem('Conv_expBits')) {
+      expBits = parseInt(window.sessionStorage.getItem('Conv_expBits'), 10);
+      hasdefault = true;
+    }
+    let length = 16;
+    if (window.sessionStorage.getItem('Conv_numBits')) {
+      length = parseInt(window.sessionStorage.getItem('Conv_numBits'), 10);
+      hasdefault = true;
+    }
     return {
+      selectedFormat: '',
       mouseDown: false,
       solution: '',
+      generated: false,
       solutionObject: '',
-      exponentBits: 5,
-      numBits: 16,
+      solutionSteps: [],
+      exponentBits: expBits,
+      numBits: length,
       falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
       exerciseText: '',
@@ -61,15 +123,13 @@ export default {
       backE: '',
       propM: '',
       backM: '',
+      fp1: input,
+      default: hasdefault,
     };
   },
   computed: {
-    bitrangeOptions() {
-      return {
-        eight: '8 bit',
-        sixteen: '16 bit',
-        thirtytwo: '32 bit',
-      };
+    solDescr() {
+      return this.solutionSteps;
     },
   },
   mounted() {
@@ -82,23 +142,44 @@ export default {
       });
       if (this.default) {
         this.recalculate();
+        this.drawExercise();
+        this.generated = true;
       }
     });
   },
   methods: {
-    generateExercise() {
-      const random = new randomIEEE.RandomIEEE(this.exponentBits, this.numBits);
-      random.generateRandomIEEE();
-      this.solutionObject = getIEEEFromString(this.exponentBits, random.result);
+    saveVals() {
+      window.sessionStorage.setItem('Conv_fp1', this.fp1);
+      window.sessionStorage.setItem('Conv_expBits', this.exponentBits);
+      window.sessionStorage.setItem('Conv_numBits', this.numBits);
+    },
+    recalculate() {
       const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
-      converter.ieeeToDec(random.result);
-      this.fp1 = converter.result;
-      this.exerciseText = `\\( fp= \\text{${this.fp1}} \\)`;
+      converter.decToBin(this.fp1.toString());
+      converter.binToIEEE(converter.result);
+      this.solutionObject = getIEEEFromString(this.exponentBits, converter.result);
+    },
+    drawExercise() {
+      this.exerciseText = `${this.$t('conversionExercise1')} \\( fp= \\text{${this.fp1}} \\) ${this.$t('conversionExercise2')} ${this.exponentBits}`;
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();
         }
       });
+      const descr = new description.DescriptionSolution(this, this.exponentBits, this.numBits, '');
+      descr.makeDescriptionConversion(this.solutionObject);
+      this.solutionSteps = descr.result;
+    },
+    generateExercise() {
+      let number = (Math.floor(Math.random() * 100) + Math.random()).toFixed(4);
+      if (Math.random() < 0.5) {
+        number *= -1;
+      }
+      this.fp1 = number;
+      this.generated = true;
+      this.recalculate();
+      this.drawExercise();
+      this.saveVals();
     },
     checkSolution() {
       const checkSolution = new checker.CheckSolution(this.exponentBits);
@@ -165,11 +246,19 @@ export default {
     },
     expandFraction() {
       this.exponentBits -= 1;
-      this.recalculate();
+      if (this.generated) {
+        this.recalculate();
+        this.drawExercise();
+        this.saveVals();
+      }
     },
     expandExponent() {
       this.exponentBits += 1;
-      this.recalculate();
+      if (this.generated) {
+        this.recalculate();
+        this.drawExercise();
+        this.saveVals();
+      }
     },
   },
 };

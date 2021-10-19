@@ -122,11 +122,13 @@
       <div>
         <label class="attention" v-if="denominatorZero === false">{{$t('attSolve')}}</label>
         <label class="attention" v-if="negativeSummand">{{$t('negativeSummand')}}</label>
+        <label class="attention" v-if="negativeSubtrahend">{{$t('negativeSubtrahend')}}</label>
+        <label class="attention" v-if="denominatorZero">{{$t('zeroDivision')}}</label>
+      </div>
+      <div>
         <label class="attention" v-if="negativeMinuendSubtrahend">
           {{$t('negativeMinuendSubtrahend')}}
         </label>
-        <label class="attention" v-if="negativeSubtrahend">{{$t('negativeSubtrahend')}}</label>
-        <label class="attention" v-if="denominatorZero">{{$t('zeroDivision')}}</label>
       </div>
       <div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
@@ -165,29 +167,39 @@ export default {
   },
   data() {
     let hasdefault = false;
-    let input1 = '';
-    if (this.$route.query.value1) {
-      input1 = this.$route.query.value1;
-      hasdefault = true;
-    }
-    let input2 = '';
-    if (this.$route.query.value2) {
-      input2 = this.$route.query.value2;
-      hasdefault = true;
-    }
     let operator = 'add';
-    if (this.$route.query.operator) {
-      operator = this.$route.query.operator;
+    if (window.sessionStorage.getItem('FPF_operator')) {
+      operator = window.sessionStorage.getItem('FPF_operator');
       hasdefault = true;
     }
     let format1 = 'decimal';
-    if (this.$route.query.format1) {
-      format1 = this.$route.query.format1;
+    if (window.sessionStorage.getItem('FPF_format1')) {
+      format1 = window.sessionStorage.getItem('FPF_format1');
       hasdefault = true;
     }
     let format2 = 'decimal';
-    if (this.$route.query.format2) {
-      format2 = this.$route.query.format2;
+    if (window.sessionStorage.getItem('FPF_format2')) {
+      format2 = window.sessionStorage.getItem('FPF_format2');
+      hasdefault = true;
+    }
+    let input1 = '';
+    if (window.sessionStorage.getItem('FPF_inputNums1')) {
+      input1 = window.sessionStorage.getItem('FPF_inputNums1');
+      hasdefault = true;
+    }
+    let input2 = '';
+    if (window.sessionStorage.getItem('FPF_inputNums2')) {
+      input2 = window.sessionStorage.getItem('FPF_inputNums2');
+      hasdefault = true;
+    }
+    let expBits = 5;
+    if (window.sessionStorage.getItem('FPF_expBits')) {
+      expBits = parseInt(window.sessionStorage.getItem('FPF_expBits'), 10);
+      hasdefault = true;
+    }
+    let length = 16;
+    if (window.sessionStorage.getItem('FPF_numBits')) {
+      length = parseInt(window.sessionStorage.getItem('FPF_numBits'), 10);
       hasdefault = true;
     }
     return {
@@ -197,8 +209,8 @@ export default {
       solutionObject: '',
       inputNums: { 0: input1, 1: input2 },
       nums: { 0: '', 1: '' },
-      exponentBits: 5,
-      numBits: 16,
+      exponentBits: expBits,
+      numBits: length,
       falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
       solutionSteps: [],
@@ -252,15 +264,30 @@ export default {
       window.addEventListener('unload', () => {
         this.containerWidth = Math.min(500, window.innerWidth - 250);
       });
-      if (this.default) {
-        this.checkAndConvertFormat(0);
-        this.checkAndConvertFormat(1);
-        this.recalculate();
-      }
     });
+    if (this.default) {
+      this.checkAndConvertFormat(0);
+      this.checkAndConvertFormat(1);
+      this.recalculate();
+    }
+  },
+  watch: {
+    input() {
+      this.saveVals();
+    },
   },
   methods: {
+    saveVals() {
+      window.sessionStorage.setItem('FPF_operator', this.selectedFormat[2]);
+      window.sessionStorage.setItem('FPF_format1', this.selectedFormat[0]);
+      window.sessionStorage.setItem('FPF_format2', this.selectedFormat[3]);
+      window.sessionStorage.setItem('FPF_inputNums1', this.inputNums[0]);
+      window.sessionStorage.setItem('FPF_inputNums2', this.inputNums[1]);
+      window.sessionStorage.setItem('FPF_expBits', this.exponentBits);
+      window.sessionStorage.setItem('FPF_numBits', this.numBits);
+    },
     recalculate() {
+      this.saveVals();
       this.containerWidth = Math.min(500, window.innerWidth - 250);
       this.convertFormat(0);
       this.convertFormat(1);
@@ -355,12 +382,12 @@ export default {
         this.watcher,
       );
       descr.generatePdf(
-        this.nums[0],
-        this.nums[1],
+        this.inputNums[0],
+        this.inputNums[1],
         this.solution,
         this.selectedFormat[2],
-        'ieee',
-        'ieee',
+        this.selectedFormat[0],
+        this.selectedFormat[3],
       );
     },
     convertFormat(num) {
@@ -420,7 +447,12 @@ export default {
           ieeeSolution.watcher,
         );
         if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
-          descr.makeDescription(this.nums[0], this.nums[1], this.solution, this.selectedFormat[2]);
+          descr.makeDescriptionArithmetic(
+            this.nums[0],
+            this.nums[1],
+            this.solution,
+            this.selectedFormat[2],
+          );
         }
         this.solutionSteps = descr.result;
         this.solutionObject = ieeeSolution.resultObject;

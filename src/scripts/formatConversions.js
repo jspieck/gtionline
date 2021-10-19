@@ -3,8 +3,6 @@ import * as tool from './gti-tools';
 
 function classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
-    console.log(instance);
-    console.log(Constructor);
     throw new TypeError('Cannot call a class as a function');
   }
 }
@@ -103,7 +101,25 @@ export class FormatConversions {
     this.result = `${sign}${preDecimal},${decimal}`;
   }
 
-  ieeeToDec(num) {
+  ieeeToDec(num, edgecase = '') {
+    if ((edgecase !== '') && (edgecase !== 'none')) {
+      switch (edgecase) {
+        case 'zero':
+          this.result = '0.0';
+          return;
+        case 'nan':
+          this.result = 'NaN';
+          return;
+        case 'inf':
+          if (num[0] === 0) {
+            this.result = 'Inf';
+          } else {
+            this.result = '-Inf';
+          }
+          return;
+        default:
+      }
+    }
     this.result = '';
     const ieeeWithoutSpace = num.replace(/\s/g, '');
     // get zero
@@ -116,6 +132,19 @@ export class FormatConversions {
     }
     if (isZero) {
       this.result = 0.0;
+      return;
+    }
+    // get nan
+    let isNan = true;
+    for (const c of ieeeWithoutSpace.substr(1)) {
+      if (c !== '1') {
+        isNan = false;
+        break;
+      }
+    }
+    if (isNan) {
+      this.result = 'NaN';
+      return;
     }
     if (ieeeWithoutSpace.length !== this.numBits) {
       this.result = 0;

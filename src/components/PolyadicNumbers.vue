@@ -1,19 +1,19 @@
 <template>
-<div class="floatingPoint">
+<div class="polyadic">
   <tabs :tabs="tabs" :currentTab="currentTab" @onClick="handleClick" updated="this.$t('exercises')"
   :wrapper-class="'default-tabs'" :tab-class="'default-tabs__item'"
   :tab-active-class="'default-tabs__item_active'" :line-class="'default-tabs__active-line'"/>
-  <div class="tab" v-if="currentTab === 'exercises'">
-    <h3 class="title">{{$t('exercises')}}</h3>
-    <fpe/>
-  </div>
-  <div class="tab" v-if="currentTab === 'free'">
-    <h3 class="title">{{$t('freeCalculation')}}</h3>
-    <fpf/>
-  </div>
-  <div class="tab" v-if="currentTab === 'convert'">
+  <div class="tab" v-if="currentTab === 'conversionExercise'">
     <h3 class="title">{{$t('conversion')}}</h3>
-    <fpc/>
+    <pce/>
+  </div>
+  <div class="tab" v-if="currentTab === 'conversionFree'">
+    <h3 class="title">{{$t('conversion')}}</h3>
+    <pcf/>
+  </div>
+  <div class="tab" v-if="currentTab === 'arithmeticFree'">
+    <h3 class="title">{{$t('arithmetic')}}</h3>
+    <paf/>
   </div>
 </div>
 </template>
@@ -21,16 +21,16 @@
 <script>
 // eslint-disable-next-line
 import Tabs from 'vue-tabs-with-active-line';
-import FloatingPointFormat from './FloatingPointFormat.vue';
-import FloatingPointExercises from './FloatingPointExercises.vue';
-import FloatingPointConversion from './FloatingPointConversion.vue';
+import PolyadicConversionExercise from './PolyadicConversionExercise.vue';
+import PolyadicConversionFree from './PolyadicConversionFree.vue';
+import PolyadicArithmeticFree from './PolyadicArithmeticFree.vue';
 
 export default {
   name: 'TinyTabs',
   components: {
-    fpc: FloatingPointConversion,
-    fpe: FloatingPointExercises,
-    fpf: FloatingPointFormat,
+    pce: PolyadicConversionExercise,
+    pcf: PolyadicConversionFree,
+    paf: PolyadicArithmeticFree,
     tabs: Tabs,
   },
   data() {
@@ -43,15 +43,15 @@ export default {
       return [
         {
           title: this.$t('conversion'),
-          value: 'convert',
-        },
-        {
-          title: this.$t('exercises'),
-          value: 'exercises',
+          value: 'conversionExercise',
         },
         {
           title: this.$t('freeCalculation'),
-          value: 'free',
+          value: 'conversionFree',
+        },
+        {
+          title: this.$t('arithmeticFree'),
+          value: 'arithmeticFree',
         },
       ];
     },

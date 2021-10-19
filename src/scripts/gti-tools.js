@@ -10039,7 +10039,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
         // Return n1
         var _result2 = new NumberIEEE(expBitNum, manBitNum, _toConsumableArray(n1.arr));
 
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'n2zero');
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'none');
         this.watcher = this.watcher.step('Result').saveVariable('result', _result2);
         return _result2;
       }
@@ -11596,4 +11596,948 @@ var AdditionIEEEToLatex = /*#__PURE__*/function () {
   return AdditionIEEEToLatex;
 }();
 
-export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, DivisionBaseNSigned, DivisionIEEE, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, TextCMOS, getBaseNComplementFromString, getIEEEFromString, getNumFromString, parseBooleanFunction, roundArray, toLaTeX };
+var NumberPolyadic = /*#__PURE__*/function () {
+  function NumberPolyadic(power, representation) {
+    _classCallCheck(this, NumberPolyadic);
+
+    if (power <= 1) {
+      throw new TypeError('Polyadic Number: Invalid power given, has to be greater 1.');
+    }
+
+    if (power === 16) {
+      this.power = 0x10;
+    } else {
+      this.power = power;
+    }
+
+    this.comma = representation.length;
+
+    if (!this._checkArray(representation)) {
+      throw new TypeError('Polyadic Number: Invalid representation given.');
+    }
+
+    this.arr = _toConsumableArray(representation);
+
+    this._actualizeValues();
+
+    this.isNegative = false; // for subtraction
+
+    this.watcher = new Algorithm();
+  }
+
+  _createClass(NumberPolyadic, [{
+    key: "_actualizeValues",
+    value: function _actualizeValues() {
+      this._checkArray(this.arr);
+
+      this.value = this._getValue();
+      this.bitString = this.arr.join('');
+      this.valueString = this._constructValString();
+    }
+  }, {
+    key: "_checkArray",
+    value: function _checkArray(arr) {
+      this.comma = arr.length;
+      var commas = 0;
+
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] < 0 || arr[i] >= this.power) {
+          return false;
+        }
+
+        if (arr[i] === ',' || arr[i] === '.') {
+          this.comma = i;
+          commas += 1;
+
+          if (commas > 1) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+  }, {
+    key: "_getValue",
+    value: function _getValue() {
+      var firstNum = 0;
+
+      if (this.arr[0] === '-') {
+        this.sign = '-';
+        firstNum = 1;
+      } else if (this.arr[0] === '+') {
+        this.sign = '+';
+        firstNum = 1;
+      } else {
+        this.sign = '+';
+      }
+
+      if (this.power === 10) {
+        return parseFloat(this.arr.join(''));
+      }
+
+      var val = 0;
+      var count = 0;
+
+      for (var i = this.comma - 1; i >= firstNum; i -= 1) {
+        val += parseInt(this.arr[i], this.power) * Math.pow(this.power, count);
+        count += 1;
+      }
+
+      count = 1;
+
+      for (var _i = this.comma + 1; _i < this.arr.length; _i += 1) {
+        val += parseInt(this.arr[_i], this.power) * Math.pow(1 / this.power, count);
+        count += 1;
+      }
+
+      if (this.sign === '-') {
+        return -val;
+      }
+
+      return val;
+    }
+  }, {
+    key: "_constructValString",
+    value: function _constructValString() {
+      return "".concat(this.value);
+    } // arithmetical methods for direct conversion and polyadic arithmetic
+
+    /** !!Internal method!!
+     * Add a single digit to the actual number.
+     * @param {*} digit : Int, single digit number.
+     * @param {*} exp : Int, optional position in the array.
+     */
+
+  }, {
+    key: "_additionOneDigit",
+    value: function _additionOneDigit(digit) {
+      var exp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      // pepare working arrays
+      var splitted = this.arr.join('').split('.');
+      var numBeforeComma = [];
+      var numAfterComma = [];
+
+      if (Array.isArray(splitted) && splitted.length === 2) {
+        numBeforeComma = splitted[0].split('');
+        numAfterComma = splitted[1].split('');
+      } else {
+        numBeforeComma = splitted[0].split('');
+      }
+
+      var overflow = 0;
+      var act = digit;
+      var breakAfterComma = false; // before comma
+
+      if (exp < 0) {
+        for (var i = 0; i < Math.abs(exp) + 1 - numAfterComma.length; i += 1) {
+          // left padding
+          numAfterComma.push('0');
+        }
+
+        for (var _i2 = Math.abs(exp) - 1; _i2 >= 0; _i2 -= 1) {
+          var res = 0;
+
+          if (this.power === 16) {
+            res = parseInt(numAfterComma[_i2], 16) + parseInt(act, 16);
+          } else {
+            res = parseInt(numAfterComma[_i2], 10) + parseInt(act, 10);
+          }
+
+          if (res >= this.power) {
+            overflow = res - this.power;
+            numAfterComma[_i2] = overflow.toString(this.power).toUpperCase();
+            act = 1;
+            this.watcher = this.watcher.step('constructResult').saveVariable("overflowAfterComma".concat(_i2), 1);
+          } else {
+            numAfterComma[_i2] = res.toString(this.power).toUpperCase();
+            breakAfterComma = true;
+            this.watcher = this.watcher.step('constructResult').saveVariable("overflowAfterComma".concat(_i2), 0);
+            break;
+          }
+        }
+      } // after comma
+
+
+      if (!breakAfterComma || exp >= 0) {
+        var start = numBeforeComma.length - 1;
+
+        if (exp >= 0) {
+          for (var _i3 = 0; _i3 < exp + 1 - numBeforeComma.length; _i3 += 1) {
+            // left padding
+            numBeforeComma.unshift('0');
+          }
+
+          start = numBeforeComma.length - 1 - exp;
+        }
+
+        for (var _i4 = start; _i4 >= 0; _i4 -= 1) {
+          var _res = 0;
+
+          if (this.power === 16) {
+            _res = parseInt(numBeforeComma[_i4], 16) + parseInt(act, 16);
+          } else {
+            _res = parseInt(numBeforeComma[_i4], 10) + parseInt(act, 10);
+          }
+
+          if (_res >= this.power) {
+            overflow = _res - this.power;
+            numBeforeComma[_i4] = overflow.toString(this.power).toUpperCase();
+            act = 1;
+            this.watcher = this.watcher.step('constructResult').saveVariable("overflowBeforeComma".concat(_i4), 1);
+
+            if (_i4 === 0) {
+              // overflow at highest position
+              numBeforeComma.unshift('1');
+            }
+          } else {
+            numBeforeComma[_i4] = _res.toString(this.power).toUpperCase();
+            this.watcher = this.watcher.step('constructResult').saveVariable("overflowBeforeComma".concat(_i4), 1);
+            break;
+          }
+        }
+      }
+
+      var resultArray = [];
+      numBeforeComma.map(function (a) {
+        return resultArray.push(a);
+      });
+
+      if (Array.isArray(splitted) && splitted.length === 2) {
+        resultArray.push('.');
+        numAfterComma.map(function (a) {
+          return resultArray.push(a);
+        });
+      }
+
+      this.arr = resultArray;
+    }
+    /** !!Internal method!!
+     * Subtract a single digit to the actual number.
+     * @param {*} digit : Int, single digit number.
+     * @param {*} exp : Int, optional position in the array.
+     */
+
+  }, {
+    key: "_subtractOneDigit",
+    value: function _subtractOneDigit(digit) {
+      var exp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      // pepare working arrays
+      var splitted = this.arr.join('').split('.');
+      var numBeforeComma = [];
+      var numAfterComma = [];
+
+      if (Array.isArray(splitted) && splitted.length === 2) {
+        // have comma?
+        numBeforeComma = splitted[0].split('');
+        numAfterComma = splitted[1].split('');
+      } else {
+        numBeforeComma = splitted[0].split('');
+      }
+
+      var underflow = 0;
+      var act = digit; // Check if result must be negative
+
+      if (exp >= 0 && numBeforeComma.length < exp + 1) {
+        // case general higher exponent at subtrahend
+        this.isNegative = true;
+
+        for (var i = 0; i < exp + 1 - numBeforeComma.length; i += 1) {
+          // left padding
+          numBeforeComma.unshift('0');
+        }
+      } else if ( // case subtrahend and minuend has the same exponent
+      // but subtrahend has the higher digit at highest exponent
+      exp >= 0 && numBeforeComma.length === exp + 1 && parseInt(numBeforeComma[exp], this.power) - parseInt(act, this.power) < 0) {
+        this.isNegative = true;
+      } else if ( // case no number before comma
+      // exponenten subtrahend after comma is greater the exponent of the minuend
+      exp < 0 && numBeforeComma.length === 0 && numAfterComma.length + exp < 0) {
+        this.isNegative = true;
+      } // calc result for a single digit
+
+
+      var breakAfterComma = false;
+      this.watcher = this.watcher.step('constructResult').saveVariable('digit', digit).saveVariable('exp', exp); // before comma
+
+      if (exp < 0) {
+        for (var _i5 = 0; _i5 < Math.abs(exp) - numAfterComma.length; _i5 += 1) {
+          // left padding
+          numAfterComma.push('0');
+        }
+
+        for (var _i6 = Math.abs(exp) - 1; _i6 >= 0; _i6 -= 1) {
+          var res = 0;
+
+          if (this.power === 16) {
+            res = parseInt(numAfterComma[_i6], 16) - parseInt(act, 16);
+          } else {
+            res = parseInt(numAfterComma[_i6], 10) - parseInt(act, 10);
+          }
+
+          if (res < 0) {
+            underflow = Math.abs(res);
+            numAfterComma[_i6] = (this.power - underflow).toString(this.power).toUpperCase();
+            act = 1;
+
+            if (numBeforeComma.length === 0 && (_i6 === 0 || _i6 === 1 && numAfterComma[0] === '0')) {
+              // case underflow makes result negative
+              this.isNegative = true;
+            }
+
+            this.watcher = this.watcher.step('constructResult').saveVariable("underflowAfterComma".concat(_i6), 1);
+          } else {
+            numAfterComma[_i6] = res.toString(this.power).toUpperCase();
+            breakAfterComma = true;
+            this.watcher = this.watcher.step('constructResult').saveVariable("underflowAfterComma".concat(_i6), 0);
+            break;
+          }
+        }
+      } // after comma
+
+
+      if (!breakAfterComma || exp >= 0) {
+        var start = numBeforeComma.length - 1;
+
+        if (exp >= 0) {
+          for (var _i7 = 0; _i7 < exp + 1 - numBeforeComma.length; _i7 += 1) {
+            // left padding
+            numBeforeComma.unshift('0');
+          }
+
+          start = numBeforeComma.length - 1 - exp;
+        }
+
+        for (var _i8 = start; _i8 >= 0; _i8 -= 1) {
+          var _res2 = 0;
+
+          if (this.power === 16) {
+            _res2 = parseInt(numBeforeComma[_i8], 16) - parseInt(act, 16);
+          } else {
+            _res2 = parseInt(numBeforeComma[_i8], 10) - parseInt(act, 10);
+          }
+
+          if (_res2 < 0) {
+            underflow = Math.abs(_res2);
+            numBeforeComma[_i8] = (this.power - underflow).toString(this.power).toUpperCase();
+            act = 1;
+
+            if (_i8 === 0 || _i8 === 1 && numBeforeComma[0] === '0') {
+              // case underflow makes result negative
+              this.isNegative = true;
+            }
+
+            this.watcher = this.watcher.step('constructResult').saveVariable("underflowBeforeComma".concat(_i8), 1);
+          } else {
+            numBeforeComma[_i8] = _res2.toString(this.power).toUpperCase();
+            this.watcher = this.watcher.step('constructResult').saveVariable("underflowBeforeComma".concat(_i8), 0);
+            break;
+          }
+        }
+      }
+
+      var resultArray = [];
+      numBeforeComma.map(function (a) {
+        return resultArray.push(a);
+      });
+
+      if (Array.isArray(splitted) && splitted.length === 2) {
+        resultArray.push('.');
+        numAfterComma.map(function (a) {
+          return resultArray.push(a);
+        });
+      }
+
+      this.arr = resultArray;
+    }
+    /**
+     * Add a float to the actual polydic
+     * @param {*} input : String, Float to add
+     */
+
+  }, {
+    key: "_additionFloat",
+    value: function _additionFloat(input) {
+      this.watcher = this.watcher.step('Input').saveVariable('operator', '+').saveVariable('bitString1', this.bitString).saveVariable('bitString2', input);
+      var val = input.split('.');
+
+      if (Array.isArray(val) && val.length === 2) {
+        var afterComma = val[1].split('');
+        this.watcher = this.watcher.step('Input').saveVariable('afterComma', _toConsumableArray(afterComma));
+
+        for (var i = afterComma.length - 1; i >= 0; i -= 1) {
+          this.watcher = this.watcher.step('constructResult').saveVariable("digitAfterComma".concat(i), afterComma[i]).saveVariable("expAfterComma".concat(i), -i - 1);
+
+          this._additionOneDigit(afterComma[i], -i - 1);
+        }
+      } // reverse, so index and exponent go the same way
+
+
+      var beforeComma = val[0].split('').reverse();
+      this.watcher = this.watcher.step('Input').saveVariable('beforeComma', _toConsumableArray(beforeComma).reverse());
+
+      for (var _i9 = 0; _i9 < beforeComma.length; _i9 += 1) {
+        this.watcher = this.watcher.step('constructResult').saveVariable("digitBeforeComma".concat(_i9), beforeComma[_i9]).saveVariable("expBeforComma".concat(_i9), -_i9 - 1);
+
+        this._additionOneDigit(beforeComma[_i9], _i9);
+      }
+
+      this._actualizeValues();
+
+      this.watcher = this.watcher.step('Result').saveVariable('array', _toConsumableArray(this.arr)).saveVariable('bitString', this.bitString).saveVariable('value', this.value).saveVariable('valueString', this.valueString).saveVariable('sign', this.sign).saveVariable('comma', this.comma);
+    }
+    /**
+     * Subtract a float to the actual polydic
+     * @param {*} input : String, Float to subtract
+     */
+
+  }, {
+    key: "_subtractionFloat",
+    value: function _subtractionFloat(input) {
+      this.watcher = this.watcher.step('Input').saveVariable('operator', '-').saveVariable('bitString1', this.bitString).saveVariable('bitString2', input);
+      var inputSplitted = input.toString().split('.');
+
+      if (Array.isArray(inputSplitted) && inputSplitted.length === 2) {
+        var afterComma = inputSplitted[1].split('');
+        this.watcher = this.watcher.step('Input').saveVariable('afterComma', _toConsumableArray(afterComma));
+
+        for (var i = afterComma.length - 1; i >= 0; i -= 1) {
+          this._subtractOneDigit(afterComma[i], -i - 1);
+        }
+      }
+
+      var beforeComma = inputSplitted[0].split('').reverse();
+      this.watcher = this.watcher.step('Input').saveVariable('beforeComma', _toConsumableArray(beforeComma).reverse());
+      var lenPadding = Math.max(beforeComma.length - this.comma, 0);
+      this.arr = Array(lenPadding).fill('0').concat(this.arr);
+
+      for (var _i10 = 0; _i10 < beforeComma.length; _i10 += 1) {
+        this._subtractOneDigit(beforeComma[_i10], _i10);
+      } // invert digit if the result is negative
+
+
+      if (this.isNegative) {
+        this.arr[this.arr.length - 1] = (parseInt(this.arr[this.arr.length - 1], this.power) - 1).toString(this.power).toUpperCase();
+
+        for (var _i11 = 0; _i11 < this.arr.length; _i11 += 1) {
+          var a = this.arr[_i11];
+
+          if (a !== '-' && a !== '.' && a !== ',') {
+            this.arr[_i11] = // invert digits
+            (this.power - parseInt(a, this.power) - 1).toString(this.power).toUpperCase();
+          }
+        }
+
+        this.arr.unshift('-');
+        this.isNegative = false;
+      }
+
+      this._actualizeValues();
+
+      this.watcher = this.watcher.step('Result').saveVariable('array', _toConsumableArray(this.arr)).saveVariable('bitString', this.bitString).saveVariable('value', this.value).saveVariable('valueString', this.valueString).saveVariable('sign', this.sign).saveVariable('comma', this.comma);
+    }
+  }]);
+
+  return NumberPolyadic;
+}();
+
+var ConversionPolyadicNumbers = /*#__PURE__*/function () {
+  function ConversionPolyadicNumbers(n, power) {
+    _classCallCheck(this, ConversionPolyadicNumbers);
+
+    this.modus = '';
+
+    if (n.power === power) {
+      console.log('ConversionPolyadicNumbers(Number, Int): Source and destination power is equal.');
+    }
+
+    if (n.power === 16 && power === 2) {
+      // Applying Shortcut Methods
+      this.watcher = new Algorithm();
+      this.watcher = this.watcher.step('Modus').saveVariable('modus', 'ShortcutHexToBin');
+      this.modus = 'ShortcutHexToBin';
+      this.solution = this._shortcutHexToBin(n);
+    } else if (n.power === 2 && power === 16) {
+      this.watcher = new Algorithm();
+      this.watcher = this.watcher.step('Modus').saveVariable('modus', 'ShortcutBinToHex');
+      this.modus = 'ShortcutBinToHex';
+      this.solution = this._shortcutBinToHex(n);
+    } else {
+      this.watcher = [new Algorithm(), new Algorithm()];
+
+      if (power === 10) {
+        this.watcher[0] = this.watcher[0].step('Modus').saveVariable('modus', 'PowerToTen');
+        this.modus = 'PowerToTen';
+        this.solution = this._convertPowerToTen(n);
+      } else if (n.power === 10) {
+        this.watcher[1] = this.watcher[1].step('Modus').saveVariable('modus', 'TenToPower');
+        this.modus = 'TenToPower';
+        this.solution = this._convertTenToPower(n, power);
+      } else {
+        this.watcher[0] = this.watcher[0].step('Modus').saveVariable('modus', 'PowerToPower');
+        this.modus = 'PowerToPower';
+        this.watcher[1] = this.watcher[1].step('Modus').saveVariable('modus', 'PowerToPower');
+
+        var PowerToTen = this._convertPowerToTen(n);
+
+        this.solution = this._convertTenToPower(PowerToTen, power);
+      }
+    }
+  }
+
+  _createClass(ConversionPolyadicNumbers, [{
+    key: "_convertPowerToTen",
+    value: function _convertPowerToTen(n) {
+      this.watcher[0] = this.watcher[0].step('Input').saveVariable('number', n);
+      var firstNum = 0; // Determine sign
+
+      if (n.arr[0] === '-') {
+        this.sign = '-';
+        firstNum = 1;
+      } else if (n.arr[0] === '+') {
+        this.sign = '+';
+        firstNum = 1;
+      } else {
+        this.sign = '+';
+      }
+
+      this.watcher[0] = this.watcher[0].step('ConstructNumber').saveVariable('sign', this.sign);
+      var val = 0;
+      var count = 0;
+
+      for (var i = n.comma - 1; i >= firstNum; i -= 1) {
+        var act = parseInt(n.arr[i], n.power) * Math.pow(n.power, count);
+        val += act;
+        this.watcher[0] = this.watcher[0].step('ConstructNumber').saveVariable("beforeComma".concat(count, "In"), n.arr[i]).saveVariable("beforeComma".concat(count, "Res"), act);
+        count += 1;
+      }
+
+      this.watcher[0] = this.watcher[0].step('ConstructNumber').saveVariable('stepsBeforeComma', count);
+      count = 1;
+
+      for (var _i = n.comma + 1; _i < n.arr.length; _i += 1) {
+        var _act = parseInt(n.arr[_i], n.power) * Math.pow(1 / n.power, count);
+
+        val += _act;
+        this.watcher[0] = this.watcher[0].step('ConstructNumber').saveVariable("afterComma".concat(count - 1, "In"), n.arr[_i]).saveVariable("afterComma".concat(count - 1, "Res"), _act);
+        count += 1;
+      }
+
+      this.watcher[0] = this.watcher[0].step('ConstructNumber').saveVariable('stepsAfterComma', count - 1); // Make result
+
+      if (this.sign === '-') {
+        var _result = new NumberPolyadic(10, (-val).toString());
+
+        this.watcher[0] = this.watcher[0].step('Result').saveVariable('resultValue', -val).saveVariable('resultNumber', _result);
+        return _result;
+      }
+
+      var result = new NumberPolyadic(10, val.toString());
+      this.watcher[0] = this.watcher[0].step('Result').saveVariable('resultValue', val).saveVariable('resultNumber', result);
+      return result;
+    }
+  }, {
+    key: "_convertTenToPower",
+    value: function _convertTenToPower(n, power) {
+      this.watcher[1] = this.watcher[1].step('Input').saveVariable('number', n).saveVariable('power', power);
+      this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('sign', n.sign);
+      var nbc = Math.floor(Math.abs(n.value)); // separate |nbc.xxx|
+      // Division Algorithm before Comma
+
+      var val = ''; // result string before comma
+
+      var count = 0;
+      var act = [nbc, 1]; // [divisor, remain]
+
+      this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('beforeCommaVal', nbc);
+
+      while (act[0] > 0) {
+        act = this._divisionWithRemain(act[0], power, 10);
+        this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable("beforeComma".concat(count, "Div"), act[0]).saveVariable("beforeComma".concat(count, "Remain"), act[1]);
+        count += 1;
+
+        if (power === 16) {
+          act[1] = act[1].toString(16).toUpperCase();
+        }
+
+        val = act[1] + val;
+      }
+
+      this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('stepsBeforeComma', count);
+
+      if (count === 0) {
+        val = '0';
+      } // Multiplication Algorithm after Comma
+
+
+      var val2 = ''; // result string after comma
+
+      count = 0;
+
+      if (n.value.toString().indexOf('.') >= 0) {
+        var limitAfterComma = n.value.toString().split('.')[1].length; // crop value after comma by ignoring floating point arithmetic
+
+        act = [(Math.abs(n.value) - nbc).toFixed(limitAfterComma), 1];
+        var vals = [act[0]]; // list of calculated values for periodicity
+
+        this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('isPeriodic', false).saveVariable('periodicStart', 0).saveVariable('periodicEnd', 9).saveVariable('afterCommaVal', act[0]);
+
+        while (act[0] > 0 && count < 9) {
+          act = this._multiplicationStepFrom10(act[0], power, limitAfterComma);
+          this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable("afterComma".concat(count, "Mul"), act[0]).saveVariable("afterComma".concat(count, "Remain"), act[1]);
+
+          if (power === 16) {
+            act[1] = act[1].toString(16).toUpperCase();
+          }
+
+          val2 += act[1];
+          var indexVal = vals.indexOf(act[0].toString());
+
+          if (indexVal >= 0) {
+            // perodicity found, no further calculation
+            this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('isPeriodic', true).saveVariable('periodicStart', indexVal).saveVariable('periodicEnd', count);
+            count += 1;
+            break;
+          } else {
+            vals.push(act[0].toString());
+          }
+
+          count += 1;
+        }
+      }
+
+      this.watcher[1] = this.watcher[1].step('ConstructNumber').saveVariable('stepsAfterComma', count); // Make result
+
+      var resVal;
+
+      if (val2 !== '') {
+        resVal = "".concat(val, ".").concat(val2);
+      } else {
+        resVal = val;
+      }
+
+      if (n.sign === '-') {
+        resVal = "-".concat(resVal);
+      }
+
+      var result = new NumberPolyadic(power, resVal);
+      this.watcher[1] = this.watcher[1].step('Result').saveVariable('resultValue', resVal).saveVariable('resultNumber', result);
+      return result;
+    } // Division with Remain to an arbitrary power
+
+  }, {
+    key: "_divisionWithRemain",
+    value: function _divisionWithRemain(n1, n2, power) {
+      var i = 0;
+      var r = 0;
+
+      while (parseInt((i * n2).toString(10), power) <= n1) {
+        r = parseInt((n1 - parseInt((i * n2).toString(10), power)).toString(10), power);
+        i += 1;
+      }
+
+      return [i - 1, r]; // Divisor, Remain
+    } // Computes one multiplication step for multiplication algorithm
+
+  }, {
+    key: "_multiplicationStepFrom10",
+    value: function _multiplicationStepFrom10(n1, n2, limit) {
+      var res = parseFloat((parseFloat(n1) * parseFloat(n2)).toFixed(limit));
+
+      if (res >= 1) {
+        return [parseFloat((res - Math.floor(res)).toFixed(limit)), Math.floor(res)];
+      } else {
+        return [res, 0]; // Result, Remain
+      }
+    } // Shortcut methods
+
+  }, {
+    key: "_shortcutHexToBin",
+    value: function _shortcutHexToBin(n) {
+      var _this = this;
+
+      this.watcher = this.watcher.step('Input').saveVariable('number', n); // Determine sign
+
+      if (n.arr[0] === '-') {
+        this.sign = '-';
+      } else if (n.arr[0] === '+') {
+        this.sign = '+';
+      } else {
+        this.sign = '+';
+      }
+
+      this.watcher = this.watcher.step('ConstructNumber').saveVariable('sign', this.sign); // shift out -/+ sign
+
+      var hexArray = n.arr;
+
+      if (n.arr[0] === '-' || n.arr[0] === '+') {
+        hexArray.shift();
+      } // conversion cycle
+
+
+      var resultVal = '';
+      var afterComma = false;
+      var count = 0;
+      hexArray.forEach(function (act) {
+        if (act === '.') {
+          // handle comma
+          resultVal += '.';
+          afterComma = true;
+          _this.watcher = _this.watcher.step('ConstructNumber').saveVariable('stepsBeforeComma', count);
+          count = 0;
+        } else {
+          // conversion
+          var binary = parseInt(act, 16).toString(2).padStart(4, '0');
+          resultVal += binary;
+
+          if (afterComma) {
+            // after comma
+            _this.watcher = _this.watcher.step('ConstructNumber').saveVariable("afterComma".concat(count), binary);
+          } else {
+            // before comma
+            _this.watcher = _this.watcher.step('ConstructNumber').saveVariable("beforeComma".concat(count), binary);
+          }
+
+          count += 1;
+        }
+      });
+
+      if (afterComma) {
+        this.watcher = this.watcher.step('ConstructNumber').saveVariable('stepsAfterComma', count);
+      } else {
+        this.watcher = this.watcher.step('ConstructNumber').saveVariable('stepsBeforeComma', count).saveVariable('stepsAfterComma', 0);
+      } // make result
+
+
+      if (this.sign === '-') {
+        resultVal = "-".concat(resultVal);
+      }
+
+      var result = new NumberPolyadic(2, resultVal);
+      this.watcher = this.watcher.step('Result').saveVariable('resultValue', resultVal).saveVariable('resultNumber', result);
+      return result;
+    }
+  }, {
+    key: "_shortcutBinToHex",
+    value: function _shortcutBinToHex(n) {
+      this.watcher = this.watcher.step('Input').saveVariable('number', n); // Determine sign
+
+      if (n.arr[0] === '-') {
+        this.sign = '-';
+      } else if (n.arr[0] === '+') {
+        this.sign = '+';
+      } else {
+        this.sign = '+';
+      } // shift out -/+ sign
+
+
+      var posComma = n.comma;
+      var binArray = n.arr.join('');
+
+      if (n.arr[0] === '-' || n.arr[0] === '+') {
+        binArray = binArray.slice(1);
+        posComma -= 1;
+      } // Padding if before or after comma some zeros missing
+
+
+      if (posComma < binArray.length - 1) {
+        // case has comma
+        var actLength = binArray.length;
+        var lenBeforeComma = posComma;
+        var lenAfterComma = actLength - posComma - 1;
+        var padStart = '';
+
+        if (lenBeforeComma % 4 !== 0) {
+          for (var _i2 = 0; _i2 < 4 - lenBeforeComma % 4; _i2 += 1) {
+            padStart += '0';
+          }
+        }
+
+        var padEnd = '';
+
+        if (lenAfterComma % 4 !== 0) {
+          for (var _i3 = 0; _i3 < 4 - lenAfterComma % 4; _i3 += 1) {
+            padEnd += '0';
+          }
+        }
+
+        binArray = padStart + binArray + padEnd;
+      } else {
+        // has no comma -> only front padding
+        var _padStart = '';
+
+        if (posComma % 4 !== 0) {
+          for (var _i4 = 0; _i4 < 4 - posComma % 4; _i4 += 1) {
+            _padStart += '0';
+          }
+        }
+
+        binArray = _padStart + binArray;
+      } // conversion cycle
+
+
+      var resultVal = '';
+      var afterComma = false;
+      var count = 0;
+      var act = '';
+      var i = 0;
+
+      while (i <= binArray.length) {
+        if (act.length < 4 && binArray[i] !== '.') {
+          // set up 4 digits to conversion
+          act += binArray[i];
+          i += 1;
+        } else if (act.length === 0 && binArray[i] === '.') {
+          // handle comma
+          resultVal += '.';
+          afterComma = true;
+          this.watcher = this.watcher.step('ConstructNumber').saveVariable('stepsBeforeComma', count);
+          count = 0;
+          i += 1;
+        } else {
+          // conversion step
+          var hex = parseInt(act, 2).toString(16).toUpperCase();
+          resultVal += hex;
+
+          if (afterComma) {
+            // after comma
+            this.watcher = this.watcher.step('ConstructNumber').saveVariable("afterComma".concat(count, "Bin"), act).saveVariable("afterComma".concat(count, "Hex"), hex);
+          } else {
+            // before comma
+            this.watcher = this.watcher.step('ConstructNumber').saveVariable("beforeComma".concat(count, "Bin"), act).saveVariable("beforeComma".concat(count, "Hex"), hex);
+          }
+
+          act = '';
+          count += 1;
+        }
+      }
+
+      if (afterComma) {
+        this.watcher = this.watcher.step('ConstructNumber').saveVariable('stepsAfterComma', count);
+      } else {
+        this.watcher = this.watcher.step('ConstructNumber').saveVariable('stepsBeforeComma', count).saveVariable('stepsAfterComma', 0);
+      } // make result
+
+
+      if (this.sign === '-') {
+        resultVal = "-".concat(resultVal);
+      }
+
+      var result = new NumberPolyadic(16, resultVal);
+      this.watcher = this.watcher.step('Result').saveVariable('resultValue', resultVal).saveVariable('resultNumber', result);
+      return result;
+    }
+  }]);
+
+  return ConversionPolyadicNumbers;
+}();
+
+var AdditionPolyadic = /*#__PURE__*/function () {
+  function AdditionPolyadic(n1, n2) {
+    _classCallCheck(this, AdditionPolyadic);
+
+    if (n1.power !== n2.power) {
+      console.log("AdditionPolyadic(Number, Number): power of n1(".concat(n1.power, ")\n            and power of n2(").concat(n2.power, ") not compatible."));
+      process.exit(1);
+    }
+
+    this.result = this._add(n1, n2);
+    this.watcher = JSON.parse(JSON.stringify(this.result.watcher));
+  }
+
+  _createClass(AdditionPolyadic, [{
+    key: "_add",
+    value: function _add(n1, n2) {
+      var result = '';
+
+      if (n1.sign === '+' && n2.sign === '+') {
+        // (+) + (+)
+        result = new NumberPolyadic(n1.power, n1.bitString);
+
+        result._additionFloat(n2.bitString);
+      } else if (n1.sign === '+' && n2.sign === '-') {
+        // (+) + (-) => (+) - (+)
+        result = new NumberPolyadic(n1.power, n1.bitString);
+        var bitString = n2.bitString.substring(1);
+
+        result._subtractionFloat(bitString);
+      } else if (n1.sign === '-' && n2.sign === '+') {
+        // (-) + (-) => - ((+) + (+))
+        var bitString1 = n2.bitString.substring(1);
+        var bitString2 = n2.bitString.substring(1);
+        bitString2.shift();
+        var intermidiate = new NumberPolyadic(n1.power, bitString1);
+
+        intermidiate._additionFloat(bitString2);
+
+        var resultBitString = intermidiate.bitString;
+        resultBitString = "-".concat(resultBitString);
+        result = new NumberPolyadic(n1.power, resultBitString);
+      }
+
+      return result;
+    }
+  }, {
+    key: "getResult",
+    value: function getResult() {
+      return this.result;
+    }
+  }]);
+
+  return AdditionPolyadic;
+}();
+
+var SubtractionPolyadic = /*#__PURE__*/function () {
+  function SubtractionPolyadic(n1, n2) {
+    _classCallCheck(this, SubtractionPolyadic);
+
+    if (n1.power !== n2.power) {
+      console.log("SubtractionPolyadic(Number, Number): power of n1(".concat(n1.power, ")\n            and power of n2(").concat(n2.power, ") not compatible."));
+      process.exit(1);
+    }
+
+    this.result = this._sub(n1, n2);
+    this.watcher = JSON.parse(JSON.stringify(this.result.watcher));
+  }
+
+  _createClass(SubtractionPolyadic, [{
+    key: "_sub",
+    value: function _sub(n1, n2) {
+      var result;
+
+      if (n1.sign === '+' && n2.sign === '+') {
+        // (+) - (+)
+        result = new NumberPolyadic(n1.power, n1.bitString);
+
+        result._subtractionFloat(n2.bitString);
+      } else if (n1.sign === '+' && n2.sign === '-') {
+        // (+) - (-) => (+) + (+)
+        result = new NumberPolyadic(n1.power, n1.bitString);
+        var bitString = n2.bitString.substring(1);
+
+        result._additionFloat(bitString);
+      } else if (n1.sign === '-' && n2.sign === '+') {
+        // (-) - (+) => - ((+) + (+))
+        var bitString1 = n1.bitString.substring(1);
+        var intermidiate = new NumberPolyadic(n1.power, bitString1);
+
+        intermidiate._additionFloat(n2.bitString);
+
+        var resultBitString = intermidiate.bitString;
+        resultBitString = "-".concat(resultBitString);
+        result = new NumberPolyadic(n1.power, resultBitString);
+      }
+
+      return result;
+    }
+  }, {
+    key: "getResult",
+    value: function getResult() {
+      return this.result;
+    }
+  }]);
+
+  return SubtractionPolyadic;
+}();
+
+export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, AdditionPolyadic, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, ConversionPolyadicNumbers, DivisionBaseNSigned, DivisionIEEE, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, NumberPolyadic, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, SubtractionPolyadic, TextCMOS, getBaseNComplementFromString, getIEEEFromString, getNumFromString, parseBooleanFunction, roundArray, toLaTeX };
