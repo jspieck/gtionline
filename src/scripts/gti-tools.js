@@ -1,3 +1,19 @@
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function (obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function (obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -12540,4 +12556,2291 @@ var SubtractionPolyadic = /*#__PURE__*/function () {
   return SubtractionPolyadic;
 }();
 
-export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, AdditionPolyadic, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, ConversionPolyadicNumbers, DivisionBaseNSigned, DivisionIEEE, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, NumberPolyadic, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, SubtractionPolyadic, TextCMOS, getBaseNComplementFromString, getIEEEFromString, getNumFromString, parseBooleanFunction, roundArray, toLaTeX };
+/**
+ * Class representing a single Literal (e.g. \
+ * a, \
+ * x0, ...) \
+ * that is identified by a global id. \
+ * 1.: That global ID is/should be shared by every Literal
+ * pointing at the 'same real world' Literal. (e.g. every
+ * 'a' and 'not a' have the ID 0 and every x2 has the ID 3) \
+ * 2.: The global IDs start counting at 0 with the Literal
+ * being on-top/to-the-bottom of the KVDiagram i.e. the one
+ * that comes into existance upon mirroring the KVDiagram
+ * (of size 1x1) to the right (-> width=2, height=1).
+ */
+var BooleanFunctionLiteral = /*#__PURE__*/function () {
+  /**
+     * Creates an Instance of some Literal.
+     * @param {number} id ID that identifies this literal
+     * @param {boolean} negated boolean specifiying if this
+     * literal is negated (-> not a) or not (-> a).
+     */
+  function BooleanFunctionLiteral(id, negated) {
+    _classCallCheck(this, BooleanFunctionLiteral);
+
+    this._id = id;
+    this._negated = negated;
+  }
+
+  _createClass(BooleanFunctionLiteral, [{
+    key: "getId",
+    value: function getId() {
+      return this._id;
+    }
+  }, {
+    key: "isNegated",
+    value: function isNegated() {
+      return this._negated;
+    }
+    /**
+    * Recursively computes and returns string representation of this BooleanFunction
+    * @param {[string]} literalNames Array of names put in place of literals
+    * @param {string} op_orStr String used in place of logic OR operator. Defaults to '+'
+    * @param {string} op_andStr String used in place of logic AND operator. Defaults to nothing
+    * @param {string} negationHeader String inserted before negated literal
+    * @param {string} negationFooter String inserted right after negated literal
+    * @param {string} bracketOpen String used for open brackets. Defaults to normal open brackets
+    * @param {string} bracketClosed String used for closed brackets. Defaults to normal closed brackets
+    */
+
+  }, {
+    key: "computeString",
+    value: function computeString(literalNames) {
+      var negationHeader = arguments.length > 3 ? arguments[3] : undefined;
+      var negationFooter = arguments.length > 4 ? arguments[4] : undefined;
+
+      if (!this.isNegated()) {
+        return literalNames[this.getId()];
+      } else {
+        return negationHeader + literalNames[this.getId()] + negationFooter;
+      }
+    }
+    /**
+       * @returns Returns a deep cloned copy of this Literal Instance.
+       */
+
+  }, {
+    key: "clone",
+    value: function clone() {
+      return new BooleanFunctionLiteral(this._id, this._negated);
+    }
+    /**
+       * @param {BooleanFunctionLiteral} other
+       * @returns true if given literal is equivalent in meaning and
+       * negation to this literal. false if not.
+       */
+
+  }, {
+    key: "equals",
+    value: function equals(other) {
+      return this.getId() == other.getId() && this.isNegated() == other.isNegated();
+    }
+  }, {
+    key: "amountLiterals",
+    value: function amountLiterals() {
+      return 1;
+    }
+  }]);
+
+  return BooleanFunctionLiteral;
+}();
+
+var BooleanFunctionOperator_AND = '*';
+var BooleanFunctionOperator_OR = '+';
+/**
+ * Class representing a boolean function (Schaltfunktion).
+ * e.g. (terms[0]) -logicOperator- (terms[1]) -logicOperator- (terms[2]) -lo...
+ */
+
+var BooleanFunction$1 = /*#__PURE__*/function () {
+  /**
+     * @param {BooleanFunctionOperator_AND | BooleanFunctionOperator_OR} logicOperator logic
+     *  operator concatenating the individual terms. \
+     *  Either BooleanFunction.js > BooleanFunctionOperator_AND \
+     *  or BooleanFunction.js > BooleanFunctionOperator_OR
+     * @param {[BooleanFunction | BooleanFunctionLiteral]} terms
+     */
+  function BooleanFunction(logicOperator, terms) {
+    _classCallCheck(this, BooleanFunction);
+
+    if (terms) {
+      this._terms = terms;
+    } else {
+      this._terms = [];
+    }
+
+    this._logicOperator = logicOperator;
+  }
+  /**
+     * Adds given term to the end of this functions internal
+     * list of terms.
+     * @param {BooleanFunction | BooleanFunctionLiteral} term
+     */
+
+
+  _createClass(BooleanFunction, [{
+    key: "addTerm",
+    value: function addTerm(term) {
+      this._terms.push(term);
+    } // toString() {
+    //     //tODO implement new literal way of doin things
+    //     let str = "";
+    //     for(let t = 0; t < this._terms.length; t++) {
+    //         str += '(' + this._terms[t] + ')';
+    //         str += t < this._terms.length ? this._logicOperator : '';
+    //     }
+    // }
+
+    /**
+       * @returns {[BooleanFunction | BooleanFunctionLiteral]}
+       */
+
+  }, {
+    key: "getTerms",
+    value: function getTerms() {
+      return this._terms;
+    }
+  }, {
+    key: "spliceTerms",
+    value: function spliceTerms(a, b) {
+      this._terms.splice(a, b);
+    }
+    /**
+       * @returns Returns the logical operator which concatenates
+       * the indiviual terms of this BooleanFuncion.
+       */
+
+  }, {
+    key: "getLogicOperator",
+    value: function getLogicOperator() {
+      return this._logicOperator;
+    }
+    /**
+       * @param {BooleanFunction} other
+       * @param {Boolean} checkOrder Whether to also want the
+       * subsequent terms to be in the same order. defaults to false.
+       * @param {Boolean} checkOrderOfSubSubTerms Whether
+       * all subterms of subterms (of subterms...) must also be in
+       * the same order
+       * @returns true if given BooleanFunction is equivalent to
+       * this BooleanFunction. Also checks all subsequent terms
+       * recursively.
+       */
+
+  }, {
+    key: "equals",
+    value: function equals(other) {
+      var _this = this;
+
+      var checkOrder = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var checkOrderOfSubSubTerms = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+      if (this.getLogicOperator() != other.getLogicOperator() || this.getTerms().length != other.getTerms().length) {
+        return false;
+      } // check if subterms are equivalent
+
+
+      if (checkOrder) {
+        for (var t = 0; t < this.getTerms().length; t++) {
+          if (!this.getTerms()[t].equals(other.getTerms()[t], checkOrderOfSubSubTerms)) {
+            return false;
+          }
+        }
+      } else {
+        var _loop = function _loop(_t) {
+          var querry = _this.getTerms()[_t]; // check if an equivalent term can be found in -other-
+
+
+          if (other.getTerms().filter(function (otherTerm) {
+            return otherTerm.equals(querry);
+          }).length == 0) {
+            return {
+              v: false
+            };
+          }
+        };
+
+        for (var _t = 0; _t < this.getTerms().length; _t++) {
+          var _ret = _loop(_t);
+
+          if (_typeof(_ret) === "object") return _ret.v;
+        }
+      }
+
+      return true;
+    }
+    /**
+    * Recursively computes and returns string representation of this BooleanFunction
+    * @param {[string]} literalNames Array of names put in place of literals
+    * @param {string} op_orStr String used in place of logic OR operator. Defaults to '+'
+    * @param {string} op_andStr String used in place of logic AND operator. Defaults to nothing
+    * @param {string} negationHeader String inserted before negated literal
+    * @param {string} negationFooter String inserted right after negated literal
+    * @param {string} bracketOpen String used for open brackets. Defaults to normal open brackets
+    * @param {string} bracketClosed String used for closed brackets. Defaults to normal closed brackets
+    */
+
+  }, {
+    key: "computeString",
+    value: function computeString(literalNames) {
+      var op_orStr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '+';
+      var op_andStr = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+      var negationHeader = arguments.length > 3 ? arguments[3] : undefined;
+      var negationFooter = arguments.length > 4 ? arguments[4] : undefined;
+      var bracketOpen = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '(';
+      var bracketClosed = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : ')';
+      var reverseOrder = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : true;
+      var str = '';
+      var amountTerms = this.getTerms().length;
+      var useBrackets = amountTerms > 1 && this.getLogicOperator() !== BooleanFunctionOperator_OR;
+
+      for (var t = reverseOrder ? amountTerms - 1 : 0; reverseOrder ? t >= 0 : t < amountTerms; t += reverseOrder ? -1 : 1) {
+        var subTerm = this.getTerms()[t];
+        var subTermIsLiteral = subTerm instanceof BooleanFunctionLiteral; // open bracket
+
+        if (useBrackets && !subTermIsLiteral) {
+          str += bracketOpen;
+        } // Literal / Subterm
+
+
+        str += subTerm.computeString(literalNames, op_orStr, op_andStr, negationHeader, negationFooter, bracketOpen, bracketClosed, reverseOrder); // closed bracket
+
+        if (useBrackets && !subTermIsLiteral) {
+          str += bracketClosed;
+        } // OP
+
+
+        if (!reverseOrder) {
+          if (t < amountTerms - 1
+          /* && this.getLogicOperator() === BooleanFunctionOperator_OR */
+          ) {
+              str += this.getLogicOperator() == BooleanFunctionOperator_OR ? op_orStr : op_andStr;
+            }
+        } else if (t > 0
+        /* && this.getLogicOperator() === BooleanFunctionOperator_OR */
+        ) {
+            str += this.getLogicOperator() == BooleanFunctionOperator_OR ? op_orStr : op_andStr;
+          }
+      }
+
+      return str;
+    }
+    /**
+    * Recursively computes and returns basic latex represenation of this BooleanFunction. \
+    * Latex shortcut to BooleanFunction.computeString(..)
+    * @param {[string]} literalNames Array of names put in place of literals
+    */
+
+  }, {
+    key: "toLatex",
+    value: function toLatex() {
+      var literalNames = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ['x0', 'x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7'];
+      var reverseOrder = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+      return this.computeString(literalNames, '+', '', '\\overline{', '}', '\\left(', '\\right)', reverseOrder);
+    }
+    /**
+       * @returns Returns deep cloned version of this BooleanFunction.
+       * Recursively calls .clone() on all subsequent terms and literals.
+       */
+
+  }, {
+    key: "clone",
+    value: function clone() {
+      var termsCloned = [];
+
+      for (var i = 0; i < this._terms.length; i++) {
+        termsCloned[i] = this._terms[i].clone();
+      }
+
+      return new BooleanFunction(this._logicOperator, termsCloned);
+    }
+    /**
+       * @returns Recursively computes amount of BooleanFunctionLiterals
+       * in this and all subsequent terms.
+       */
+
+  }, {
+    key: "amountLiterals",
+    value: function amountLiterals() {
+      var sum = 0;
+
+      this._terms.forEach(function (term) {
+        return sum += term.amountLiterals();
+      });
+
+      return sum;
+    }
+  }]);
+
+  return BooleanFunction;
+}();
+
+/**
+ *  Class encapsulating a KVDiagram / Symmetriediagramm
+ */
+var KVDiagram = /*#__PURE__*/function () {
+  /**
+     * @param {number[][]} values values[y][x] (also [row, row, ...])\
+     * 0 / 1 / 2=DontCare
+     */
+  function KVDiagram(values, amountLiterals) {
+    _classCallCheck(this, KVDiagram);
+
+    this._values = values;
+    this._amountLiterals = amountLiterals;
+
+    this._generateLiteralToKVMapping();
+  }
+
+  _createClass(KVDiagram, [{
+    key: "getAmountLiterals",
+    value: function getAmountLiterals() {
+      return this._amountLiterals;
+    }
+  }, {
+    key: "getValues",
+    value: function getValues() {
+      return this._values;
+    }
+    /**
+       * computes kv-index of given y-x position (counting starts at 0). \
+       * e.g. \
+       * (0, 0) -> 0 \
+       * (0, 1) -> 1 \
+       * (1, 0) -> 2 \
+       * (1, 1) -> 3 \
+       * ...
+       */
+
+  }, {
+    key: "computeKVIndex",
+    value: function computeKVIndex(y, x) {
+      // tODO overhaul this and the _generateLiteralToKVMapping function
+      var index = 0;
+
+      for (var i = 0; i < this._amountLiterals; i++) {
+        if (this._literalToKVMapping[i][0] == 0 || this._literalToKVMapping[i][0] == 2) {
+          // literal acts on columns
+          for (var j = 0; j < this._literalToKVMapping[i][1].length; j++) {
+            if (x == this._literalToKVMapping[i][1][j]) {
+              index += Math.pow(2, i);
+              break;
+            }
+          }
+        } else {
+          // literal acts on rows
+          for (var j = 0; j < this._literalToKVMapping[i][1].length; j++) {
+            if (y == this._literalToKVMapping[i][1][j]) {
+              index += Math.pow(2, i);
+              break;
+            }
+          }
+        }
+      }
+
+      return index;
+    }
+    /**
+       * NOTE: not tested yet
+       * @param {KVDiagram} other
+       */
+
+  }, {
+    key: "equals",
+    value: function equals(other) {
+      if (this._amountLiterals != other._amountLiterals) {
+        return false;
+      }
+
+      if (this._values.length != other._values.length) {
+        return false;
+      } // loop through columns
+
+
+      for (var y = 0; y < Math.max(this.getValues().length, other.getValues().length); y++) {
+        if (this.getValues()[y] == undefined || other.getValues()[y] == undefined || this.getValues()[y].length != other.getValues()[y].length) {
+          return false;
+        } // loop through rows
+
+
+        for (var x = 0; x < Math.max(this.getValues()[y].length, other.getValues()[y].length); x++) {
+          if (this.getValues()[y][x] == undefined || other.getValues()[y][x] == undefined || this.getValues()[y][x] != other.getValues()[y][x]) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+    /**
+       * generates mapping/array specifying which literals act (are 'positive') on which columns/rows, \
+       *  e.g. \
+       *  -array[INDEX_OF_LITERAL][0] --> this literal sits on the (0=top / 1=left
+       *      / 2=bottom / 3=right) side of the SD; \
+       *  \
+       *  -array[INDEX_OF_LITERAL][1] --> list of columns/rows it's positive on (e.g.
+       *      [1, 2]);
+       */
+
+  }, {
+    key: "_generateLiteralToKVMapping",
+    value: function _generateLiteralToKVMapping() {
+      this._literalToKVMapping = [];
+      var width = this._values[0].length;
+      var height = this._values.length;
+
+      for (var i = 0; i < this._amountLiterals; i++) {
+        this._literalToKVMapping[i] = [];
+        this._literalToKVMapping[i][0] = i % 4; // now get overlayed
+
+        this._literalToKVMapping[i][1] = [];
+
+        if (this._literalToKVMapping[i][0] == 0 || this._literalToKVMapping[i][0] == 2) {
+          var gespiegelt = Math.round(Math.log2(width / 2)); // wie viel felder überdeckt die nicht gespiegelte Variante
+
+          var wieVielteSpaltenCover = i / 2;
+          var basisFelder = Math.pow(2, wieVielteSpaltenCover); // first column is 2er-potence
+
+          var first = Math.pow(2, i / 2);
+
+          for (var o = 0; o < basisFelder; o++) {
+            this._literalToKVMapping[i][1].push(first + o);
+          } // now compute rest of cells
+
+
+          for (var j = 0; j < gespiegelt - wieVielteSpaltenCover; j++) {
+            // durchlaufe das komplette array und spiegel alle werte nach hinten
+            var oldLength = this._literalToKVMapping[i][1].length;
+
+            for (var k = oldLength - 1; k >= 0; k--) {
+              var partWidth = Math.pow(2, 2 + j + wieVielteSpaltenCover);
+              var newIndex = partWidth - 1 - this._literalToKVMapping[i][1][k];
+
+              this._literalToKVMapping[i][1].push(newIndex);
+            }
+          }
+        } else {
+          var gespiegelt = Math.round(Math.log2(height / 2)); // wie viel felder überdeckt die nicht gespiegelte Variante
+
+          var wieVielteZeilenCover = (i - 1) / 2;
+          var basisFelder = Math.pow(2, wieVielteZeilenCover); // first row is 2er-potence
+
+          var first = Math.pow(2, (i - 1) / 2);
+
+          for (var o = 0; o < basisFelder; o++) {
+            this._literalToKVMapping[i][1].push(first + o);
+          } // now compute rest of cells
+
+
+          for (var j = 0; j < gespiegelt - wieVielteZeilenCover; j++) {
+            // durchlaufe das komplette array und spiegel alle werte nach hinten
+            var oldLength = this._literalToKVMapping[i][1].length;
+
+            for (var k = oldLength - 1; k >= 0; k--) {
+              var partHeight = Math.pow(2, 2 + j + wieVielteZeilenCover);
+              var newIndex = partHeight - 1 - this._literalToKVMapping[i][1][k];
+
+              this._literalToKVMapping[i][1].push(newIndex);
+            }
+          }
+        }
+      }
+    }
+  }]);
+
+  return KVDiagram;
+}();
+function generateRandomKVDiagram(amountLiterals) {
+  var notPracticallyEmptyOrFull = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var diagramWidth = Math.pow(2, Math.floor((amountLiterals + 1) / 2));
+  var diagramHeight = Math.pow(2, Math.floor(amountLiterals / 2));
+
+  while (true) {
+    var amountOnes = 0;
+    var amountZeros = 0;
+    var values = [];
+
+    for (var y = 0; y < diagramHeight; y++) {
+      values[y] = [];
+
+      for (var x = 0; x < diagramWidth; x++) {
+        var r = Math.random();
+
+        if (r < 1 / 3.0) {
+          values[y][x] = '0';
+          amountZeros++;
+        } else if (r < 2 / 3.0) {
+          values[y][x] = '1';
+          amountOnes++;
+        } else {
+          values[y][x] = '-';
+        }
+      }
+    }
+
+    if (notPracticallyEmptyOrFull && (amountZeros === 0 || amountOnes === 0)) continue;
+    return new KVDiagram(values, amountLiterals);
+  }
+}
+
+/**
+ * Computes Minterms from given KVDiagram. For every cell in the
+ * KVDiagram that contains a '1', a Minterm is generated. Dont cares
+ * are therefore not included.
+ * @param {KVDiagram} kvdiagram
+ * @returns {[BooleanFunction]} Array of BooleanFunctions, each
+ * one representing a single minterm.
+ */
+
+function computeMinTermsFromKV(kvdiagram) {
+  var minTerms = [];
+  var kv = kvdiagram.getValues();
+
+  for (var y = 0; y < kv.length; y++) {
+    for (var x = 0; x < kv[0].length; x++) {
+      if (kv[y][x] != 1) {
+        continue;
+      } // Converting the kvindex(base 10) to a binary number
+      // shows us which literals are 'positive' (-> 1) on the cell
+      // and which are negated (-> 0)
+
+
+      var index = kvdiagram.computeKVIndex(y, x);
+      var binary = index.toString(2); // fill in missing literals
+
+      while (binary.length < kvdiagram.getAmountLiterals()) {
+        binary = "0".concat(binary);
+      } // convert string representation to object structure
+
+
+      var minTerm = new BooleanFunction$1(BooleanFunctionOperator_AND, []);
+
+      for (var c = 0; c < binary.length; c++) {
+        minTerm.addTerm(new BooleanFunctionLiteral(c, binary.charAt(binary.length - 1 - c) == '0'));
+      }
+
+      minTerms.push(minTerm);
+    }
+  }
+
+  return minTerms;
+}
+/**
+ * Computes Maxterms from given KVDiagram. For every cell in the
+ * KVDiagram that contains a '0', a Maxterm is generated. Dont cares
+ * are therefore not included.
+ * @param {KVDiagram} kvdiagram
+ * @returns {[BooleanFunction]} Array of BooleanFunctions, each
+ * one representing a single maxterm.
+ */
+
+function computeMaxTermsFromKV(kvdiagram) {
+  var maxTerms = [];
+  var kv = kvdiagram.getValues();
+
+  for (var y = 0; y < kv.length; y++) {
+    for (var x = 0; x < kv[0].length; x++) {
+      if (kv[y][x] != 0) {
+        continue;
+      } // Converting the kvindex(base 10) to a binary number
+      // shows us which literals are 'positive' (-> 1) on the cell
+      // and which are negated (-> 0)
+
+
+      var index = kvdiagram.computeKVIndex(y, x);
+      var binary = index.toString(2); // fill in missing literals
+
+      while (binary.length < kvdiagram.getAmountLiterals()) {
+        binary = "0".concat(binary);
+      } // convert string representation to object structure
+
+
+      var maxTerm = new BooleanFunction$1(BooleanFunctionOperator_OR, []);
+
+      for (var c = 0; c < binary.length; c++) {
+        maxTerm.addTerm(new BooleanFunctionLiteral(c, binary.charAt(binary.length - 1 - c) != '0'));
+      }
+
+      maxTerms.push(maxTerm);
+    }
+  }
+
+  return maxTerms;
+}
+/**
+ * Computes Minterms for all 'dont cares' in a given KVDiagram. For
+ * every cell in the KVDiagram that contains '-', a Minterm is generated.
+ * @param {KVDiagram} kvdiagram
+ * @returns {[BooleanFunction]} Array of BooleanFunctions, each
+ * one representing a single minterm of a 'dont care'.
+ */
+
+function computeDontCareMinTermsFromKV(kvdiagram) {
+  var minTerms = [];
+  var kv = kvdiagram.getValues();
+
+  for (var y = 0; y < kv.length; y++) {
+    for (var x = 0; x < kv[0].length; x++) {
+      if (kv[y][x] != '-') {
+        continue;
+      } // Converting the kvindex(base 10) to a binary number
+      // shows us which literals are 'positive' (-> 1) on the cell
+      // and which are negated (-> 0)
+
+
+      var index = kvdiagram.computeKVIndex(y, x);
+      var binary = index.toString(2); // fill in missing literals
+
+      while (binary.length < kvdiagram.getAmountLiterals()) {
+        binary = "0".concat(binary);
+      } // convert string representation to object structure
+
+
+      var minTerm = new BooleanFunction$1(BooleanFunctionOperator_AND, []);
+
+      for (var c = 0; c < binary.length; c++) {
+        minTerm.addTerm(new BooleanFunctionLiteral(c, binary.charAt(binary.length - 1 - c) == '0'));
+      }
+
+      minTerms.push(minTerm);
+    }
+  }
+
+  return minTerms;
+}
+
+var BooleanFunctionUtil = /*#__PURE__*/function () {
+  function BooleanFunctionUtil() {
+    _classCallCheck(this, BooleanFunctionUtil);
+  }
+
+  _createClass(BooleanFunctionUtil, [{
+    key: "convertBaseTermsToStringFormat",
+
+    /** Converts array of BooleanFunction baseTerms to an array
+       * of their respective string representations. See
+       * convertBaseTermToStringFormat(..) for further reference.
+       * @param {[BooleanFunction]} baseTerms
+       */
+    value: function convertBaseTermsToStringFormat(baseTerms, globalAmountLiterals) {
+      var termsStr = [];
+
+      for (var t = 0; t < baseTerms.length; t++) {
+        termsStr.push(this.convertBaseTermToStringFormat(baseTerms[t], globalAmountLiterals));
+      }
+
+      return termsStr;
+    }
+    /**
+       * Converts a BaseTerm (i.e. function consisting only of BooleanFunctionLiterals directly)
+       * to its string representation (e.g. '0-101').
+       * See Readme.md for further info on the string format. \
+       * The returned string fullfills the format specification of having the Literal-IDs in descending
+       * order.
+       * @param {BooleanFunction} baseTerm BooleanFunction baseTerm to convert.
+       * @param {number} globalAmountLiterals Number defining how many global literals exists
+       * as to fill the String with DontCares to match that total amount. Or to cut it if move literals
+       * than -globalAmountLiterals- are present in the BooleanFunction.
+       * @returns {string} string representation of given baseTerm.
+       */
+
+  }, {
+    key: "convertBaseTermToStringFormat",
+    value: function convertBaseTermToStringFormat(baseTerm, globalAmountLiterals) {
+      var strRepresentation = '';
+      /** @type {[BooleanFunctionLiteral]} */
+
+      var literals = baseTerm.getTerms();
+
+      if (globalAmountLiterals == undefined) {
+        console.trace('error in BooleanFunctionUtil.js > convertBaseTermToStringFormat(..) \n' + 'No globalAmountLiterals (2nd parameter) was given\n');
+      }
+
+      var id = 0; // let literalsProcessed = 0;
+      // while(literalsProcessed < globalAmountLiterals) {
+
+      while (id < globalAmountLiterals) {
+        // search for literal with id
+        var literalsWithThatID = literals.filter(function (literal) {
+          return literal.getId() == id;
+        });
+
+        if (literalsWithThatID.length > 1) {
+          console.trace('error in BooleanFunctionUtil.js > convertBaseTermToStringFormat(..) \n' + 'Given baseTerm had multiple Literals with the same ID. Conversion to String format ' + 'not possible. Returning null');
+          return null;
+        }
+
+        if (literalsWithThatID.length == 1) {
+          strRepresentation = (literalsWithThatID[0].isNegated() ? '0' : '1') + strRepresentation; // literalsProcessed++;
+        } else {
+          // dont care, as the literal was not present
+          strRepresentation = "-".concat(strRepresentation);
+        }
+
+        id++;
+      }
+
+      return strRepresentation;
+    }
+    /**
+       * Converts string representation (e.g. '01-1') to its BooleanFunction equivalent.
+       * See Readme.md for further info on the string format. \
+       * Literal-IDs are assumed to be in descending order, starting with termStr.length()-1,
+       * ending with 0. \
+       * DontCares, represented by '-' will be ignored and no literal will be inserted
+       * into the output term for it.
+       * @param {string} termStr
+       * @param {BooleanFunctionOperator_OR | BooleanFunctionOperator_AND} booleanFunctionOperator
+       *  see BooleanFunction.js for BooleanFunction Operator constants
+       * @returns {BooleanFunction}
+       */
+
+  }, {
+    key: "convertStringFormatBaseTermToBooleanFunction",
+    value: function convertStringFormatBaseTermToBooleanFunction(termStr, booleanFunctionOperator) {
+      var term = new BooleanFunction$1(booleanFunctionOperator, []);
+
+      for (var c = 0; c < termStr.length; c++) {
+        var index = termStr.length - 1 - c;
+        if (termStr[index] == '-') continue;
+        term.addTerm(new BooleanFunctionLiteral(c, termStr.charAt(index) == '0'));
+      } // console.log('conversion from "' + termStr + '"');
+      // console.log(term);
+
+
+      return term;
+    }
+    /**
+       * @param {[BooleanFunction | BooleanFunctionLiteral]} array
+       * @returns deep cloned version of given array
+       */
+
+  }, {
+    key: "cloneBooleanFunctionArray",
+    value: function cloneBooleanFunctionArray(array) {
+      var arrayNew = [];
+
+      for (var i = 0; i < array.length; i++) {
+        arrayNew[i] = array[i].clone();
+      }
+
+      return arrayNew;
+    }
+    /**
+       * Converts the final (most cost effective) solution of a petrick
+       * statement to its BooleanFunction equivalent. Uses prime terms
+       * that have been carried around in the petrickStatementObjMinORMax
+       * itself to do so.
+       * @param { {
+       *      primeTerms: [BooleanFunction],
+       *      cheapestSolution: String,
+       *      PRIMETERM_SYMBOL_BASE_CHAR_CODE: number,
+       *      etc___: "..."
+       *  } } petrickStatementObjMinORMax petrick statement obj of EITHER 'min-terms'
+       * OR 'max-terms' as returned by _computePetrickStatement(..) or
+       * computePetrickStatement(..)[<ONE VARIANT>].
+       * @param {BooleanFunctionOperator_OR | BooleanFunctionOperator_AND} booleanFunctionOpTopLevel A
+       * BooleanFunction Operator as defined in file BooleanFunction.js. The resulting BooleanFunction
+       * will get this OP as its main arithmetic operator.
+       * @returns {BooleanFunction}
+       */
+
+  }, {
+    key: "convertFinalPetrickSolutionToBooleanFunction",
+    value: function convertFinalPetrickSolutionToBooleanFunction(petrickStatementObjMinORMax, booleanFunctionOpTopLevel) {
+      /** @type {[BooleanFunction]} */
+      var primeTerms = petrickStatementObjMinORMax.primeTerms; // retrieve cheapest solution from obj
+
+      /** @type {String} */
+
+      var solutionStr = petrickStatementObjMinORMax.cheapestSolution; // build minimal-form BooleanFunction
+
+      var bf = new BooleanFunction$1(booleanFunctionOpTopLevel, []);
+      var PRIMETERM_SYMBOL_BASE_CHAR_CODE = petrickStatementObjMinORMax.PRIMETERM_SYMBOL_BASE_CHAR_CODE;
+
+      for (var p = 0; p < solutionStr.length; p++) {
+        var primeTermi = solutionStr.charCodeAt(p) - PRIMETERM_SYMBOL_BASE_CHAR_CODE;
+        bf.addTerm(primeTerms[primeTermi].clone());
+      }
+
+      return bf;
+    }
+    /**
+       *
+       * @param petrickStatementObj as returned by the petrick statement algorithm
+       * @param {BooleanFunctionOperator_AND | BooleanFunctionOperator_OR} booleanFunctionOpTopLevel OP
+       * resulting boolean function containing prime terms
+       */
+
+  }, {
+    key: "extractCheapestSolutionFromPetrickStatementObj",
+    value: function extractCheapestSolutionFromPetrickStatementObj(petrickStatementObj, booleanFunctionOpTopLevel) {
+      var primeTerms = petrickStatementObj.primeTerms;
+      var lastStep = petrickStatementObj.steps[petrickStatementObj.steps.length - 1];
+      var cheapestSolution = lastStep.bf.getTerms()[0].getTerms()[petrickStatementObj.cheapestSolution];
+      console.log(lastStep, lastStep.bf);
+      var out = new BooleanFunction$1(booleanFunctionOpTopLevel, []);
+
+      for (var l = 0; l < cheapestSolution.getTerms().length; l++) {
+        var primeTermi = cheapestSolution.getTerms()[l].getId();
+        out.addTerm(primeTerms[primeTermi].clone());
+      }
+
+      return out;
+    }
+    /**
+       * Returns a sorted version of the given array of Baseterms by their
+       * respective KVDiagram-Index.
+       * Does not change the original array in any way.
+       * BooleanFunctions themselves are not clones
+       * @param {[BooleanFunction]} baseTerms
+       */
+
+  }, {
+    key: "sortBaseTermsByKVIndex",
+    value: function sortBaseTermsByKVIndex(baseTerms) {
+      var kvindices = [];
+
+      for (var b = 0; b < baseTerms.length; b += 1) {
+        var baseTerm = baseTerms[b];
+        var kvindex = parseInt(baseTerm.getTerms().map(function (bfliteral) {
+          return bfliteral.isNegated() ? '0' : '1';
+        }).reverse().join(''), 2);
+        kvindices[b] = kvindex;
+      } // get array with baseTerms and their respective kvindices
+
+
+      var kvindicesTupleSorted = kvindices.map(function (kvindex, i) {
+        return [baseTerms[i], kvindex];
+      }).sort(function (a, b) {
+        return Math.sign(a[1] - b[1]);
+      });
+      return kvindicesTupleSorted.map(function (tuple) {
+        return tuple[0];
+      });
+    }
+    /**
+       * @param {BooleanFunction} primeTerm
+       * @param {[BooleanFunction]} baseTerm
+       * @returns {boolean} Boolean stating if the given prime term coveres the
+       * given base term
+       */
+
+  }, {
+    key: "primeTermCoversBaseTerm",
+    value: function primeTermCoversBaseTerm(primeTerm, baseTerm) {
+      var _loop = function _loop(l) {
+        var primeTermLiteral = primeTerm.getTerms()[l];
+        if (baseTerm.getTerms().find(function (baseTermLiteral) {
+          return baseTermLiteral.equals(primeTermLiteral);
+        }) === undefined) return {
+          v: false
+        };
+      };
+
+      for (var l = 0; l < primeTerm.getTerms().length; l++) {
+        var _ret = _loop(l);
+
+        if (_typeof(_ret) === "object") return _ret.v;
+      }
+
+      return true;
+    }
+    /**
+       * Untestet!
+       * Converts deep cloned array of maxTerms variants of given minTerms
+       * @param {[BooleanFunction]} minTerms
+       */
+
+  }, {
+    key: "convertMinTermsToMaxTerms",
+    value: function convertMinTermsToMaxTerms(minTerms) {
+      var maxTerms = [];
+
+      for (var t = 0; t < minTerms.length; t++) {
+        var minTerm = minTerms[t];
+        var minTermLiterals = minTerm.getTerms();
+        var maxTerm = new BooleanFunction$1(BooleanFunctionOperator_OR, []);
+        maxTerms[t] = maxTerm;
+
+        for (var l = 0; l < minTermLiterals.length; l++) {
+          maxTerm.addTerm(new BooleanFunctionLiteral(minTermLiterals[l].getId(), !minTermLiterals[l].isNegated()));
+        }
+      }
+
+      return maxTerms;
+    }
+    /**
+       * @param {BooleanFunction} bfLeft
+       * @param {BooleanFunction} bfRight
+       * @returns true if bfLeft fully contains all of rights literals
+       * [bfRight ist Untermenge von bfLeft]
+       */
+
+  }, {
+    key: "booleanFunctionContainsAnother",
+    value: function booleanFunctionContainsAnother(bfLeft, bfRight) {
+      var _loop2 = function _loop2(r) {
+        var subTermRight = bfRight.getTerms()[r];
+
+        if (bfLeft.getTerms().find(function (l) {
+          return l.equals(subTermRight);
+        }) === undefined) {
+          return {
+            v: false
+          };
+        }
+      };
+
+      for (var r = 0; r < bfRight.getTerms().length; r++) {
+        var _ret2 = _loop2(r);
+
+        if (_typeof(_ret2) === "object") return _ret2.v;
+      }
+
+      return true;
+    }
+  }, {
+    key: "computeBinaryStringRepresentationOfBaseTerm",
+    value: function computeBinaryStringRepresentationOfBaseTerm(baseTermBF, amountVariablesTotal) {
+      var str = '';
+
+      var _loop3 = function _loop3(v) {
+        var literal = baseTermBF.getTerms().find(function (l) {
+          return l.getId() === v;
+        });
+
+        if (literal == undefined) {
+          str += '-';
+        } else if (literal.isNegated()) {
+          str += '0';
+        } else {
+          str += '1';
+        }
+      };
+
+      for (var v = amountVariablesTotal - 1; v >= 0; v--) {
+        _loop3(v);
+      }
+
+      return str;
+    }
+  }]);
+
+  return BooleanFunctionUtil;
+}();
+
+/**
+ * This performes the QuineMCCluskey class absorption algorithm to find
+ * Primimplika(n)te(n). It is once executed on the given minTerms and dontCares,
+ * and a second time on the given maxTerms and dontCares. \
+ * The results are encapsulated into one object respectively: \
+ * { \
+ *  'min-terms': RESULTS OF ALGO. WITH MINTERMS, \
+ *  'max-terms': RESULTS OF ALGO. WITH MAXTERMS \
+ * } \
+ * \
+ * The structure of the individual result-objects is explained in the doc of
+ * _computeQuineCluskeyClasses(..).
+ *
+ * @param {[BooleanFunction]} minTerms
+ * @param {[BooleanFunction]} maxTerms
+ * @param {[BooleanFunction]} dontCareMinTerms
+ * @returns {{'min-terms': {}, 'max-terms': {} }}
+ */
+
+function computeQuineCluskeyClasses(minTerms, maxTerms, dontCareMinTerms) {
+  return {
+    'min-terms': _computeQuineCluskeyClasses(minTerms, dontCareMinTerms),
+    'max-terms': _computeQuineCluskeyClasses(maxTerms, dontCareMinTerms)
+  };
+}
+/**
+ * This performs the QuineMCCluskey class absorption algorithm to find
+ * Primimplika(n)te(n). \
+ * The returned (somewhat 2D) array has the following structure: \
+ * array[class_amount_literals][class_amount_negations][nth term] =
+ *      [possibly shortened term (BooleanFunction), boolean stating if this term was absorbed (boolean)]. \
+ * \
+ * e.g. the seventh term in Q_3_2 being at: \
+ * array[3][2][6][0], \
+ * and the boolean specifiying if it was absorbed at: \
+ * array[3][2][6][1]
+ *
+ * NOTE: this implementation depends on the minOrMaxTermsBFs terms to actually
+ * be min / max terms, meaning they have the global amount of literals, and NO
+ * missing ones(i.e. dont cares).
+ * @param {[BooleanFunction]} minOrMaxTermsBF
+ * @param {[BooleanFunction]} dontCareMinTermsBF Array of DontCares (in MinTerm-BooleanFunction repres.)
+ */
+
+function _computeQuineCluskeyClasses(minOrMaxTermsBF, dontCareMinTermsBF) {
+  if (!minOrMaxTermsBF || minOrMaxTermsBF.length == 0) {
+    console.error('error in _computeQuineCluskeyClasses(..): given MinOrMaxTerms was undefined ' + 'or of length 0. Might be bc knf = 1 or dnf = 0.');
+    return null;
+  }
+
+  var isMinterm = minOrMaxTermsBF[0].getLogicOperator() == BooleanFunctionOperator_AND;
+  var numVariables = minOrMaxTermsBF[0].getTerms().length; // parse object representation of parameters to string format
+
+  var util = new BooleanFunctionUtil();
+  var baseTerms = util.convertBaseTermsToStringFormat(minOrMaxTermsBF, numVariables);
+  var dontCares = util.convertBaseTermsToStringFormat(dontCareMinTermsBF, numVariables); // NOTE: dont care min terms are negated (i.e. transformed into maxterms), if
+  //       we are also dealing with maxterms as base terms
+
+  if (!isMinterm) {
+    for (var d = 0; d < dontCares.length; d++) {
+      var dontCareStr = dontCares[d];
+      var dontCareNegatedStr = '';
+
+      for (var c = 0; c < dontCareStr.length; c++) {
+        dontCareNegatedStr += dontCareStr[c] == '-' ? '-' : dontCareStr[c] == '1' ? '0' : '1';
+      }
+
+      dontCares[d] = dontCareNegatedStr;
+    }
+  }
+  /** contains all Q_classes, for example Q_4_4 with all the terms as pairs of [term, bool:term minimized?] */
+
+
+  var Q_container = [];
+  /** counts which Qs to compare */
+
+  var q_class = numVariables; // generate first layer of classes that contain the unchanged base terms
+
+  Q_container[q_class] = [];
+
+  for (var i = 0; i <= numVariables; i++) {
+    Q_container[q_class][i] = [];
+  }
+
+  for (var i = 0; i < baseTerms.length; i++) {
+    // get number of 1s
+    var num = baseTerms[i].replace(/[^1]/g, '').length;
+    Q_container[q_class][num].push([baseTerms[i], false]);
+  }
+
+  for (var i = 0; i < dontCares.length; i++) {
+    // get number of 1s
+    var num = dontCares[i].replace(/[^1]/g, '').length;
+    Q_container[q_class][num].push([dontCares[i], false]);
+  } // start reduction phase
+
+
+  while (q_class > 0) {
+    // create next smaller q-class
+    Q_container[q_class - 1] = [];
+
+    for (var l = 0; l < q_class; l++) {
+      Q_container[q_class - 1][l] = [];
+    } // compare classes
+
+
+    for (var class_comp = q_class; class_comp > 0; class_comp--) {
+      // skip if no terms in classes that should be compared
+      var sizeQU = Q_container[q_class][class_comp].length;
+      var sizeQU2 = Q_container[q_class][class_comp - 1].length;
+      if (sizeQU < 1 || sizeQU2 < 1) continue; // compare all terms of u and u-1
+
+      var seen = {}; // to remove duplicates
+
+      for (var _c = 0; _c < sizeQU; _c++) {
+        for (var _d = 0; _d < sizeQU2; _d++) {
+          // only one position should differ
+          var term1 = Q_container[q_class][class_comp][_c][0];
+          var term2 = Q_container[q_class][class_comp - 1][_d][0];
+          var diffs = -1;
+
+          for (var e = 0; e < numVariables; e++) {
+            var charA = term1.charAt(e);
+            var charB = term2.charAt(e);
+
+            if (charA != charB) {
+              if (charA == '-' || charB == '-') {
+                // if one has a -, the term cannot be reduced
+                diffs = -2;
+                break;
+              }
+
+              if (diffs == -1) {
+                diffs = e;
+              } else {
+                // more than one diff: break
+                diffs = -2;
+                break;
+              }
+            }
+          } // there is exactly one diff, put it in next class
+
+
+          if (diffs >= 0) {
+            // new term has a - at the position where the reduction took place
+            var termNew = _replaceAt(term1, diffs, '-'); // set boolean to true, was reduced!
+
+
+            Q_container[q_class][class_comp][_c][1] = true;
+            Q_container[q_class][class_comp - 1][_d][1] = true; // there was a reduction, so we can start the algorithm on the next stage
+            // change = true;
+
+            if (seen[termNew] !== 1) {
+              seen[termNew] = 1;
+              Q_container[q_class - 1][class_comp - 1].push([termNew, false]);
+            }
+          }
+        }
+      }
+    }
+
+    q_class--;
+  } // convert from string to object representation
+
+
+  var Q_containerObj = [];
+
+  for (var _i = 0; _i < Q_container.length; _i++) {
+    Q_containerObj[_i] = [];
+
+    for (var j = 0; j < Q_container[_i].length; j++) {
+      Q_containerObj[_i][j] = [];
+
+      for (var t = 0; t < Q_container[_i][j].length; t++) {
+        Q_containerObj[_i][j][t] = [util.convertStringFormatBaseTermToBooleanFunction(Q_container[_i][j][t][0], isMinterm ? BooleanFunctionOperator_AND : BooleanFunctionOperator_OR), Q_container[_i][j][t][1]];
+      }
+    }
+
+    Q_containerObj[_i].reverse();
+  }
+
+  return Q_containerObj;
+}
+/**
+ * Replaces portion of string with a given replacement at given position.
+ * @param {string} str
+ * @param {number} index
+ * @param {string} replacement
+ */
+
+
+function _replaceAt(str, index, replacement) {
+  return str.substr(0, index) + replacement + str.substr(index + replacement.length);
+}
+
+/**
+ * This is the quick access version of the PrimeTerm / Primimplika(n)te(n)
+ * computation algorithm. \
+ * See {@link computePrimes computePrimes()} for documentation about
+ * the returned object. \
+ * NOTE: If the quine cluskey class algorithm (see BooleanFunctionQuineCluskey.js)
+ * was already executed, calling {@link computePrimes computePrimes()} will be of
+ * better performance, as this method is doing nothing but encapsulating another
+ * full execution call to the quine cluskey class algorithm. \
+ * See computeQuineCluskeyClasses(..) for further reference and explanation.
+ * @param {KVDiagram} kvdiagram
+ * @returns {
+ *      'min-terms': [BooleanFunction],
+ *      'max-terms': [BooleanFunction]
+ * } Computed prime terms from given KVDiagram.
+ */
+
+function computePrimesFromKV(kvdiagram) {
+  // base terms
+  var minTerms = computeMinTermsFromKV(kvdiagram);
+  var maxTerms = computeMaxTermsFromKV(kvdiagram);
+  var dontCareMinTerms = computeDontCareMinTermsFromKV(kvdiagram);
+  var dontCareMaxTerms = new BooleanFunctionUtil().convertMinTermsToMaxTerms(dontCareMinTerms);
+  var q_containerObjMinMax = computeQuineCluskeyClasses(minTerms, maxTerms, dontCareMinTerms);
+  return computePrimes(q_containerObjMinMax, dontCareMinTerms, dontCareMaxTerms);
+}
+/**
+ * Extracts prime terms (Primimplikate AND Primimplikanten) from
+ * given q_containerObjMinMax that was returned by
+ * computeQuineCluskeyClasses(..) or computeQuineCluskeyClassesFromKV(..).
+ * @param { {
+ *      'min-terms': [ [[[BooleanFunction, boolean]]] ],
+ *      'max-terms': [ [[[BooleanFunction, boolean]]] ]
+ * }} q_containerObjMinMax
+ * @param {[BooleanFunction]} dontCareMinTerms Array of all dont cares as MinTerms
+ * @param {[BooleanFunction]} dontCareMaxTerms Array of all dont cares as MaxTerms
+ * @returns { {
+ *      'min-terms': [BooleanFunction],
+ *      'max-terms': [BooleanFunction]
+ * } } Prime terms extracted from given q_containerObjMinMax.
+ */
+
+function computePrimes(q_containerObjMinMax, dontCareMinTerms, dontCareMaxTerms) {
+  return {
+    'min-terms': _computePrimes(q_containerObjMinMax['min-terms'], dontCareMinTerms),
+    'max-terms': _computePrimes(q_containerObjMinMax['max-terms'], dontCareMaxTerms)
+  };
+}
+/**
+ * Extracts prime terms (Primimplikate OR Primimplikanten) from given q_containerObj
+ * that was returned by a QuineClusky class absorption algorithm.
+ * @param { [ [[[BooleanFunction, boolean]]] ] } q_containerObj array of quine
+ * cluskey classes as returned by _computeQuineCluskeyClasses(..).
+ * @param { [BooleanFunction]} dontCares
+ * @returns { [BooleanFunction] } primes as extracted from given quine cluskey classes.
+ * Does not contain duplicates. All terms are deep cloned before returning them.
+ */
+
+function _computePrimes(q_containerObj, dontCares) {
+  // get every term that was not absorbed in the quineCluskeyClass algorithm
+
+  /** @type {[BooleanFunction]} */
+  var primes = [];
+
+  for (var c = 0; c < q_containerObj.length; c++) {
+    for (var n = 0; n < q_containerObj[c].length; n++) {
+      for (var t = 0; t < q_containerObj[c][n].length; t++) {
+        var termCapsule = q_containerObj[c][n][t];
+
+        if (termCapsule[1] == true) // term was absorbed
+          {
+            continue;
+          }
+
+        if (primes.includes(termCapsule[0])) // skip duplicates
+          {
+            continue;
+          } // skip ones only covering dont cares
+
+
+        if (_primeTermCoversOnlyDontCares(termCapsule[0], dontCares)) continue;
+        primes.push(termCapsule[0]);
+      }
+    }
+  } // clone terms
+
+
+  var out = [];
+
+  for (var _t = 0; _t < primes.length; _t++) {
+    out.push(primes[_t].clone());
+  }
+
+  return out;
+}
+/**
+ *
+ * @param {BooleanFunction} primeTerm BooleanFunction primeTerm
+ * @param {[BooleanFunction]} dontCares Array of BooleanFunction base terms
+ * pointing to dont cares. Must be MinTerms if primeTerm is PrimimpliKANT
+ * and MaxTerms if primeTerm is a PrimimpliKAT.
+ * @returns {boolean} Boolean stating if the given primeterm covers only dont
+ * cares and not a single other '1'/'0', depending on the context.
+ */
+
+
+function _primeTermCoversOnlyDontCares(primeTerm, dontCares) {
+  if (!dontCares || dontCares.length === 0) return false;
+  var numVariables = dontCares[0].getTerms().length;
+  var util = new BooleanFunctionUtil();
+  var primeTermAreaSize = Math.pow(2, numVariables - primeTerm.getTerms().length);
+  var dontCaresCovered = 0;
+
+  for (var dc = 0; dc < dontCares.length; dc++) {
+    if (util.primeTermCoversBaseTerm(primeTerm, dontCares[dc])) dontCaresCovered++;
+  }
+
+  return dontCaresCovered === primeTermAreaSize;
+}
+
+/**
+ * Type of Step, where a prime term was identified as a core, bc it is
+ * the only one covering a certain base term
+ */
+
+var BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE = 'found-core';
+/**
+ * Type of Step, where a column is crossed out, bc it is already being covered
+ * by some prime term.
+ */
+
+var BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED = 'cross-column-bc-covered';
+/**
+ * Type of Step, where a row is crossed out, bc all of its crosses
+ * are already being covered. (if this type would not exist, such empty rows
+ * would be reduced thru Row-Domination. But on paper, just crossing an empty row
+ * out is more straightforward)
+ */
+
+var BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED = 'cross-row-bc-covered';
+/**
+ * Type of Step, where a row is dominated by some other row. A cost analysis of
+ * both rows has been done if this Step was taken by the algorithm.
+ */
+
+var BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION = 'row-domination';
+/**
+ * Type of Step, where a column is dominated by some other column. The dominatING column
+ * is to be crossed out.
+ */
+
+var BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION = 'column-domination';
+/**
+ * Type of Step that is appended to the step array, stating that the table has a cyclic Rest
+ * that can not be minimized by only using this PrimeTable approach. This step is appended exactly
+ * then, when {}.cyclic === true.
+ */
+
+var BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST = 'has-cyclic-rest';
+/**
+ * This will execute the prime table / Ueberdeckungstabellen algorithm
+ * once for (minTerms with primeTerms) and once for (maxTerms with primeTerms).
+ * @param {[BooleanFunction]} minTerms Array of Minterms
+ * @param {[BooleanFunction]} maxTerms Array of Maxterms
+ * @param { {
+ *      'min-terms': [BooleanFunction],
+ *      'max-terms': [BooleanFunction]
+ * } } primeTerms Object containing Min and Max primeterms
+ * as returned by computePrimes[-FromKV](..)
+ * @returns { {
+ *      'min-terms': {},
+ *      'max-terms': {}
+ * } }
+ */
+
+function computePrimeTable(minTerms, maxTerms, primeTerms) {
+  var sortBaseTermsByKVIndex = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+  var util = new BooleanFunctionUtil();
+  var minTermsSorted = !sortBaseTermsByKVIndex ? minTerms : util.sortBaseTermsByKVIndex(minTerms);
+  var maxTermsSorted = !sortBaseTermsByKVIndex ? maxTerms : util.sortBaseTermsByKVIndex(maxTerms);
+  return {
+    'min-terms': _computePrimeTable(minTermsSorted, primeTerms['min-terms']),
+    'max-terms': _computePrimeTable(maxTermsSorted, primeTerms['max-terms'])
+  };
+}
+/**
+ * @param {[BooleanFunction]} baseTerms
+ * @param {[BooleanFunction]} primeTerms
+ * @returns {
+ *      {
+ *        'coverTable': [[boolean]],
+ *        'steps': [Step],
+ *        'baseTerms': [BooleanFunction],
+ *        'primeTerms': [BooleanFunction],
+ *        'cyclic': boolean
+ *      }
+ *  }
+ */
+
+function _computePrimeTable(baseTerms, primeTerms) {
+  var util = new BooleanFunctionUtil();
+  var returnObj = {
+    coverTable: null,
+    // filled in below
+    steps: [],
+    // filled in below
+    baseTerms: util.cloneBooleanFunctionArray(baseTerms),
+    primeTerms: util.cloneBooleanFunctionArray(primeTerms)
+  }; // create cover table
+
+  var petrickTable = [];
+
+  for (var i = 0; i < baseTerms.length; i++) {
+    petrickTable[i] = [];
+
+    for (var j = 0; j < primeTerms.length; j++) {
+      if (_primeTermCoversBaseTerm(primeTerms[j], baseTerms[i])) petrickTable[i][j] = true;else petrickTable[i][j] = false;
+    }
+  }
+
+  returnObj.coverTable = petrickTable; // create helper table[col][row]:
+  //  -1: no info
+  //   0: striked out
+  //   1: is core (kind of used but kind of not)
+
+  var helperTable = [];
+
+  for (var col = 0; col < petrickTable.length; col++) {
+    helperTable[col] = [];
+
+    for (var _i = 0; _i < petrickTable[0].length; _i++) {
+      helperTable[col][_i] = -1;
+    }
+  }
+
+  var crossedOutRows = [];
+  var crossedOutColumns = []; // check for Kernimplikanten und deren abgedeckte columns
+
+  _computePrimeTable_checkForCores(returnObj, helperTable, crossedOutRows, crossedOutColumns);
+
+  var changes = true;
+
+  while (changes === true) {
+    changes = false; // Spaltendominanz
+
+    changes = _computePrimeTable_checkForSpaltenDominanz(returnObj, helperTable, crossedOutRows, crossedOutColumns) || changes; // through column dominance some lines may have been silently cut of their last Xs. remove those officially
+
+    changes = _computePrimeTable_checkForEmptyLines(returnObj, helperTable, crossedOutRows) || changes; // Zeilendominanz (See VL Folien 17, Seite 33 for algorithm)
+    // Example case where Zeilendominanz is necessary:
+    // 1 0 1 0
+    // 1 1 1 0
+
+    changes = _computePrimeTable_checkForZeilenDominanz(returnObj, helperTable, crossedOutRows, crossedOutColumns, primeTerms) || changes; // check for Kernimplikanten again. e.g. important at
+    // 0 1 1 0
+    // 0 - 1 1
+    // 0 0 1 -
+    // - 1 - 0
+
+    changes = _computePrimeTable_checkForCores(returnObj, helperTable, crossedOutRows, crossedOutColumns) || changes; // console.log("looping");
+  } // 0 0 0 0
+  // 1 1 0 1
+  // 0 1 1 1
+  // 0 0 1 0
+  // shows that it is necessary to loop through Zeilendominanz and searching for cores multiple times!
+
+
+  var hasCyclicRest = !_computePrimeTable_isCompletelySolved(helperTable, crossedOutRows, crossedOutColumns);
+  returnObj.cyclic = hasCyclicRest;
+
+  if (hasCyclicRest) {
+    returnObj.steps.push(new Step$1(BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST, {}));
+  }
+
+  return returnObj;
+}
+
+function _computePrimeTable_checkForCores(returnObj, helperTable, crossedOutRows, crossedOutColumns) {
+  var changes = false;
+  var petrickTable = returnObj.coverTable; // check for kernimplika(n)te(n)
+
+  for (var col = 0; col < petrickTable.length; col++) {
+    if (crossedOutColumns.includes(col)) continue; // > get row that is covering this column
+
+    var rowCoveringTheColumn = -1;
+    var isCore = true;
+
+    for (var row = 0; row < petrickTable[0].length; row++) {
+      if (petrickTable[col][row] == true && helperTable[col][row] == -1) {
+        if (rowCoveringTheColumn == -1) {
+          rowCoveringTheColumn = row;
+        } else {
+          isCore = false;
+          break;
+        }
+      }
+    }
+
+    if (!isCore) {
+      continue;
+    } // > We have found a core term
+
+
+    changes = true;
+    returnObj.steps.push(new Step$1(BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE, {
+      core: rowCoveringTheColumn,
+      column: col
+    })); // cross current column
+
+    _crossColumn(petrickTable, col, helperTable);
+
+    crossedOutColumns.push(col); // cross current row
+
+    _crossRow(petrickTable, rowCoveringTheColumn, helperTable);
+
+    crossedOutRows.push(rowCoveringTheColumn); // cross columns (base terms) that this core also covers
+
+    for (var i = 0; i < petrickTable.length; i++) {
+      if (col == i) continue;
+      if (crossedOutColumns.includes(i)) continue;
+
+      if (petrickTable[i][rowCoveringTheColumn] == true) {
+        _crossColumn(petrickTable, i, helperTable);
+
+        crossedOutColumns.push(i);
+        returnObj.steps.push(new Step$1(BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED, {
+          column: i,
+          coveredBy: rowCoveringTheColumn
+        }));
+      }
+
+      if (helperTable[i][rowCoveringTheColumn] != 1) {
+        helperTable[i][rowCoveringTheColumn] = 0;
+      }
+    }
+
+    helperTable[col][rowCoveringTheColumn] = 1;
+  }
+
+  return changes;
+}
+
+function _computePrimeTable_checkForSpaltenDominanz(returnObj, helperTable, crossedOutRows, crossedOutColumns) {
+  var changes = false;
+  var petrickTable = returnObj.coverTable; // > search for a column that covers the same but less than some other column
+
+  for (var colDominatori = 0; colDominatori < petrickTable.length; colDominatori++) {
+    if (crossedOutColumns.includes(colDominatori)) continue; // search for the col it can dominate
+
+    for (var colMi = 0; colMi < petrickTable.length; colMi++) {
+      if (colDominatori == colMi || crossedOutColumns.includes(colMi)) continue; // check condition of domination
+
+      var dominationPossible = true;
+
+      for (var row = 0; row < petrickTable[0].length; row++) {
+        if (crossedOutRows.includes(row)) continue; // dominated col does not have a mark in this row
+
+        if (petrickTable[colMi][row] == false) continue; // > a mark in dominated col. And in dominating? => OK
+
+        if (petrickTable[colDominatori][row]) continue;
+        dominationPossible = false;
+        break;
+      }
+
+      if (!dominationPossible) continue; // > DOMINATION!
+      // -> cross out dominatING column
+
+      changes = true;
+      crossedOutColumns.push(colDominatori);
+
+      _crossColumn(petrickTable, colDominatori, helperTable);
+
+      returnObj.steps.push(new Step$1(BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION, {
+        dominator: colDominatori,
+        dominated: colMi
+      }));
+    }
+  }
+
+  return changes;
+}
+
+function _computePrimeTable_checkForZeilenDominanz(returnObj, helperTable, crossedOutRows, crossedOutColumns, primeTerms) {
+  var changes = false;
+  var petrickTable = returnObj.coverTable; // > search for a row, that covers more than some other row
+
+  for (var rowDominatori = 0; rowDominatori < petrickTable[0].length; rowDominatori++) {
+    if (crossedOutRows.includes(rowDominatori)) continue; // search for the row it can dominate
+
+    for (var rowMi = 0; rowMi < petrickTable[0].length; rowMi++) {
+      if (rowDominatori == rowMi || crossedOutRows.includes(rowMi)) continue; // check condition of domination
+
+      var dominationPossible = true;
+
+      for (var col = 0; col < petrickTable.length; col++) {
+        if (crossedOutColumns.includes(col)) continue; // dominated row does not have a mark in this col
+
+        if (petrickTable[col][rowMi] == false) continue; // > mark in dominated row. And in dominating? => OK
+
+        if (petrickTable[col][rowDominatori]) continue;
+        dominationPossible = false;
+        break;
+      }
+
+      if (!dominationPossible) continue; // > Possibly Dominated lines have been found!
+      // check cost (amount of literals. See VL Folien 17, Seite 33)
+
+      var costDominator = primeTerms[rowDominatori].getTerms().length;
+      var costDominated = primeTerms[rowMi].getTerms().length;
+      var domination = false;
+
+      if (costDominator <= costDominated) {
+        // > Dominating row is cheaper or equally cheap as dominated row
+        domination = true;
+      } else {
+        // > Dominated row is cheaper
+
+        /* VL Folien 17, Seite 30:
+                    [Wenn z2 <= z1 , jedoch] c2 < c1 und es existieren keine Zeilen zk
+                    (Primterme pk), welche die restlichen Einsstellen der Zeile z1
+                    überdecken können und weniger als die Differenz c1 - c2 kosten
+                    (d.h.: c1 <= c2 + ck).
+                    -> Dann kann die Zeile z2 auch gestrichen werden.
+                */
+        // > search for other row that fits the condition above
+        for (var rowOtheri = 0; rowOtheri < petrickTable[0].length; rowOtheri++) {
+          // search for OTHER row
+          if (rowOtheri == rowDominatori || rowOtheri == rowMi || crossedOutRows.includes(rowOtheri)) continue; // check if it is cheaper than the difference
+
+          var costOther = primeTerms[rowOtheri].getTerms().length;
+          if (!(costDominator <= costDominated + costOther)) continue; // check if this row coveres the 'restlichen Einstellen' of dominator row
+
+          var otherRowCoveresRestlicheEinsstellen = true;
+
+          for (var _col = 0; _col < petrickTable.length; _col++) {
+            // it only needs to cover other EINSstellen
+            if (petrickTable[_col][rowDominatori] == false) continue; // it only needs to cover OTHER einsstellen
+
+            if (petrickTable[_col][rowMi] == true) continue; // > the 'other' row would need to cover this column
+
+            if (petrickTable[_col][rowOtheri] == false) {
+              // > but it does not
+              otherRowCoveresRestlicheEinsstellen = false;
+              break;
+            }
+          }
+
+          if (otherRowCoveresRestlicheEinsstellen) {
+            // > we have found another row that fits this very specific condition.
+            // Domination will therefore not take place with in constellation
+            domination = false;
+            break;
+          } // > this line was not one that fit the specific condition. Go on
+          // to check if some other line fits it.
+
+        }
+      }
+
+      if (domination == false) {
+        // Row 'rowDominatori' does not legally cover 'rowMi' due to
+        // costDom > rowMi AND the very specific condition stated above.
+        continue;
+      } // > DOMINATION!
+
+
+      changes = true;
+      crossedOutRows.push(rowMi);
+
+      _crossRow(petrickTable, rowMi, helperTable);
+
+      returnObj.steps.push(new Step$1(BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION, {
+        dominator: rowDominatori,
+        dominated: rowMi
+      }));
+    }
+  }
+
+  return changes;
+}
+
+function _computePrimeTable_checkForEmptyLines(returnObj, helperTable, crossedOutRows, crossedOutColumns) {
+  var changes = false;
+  var petrickTable = returnObj.coverTable;
+
+  for (var row = 0; row < petrickTable[0].length; row++) {
+    if (crossedOutRows.includes(row)) continue; // console.log("checking row " + row + ".......");
+
+    var isLineEmpty = true;
+
+    for (var col = 0; col < petrickTable.length; col++) {
+      if (!petrickTable[col][row]) continue;
+
+      if (helperTable[col][row] === 0) // if cell is striked out
+        {
+          continue;
+        } // console.log("found a uncovered cross in column " + col + " with value: " + helperTable[col][row]);
+
+
+      isLineEmpty = false;
+      break;
+    }
+
+    if (!isLineEmpty) continue; // console.log("row " + row + " is empty!");
+
+    _crossRow(petrickTable, row, helperTable);
+
+    crossedOutRows.push(row);
+    returnObj.steps.push(new Step$1(BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED, {
+      row: row
+    }));
+    changes = true;
+  }
+
+  return changes;
+}
+
+function _computePrimeTable_isCompletelySolved(helperTable, crossedOutRows, crossedOutColumns) {
+  for (var row = 0; row < helperTable[0].length; row++) {
+    if (!crossedOutRows.includes(row)) {
+      return false;
+    }
+  }
+
+  for (var col = 0; col < helperTable.length; col++) {
+    if (!crossedOutColumns.includes(col)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+/**
+ * Sets every cell in a column of the helper table to zero,
+ * unless it is marked as a core.
+ */
+
+
+function _crossColumn(petrickTable, column, helperTable) {
+  for (var i = 0; i < petrickTable[0].length; i++) {
+    if (helperTable[column][i] != 1) {
+      helperTable[column][i] = 0;
+    }
+  }
+}
+/**
+ * Sets every cell in a row of the helper table to zero.
+ */
+
+
+function _crossRow(petrickTable, row, helperTable) {
+  for (var col = 0; col < petrickTable.length; col++) {
+    helperTable[col][row] = 0;
+  }
+}
+/**
+ * Checks if the given prime term covers a given min term
+ * in the kvdiagram.
+ * @param {BooleanFunction} primeTerm
+ * @param {BooleanFunction} minTerm
+ */
+
+
+function _primeTermCoversBaseTerm(primeTerm, minTerm) {
+  // check if for every literal in the prime term, an equivalent
+  // literal in the base term exists
+  var primeLiterals = primeTerm.getTerms();
+  var baseLiterals = minTerm.getTerms();
+
+  for (var pl = 0; pl < primeLiterals.length; pl++) {
+    // check for occurence of current prime-literal
+    // somewhere in the base term
+    var primeLiteralIsInBaseTerm = false;
+
+    for (var bl = 0; bl < baseLiterals.length; bl++) {
+      if (primeLiterals[pl].equals(baseLiterals[bl])) {
+        primeLiteralIsInBaseTerm = true;
+        break;
+      }
+    }
+
+    if (!primeLiteralIsInBaseTerm) return false;
+  }
+
+  return true;
+}
+/**
+ * Convenience class to encapsulate a single 'step' during
+ * the Ueberdeckungstabellen algorithm.
+ * See constructor for further reference.
+ */
+
+
+var Step$1 =
+/**
+   * @param {BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE
+   *      | BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED
+   *      | BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION
+   *      | BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION
+   *      | BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED } actionType
+   *      ID-like value defining the type of action performed in this step. See
+   *      exported constants at the top of this file.
+   * @param values Values regarding the current step. Meant to be used for
+   *      easy access / embedding of step-details from front-end. For which values
+   *      are set on what -type- of step, see the readme.md
+   */
+function Step(actionType, _ref) {
+  var core = _ref.core,
+      column = _ref.column,
+      coveredBy = _ref.coveredBy,
+      dominator = _ref.dominator,
+      dominated = _ref.dominated,
+      row = _ref.row;
+
+  _classCallCheck(this, Step);
+
+  this.actionType = actionType;
+  this.core = core;
+  this.column = column;
+  this.row = row;
+  this.coveredBy = coveredBy;
+  this.dominator = dominator;
+  this.dominated = dominated;
+};
+
+var BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_INITIAL = 'bf-ps-initial';
+var BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_DISTRIBUTION = 'bf-ps-distribution';
+var BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE = 'bf-ps-idempotence';
+var BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION = 'bf-ps-absorption';
+var BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING = 'bf-ps-sorting';
+/**
+ * Computes the petrick statement (obj) e.g. containing the cheapest solution
+ * and different snapshots of solving the statement mathematically one by one.
+ * @param { {
+ *      'min-terms': {},
+ *      'max-terms': {}
+ * } } primeTableObj Object containing cover table data as returned by
+ * computePrimeTable(..) or computePrimeTableFromKV(..)
+ * @returns { {
+ *      'min-terms': {},
+ *      'max-terms': {}
+ * } } The petrick statement (obj) split into a 'min-terms' and a 'max-terms'
+ * variant. See README and _computePetrickStatement(..) for more info on the return value.
+ */
+
+function computePetrickStatement(primeTableObj) {
+  return {
+    'min-terms': _computePetrickStatementBF(primeTableObj['min-terms']),
+    'max-terms': _computePetrickStatementBF(primeTableObj['max-terms'])
+  };
+}
+
+function _computePetrickStatementBF(primeTableObjMinORMax) {
+  // build petrickterm
+  var petrickTable = primeTableObjMinORMax.coverTable; // create basic Petrickterm without any simplifications
+
+  var bfPetrickTerm = new BooleanFunction$1(BooleanFunctionOperator_AND, []); // ' = 1'
+
+  for (var col = 0; col < petrickTable.length; col++) {
+    bfPetrickTerm.addTerm(new BooleanFunction$1(BooleanFunctionOperator_OR, []));
+
+    for (var row = 0; row < petrickTable[0].length; row++) {
+      if (petrickTable[col][row]) {
+        bfPetrickTerm.getTerms()[col].addTerm(new BooleanFunction$1(BooleanFunctionOperator_AND, [new BooleanFunctionLiteral(row, false)])); // console.log(col, row);
+      } // constellationDirect[col] += String.fromCharCode(PRIMETERM_SYMBOL_BASE_CHAR_CODE + row); // => i.e. 'A' + row
+
+    }
+  }
+
+  var util = new BooleanFunctionUtil();
+  var returnObj = {
+    steps: [new PetrickStatementStep(bfPetrickTerm, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_INITIAL)],
+    // NOTE: having primeTerms here is a bit heselig, but its not hurting anyone
+    primeTerms: util.cloneBooleanFunctionArray(primeTableObjMinORMax.primeTerms)
+  };
+
+  function __registerStep(stepObj) {
+    returnObj.steps.push(stepObj);
+  }
+
+  function __getLastStep() {
+    return returnObj.steps[returnObj.steps.length - 1];
+  } // some preparations to make the algorithm sleeker:
+  // sort terms by literal count (accending)
+
+
+  bfPetrickTerm.getTerms().sort(function (a, b) {
+    return a.amountLiterals() - b.amountLiterals();
+  });
+
+  if (!bfPetrickTerm.equals(__getLastStep().bf, true, true)) {
+    // > if some change occured
+    __registerStep(new PetrickStatementStep(bfPetrickTerm, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING));
+  } // multi-term absorption
+
+
+  var track_amountBeforeAbsorption0 = bfPetrickTerm.getTerms().length;
+
+  _absorbBF(bfPetrickTerm);
+
+  var track_amountAfterAbsorption0 = bfPetrickTerm.getTerms().length;
+
+  if (track_amountAfterAbsorption0 !== track_amountBeforeAbsorption0) {
+    __registerStep(new PetrickStatementStep(bfPetrickTerm, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION));
+  } // sort terms by literal count (descending)
+
+
+  bfPetrickTerm.getTerms().sort(function (a, b) {
+    return b.amountLiterals() - a.amountLiterals();
+  });
+
+  if (!bfPetrickTerm.equals(__getLastStep().bf, true, true)) {
+    // > if some change occured
+    __registerStep(new PetrickStatementStep(bfPetrickTerm, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING));
+  } // repeat until the main konjunctive term only consists of one single subterm:
+  // 1: distribute the leftmost subterm with its neighbour
+  // 2: 'Idempotenz + absorption' between the newly created objects
+  // 3: This addition of konjunctions (subsubterms) will be treated as the new 'leftmost'
+  // (4:) Shift all terms except the leftmost one to the left in the main BF
+  // console.log("whole term before: ");
+  // console.log(require('util').inspect(bfPetrickTerm, true, null, true /* enable colors */));
+
+
+  while (bfPetrickTerm.getTerms().length > 1) {
+    // console.log();
+    // console.log("-loop cycle start-");
+    // 1: Distribute leftmost subterm with its neighbour on the right
+    bfPetrickTerm.getTerms()[0] = _distributeBF(bfPetrickTerm.getTerms()[0], bfPetrickTerm.getTerms()[1]);
+    bfPetrickTerm.getTerms().splice(1, 1); // remove second term and shift righter ones to the left
+
+    __registerStep(new PetrickStatementStep(bfPetrickTerm, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_DISTRIBUTION)); // console.log("whole term after first distribution: ");
+    // console.log(require('util').inspect(bfPetrickTerm, true, null, true /* enable colors */));
+    // 2. a) Simplify the newly created terms (all inside of the first disjunction / subterm)
+
+
+    var subterms = bfPetrickTerm.getTerms()[0].getTerms();
+    var changeBySelectUniqueTerms = false;
+
+    for (var i = 0; i < subterms.length; i++) {
+      var lengthBefore = subterms[i].getTerms().length;
+      subterms[i] = new BooleanFunction$1(BooleanFunctionOperator_AND, _selectUniqueTermsBF(subterms[i].getTerms()));
+      var lengthAfter = subterms[i].getTerms().length;
+      if (lengthBefore !== lengthAfter) changeBySelectUniqueTerms = true;
+    }
+
+    if (changeBySelectUniqueTerms) {
+      __registerStep(new PetrickStatementStep(bfPetrickTerm, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE));
+    } // console.log("whole term after first reduction: ");
+    // console.log(require('util').inspect(bfPetrickTerm, true, null, true /* enable colors */));
+    // 2. b) Some of those sub parts will now be able to be absorbed. Remove them
+
+
+    var track_lengthBeforeAbsorption = bfPetrickTerm.getTerms()[0].getTerms().length;
+
+    _absorbBF(bfPetrickTerm.getTerms()[0]);
+
+    var track_lengthAfterAbsorption = bfPetrickTerm.getTerms()[0].getTerms().length;
+
+    if (track_lengthBeforeAbsorption !== track_lengthAfterAbsorption) {
+      __registerStep(new PetrickStatementStep(bfPetrickTerm, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION));
+    } // console.log("Whole term after absorption of subterms of first BF: ");
+    // console.log(require('util').inspect(bfPetrickTerm, true, null, true /* enable colors */));
+
+  } // find cheapest solution
+  // compute cost of each individual prime term
+
+
+  var primeTerms = primeTableObjMinORMax.primeTerms;
+  var costPrimeTerms = [];
+
+  for (var t = 0; t < primeTerms.length; t++) {
+    costPrimeTerms[t] = primeTerms[t].getTerms().length;
+  } // compute cost of each possible solution
+
+
+  var costSolution = [];
+  var solutions = bfPetrickTerm.getTerms()[0].getTerms();
+  var amountSolutions = solutions.length;
+
+  for (var s = 0; s < amountSolutions; s++) {
+    costSolution[s] = 0;
+    var solution = solutions[s]; // add cost of each individual prime term in it
+
+    for (var _t = 0; _t < solution.getTerms().length; _t++) {
+      // e.g. 'C' - 'A' = 2:
+      var primeTermi = solution.getTerms()[_t].getId();
+
+      costSolution[s] += costPrimeTerms[primeTermi];
+    } // add amount of primeterms to the cost
+
+
+    costSolution[s] += solution.getTerms().length;
+  } // get solution with lowest cost
+
+
+  var costSolutionMin = costSolution[0];
+  var costSolutionMinIndex = 0;
+
+  for (var _i2 = 0; _i2 < costSolution.length; _i2++) {
+    if (costSolution[_i2] < costSolutionMin) {
+      costSolutionMin = costSolution[_i2];
+      costSolutionMinIndex = _i2;
+    }
+  }
+
+  returnObj.cheapestSolution = costSolutionMinIndex;
+  return returnObj;
+}
+
+function _distributeBF(termLeft, termRight) {
+  // termLeft and termRight are both disjunctions of conjunctions
+  // console.log("term left: ");
+  // console.log(require('util').inspect(termLeft, true, null, true /* enable colors */));
+  // console.log("term right: ");
+  // console.log(require('util').inspect(termRight, true, null, true /* enable colors */));
+  // cross match
+  var bfMatchCollection = new BooleanFunction$1(BooleanFunctionOperator_OR, []);
+
+  for (var i = 0; i < termLeft.getTerms().length; i++) {
+    for (var j = 0; j < termRight.getTerms().length; j++) {
+      // match conjunctions i and j (combine their literals)
+      var leftConjunction = termLeft.getTerms()[i].clone();
+      var rightConjunction = termRight.getTerms()[j]; // console.log('left: ', leftConjunction, '; right: ', rightConjunction);
+      // add all literals of rightConjunction to leftConjunction
+      // if they are not yet contained (not (yet) implemented, as seeing the
+      // process step by step from a students perspective might be better)
+
+      for (var rightLiteralI = 0; rightLiteralI < rightConjunction.getTerms().length; rightLiteralI++) {
+        var rightLiteral = rightConjunction.getTerms()[rightLiteralI]; //
+        // if (leftConjunction.getTerms().find(literalLeft => literalLeft.getId() === rightLiteral.getId()) === undefined)
+
+        leftConjunction.addTerm(rightLiteral);
+      }
+
+      bfMatchCollection.addTerm(leftConjunction);
+    }
+  } // console.log("After: ");
+  // console.log(require('util').inspect(bfMatchCollection, true, null, true /* enable colors */));
+
+
+  return bfMatchCollection;
+}
+
+function _selectUniqueTermsBF(terms) {
+  var uniqueTerms = [];
+
+  for (var t = terms.length - 1; t >= 0; t--) {
+    var term = terms[t];
+    var termUnique = true;
+
+    for (var c = 0; c < t; c++) {
+      if (term.equals(terms[c])) {
+        termUnique = false;
+        break;
+      }
+    }
+
+    if (!termUnique) continue;
+    uniqueTerms.push(term);
+  }
+
+  return uniqueTerms;
+}
+
+function _absorbBF(bfTerm) {
+  // NOTE: there must not be identical literals in any SINGLE BooleanFunction!
+  // for every sub term, check if it fully contains another subterm (literal-wise)
+  var util = new BooleanFunctionUtil();
+  var amountSubTermsBefore = bfTerm.getTerms().length;
+  var absorbedRegister = [];
+
+  function __absorb(i) {
+    absorbedRegister[i] = true;
+  }
+
+  var terms = bfTerm.getTerms();
+
+  for (var t = 0; t < terms.length; t++) {
+    var term = terms[t]; // compare against
+
+    for (var compi = 0; compi < terms.length; compi++) {
+      if (compi === t) continue;
+      if (absorbedRegister[compi] === true) continue; // prevents two identical terms from absorbing each other and fading out of existance completely
+
+      var comp = terms[compi];
+      if (term.getTerms().length < comp.getTerms().length) continue; // term can not contain comp
+
+      if (util.booleanFunctionContainsAnother(term, comp)) {
+        // console.log("absorbed term ", t, " bc of term ", compi);
+        __absorb(t); // since literals of comp are a subset of term's
+
+
+        break;
+      }
+    }
+  } // bfTerm.clearTerms();
+
+
+  for (var _t3 = amountSubTermsBefore - 1; _t3 >= 0; _t3--) {
+    if (absorbedRegister[_t3] === true) {
+      bfTerm.spliceTerms(_t3, 1); // remove that term from the BF
+    }
+  } // console.log("absorbed reg: ", absorbedRegister);
+  // console.log("After absorption of subterms: ");
+  // console.log(require('util').inspect(bfTerm, true, null, true /* enable colors */))
+
+}
+/**
+ * Object depicting a single step in the petrick statemen algorithm.
+ */
+
+
+var PetrickStatementStep =
+/**
+   * this.bf is the result of this step/action
+   */
+function PetrickStatementStep(booleanFunctionObj, actionType) {
+  _classCallCheck(this, PetrickStatementStep);
+
+  this.bf = booleanFunctionObj.clone();
+  this.actionType = actionType;
+};
+
+/**
+ * Directly computes DMF from given petrick statement obj as returned by
+ * computePetrickStatementFromKV(..) or computePetrickStatement(..). \
+ * See computeDMFFromKV(..) for a quick access version of this method.
+ *
+ * @param { {
+ *      'min-terms': {},
+ *      'max-terms': {}
+ * } } petrickStatementObj Petrick statement obj as returned by
+ * computePetrickStatementFromKV(..) or computePetrickStatement(..),
+ * containing both the 'min-terms' and 'max-terms' variants.
+ * @returns {BooleanFunction} BooleanFunction representation of the DMF
+ */
+
+function computeDMF(petrickStatementObj) {
+  var util = new BooleanFunctionUtil(); // return util.convertFinalPetrickSolutionToBooleanFunction(
+  //     petrickStatementObj['min-terms'],
+  //     BooleanFunctionOperator_OR
+  // );
+  // const lastStep = petrickStatementObj['min-terms'].steps[
+  //     petrickStatementObj['min-terms'].steps.length - 1
+  // ];
+  // return util.convertPetrickStatementBFToFullBF(
+  //     lastStep.bf,
+  //     petrickStatementObj['min-terms'].primeTerms
+  // );
+
+  return util.extractCheapestSolutionFromPetrickStatementObj(petrickStatementObj['min-terms'], BooleanFunctionOperator_OR);
+}
+/**
+ * Directly computes KMF from given petrick statement obj as returned by
+ * computePetrickStatementFromKV(..) or computePetrickStatement(..). \
+ * See computeDMFFromKV(..) for a quick access version of this method.
+ *
+ * @param { {
+ *      'min-terms': {},
+ *      'max-terms': {}
+ * } } petrickStatementObj Petrick statement obj as returned by
+ * computePetrickStatementFromKV(..) or computePetrickStatement(..),
+ * containing both the 'min-terms' and 'max-terms' variants.
+ * @returns {BooleanFunction} BooleanFunction representation of the DMF
+ */
+
+function computeKMF(petrickStatementObj) {
+  var util = new BooleanFunctionUtil(); // return util.convertFinalPetrickSolutionToBooleanFunction(
+  //     petrickStatementObj['max-terms'],
+  //     BooleanFunctionOperator_AND
+  // );
+
+  return util.extractCheapestSolutionFromPetrickStatementObj(petrickStatementObj['max-terms'], BooleanFunctionOperator_AND);
+}
+
+var BooleanFunctionNF = /*#__PURE__*/function () {
+  function BooleanFunctionNF() {
+    _classCallCheck(this, BooleanFunctionNF);
+  }
+
+  _createClass(BooleanFunctionNF, [{
+    key: "computeDNFFromKV",
+
+    /**
+       * Computes DNF from given KVDiagram. \
+       * NOTE: For better performance use computeDNF(..)
+       * if you already have the necessary Minterms at hand.
+       * @param {KVDiagram} kvdiagram
+       * @returns {BooleanFunction} BooleanFunction representing the DNF
+       */
+    value: function computeDNFFromKV(kvdiagram) {
+      var minTerms = computeMinTermsFromKV(kvdiagram);
+      return this.computeDNF(minTerms);
+    }
+    /**
+       * Computes DNF from given Minterms (as BooleanFunctions). \
+       * NOTE: The given Minterms are deep cloned before encapsulating
+       * them in a BooleanFunction.
+       * @param {[BooleanFunction]} minTerms
+       * @returns {BooleanFunction} a BooleanFunction representing the DNF
+       */
+
+  }, {
+    key: "computeDNF",
+    value: function computeDNF(minTerms) {
+      // deep clone minTerms array
+      var minTermsCloned = [];
+
+      for (var i = 0; i < minTerms.length; i++) {
+        minTermsCloned[i] = minTerms[i].clone();
+      }
+
+      return new BooleanFunction$1(BooleanFunctionOperator_OR, minTermsCloned);
+    }
+    /**
+       * Computes KNF from given KVDiagram. \
+       * NOTE: For better performance use computeKNF(..)
+       * if you already have the necessary Maxnterms at hand.
+       * @param {KVDiagram} kvdiagram
+       * @returns {BooleanFunction} BooleanFunction representing the KNF
+       */
+
+  }, {
+    key: "computeKNFFromKV",
+    value: function computeKNFFromKV(kvdiagram) {
+      var maxTerms = computeMaxTermsFromKV(kvdiagram);
+      return this.computeKNF(maxTerms);
+    }
+    /**
+       * Computes KNF from given Maxterms (as BooleanFunctions). \
+       * NOTE: The given Maxterms are deep cloned before encapsulating
+       * them in a BooleanFunction.
+       * @param {[BooleanFunction]} maxTerms
+       * @returns {BooleanFunction} BooleanFunction representing the KNF
+       */
+
+  }, {
+    key: "computeKNF",
+    value: function computeKNF(maxTerms) {
+      // deep clone maxTerms array
+      var maxTermsCloned = [];
+
+      for (var i = 0; i < maxTerms.length; i++) {
+        maxTermsCloned[i] = maxTerms[i].clone();
+      }
+
+      return new BooleanFunction$1(BooleanFunctionOperator_AND, maxTermsCloned);
+    }
+  }]);
+
+  return BooleanFunctionNF;
+}();
+
+/**
+ * Function encapsulating access to all optimization algorithms at once.
+ * See README for documentation on individual algorithms.
+ * @param {KVDiagram} kvdiagram
+ * @returns { {
+ *      dnf: BooleanFunction,
+ *      knf: BooleanFunction,
+ *      quineClasses: {
+ *          'min-terms': {},
+ *          'max-terms': {}
+ *      },
+ *      primes: {
+ *          'min-terms': [BooleanFunction],
+ *          'max-terms': [BooleanFunction]
+ *      },
+ *      primeTable: {
+ *          'min-terms': {},
+ *          'max-terms': {}
+ *      },
+ *      petrickStatement: {
+ *          'min-terms': {},
+ *          'max-terms': {}
+ *      },
+ *      dmf: BooleanFunction,
+ *      kmf: BooleanFunction
+ *  } }
+ */
+
+function optimizeBooleanFunction(kvdiagram) {
+  var util = new BooleanFunctionUtil(); // base terms
+
+  var minTerms = computeMinTermsFromKV(kvdiagram);
+  var maxTerms = computeMaxTermsFromKV(kvdiagram);
+  var dontCareMinTerms = computeDontCareMinTermsFromKV(kvdiagram);
+  var dontCareMaxTerms = util.convertMinTermsToMaxTerms(dontCareMinTerms); // normal forms
+
+  var computerNF = new BooleanFunctionNF();
+  var dnf = computerNF.computeDNF(minTerms);
+  var knf = computerNF.computeKNF(maxTerms); // quine cluskey classes
+
+  var quineClasses = computeQuineCluskeyClasses(minTerms, maxTerms, dontCareMinTerms); // primes
+
+  var primes = computePrimes(quineClasses, dontCareMinTerms, dontCareMaxTerms); // Ueberdeckungstabelle
+
+  var primeTableObj = computePrimeTable(minTerms, maxTerms, primes, true); // Petrick Ausdruck
+
+  var petrickStatement = computePetrickStatement(primeTableObj); // Minimal forms
+
+  var dmf = computeDMF(petrickStatement);
+  var kmf = computeKMF(petrickStatement);
+  return {
+    dnf: dnf,
+    // BooleanFunction
+    knf: knf,
+    // BooleanFunction
+    quineClasses: quineClasses,
+    primes: primes,
+    primeTable: primeTableObj,
+    petrickStatement: petrickStatement,
+    dmf: dmf,
+    // BooleanFunction
+    kmf: kmf // BooleanFunction
+
+  };
+}
+
+export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, AdditionPolyadic, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_DISTRIBUTION, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_INITIAL, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION, BooleanFunction$1 as BooleanFunction, BooleanFunctionLiteral, BooleanFunctionOperator_AND, BooleanFunctionOperator_OR, BooleanFunctionUtil, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, ConversionPolyadicNumbers, DivisionBaseNSigned, DivisionIEEE, KVDiagram, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, NumberPolyadic, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, SubtractionPolyadic, TextCMOS, computePrimesFromKV, generateRandomKVDiagram, getBaseNComplementFromString, getIEEEFromString, getNumFromString, optimizeBooleanFunction, parseBooleanFunction, roundArray, toLaTeX };

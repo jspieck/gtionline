@@ -4,10 +4,10 @@
   <div class="fp-arithmetic">
     <h4>{{$t('fpformat')}}</h4>
     <FSelect class="bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
-             :options="bitrangeOptions">
+      :options="bitrangeOptions">
     </FSelect>
     <FSelect class="mobile_bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
-             :options="bitrangeOptions">
+      :options="bitrangeOptions">
     </FSelect>
     <div class="formatContainer" v-on:mousemove="sliderMouseMove">
       <div class="sign">VB</div>
@@ -522,11 +522,11 @@ export default {
       }
     },
     expandFraction() {
-      this.exponentBits -= 1;
+      this.exponentBits = Math.max(this.exponentBits - 1, 1);
       this.recalculate();
     },
     expandExponent() {
-      this.exponentBits += 1;
+      this.exponentBits = Math.min(this.exponentBits + 1, this.numBits - 2);
       this.recalculate();
     },
   },
