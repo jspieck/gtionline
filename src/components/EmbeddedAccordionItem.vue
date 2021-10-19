@@ -6,6 +6,7 @@
     </div>
     <!-- Item body -->
     <div class="accordion-item-body" v-if="this.expanded === true" ref="accordion_item_body">
+      <!-- NOTE: 'expanding sideways' is now more like a fullscreen mode -->
       <button v-if="this.expandableSideways" class="accordion-item-expand-sideways-toggle ion-md-expand"
           @click="toggleExpandSideways">
       </button>
@@ -98,20 +99,16 @@ export default {
     overflow-x: auto;
 
     .accordion-item-expand-sideways-toggle {
-      // content: "&#xf386;";
-      // font-family: IonIcons;
-
-      // content: "\f3d0";
-      // font-family: IonIcons;
-      // background-color: pink;
-
-      float: right;
+      position: sticky;
+      left: 0;
       font-size: 1.4em;
 
-      padding-top: .1em;
-      background-color: rgba($brightBlue, 0.5);
-      // background-color: transparent;
-      // color: $brightBlue;
+      padding-top: .08em;
+      background-color: $brightBlue;
+    }
+    .accordion-item-expand-sideways-toggle:hover {
+      background-color: transparent;
+      color: rgba(black, 0.2);
     }
   }
 
@@ -123,6 +120,25 @@ export default {
 
     border-style: solid;
     border-width: 1px;
+
+    position: fixed;
+    overflow-y: auto;
+    z-index: 2;
+    margin-left: 0;
+
+    top: 5%;
+    left: 5%;
+    width: 90%;
+    height: 90%;
+    @media screen and (max-width: 1400px) {
+      width: 95%;
+      height: 90%;
+      top: 10px;
+      left: 0%;
+    }
+    @media screen and (max-width: 700px) {
+      width: 90%;
+    }
 
   }
 

@@ -150,29 +150,37 @@ export const i18n = new VueI18n({
       bf_petrickExpression: 'Petrick Ausdruck',
       bf_minimalForms: 'Minimalformen',
       bf_tableWithCyclicRest: 'Zyklische Resttabelle',
+      bf_einstelle: 'Einsstelle',
+      bf_nullstelle: 'Nullstelle',
+      bf_einstellen: 'Einsstellen',
+      bf_nullstellen: 'Nullstellen',
+      bf_goal_determine_DNF: 'DNF bestimmen',
+      bf_goal_determine_KNF: 'KNF bestimmen',
+      bf_goal_determine_prime_implicants: 'Primimplikanten bestimmen',
+      bf_goal_determine_prime_implicates: 'Primimplikate bestimmen',
 
       bf_covertable_step_description_initial: '<h4>Initialer Schritt:</h4>'
-        + 'Trage spaltenweise alle Basisterme (Einsstellen) und reihenweise alle Primimplikanten (PI) in die Tabelle ein. '
-        + 'Überdeckt ein Primterm eine Einstelle, markiere jene Zelle mit einem X. '
-        + 'Die Kosten c eines Primterms sind die Anzahl seiner Literale. Je höher, desto aufwändiger (teurer) die Umsetzung in Hardware. '
+        + 'Trage spaltenweise alle Basisterme ({ifMinTermsEinstellenElseNullstellen}) und reihenweise alle Primterme (PI) in die Tabelle ein. '
+        + 'Überdeckt ein Primterm eine {ifMinTermsEinstelleElseNullstelle}, markiere jene Zelle mit einem X. '
+        + 'Die Kosten (eng. cost) c eines Primterms sind die Anzahl seiner Literale. Je höher, desto aufwändiger (teurer) die Umsetzung in Hardware. '
         + '<br>Tipp:<br>'
-        + 'Ein Primimplikant überdeckt eine Einstelle genau dann, wenn alle Literale des Primterms auch genauso im Basisterm vorkommen',
+        + 'Ein PrimimplikaNT überdeckt eine EINstelle genau dann, wenn alle Literale des Primterms auch genauso im Basisterm vorkommen',
       bf_covertable_step_description_core_found: '<h4>Kern gefunden:</h4>'
-        + 'Der einzige Primterm, der die Einstelle {columnName} überdeckt, ist Term {rowName}. '
+        + 'Der einzige Primterm, der die {ifMinTermsEinstelleElseNullstelle} {columnName} überdeckt, ist Term {rowName}. '
         + 'Dieser Primterm muss also unbedingt in unserer Schaltfunktion vorkommen! '
         + 'Markiere die Zeile als Kern und streiche die Spalte heraus.',
       bf_covertable_step_description_cross_column_bc_covered: '<h4>Spalte bereits abgedeckt:</h4>'
-        + 'Die Spalte {columnName} wird bereits vom Primterm {rowName} überdeckt. '
+        + 'Die {ifMinTermsEinstellenElseNullstellen} {columnName} wird bereits vom Primterm {rowName} überdeckt. '
         + 'Streiche die Spalte heraus.',
       bf_covertable_step_description_cross_row_bc_covered: '<h4>Reihe bereits bereits vollständig abgedeckt:</h4>'
-        + 'Alles X\'e der Reihe {rowName} werden bereits abgedeckt. '
+        + 'Alles X\'e der Zeile {rowName} werden bereits abgedeckt. '
         + 'Streiche die Reihe heraus.',
       bf_covertable_step_description_row_domination: '<h4>Zeilendominanz:</h4>'
-        + 'Die Reihe {dominatorName} dominiert die Zeile {dominatedName}; '
+        + 'Die Zeile {dominatorName} dominiert die Zeile {dominatedName}; '
         + 'd.h. {dominatorName} besitzt überall da Markierungen, wo Zeile {dominatedName} auch welche besitzt (und vielleicht sogar mehr!). '
         + '=> Streiche die dominieRTE Zeile {dominatedName}. '
         + '<br>Beachte, dass die Zeilendominanz nur anwendbar ist, da die Zeile {dominatorName} weniger oder genauso viel kostet wie {dominatedName}; '
-        + 'bzw. weil es keine andere Zeile gibt, die die zusätzlichen Einstellen von {dominatorName} überdeckt und weniger als {dominatorName} - {dominatedName} kostet.',
+        + 'bzw. weil es keine andere Zeile gibt, die die zusätzlichen Stellen von {dominatorName} überdeckt und weniger als {dominatorName} - {dominatedName} kostet.',
       bf_covertable_step_description_column_domination: '<h4>Spaltendominanz:</h4>'
         + 'Die Spalte {dominatorName} dominiert die Spalte {dominatedName}; '
         + 'd.h. {dominatorName} besitzt überall da Markierungen, wo Spalte {dominatedName} auch welche besitzt (und vielleicht sogar mehr!). '
@@ -180,7 +188,14 @@ export const i18n = new VueI18n({
         + '<br>Im Gegensatz zur Zeilendominanz muss bei der Spaltendominanz überhaupt nicht auf Kosten geachtet werden (/▽＼)',
       bf_covertable_step_description_cyclic_rest: '<h4>Zyklischer Rest:</h4>'
         + 'Keine Regel der Überdeckungstabelle ist anwendbar. Man spricht hierbei von einem \'Zyklischem Rest\'.'
-        + '<br>Um nun dennoch eine Minimalform der Schaltfunktion bestimmen zu können, bietet sich eine Aufstellung des Petrick Ausdrucks an.',
+        + '<br>Um nun dennoch eine Minimalform der Schaltfunktion bestimmen zu können, bietet sich eine Aufstellung des Petrick Ausdrucks an, wobei nur Zeilen und Spalten eingetragen werden, die noch nicht herausgestrichen wurden.',
+
+      bf_infoblob_random_exercise_selection: 'Die ausgewählte Schwierigkeit bestimmt dabei, wie viele Terme einer Art (z.B. Minterme, Primimplikanten) die Schaltfunktion enthalten soll',
+      bf_infoblob_petrick_statement: 'Der Algorithmus besteht aus zwei Phasen:'
+        + '<ol>'
+        + '<li>Mache sich absorbierende Terme durch Umsortierug sichtbar. (Nicht unbedingt der Fall)</li>'
+        + '<li>Multipliziere so lange die ersten beiden Terme aus, bis die typische Summe entsteht.</li>'
+        + '</ol>',
 
       bf_distributionUC: 'Distribution',
       bf_idempotenceUC: 'Idempotenz',
@@ -328,13 +343,21 @@ export const i18n = new VueI18n({
       bf_petrickExpression: 'Petrick Expression',
       bf_minimalForms: 'Minimal Forms',
       bf_tableWithCyclicRest: 'Table with cyclic rest',
+      bf_einstelle: 'One',
+      bf_nullstelle: 'Zero',
+      bf_einstellen: 'Ones',
+      bf_nullstellen: 'Zeros',
+      bf_goal_determine_DNF: 'determine DNF',
+      bf_goal_determine_KNF: 'determine KNF',
+      bf_goal_determine_prime_implicants: 'determine primeimplicants',
+      bf_goal_determine_prime_implicates: 'determine primeimplicates',
 
       bf_covertable_step_description_initial: '<h4>Initial step:</h4>'
-          + 'Enter all base terms (ones) in the columns and all prime implicants (PI) in the rows of the table. '
-          + 'If a prime term covers a \'one\', mark that cell with an X. '
+          + 'Enter all base terms in the columns and all prime terms (PI) in the rows of the table. '
+          + 'If a prime term covers a field, mark that cell with an X. '
           + 'The cost c of a primeterm is the number of its literals. The higher, the more complex (i.e. costly) the implementation in hardware. '
           + '<br>Tip:<br>'
-          + 'A prime implicant covers a \'one\' exactly if all literals of the primeterm also occur in the same way in the base term.',
+          + 'A prime implicaNT covers a \'ONE\' exactly if all literals of the primeterm also occur in the same way in the base term.',
       bf_covertable_step_description_core_found: '<h4>Core found:</h4>'
         + 'The only primeterm that covers column {columnName} is term {rowName}. '
         + 'Hence this primterm must definitely appear in our resulting function! '
@@ -359,6 +382,13 @@ export const i18n = new VueI18n({
       bf_covertable_step_description_cyclic_rest: '<h4>Cyclic rest:</h4>'
         + 'No rule of the prime table algorithm is applicable. This is referred to as a \'cyclic rest\' (ger: \'Zyklischer Rest\').'
         + '<br>By setting up the Petrick-Expression (ger: Petrick Ausdruck) for the rest table, one is still able to determine a minimal form of the original function.',
+
+      bf_infoblob_random_exercise_selection: 'Difficulty states how many individual terms of some kind (e.g. minterms, primeimplicants) the boolean function should yield.',
+      bf_infoblob_petrick_statement: 'The algorithm consists of two phases:'
+        + '<ol>'
+        + '<li>Make terms that absorb each other easily visible through sorting (only shown if it has any effect)</li>'
+        + '<li>Multiply the first two terms with each other until the typical sum remains.</li>'
+        + '</ol>',
 
       bf_distributionUC: 'Distribution',
       bf_idempotenceUC: 'Idempotence',

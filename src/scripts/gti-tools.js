@@ -12511,6 +12511,31 @@ var BooleanFunctionUtil = /*#__PURE__*/function () {
 
       return true;
     }
+  }, {
+    key: "computeBinaryStringRepresentationOfBaseTerm",
+    value: function computeBinaryStringRepresentationOfBaseTerm(baseTermBF, amountVariablesTotal) {
+      var str = '';
+
+      var _loop3 = function _loop3(v) {
+        var literal = baseTermBF.getTerms().find(function (l) {
+          return l.getId() === v;
+        });
+
+        if (literal == undefined) {
+          str += '-';
+        } else if (literal.isNegated()) {
+          str += '0';
+        } else {
+          str += '1';
+        }
+      };
+
+      for (var v = amountVariablesTotal - 1; v >= 0; v--) {
+        _loop3(v);
+      }
+
+      return str;
+    }
   }]);
 
   return BooleanFunctionUtil;
@@ -13818,4 +13843,4 @@ function optimizeBooleanFunction(kvdiagram) {
   };
 }
 
-export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_DISTRIBUTION, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_INITIAL, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION, BooleanFunction$1 as BooleanFunction, BooleanFunctionLiteral, BooleanFunctionOperator_AND, BooleanFunctionOperator_OR, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, DivisionBaseNSigned, DivisionIEEE, KVDiagram, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, TextCMOS, computePrimesFromKV, generateRandomKVDiagram, getBaseNComplementFromString, getIEEEFromString, getNumFromString, optimizeBooleanFunction, parseBooleanFunction, roundArray, toLaTeX };
+export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_DISTRIBUTION, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_INITIAL, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION, BooleanFunction$1 as BooleanFunction, BooleanFunctionLiteral, BooleanFunctionOperator_AND, BooleanFunctionOperator_OR, BooleanFunctionUtil, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, DivisionBaseNSigned, DivisionIEEE, KVDiagram, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, TextCMOS, computePrimesFromKV, generateRandomKVDiagram, getBaseNComplementFromString, getIEEEFromString, getNumFromString, optimizeBooleanFunction, parseBooleanFunction, roundArray, toLaTeX };

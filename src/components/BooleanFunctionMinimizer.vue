@@ -13,7 +13,14 @@
             </div>
           </div>
           <div class="exercise-selection-container">
-            <div class="exercise-selection-container-tooltip">{{$t('randomExercise')}}:</div>
+            <div class="exercise-selection-container-tooltip">
+              {{$t('randomExercise')}}:
+              <span class="infoblob-wrapper">
+                <InfoBlob>
+                  <span v-html="$t('bf_infoblob_random_exercise_selection')"></span>
+                </InfoBlob>
+              </span>
+            </div>
             <div class="exercise-selection-container-subsection">
               {{$t('goal')}}:
               <FSelect :options="randomExercisesGoalsTitles" :sel="0"
@@ -49,6 +56,14 @@
       </span>
 
       <div v-else class="bf-main-accordion-container">
+        <span style="padding-top:3px">
+          Minterme
+        </span>
+        <ToggleSwitch v-on:toggle="toggleMinMaxTerms" checkedDefault=false />
+        <span style="padding-top:3px">
+          Maxterme
+        </span>
+
         <Accordion>
           <!-- <AccordionItem>
             <template v-slot:accordion-item-title>
@@ -90,45 +105,56 @@
               {{$t('bf_quineMCCluskeyClasses')}}
             </template>
             <template v-slot:accordion-item-body>
-              <span>
-                <ToggleSwitch v-on:toggle="changeQuineClassesDisplayStyle" checkedDefault=true />
-                <span style="padding-top:3px">
-                  {{$t('colorCoding')}}
-                </span>
-              </span>
+              <div class="quine-classes-toggle-switch-container">
+                <div>
+                  <ToggleSwitch v-on:toggle="changeQuineClassesDisplayStyle" checkedDefault=true />
+                  <span>
+                    {{$t('colorCoding')}}
+                  </span>
+                </div>
+
+                <div>
+                  <ToggleSwitch v-on:toggle="changeQuineClassesBinaryDisplayStyle" checkedDefault=false />
+                  <span>
+                    01-0
+                  </span>
+                </div>
+              </div>
               <div class="small-info-text">{{$t('bf_infotest_click_on_hidden_areas_to_make_visible')}}</div>
               <!-- Quine Cluskey classes have been reversed in script section for easy access here -->
               <!-- loop through Q_X -->
-              <div v-for="(qlayer, qi) in quineClassesMin" :key="`quineClassLayerMin_${qi}`">
+              <div v-for="(qlayer, qi) in quineClassesCurrent" :key="`quineClassLayerMin_${qi}`">
                 <!-- loop through Q_._X -->
-                <div v-if="qi < quineClassesMin.length - 1" class="blurred" @mousedown="unblurDOM"> <!-- @mouseenter="unblurDOM" -->
-                  <div v-for="(qlayerInner, qqi) in quineClassesMin[qi]" :key="`quineClassLayerInnerMin_${qqi}`"
+                <div v-if="qi < quineClassesCurrent.length - 1" class="blurred" @mousedown="unblurDOM"> <!-- @mouseenter="unblurDOM" -->
+                  <div v-for="(qlayerInner, qqi) in quineClassesCurrent[qi]" :key="`quineClassLayerInnerMin_${qqi}`"
                       class="quine-class-single-class-container">
-                    <!-- Q{{quineClassesMin.length-qi-1}}_{{quineClassesMin[qi].length-qqi-1}}: { -->
-                    <span class="svg-text" v-html="toSvg(`Q _{${quineClassesMin.length-qi-1},\\ ${quineClassesMin[qi].length-qqi-1}}:\\{`)"></span>
+                    <!-- Q{{quineClassesCurrent.length-qi-1}}_{{quineClassesCurrent[qi].length-qqi-1}}: { -->
+                    <span class="svg-text" v-html="toSvg(`Q _{${quineClassesCurrent.length-qi-1},\\ ${quineClassesCurrent[qi].length-qqi-1}}:\\{`)"></span>
 
                     <span class="termcollection">
                       <!-- loop through all terms in Q_x_y -->
-                      <span v-for="(qterm, ti) in quineClassesMin[qi][qqi]" :key="`quineClassTermMin_${ti}`">
+                      <span v-for="(qterm, ti) in quineClassesCurrent[qi][qqi]" :key="`quineClassTermMin_${ti}`">
                         <!-- non-reduced term -->
-                        <template v-if="!quineClassesMin[qi][qqi][ti][1]">
-                          <span class="svg-text term" v-html="toSvg(quineClassesMin[qi][qqi][ti][0])"/>
+                        <template v-if="!quineClassesCurrent[qi][qqi][ti][1]">
+                          <span class="svg-text term" v-html="toSvg(quineClassesCurrent[qi][qqi][ti][
+                            quineClassesBinaryDisplayStyle ? 2 : 0
+                          ])"/>
                         </template>
                         <!-- reduced term -->
                         <template v-else>
-                          <span v-if="!quineClassesColorfulDisplayStyle" class="svg-text term .quine-classes-reduced-term-crossed" v-html="toSvg('\\cancel{' + quineClassesMin[qi][qqi][ti][0] + '}')"/>
-                          <!-- <span v-if="!quineClassesColorfulDisplayStyle" class="svg-text term quine-classes-reduced-term-crossed" v-html="toSvg(quineClassesMin[qi][qqi][ti][0])"/> -->
-                          <span v-else class="svg-text term quine-classes-reduced-term-colored" v-html="toSvg(quineClassesMin[qi][qqi][ti][0])"/>
+                          <span v-if="!quineClassesColorfulDisplayStyle" class="svg-text term .quine-classes-reduced-term-crossed" v-html="toSvg('\\cancel{' + quineClassesCurrent[qi][qqi][ti][quineClassesBinaryDisplayStyle ? 2 : 0] + '}')"/>
+                          <!-- <span v-if="!quineClassesColorfulDisplayStyle" class="svg-text term quine-classes-reduced-term-crossed" v-html="toSvg(quineClassesCurrent[qi][qqi][ti][0])"/> -->
+                          <span v-else class="svg-text term quine-classes-reduced-term-colored" v-html="toSvg(quineClassesCurrent[qi][qqi][ti][quineClassesBinaryDisplayStyle ? 2 : 0])"/>
                         </template>
 
-                        <span v-if="ti < quineClassesMin[qi][qqi].length - 1" v-html="toSvg(',')"/>
+                        <span v-if="ti < quineClassesCurrent[qi][qqi].length - 1" v-html="toSvg(',')"/>
                       </span>
                     </span>
 
                     <span class="svg-text" v-html="toSvg('\\}')"></span>
                   </div>
                 </div>
-                <div class="horizontalbar" v-if="qi < quineClassesMin.length - 2"></div>
+                <div class="horizontalbar" v-if="qi < quineClassesCurrent.length - 2"></div>
               </div>
 
             </template>
@@ -186,7 +212,7 @@
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              {{$t('bf_primeCoverTable')}}:
+              {{$t('bf_primeCoverTable')}}
             </template>
             <template v-slot:accordion-item-body>
               <table class="bf-primetable">
@@ -197,7 +223,7 @@
                   <td :class="primeTableColorMatrixObj.matrix[0][0]"> PI </td>
 
                   <!-- Base terms -->
-                  <!-- <th v-for="(bt, col) in primeTableMin.baseTerms" :key="`primeTableMinTR_${col}`"
+                  <!-- <th v-for="(bt, col) in primeTableCurrent.baseTerms" :key="`primeTableCurrentTR_${col}`"
                      class="svg-text" v-html="toSvg(bt.toLatex(literalNames))"
                       :class="[
                         primeTableColorMatrixObj.matrix[col+1][0],
@@ -206,7 +232,7 @@
                   /> -->
 
                   <!-- Base terms -->
-                  <th v-for="(bt, col) in primeTableMin.baseTerms" :key="`primeTableMinTR_${col}`"
+                  <th v-for="(bt, col) in primeTableCurrent.baseTerms" :key="`primeTableCurrentTR_${col}`"
                       :class="[
                         primeTableColorMatrixObj.matrix[col+1][0],
                         (primeTableColorMatrixObj.highlightedCellRow === 0 && primeTableColorMatrixObj.highlightedCellColumn === col+1) ? 'primetable-highlighted-cell' : ''
@@ -220,7 +246,7 @@
                 </tr>
 
                 <!-- body of table -->
-                <tr v-for="(pt, row) in primeTableMin.primeTerms" :key="`primeTableMinRow_${row}`">
+                <tr v-for="(pt, row) in primeTableCurrent.primeTerms" :key="`primeTableCurrentRow_${row}`">
                   <!-- prime term on the left -->
                   <td>{{nthLetter(row + 1)}}</td>
                   <th class="svg-text" v-html="toSvg(pt.toLatex(literalNames))"
@@ -231,17 +257,17 @@
                   />
 
                   <!-- Crosses -->
-                  <td v-for="col in primeTableMin.coverTable.length" :key="`primeTableMinCell_${row}_${col}`"
+                  <td v-for="col in primeTableCurrent.coverTable.length" :key="`primeTableCurrentCell_${row}_${col}`"
                       :class="primeTableColorMatrixObj.matrix[col][row+1]"
                   >
-                    <span v-if="primeTableMin.coverTable[col-1][row] === true"
+                    <span v-if="primeTableCurrent.coverTable[col-1][row] === true"
                         :class="(primeTableColorMatrixObj.highlightedCellRow === row + 1 && primeTableColorMatrixObj.highlightedCellColumn === col) ? 'primetable-highlighted-cell' : ''">
                       X
                     </span>
                   </td>
 
                   <!-- Cost -->
-                  <td>{{primeTableMin.primeTerms[row].getTerms().length}}</td>
+                  <td>{{primeTableCurrent.primeTerms[row].getTerms().length}}</td>
                 </tr>
               </table>
 
@@ -261,23 +287,28 @@
 
           <AccordionItem :expandableSideways="true">
             <template v-slot:accordion-item-title>
-              {{$t('bf_petrickExpression')}}:
+              {{$t('bf_petrickExpression')}}
             </template>
             <template v-slot:accordion-item-body>
-              <!-- <div><span v-html="toSvg(petrickStatementMin.expressionDirectStr + '=1')"/><span> | Absorption + Idempotenz</span></div>
-              <div><span v-html="toSvg(petrickStatementMin.expressionAbsorbedStr + '=1')"/><span> | {{$t('mathDistribution')}}</span></div>
-              <div><span v-html="toSvg(petrickStatementMin.expressionExpandedStr + '=1')"/><span> | Absorption + Idempotenz</span></div>
-              <div><span v-html="toSvg(petrickStatementMin.expressionStr + '=1')"/></div> -->
+              <!-- <div><span v-html="toSvg(petrickStatementCurrent.expressionDirectStr + '=1')"/><span> | Absorption + Idempotenz</span></div>
+              <div><span v-html="toSvg(petrickStatementCurrent.expressionAbsorbedStr + '=1')"/><span> | {{$t('mathDistribution')}}</span></div>
+              <div><span v-html="toSvg(petrickStatementCurrent.expressionExpandedStr + '=1')"/><span> | Absorption + Idempotenz</span></div>
+              <div><span v-html="toSvg(petrickStatementCurrent.expressionStr + '=1')"/></div> -->
               <div class="bf-petrick-statement-container">
-                <div v-for="(step, s) in petrickStatementMin.steps" :key="s" class="bf-petrick-statement-subcontainer">
+                <span v-if="petrickStatementCurrent.steps.length > 4" class="infoblob-wrapper">
+                  <InfoBlob>
+                    <span v-html="$t('bf_infoblob_petrick_statement')" class="petrick-statement-infoblob-ol"></span>
+                  </InfoBlob>
+                </span>
+                <div v-for="(step, s) in petrickStatementCurrent.steps" :key="s" class="bf-petrick-statement-subcontainer">
                   <span v-html="toSvg(step.bf.toLatex('ABCDEFGHIJKLMNOPQRSTUVPXYZ'.split(''), false) + ' = 1')"></span>
-                  <span v-if="s < petrickStatementMin.steps.length - 1">
-                    | {{ getTextFromPetrickStatementActionType(petrickStatementMin.steps[s+1].actionType) }}
+                  <span v-if="s < petrickStatementCurrent.steps.length - 1">
+                    | {{ getTextFromPetrickStatementActionType(petrickStatementCurrent.steps[s+1].actionType) }}
                   </span>
 
                   <!-- Math explanations also rendered as svg: -->
                   <!-- <span v-html="toSvg(step.bf.toLatex('ABCDEFGHIJKLMNOPQRSTUVPXYZ'.split(''), false) + ' = 1')"></span>
-                  <span v-if="s < petrickStatementMin.steps.length - 1" v-html="toSvg(' | ' + getTextFromPetrickStatementActionType(petrickStatementMin.steps[s+1].actionType) )" /> -->
+                  <span v-if="s < petrickStatementCurrent.steps.length - 1" v-html="toSvg(' | ' + getTextFromPetrickStatementActionType(petrickStatementCurrent.steps[s+1].actionType) )" /> -->
                 </div>
               </div>
             </template>
@@ -317,7 +348,7 @@
 
 <script>
 import {
-  optimizeBooleanFunction, generateRandomKVDiagram, // computePrimesFromKV,
+  optimizeBooleanFunction, generateRandomKVDiagram, BooleanFunctionUtil, // computePrimesFromKV,
   BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED,
   BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION,
   BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST,
@@ -331,6 +362,7 @@ import Accordion from './EmbeddedAccordion.vue';
 import AccordionItem from './EmbeddedAccordionItem.vue';
 import FormatSelect from './FormatSelect.vue';
 import ToggleSwitch from './ToggleSwitch.vue';
+import InfoBlob from './InfoBlob.vue';
 
 export default {
   name: 'BooleanFunctionMinimizer',
@@ -340,6 +372,7 @@ export default {
     AccordionItem,
     FSelect: FormatSelect,
     ToggleSwitch,
+    InfoBlob,
   },
   data() {
     return {
@@ -349,14 +382,20 @@ export default {
       randomExerciseDifficultySelectedIndex: 0,
       randomExerciseGoalSelectedIndex: 0,
 
+      useMinNotMaxTermDisplayStyle: true,
+
       dnf: '',
       knf: '',
+      quineClassesCurrent: [], // responsive
       quineClassesMin: [],
       quineClassesMax: [],
+      primeTermsCurrent: '', // responsive
       primeTermsMin: '',
       primeTermsMax: '',
+      primeTableCurrent: {}, // responsive
       primeTableMin: {},
       primeTableMax: {},
+      petrickStatementCurrent: {}, // responsive
       petrickStatementMin: {},
       petrickStatementMax: {},
       dmf: '',
@@ -367,6 +406,7 @@ export default {
       showMsgKVDiagramMustNotBeEmptyOrFull: false,
 
       quineClassesColorfulDisplayStyle: false,
+      quineClassesBinaryDisplayStyle: false,
 
       primetableStepsAmount: 0,
       primetableCurrentStepIndex: 0,
@@ -405,27 +445,27 @@ export default {
     randomExercisesGoalsMetrics() {
       // TODO: translation
       return [
+        // {
+        //   title: this.$t('bf_goal_egal'),
+        //   difficulties: [
+        //     {
+        //       numVars: 2,
+        //     },
+        //     {
+        //       numVars: 3,
+        //       numMintermsMin: 3,
+        //       numMaxtermsMin: 3,
+        //     },
+        //     {
+        //       numVarsMin: 4,
+        //       numVarsMax: 5,
+        //       numMintermsMin: 5,
+        //       numMaxtermsMin: 5,
+        //     },
+        //   ],
+        // },
         {
-          title: 'Egal',
-          difficulties: [
-            {
-              numVars: 2,
-            },
-            {
-              numVars: 3,
-              numMintermsMin: 3,
-              numMaxtermsMin: 3,
-            },
-            {
-              numVarsMin: 4,
-              numVarsMax: 5,
-              numMintermsMin: 5,
-              numMaxtermsMin: 5,
-            },
-          ],
-        },
-        {
-          title: 'DNF bestimmen',
+          title: this.$t('bf_goal_determine_DNF'),
           difficulties: [
             {
               numVarsMin: 2,
@@ -447,7 +487,7 @@ export default {
           ],
         },
         {
-          title: 'KNF bestimmen',
+          title: this.$t('bf_goal_determine_KNF'),
           difficulties: [
             {
               numVarsMin: 2,
@@ -469,7 +509,7 @@ export default {
           ],
         },
         {
-          title: 'Primimplikanten bestimmen',
+          title: this.$t('bf_goal_determine_prime_implicants'),
           difficulties: [
             {
               numVarsMin: 2,
@@ -492,7 +532,7 @@ export default {
           ],
         },
         {
-          title: 'Primimplikaten bestimmen',
+          title: this.$t('bf_goal_determine_prime_implicates'),
           difficulties: [
             {
               numVarsMin: 2,
@@ -530,7 +570,7 @@ export default {
       let highlightedCellRow = -1;
       let highlightedCellColumn = -1;
 
-      const primetableObj = this.primeTableMin;
+      const primetableObj = this.primeTableCurrent;
 
       const cellClassDefault = 'primetable-cell-default';
       const cellClassCore = 'primetable-cell-core';
@@ -614,7 +654,7 @@ export default {
       };
     },
     primeTableCurrentExplanation() {
-      const primetableObj = this.primeTableMin;
+      const primetableObj = this.primeTableCurrent;
 
       if (this.primetableCurrentStepIndex === 0) {
         // return '<h4>Initialer Schritt:</h4>'
@@ -623,7 +663,12 @@ export default {
         //   + 'Die Kosten c eines Primterms sind die Anzahl seiner Literale. Je höher, desto aufwändiger (teurer) die Umsetzung in Hardware. '
         //   + '<br>Tipp:<br>'
         //   + 'Ein Primimplikant überdeckt eine Einstelle genau dann, wenn alle Literale des Primterms auch genauso im Basisterm vorkommen';
-        return this.$t('bf_covertable_step_description_initial');
+        return this.$t('bf_covertable_step_description_initial', {
+          ifMinTermsEinstelleElseNullstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_einstelle') : this.$t('bf_nullstelle'),
+          ifMinTermsEinstellenElseNullstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_einstellen') : this.$t('bf_nullstellen'),
+          ifMinTermsNullstelleElseEinstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstelle') : this.$t('bf_einstelle'),
+          ifMinTermsNullstellenElseEinstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstellen') : this.$t('bf_einstellen'),
+        });
       }
       const step = primetableObj.steps[this.primetableCurrentStepIndex - 1];
       switch (step.actionType) {
@@ -632,10 +677,19 @@ export default {
           //   + `Der einzige Primterm, der die Einstelle ${this.primeTableBaseTermIndices[step.column]} überdeckt, ist Term ${this.nthLetter(step.core + 1)}. `
           //   + 'Dieser Primterm muss also unbedingt in unserer Schaltfunktion vorkommen! '
           //   + 'Markiere die Zeile als Kern und streiche die Spalte heraus.';
+
           return this.$t('bf_covertable_step_description_core_found', {
             columnName: this.primeTableBaseTermIndices[step.column],
             rowName: this.nthLetter(step.core + 1),
+            ifMinTermsEinstelleElseNullstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_einstelle') : this.$t('bf_nullstelle'),
+            ifMinTermsEinstellenElseNullstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_einstellen') : this.$t('bf_nullstellen'),
+            ifMinTermsNullstelleElseEinstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstelle') : this.$t('bf_einstelle'),
+            ifMinTermsNullstellenElseEinstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstellen') : this.$t('bf_einstellen'),
           });
+          // return this.$t('bf_covertable_step_description_core_found').replace('$$$COLUMN_NAME$$$', this.primeTableBaseTermIndices[step.column]);
+          // //   columnName: this.primeTableBaseTermIndices[step.column],
+          // //   rowName: this.nthLetter(step.core + 1),
+          // // });
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED:
           // return '<h4>Spalte bereits abgedeckt:</h4>'
           //   + `Die Spalte ${this.primeTableBaseTermIndices[step.column]} wird bereits vom Primterm ${this.nthLetter(step.coveredBy + 1)} überdeckt. `
@@ -643,6 +697,10 @@ export default {
           return this.$t('bf_covertable_step_description_cross_column_bc_covered', {
             columnName: this.primeTableBaseTermIndices[step.column],
             rowName: this.nthLetter(step.coveredBy + 1),
+            ifMinTermsEinstelleElseNullstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_einstelle') : this.$t('bf_nullstelle'),
+            ifMinTermsEinstellenElseNullstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_einstellen') : this.$t('bf_nullstellen'),
+            ifMinTermsNullstelleElseEinstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstelle') : this.$t('bf_einstelle'),
+            ifMinTermsNullstellenElseEinstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstellen') : this.$t('bf_einstellen'),
           });
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED:
           // return '<h4>Reihe bereits bereits vollständig abgedeckt:</h4>'
@@ -650,6 +708,10 @@ export default {
           //   + 'Streiche die Reihe heraus.';
           return this.$t('bf_covertable_step_description_cross_row_bc_covered', {
             rowName: this.nthLetter(step.row + 1),
+            ifMinTermsEinstelleElseNullstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_einstelle') : this.$t('bf_nullstelle'),
+            ifMinTermsEinstellenElseNullstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_einstellen') : this.$t('bf_nullstellen'),
+            ifMinTermsNullstelleElseEinstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstelle') : this.$t('bf_einstelle'),
+            ifMinTermsNullstellenElseEinstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstellen') : this.$t('bf_einstellen'),
           });
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION:
           // return '<h4>Zeilendominanz:</h4>'
@@ -661,6 +723,10 @@ export default {
           return this.$t('bf_covertable_step_description_row_domination', {
             dominatorName: this.nthLetter(step.dominator + 1),
             dominatedName: this.nthLetter(step.dominated + 1),
+            ifMinTermsEinstelleElseNullstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_einstelle') : this.$t('bf_nullstelle'),
+            ifMinTermsEinstellenElseNullstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_einstellen') : this.$t('bf_nullstellen'),
+            ifMinTermsNullstelleElseEinstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstelle') : this.$t('bf_einstelle'),
+            ifMinTermsNullstellenElseEinstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstellen') : this.$t('bf_einstellen'),
           });
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION:
           // return '<h4>Spaltendominanz:</h4>'
@@ -671,18 +737,27 @@ export default {
           return this.$t('bf_covertable_step_description_column_domination', {
             dominatorName: this.primeTableBaseTermIndices[step.dominator],
             dominatedName: this.primeTableBaseTermIndices[step.dominated],
+            ifMinTermsEinstelleElseNullstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_einstelle') : this.$t('bf_nullstelle'),
+            ifMinTermsEinstellenElseNullstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_einstellen') : this.$t('bf_nullstellen'),
+            ifMinTermsNullstelleElseEinstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstelle') : this.$t('bf_einstelle'),
+            ifMinTermsNullstellenElseEinstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstellen') : this.$t('bf_einstellen'),
           });
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST:
           // return '<h4>Zyklischer Rest:</h4>'
           //   + 'Keine Regel der Überdeckungstabelle ist anwendbar. Man spricht hierbei von einem \'Zyklischem Rest\'.'
           //   + '<br>Um nun dennoch eine Minimalform der Schaltfunktion bestimmen zu können, bietet sich eine Aufstellung des Petrick Ausdrucks an.';
-          return this.$t('bf_covertable_step_description_cyclic_rest');
+          return this.$t('bf_covertable_step_description_cyclic_rest', {
+            ifMinTermsEinstelleElseNullstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_einstelle') : this.$t('bf_nullstelle'),
+            ifMinTermsEinstellenElseNullstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_einstellen') : this.$t('bf_nullstellen'),
+            ifMinTermsNullstelleElseEinstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstelle') : this.$t('bf_einstelle'),
+            ifMinTermsNullstellenElseEinstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstellen') : this.$t('bf_einstellen'),
+          });
         default:
-          return `CoverTable: actionType of Step obj unknown: '${step.actionType}'`;
+          return `ERROR: CoverTable: actionType of Step obj unknown: '${step.actionType}'`;
       }
     },
     primeTableBaseTermIndices() {
-      const baseTerms = this.primeTableMin.baseTerms;
+      const baseTerms = this.primeTableCurrent.baseTerms;
       const indices = [];
       for (let b = 0; b < baseTerms.length; b += 1) {
         const baseTerm = baseTerms[b];
@@ -712,6 +787,9 @@ export default {
       const varNames = kvdiagramVue.getSelectedVarNames();
       this.literalNames = varNames;
 
+      const numVars = kvdiagram.getAmountLiterals();
+      const util = new BooleanFunctionUtil();
+
       let optimizations;
       try {
         optimizations = optimizeBooleanFunction(kvdiagram);
@@ -731,17 +809,27 @@ export default {
       this.quineClassesMin = optimizations.quineClasses['min-terms'].map(
         qLayer => qLayer.map(
           qLayerInner => qLayerInner.map(
-            termTuple => [termTuple[0].toLatex(varNames), termTuple[1]],
+            termTuple => [
+              termTuple[0].toLatex(varNames),
+              termTuple[1],
+              `\\text{${util.computeBinaryStringRepresentationOfBaseTerm(termTuple[0], numVars)}}`,
+            ],
           ),
         ).slice().reverse(),
       ).slice().reverse();
       this.quineClassesMax = optimizations.quineClasses['max-terms'].map(
         qLayer => qLayer.map(
           qLayerInner => qLayerInner.map(
-            termTuple => [termTuple[0].toLatex(varNames), termTuple[1]],
+            termTuple => [
+              termTuple[0].toLatex(varNames),
+              termTuple[1],
+              `\\text{${util.computeBinaryStringRepresentationOfBaseTerm(termTuple[0], numVars)}}`,
+            ],
           ),
         ).slice().reverse(),
       ).slice().reverse();
+
+      console.log(this.quineClassesMin[1][1][0]);
 
       // Prime terms
       this.primeTermsMin = optimizations.primes['min-terms'].map(pt => pt.toLatex(varNames));
@@ -750,7 +838,6 @@ export default {
       // Prime table
       this.primeTableMin = optimizations.primeTable['min-terms'];
       this.primeTableMax = optimizations.primeTable['max-terms'];
-      this.resetPrimeTable();
 
       // Petrick statement
       this.petrickStatementMin = optimizations.petrickStatement['min-terms'];
@@ -760,14 +847,39 @@ export default {
       this.dmf = optimizations.dmf.toLatex(varNames);
       this.kmf = optimizations.kmf.toLatex(varNames);
 
+      this.updateMinMaxDisplayStyle();
+
+      this.resetPrimeTable();
       this.someOptimizationsFinished = true;
     },
     changeQuineClassesDisplayStyle(isToggleSwitchChecked) {
       this.quineClassesColorfulDisplayStyle = isToggleSwitchChecked;
     },
+    changeQuineClassesBinaryDisplayStyle(isToggleSwitchChecked) {
+      this.quineClassesBinaryDisplayStyle = isToggleSwitchChecked;
+    },
+    toggleMinMaxTerms(isToggleSwitchChecked) {
+      this.useMinNotMaxTermDisplayStyle = !isToggleSwitchChecked;
+      this.updateMinMaxDisplayStyle();
+
+      this.resetPrimeTable();
+    },
+    updateMinMaxDisplayStyle() {
+      if (!this.useMinNotMaxTermDisplayStyle) {
+        this.quineClassesCurrent = this.quineClassesMax;
+        this.primeTermsCurrent = this.primeTermsMax;
+        this.primeTableCurrent = this.primeTableMax;
+        this.petrickStatementCurrent = this.petrickStatementMax;
+      } else {
+        this.quineClassesCurrent = this.quineClassesMin;
+        this.primeTermsCurrent = this.primeTermsMin;
+        this.primeTableCurrent = this.primeTableMin;
+        this.petrickStatementCurrent = this.petrickStatementMin;
+      }
+    },
     resetPrimeTable() {
       this.primetableCurrentStepIndex = 0;
-      this.primetableStepsAmount = this.primeTableMin.steps.length;
+      this.primetableStepsAmount = this.primeTableCurrent.steps.length;
     },
     primetableStepForward() {
       if (this.primetableCurrentStepIndex >= this.primetableStepsAmount) {
@@ -926,6 +1038,7 @@ export default {
         kvdiagram,
       );
 
+      this.updateMinMaxDisplayStyle();
       this.someOptimizationsFinished = false;
     },
     getTextFromPetrickStatementActionType(actionType) {
@@ -1005,6 +1118,10 @@ export default {
     .exercise-selection-container {
       .exercise-selection-container-tooltip {
         margin-bottom: .8em;
+
+        .infoblob-wrapper {
+          float: left;
+        }
       }
 
       .exercise-selection-container-subsection {
@@ -1036,6 +1153,14 @@ export default {
   }
   .termcollection {
     padding-right: .5em;
+  }
+  .quine-classes-toggle-switch-container {
+    text-align: left;
+    font-size: 0.8em;
+
+    div {
+      padding-top: 3px;
+    }
   }
   .quine-classes-reduced-term-colored {
     color: rgba(gray, .8);
@@ -1091,6 +1216,21 @@ export default {
     // NOTE: holds all Petrick statement alg. lines
     white-space: nowrap; // forces svg + mathematical expl. int the same line
     font-size: 1.1em;
+
+    .infoblob-wrapper {
+      display: block;
+      text-align: left;
+
+      .petrick-statement-infoblob-ol {
+        text-align: left;
+        margin-block-start: .5em;
+        margin-block-end: 0;
+        padding-inline-start: 20px;
+        li {
+            margin-bottom: .5em;
+        }
+      }
+    }
   }
 
   .bf-petrick-statement-subcontainer {
