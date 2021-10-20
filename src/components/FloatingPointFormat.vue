@@ -242,9 +242,9 @@ export default {
     },
     formatOptions() {
       return {
-        decimal: `${this.$t('decimal')} (42,14)`,
-        binary: `${this.$t('binary')}  (1,0011)`,
-        ieee: 'IEEE (1 0101 1101)',
+        decimal: `${this.$t('decimal')}`,
+        binary: `${this.$t('binary')}`,
+        ieee: 'IEEE',
       };
     },
     bitrangeOptions() {
