@@ -8,6 +8,8 @@ export const i18n = new VueI18n({
   fallbackLocale: 'de',
   messages: {
     de: {
+      homePageText: 'Ziel dieser Webseite ist das Vertiefen der Kenntnisse aus der Vorlesung und zugehörigen Übung zu ausgewählten Themenschwerpunkten. Wählen Sie im Menü das Thema aus, zu dem sie Übungsaufgaben lösen möchten.',
+      startTraining: 'Los geht\'s',
       numVarInput: 'Anzahl an Variablen',
       confirm: 'Bestätigen',
       varNaming: 'Benennung der Variablen',
@@ -250,6 +252,8 @@ export const i18n = new VueI18n({
       bf_sortingUC: 'Sortierung',
     },
     en: {
+      homePageText: 'The goal of GTI-Online is to deepen the knowledge of selected topics learned in the lecture and corresponding exercise. Select in the menu a topic and start practicing.',
+      startTraining: 'Let\'s go',
       numVarInput: 'Number of variables',
       confirm: 'Confirm',
       varNaming: 'Variable naming',

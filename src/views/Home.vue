@@ -3,15 +3,23 @@
     <div class="headerHome">
       <h1 class="titleHome"><span class="red">GTI</span> ONLINE</h1>
       <div class="textHome">
-        <p>Ziel dieser Webseite ist das Vertiefen der Kenntnisse aus der
-        Vorlesung und zugehörigen Übung zu ausgewählten Themenschwerpunkten.
-        Wählen Sie im Menü das Thema aus, zu dem sie Übungsaufgaben lösen möchten.</p>
+        <p>{{$t('homePageText')}}</p>
       </div>
       <div class="linkHome">
-        <a href="/fparithmetic" class="link">
-          <div class="linkLabel">Los geht's</div>
-          <div class="linkButton"></div>
-        </a>
+        <router-link
+          to="/fparithmetic"
+          custom
+          v-slot="{ href, navigate, isActive, isExactActive }"
+        >
+          <a
+            :href="href"
+            @click="navigate"
+            :class="['link', isActive && 'router-link-active', isExactActive && 'router-link-exact-active']"
+          >
+            <div class="linkLabel">{{$t('startTraining')}}</div>
+            <div class="linkButton"></div>
+          </a>
+        </router-link>
       </div>
     </div>
     <div class="imageContainer">
