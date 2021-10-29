@@ -1,8 +1,6 @@
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
 function classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
-    console.log(instance);
-    console.log(Constructor);
     throw new TypeError('Cannot call a class as a function');
   }
 }

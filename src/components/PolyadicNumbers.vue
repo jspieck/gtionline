@@ -3,13 +3,17 @@
   <tabs :tabs="tabs" :currentTab="currentTab" @onClick="handleClick" updated="this.$t('exercises')"
   :wrapper-class="'default-tabs'" :tab-class="'default-tabs__item'"
   :tab-active-class="'default-tabs__item_active'" :line-class="'default-tabs__active-line'"/>
-  <div class="tab" v-if="currentTab === 'convert'">
+  <div class="tab" v-if="currentTab === 'conversionExercise'">
     <h3 class="title">{{$t('conversion')}}</h3>
-    <pc/>
+    <pce/>
   </div>
-  <div class="tab" v-if="currentTab === 'free'">
+  <div class="tab" v-if="currentTab === 'conversionFree'">
     <h3 class="title">{{$t('conversion')}}</h3>
-    <pf/>
+    <pcf/>
+  </div>
+  <div class="tab" v-if="currentTab === 'arithmeticFree'">
+    <h3 class="title">{{$t('arithmetic')}}</h3>
+    <paf/>
   </div>
 </div>
 </template>
@@ -17,19 +21,21 @@
 <script>
 // eslint-disable-next-line
 import Tabs from 'vue-tabs-with-active-line';
-import PolyadicConversion from './PolyadicConversion.vue';
-import PolyadicFree from './PolyadicFree.vue';
+import PolyadicConversionExercise from './PolyadicConversionExercise.vue';
+import PolyadicConversionFree from './PolyadicConversionFree.vue';
+import PolyadicArithmeticFree from './PolyadicArithmeticFree.vue';
 
 export default {
   name: 'TinyTabs',
   components: {
-    pc: PolyadicConversion,
-    pf: PolyadicFree,
+    pce: PolyadicConversionExercise,
+    pcf: PolyadicConversionFree,
+    paf: PolyadicArithmeticFree,
     tabs: Tabs,
   },
   data() {
     return {
-      currentTab: 'free',
+      currentTab: 'conversionExercise',
     };
   },
   computed: {
@@ -37,11 +43,15 @@ export default {
       return [
         {
           title: this.$t('conversion'),
-          value: 'convert',
+          value: 'conversionExercise',
         },
         {
           title: this.$t('freeCalculation'),
-          value: 'free',
+          value: 'conversionFree',
+        },
+        {
+          title: this.$t('arithmeticFree'),
+          value: 'arithmeticFree',
         },
       ];
     },

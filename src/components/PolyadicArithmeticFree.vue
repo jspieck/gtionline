@@ -8,20 +8,27 @@
           <tr>
             <td>
               <div class="solutionInput">
-              <p>{{$t('input')}}</p>
-              <input id="InputNumber" v-model="inputNums[0]" :placeholder="this.$t('inputNumber') "
-                     @input="checkFormat($event.target.value)" :class="backFormat"/>
+              <p>{{$t('input')}} 1</p>
+              <input id="InputNumber1" v-model="inputNums[0]" :placeholder="this.$t('inputNumber') "
+                     @input="selectVal(0, $event.target.value)" :class="backFormat"/>
+              </div>
+            </td>
+            <td>
+              <div class="solutionInput">
+              <p>{{$t('input')}} 2</p>
+              <input id="InputNumber2" v-model="inputNums[1]" :placeholder="this.$t('inputNumber') "
+                     @input="selectVal(1, $event.target.value)" :class="backFormat"/>
               </div>
             </td>
             <td>
               <p>{{$t('firstFormat')}}</p>
-              <FSelect :num="0" :sel="selectedFormat[0]" @input="selectFormat"
-                         :options="formatOptions"/>
+              <FSelect :num="0" :sel="selectedFormat" @input="selectFormat"
+                       :options="formatOptions"/>
             </td>
             <td>
-              <p>{{$t('secondFormat')}}</p>
-              <FSelect :num="1" :sel="selectedFormat[0]" @input="selectFormat"
-                         :options="formatOptions"/>
+              <p>{{$t('operand')}}</p>
+              <FSelect :sel="operator" @input="selectOperator"
+                :options="operationOptions"/>
             </td>
           </tr>
         </table>
@@ -41,12 +48,12 @@
       <div>
         <label class="attention">{{$t('attSolve')}}</label>
       </div>
-      <!-- <div class="pdfGen">
+      <div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
       </div>
       <div class="mobile_pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
-      </div> -->
+      </div>
     </div>
     <div id="solution">
       <Accordion :solutionDescription="solDescr">
@@ -61,65 +68,83 @@
 </template>
 
 <script>
-/* eslint-disable */
+/* eslint no-useless-escape: 0  no-case-declarations: 0 */
 import FormatSelect from './FormatSelect.vue';
 import SolutionAccordion from './SolutionAccordion.vue';
-import * as description from '../scripts/DescriptionSolution';
-import * as checker from '../scripts/checkSolution';
-import * as pdf from '../scripts/generatePdf';
+import * as description from '../scripts/DescriptionPolyadicSolution';
+import * as pdf from '../scripts/generatePdfPolyadicConversion';
 import * as solution from '../scripts/polyadicSolution';
 
 export default {
-  name: 'PolyadicFree',
+  name: 'PolyadicConversionFree',
   components: {
     FSelect: FormatSelect,
     Accordion: SolutionAccordion,
   },
   data() {
     let hasdefault = false;
-    let format1 = 'decimal';
-    if (window.sessionStorage.getItem('PF_format1')) {
-      format1 = window.sessionStorage.getItem('PF_format1');
+    let format = 'decimal';
+    if (window.sessionStorage.getItem('PAF_format')) {
+      format = window.sessionStorage.getItem('PAF_format');
       hasdefault = true;
     }
-    let format2 = 'decimal';
-    if (window.sessionStorage.getItem('PF_format2')) {
-      format2 = window.sessionStorage.getItem('PF_format2');
+    let input1 = '';
+    if (window.sessionStorage.getItem('PAF_inputNums1')) {
+      input1 = window.sessionStorage.getItem('PAF_inputNums2');
       hasdefault = true;
     }
-    let input = '';
-    if (window.sessionStorage.getItem('PF_inputNum')) {
-      input = window.sessionStorage.getItem('PF_inputNum');
+    let input2 = '';
+    if (window.sessionStorage.getItem('PAF_inputNums2')) {
+      input2 = window.sessionStorage.getItem('PAF_inputNums2');
+      hasdefault = true;
+    }
+    let op = 'add';
+    if (window.sessionStorage.getItem('PAF_operator')) {
+      op = window.sessionStorage.getItem('PAF_operator');
       hasdefault = true;
     }
     return {
-      selectedFormat: [format1, format2], // 0: in format, 1: out format
-      power: [10, 10],
+      selectedFormat: format,
+      operator: op,
+      power: 10,
       mouseDown: false,
       solution: '',
       solutionObject: '',
-      inputNums: { 0: input },
-      nums: { 0: '' },
+      inputNums: [input1, input2],
       falseFormatOutput: 'Falsches Format!',
       solutionSteps: [],
       default: hasdefault,
       watcher: '',
       propSol: '',
       backSol: '',
-      backFormat: '',
+      backFormat: ['', ''],
+      modus: '',
     };
   },
   computed: {
     solDescr() {
       return this.solutionSteps;
     },
+    operationOptions() {
+      return {
+        add: `${this.$t('addition')} (+)`,
+        sub: `${this.$t('subtraction')} (-)`,
+        // mul: `${this.$t('multiplication')} (*)`,
+        // div: `${this.$t('division')} (/)`,
+      };
+    },
     formatOptions() {
       return {
-        decimal: `${this.$t('decimal')} (92,14)`,
-        binary: `${this.$t('binary')} (1,0011)`,
-        ternary: `${this.$t('ternary')} (2122,01)`,
-        octal: `${this.$t('octal')} (6373,01)`,
-        hex: `${this.$t('hexadecimal')} (A53F0,08)`,
+        decimal: `${this.$t('decimal')} (Basis 10)`,
+        binary: `${this.$t('binary')} (Basis 2)`,
+        ternary: `${this.$t('ternary')} (Basis 3)`,
+        quaternary: `${this.$t('quaternary')} (Basis 4)`,
+        quinary: `${this.$t('quinary')} (Basis 5)`,
+        senary: `${this.$t('senary')} (Basis 6)`,
+        septenary: `${this.$t('septenary')} (Basis 7)`,
+        octal: `${this.$t('octal')} (Basis 8)`,
+        novenary: `${this.$t('novenary')} (Basis 9)`,
+        hex: `${this.$t('hexadecimal')} (Basis 10)`,
       };
     },
   },
@@ -135,9 +160,10 @@ export default {
   },
   methods: {
     saveVals() {
-      window.sessionStorage.setItem('PF_format1', this.selectedFormat[0]);
-      window.sessionStorage.setItem('PF_format2', this.selectedFormat[1]);
-      window.sessionStorage.setItem('PF_inputNum', this.inputNums[0]);
+      window.sessionStorage.setItem('PAF_format', this.selectedFormat);
+      window.sessionStorage.setItem('PAF_inputNums1', this.inputNums[0]);
+      window.sessionStorage.setItem('PAF_inputNums2', this.inputNums[1]);
+      window.sessionStorage.setItem('PAF_operator', this.operator);
     },
     recalculate() {
       this.saveVals();
@@ -148,57 +174,130 @@ export default {
         }
       });
     },
+    // eslint-disable-next-line no-unused-vars
+    selectOperator(num, val) {
+      this.operator = val;
+      this.recalculate();
+    },
+    // eslint-disable-next-line no-unused-vars
     selectFormat(num, val) {
-      this.selectedFormat[num] = val;
-      if (val === 'decimal') {
-        this.power[num] = 10;
-      } else if (val === 'binary') {
-        this.power[num] = 2;
-      } else if (val === 'ternary') {
-        this.power[num] = 3;
-      } else if (val === 'octal') {
-        this.power[num] = 8;
-      } else if (val === 'hex') {
-        this.power[num] = 16;
+      this.selectedFormat = val;
+      switch (this.selectedFormat) {
+        case 'binary':
+          this.power = 2;
+          break;
+        case 'ternary':
+          this.power = 3;
+          break;
+        case 'quaternary':
+          this.power = 4;
+          break;
+        case 'quinary':
+          this.power = 5;
+          break;
+        case 'senary':
+          this.power = 6;
+          break;
+        case 'septenary':
+          this.power = 7;
+          break;
+        case 'octal':
+          this.power = 8;
+          break;
+        case 'novenary':
+          this.power = 9;
+          break;
+        case 'decimal':
+          this.power = 10;
+          break;
+        case 'hex':
+          this.power = 16;
+          break;
+        default:
       }
-      if (this.checkFormat(this.inputNums[0])) {
+      if (this.checkFormat(this.inputNums[0]) && this.checkFormat(this.inputNums[1])) {
+        this.recalculate();
+      }
+    },
+    selectVal(num, val) {
+      this.inputNums[num] = val;
+      if (this.checkFormat(this.inputNums[num])) {
         this.recalculate();
       }
     },
     checkFormat(conv) {
       this.backFormat = '';
-      const format = this.selectedFormat[0];
+      const format = this.selectedFormat;
       const convert = conv.replace(/\s/g, '');
       let commaFound = false;
       for (let i = 0; i < convert.length; i += 1) {
-        if (format === 'binary') {
-          if (!(['0', '1', ',', '.', '-', '+'].includes(convert[i]))) {
-            this.backFormat = 'incorrectInput';
-            return false;
-          }
-        } else if (format === 'decimal') {
-          if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-            ',', '.', '-', '+'].includes(convert[i]))) {
-            this.backFormat = 'incorrectInput';
-            return false;
-          }
-        } else if (format === 'ternary') {
-          if (!(['0', '1', '2', ',', '.', '-', '+'].includes(convert[i]))) {
-            this.backFormat = 'incorrectInput';
-            return false;
-          }
-        } else if (format === 'octal') {
-          if (!(['0', '1', '2', '3', '4', '5', '6', '7', ',', '.', '-',
-            '+'].includes(convert[i]))) {
-            this.backFormat = 'incorrectInput';
-            return false;
-          }
-        } else if (format === 'hex') {
-          if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
-            ',', '.', '-', '+'].includes(convert[i]))) {
-            this.backFormat = 'incorrectInput';
-            return false;
-          }
+        switch (format) {
+          case 'binary':
+            if (!(['0', '1', ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'ternary':
+            if (!(['0', '1', '2', ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'quaternary':
+            if (!(['0', '1', '2', '3', ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'quinary':
+            if (!(['0', '1', '2', '3', '4', ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'senary':
+            if (!(['0', '1', '2', '3', '4', '5', ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'septenary':
+            if (!(['0', '1', '2', '3', '4', '5', '6', ',', '.', '-',
+              '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'octal':
+            if (!(['0', '1', '2', '3', '4', '5', '6', '7', ',', '.', '-',
+              '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'novenary':
+            if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8',
+              ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'decimal':
+            if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+              ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          case 'hex':
+            if (!(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+              ',', '.', '-', '+'].includes(convert[i]))) {
+              this.backFormat = 'incorrectInput';
+              return false;
+            }
+            break;
+          default:
         }
         if ((convert[i] === '+' || convert[i] === '-') && i > 1) {
           this.backFormat = 'incorrectInput';
@@ -215,48 +314,45 @@ export default {
       }
       return true;
     },
-    /* downloadPdf() {
+    downloadPdf() {
       this.recalculate();
-      const descr = new pdf.PdfDescription(
-        this,
-        this.exponentBits,
-        this.numBits,
-        this.watcher,
-      );
-      descr.generatePolyadicPdf(
+      const descr = new pdf.PdfDescription(this, this.watcher);
+      descr.generatePdf();
+    },
+    computeSolution() {
+      // calc solution
+      const polyadicSolution = new solution.PolyadicSolution();
+      polyadicSolution.calcArithmeticSolution(
         this.inputNums[0],
         this.inputNums[1],
-        this.solution,
-        this.selectedFormat[2],
-        this.selectedFormat[0],
+        this.power,
+        this.operator,
       );
-    }, */
-    computeSolution() {
-      console.log('compute');
-      const polyadicSolution = new solution.PolyadicSolution();
-      polyadicSolution.convertFormat(this.inputNums[0], this.power[0], this.power[1]);
       this.watcher = JSON.parse(JSON.stringify(polyadicSolution.watcher));
       this.solution = polyadicSolution.result;
-      /* const descr = new description.DescriptionSolution(
-        this,
-        this.exponentBits,
-        this.numBits,
-        ieeeSolution.watcher,
+      // construct description
+      const descr = new description.DescriptionPolyadicSolution(this, this.watcher);
+      descr.makeDescription(
+        this.inputNums[0],
+        this.inputNums[1],
+        this.power,
+        this.operator,
       );
-      descr.makeDescriptionArithmetic(
-        this.nums[0],
-        this.nums[1],
-        this.solution,
-        this.selectedFormat[2],
-      );
-      this.solutionSteps = descr.result; */
-      this.solutionSteps = this.solution;
+      this.solutionSteps = descr.result;
       this.solutionObject = polyadicSolution.resultObject;
+      this.modus = polyadicSolution.modus;
+      this.$nextTick(() => {
+        if (window.MathJax) {
+          window.MathJax.typeset(); // https://github.com/mathjax/MathJax/issues/2557
+        }
+      });
     },
     checkSolution() {
-      const checkSolution = new checker.CheckSolution(this.exponentBits);
-      checkSolution.checkSolution(this.solutionObject, this.propVB, this.propE, this.propM);
-      this.backSol = checkSolution.backSol;
+      if (this.solution === this.propSol) {
+        this.backSol = 'correctInput';
+      } else {
+        this.backSol = 'incorrectInput';
+      }
     },
     preventGlobalMouseEvents() {
       document.body.style['pointer-events'] = 'none';

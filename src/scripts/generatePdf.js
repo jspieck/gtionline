@@ -128,7 +128,7 @@ export class PdfDescription {
     switch (this.imp.selectedFormat[2]) {
       case 'add':
         values += `<th>${this.imp.$t('firstSummand')}</th>`;
-        values += `<th>${this.imp.$t('firstSummand')}</th>`;
+        values += `<th>${this.imp.$t('secondSummand')}</th>`;
         break;
 
       case 'mul':

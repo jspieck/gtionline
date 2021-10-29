@@ -5,8 +5,10 @@
     <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
     <ul class="menu">
       <li v-for="submenu in menu" v-bind:key="submenu.id">
-        <a>{{submenu.label}}</a>
-        <ul class="navbar-dropdown">
+        <a v-if="submenu.link === undefined">{{submenu.label}}</a>
+        <router-link v-else :to="`${submenu.link}`">{{submenu.label}}</router-link>
+
+        <ul class="navbar-dropdown" v-if="submenu.items !== undefined">
           <li v-for="item in submenu.items" v-bind:key="item.id">
             <router-link :to="`${item.link}`">{{item.label}}</router-link>
           </li>
@@ -52,23 +54,29 @@ export default {
         {
           id: 1,
           label: this.$t('functionMin'),
-          items: [
-            {
-              id: 2,
-              label: this.$t('kvDiagram'),
-              link: '/kvdiagram',
-            },
-            {
-              id: 3,
-              label: 'Quine/McCluskey',
-              link: '/quinemccluskey',
-            },
-            {
-              id: 4,
-              label: 'Nelson-Petrick',
-              link: '/nelsonpetrick',
-            },
-          ],
+          link: 'bfminimizer',
+          // items: [
+          //   {
+          //     id: 2,
+          //     label: this.$t('kvDiagram'),
+          //     link: '/kvdiagram',
+          //   },
+          //   {
+          //     id: 3,
+          //     label: 'Quine/McCluskey',
+          //     link: '/quinemccluskey',
+          //   },
+          //   {
+          //     id: 4,
+          //     label: 'Nelson-Petrick',
+          //     link: '/nelsonpetrick',
+          //   },
+          //   {
+          //     id: 5,
+          //     label: 'Boolean-Function Minimierung',
+          //     link: '/bfminimizer',
+          //   },
+          // ],
         },
       ];
     },
@@ -127,6 +135,8 @@ export default {
     a {
       white-space: nowrap;
       cursor: pointer;
+      text-decoration: none;
+      color: white;
     }
   }
 

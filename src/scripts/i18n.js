@@ -8,6 +8,8 @@ export const i18n = new VueI18n({
   fallbackLocale: 'de',
   messages: {
     de: {
+      homePageText: 'Ziel dieser Webseite ist das Vertiefen der Kenntnisse aus der Vorlesung und zugehörigen Übung zu ausgewählten Themenschwerpunkten. Wählen Sie im Menü das Thema aus, zu dem sie Übungsaufgaben lösen möchten.',
+      startTraining: 'Los geht\'s',
       numVarInput: 'Anzahl an Variablen',
       confirm: 'Bestätigen',
       varNaming: 'Benennung der Variablen',
@@ -43,11 +45,13 @@ export const i18n = new VueI18n({
       fpformat: 'Floating Point Format',
       check: 'Check',
       values: 'Werte',
+      load: 'Laden',
       // neu
       // general
+      arithmetic: 'Arithmetik',
       conversion: 'Konvertierung',
       conversionExercise1: 'Konvertiere: ',
-      conversionExercise2: 'in eine IEEE-Flieskommazahl einer Exponenten-Länge von: ',
+      conversionExercise2: 'in eine IEEE-Fließkommazahl einer Exponenten-Länge von ',
       steps: 'Schritte',
       repeatMinuend: 'wiederhole\\ Minuend',
       doDivision: 'Divison durchführen',
@@ -72,6 +76,8 @@ export const i18n = new VueI18n({
       divWithZero: 'Bei einer Division mit 0 im Zähler ist das Ergebnis immer 0.',
       mulWithZero: 'Bei einer Multiplikation mit 0 ist das Ergebnis immer 0.',
       zeroDivision: 'Eine Division durch 0 ist nicht möglich!',
+      arithmeticFree: 'Freie Arithmetik',
+      conversionFree: 'Freie Konvertierung',
       // values
       value: 'Wert',
       givenValues: 'Werte der übertragenen Zahlen',
@@ -124,15 +130,130 @@ export const i18n = new VueI18n({
       shift: 'Shift',
       considerRepresentation: 'Darstellung beachten',
       consider1comma: 'Die Mantisse beginnt in der Standard-Darstellung immer mit einer 1 vor dem Komma.',
-      // polydic
+      // polyadic
       ternary: 'Ternärzahl',
+      quaternary: 'Quartärzahl',
+      quinary: 'Quintärzahl',
+      senary: 'Sextärzahl',
+      septenary: 'Septimärzahl',
       octal: 'Oktalzahl',
-      hexadecimal: 'Hexadezimal',
+      novenary: 'Noniärzahl',
+      hexadecimal: 'Hexadezimalzahl',
+      hex: 'Hexadezimal',
       input: 'Eingabe',
+      number: 'Nummer',
+      representation: 'Repräsentation im Ausgangsformat',
+      // polyadic conversion
       firstFormat: 'Ausgangsformat',
       secondFormat: 'Zielformat',
+      doConversion: 'Konvertierung durchführen:',
+      modus: 'Modus',
+      to: 'nach',
+      TenToPower: 'Bei der Konvertierung vom Dezimalsystem in ein beliebiges anders muss vor dem Komma der Divisions- und nach dem Komma der Multiplikationsalgorithmus angewendet werden.',
+      PowerToTen: 'Die Konvertierung eines beliebigen Systems in das Dezimalsystem läuft durch Summierung der potenzierten Stellen.',
+      PowerToPower: 'Die Konvertierung einer Zahl eines Zahlensystems in ein anderes Zahlensystem erfolgt in zwei Schritten. Zuerst wird die Zahl des ursprünglichen Systems durch Aufsummieren in das Dezimalsystem übertragen. Danach wird diese Dezimalzahl mittels sukzessiver Division der Vorkommastellen und sukzessiver Multiplikation der Nachkommastellen ins Zielsystem konvertiert.',
+      noValuesBeforeComma: 'Keine Werte vor dem Komma. Der Divisionsalgorithmus kann weggelassen werden',
+      noValuesAfterComma: 'Keine Werte nach dem Komma. Der Multiplikationssalgorithmus kann weggelassen werden',
+      firstToTen: '1. Summieren der potenzierten Stellen',
+      secondToPower: '2. Konvertierung mittels Divisions- und Multiplikationsalgorithmus',
+      shortcutBinToHex: 'Bei der Konvertierung von Binär nach Hex können die Werte direkt abgelesen werden.',
+      shortcutHexToBin: 'Bei der Konvertierung von Hex nach Binär können die Werte direkt abgelesen werden.',
+      divisionAlgorithm: 'Divisions-Algorithmus',
+      multiplicationAlgorithm: 'Multiplikations-Algorithmus',
+      summation: 'Aufsummieren',
+      factor: 'Faktor',
+      quotient: 'Quotient',
+      remainder: 'Rest',
+      newBasis: 'neue Basis',
+      calcStep: 'Rechenschritt',
+      summands: 'Summanden',
+      polyadicExercise1: 'Konvertiere die',
+      polyadicExercise3: 'in eine ',
+
+      exerciseArchive: 'Aufgabenarchiv',
+      randomExercise: 'Zufällige Aufgabe',
+      doCalculation: 'Berechnen',
+      colorCoding: 'Farbkodierung',
+      mathDistribution: 'Distribuierung',
+      easy: 'einfach',
+      difficultyMiddle: 'mittel',
+      difficultyHard: 'schwer',
+      sheet: 'Blatt',
+      goal: 'Ziel',
+      difficultyUC: 'Schwierigkeit',
+
+      // Boolean Function Minimization
+      bf_infotext_or_interact_with_kv: 'Oder interagiere direkt mit dem KV-Diagramm',
+      bf_infotext_kv_must_not_be_empty: 'Das KV-Diagram muss Einsen und Nullen enthalten',
+      bf_infotest_click_on_hidden_areas_to_make_visible: 'Klicke auf die versteckten Bereiche um sie aufzudecken',
+      bf_normal_forms: 'Normalformen',
+      bf_disjunctiveNormalForm: 'Disjunktive Normalform',
+      bf_conjunctiveNormalForm: 'Konjunktive Normalform',
+      bf_disjunctiveMinimalForm: 'Disjunktive Minimalform',
+      bf_conjunctiveMinimalForm: 'Konjunktive Minimalform',
+      bf_quineMCCluskeyClasses: 'Quine MC Cluskey Klassen',
+      bf_primeTerms: 'Primterme',
+      bf_primeImplicants: 'Primimplikanten',
+      bf_primeImplicates: 'Primimplikate',
+      bf_primeCoverTable: 'Überdeckungstabelle', // prime implicant chart
+      bf_petrickExpression: 'Petrick Ausdruck',
+      bf_minimalForms: 'Minimalformen',
+      bf_tableWithCyclicRest: 'Zyklische Resttabelle',
+      bf_einstelle: 'Einsstelle',
+      bf_nullstelle: 'Nullstelle',
+      bf_einstellen: 'Einsstellen',
+      bf_nullstellen: 'Nullstellen',
+      bf_goal_determine_DNF: 'DNF bestimmen',
+      bf_goal_determine_KNF: 'KNF bestimmen',
+      bf_goal_determine_prime_implicants: 'Primimplikanten bestimmen',
+      bf_goal_determine_prime_implicates: 'Primimplikate bestimmen',
+
+      bf_covertable_step_description_initial: '<h4>Initialer Schritt:</h4>'
+        + 'Trage spaltenweise alle Basisterme ({ifMinTermsEinstellenElseNullstellen}) und reihenweise alle Primterme (PI) in die Tabelle ein. '
+        + 'Überdeckt ein Primterm eine {ifMinTermsEinstelleElseNullstelle}, markiere jene Zelle mit einem X. '
+        + 'Die Kosten (eng. cost) c eines Primterms sind die Anzahl seiner Literale. Je höher, desto aufwändiger (teurer) die Umsetzung in Hardware. '
+        + '<br>Tipp:<br>'
+        + 'Ein PrimimplikaNT überdeckt eine EINstelle genau dann, wenn alle Literale des Primterms auch genauso im Basisterm vorkommen',
+      bf_covertable_step_description_core_found: '<h4>Kern gefunden:</h4>'
+        + 'Der einzige Primterm, der die {ifMinTermsEinstelleElseNullstelle} {columnName} überdeckt, ist Term {rowName}. '
+        + 'Dieser Primterm muss also unbedingt in unserer Schaltfunktion vorkommen! '
+        + 'Markiere die Zeile als Kern und streiche die Spalte heraus.',
+      bf_covertable_step_description_cross_column_bc_covered: '<h4>Spalte bereits abgedeckt:</h4>'
+        + 'Die {ifMinTermsEinstellenElseNullstellen} {columnName} wird bereits vom Primterm {rowName} überdeckt. '
+        + 'Streiche die Spalte heraus.',
+      bf_covertable_step_description_cross_row_bc_covered: '<h4>Reihe bereits bereits vollständig abgedeckt:</h4>'
+        + 'Alles X\'e der Zeile {rowName} werden bereits abgedeckt. '
+        + 'Streiche die Reihe heraus.',
+      bf_covertable_step_description_row_domination: '<h4>Zeilendominanz:</h4>'
+        + 'Die Zeile {dominatorName} dominiert die Zeile {dominatedName}; '
+        + 'd.h. {dominatorName} besitzt überall da Markierungen, wo Zeile {dominatedName} auch welche besitzt (und vielleicht sogar mehr!). '
+        + '=> Streiche die dominieRTE Zeile {dominatedName}. '
+        + '<br>Beachte, dass die Zeilendominanz nur anwendbar ist, da die Zeile {dominatorName} weniger oder genauso viel kostet wie {dominatedName}; '
+        + 'bzw. weil es keine andere Zeile gibt, die die zusätzlichen Stellen von {dominatorName} überdeckt und weniger als {dominatorName} - {dominatedName} kostet.',
+      bf_covertable_step_description_column_domination: '<h4>Spaltendominanz:</h4>'
+        + 'Die Spalte {dominatorName} dominiert die Spalte {dominatedName}; '
+        + 'd.h. {dominatorName} besitzt überall da Markierungen, wo Spalte {dominatedName} auch welche besitzt (und vielleicht sogar mehr!). '
+        + '=> Streiche die dominieRENDE Spalte {dominatorName}'
+        + '<br>Im Gegensatz zur Zeilendominanz muss bei der Spaltendominanz überhaupt nicht auf Kosten geachtet werden (/▽＼)',
+      bf_covertable_step_description_cyclic_rest: '<h4>Zyklischer Rest:</h4>'
+        + 'Keine Regel der Überdeckungstabelle ist anwendbar. Man spricht hierbei von einem \'Zyklischem Rest\'.'
+        + '<br>Um nun dennoch eine Minimalform der Schaltfunktion bestimmen zu können, bietet sich eine Aufstellung des Petrick Ausdrucks an, wobei nur Zeilen und Spalten eingetragen werden, die noch nicht herausgestrichen wurden.',
+
+      bf_infoblob_random_exercise_selection: 'Die ausgewählte Schwierigkeit bestimmt dabei, wie viele Terme einer Art (z.B. Minterme, Primimplikanten) die Schaltfunktion enthalten soll',
+      bf_infoblob_petrick_statement: 'Der Algorithmus besteht aus zwei Phasen:'
+        + '<ol>'
+        + '<li>Mache sich absorbierende Terme durch Umsortierug sichtbar. (Nicht unbedingt der Fall)</li>'
+        + '<li>Multipliziere so lange die ersten beiden Terme aus, bis die typische Summe entsteht.</li>'
+        + '</ol>',
+
+      bf_distributionUC: 'Distribution',
+      bf_idempotenceUC: 'Idempotenz',
+      bf_absorptionUC: 'Absorption',
+      bf_sortingUC: 'Sortierung',
     },
     en: {
+      homePageText: 'The goal of GTI-Online is to deepen the knowledge of selected topics learned in the lecture and corresponding exercise. Select in the menu a topic and start practicing.',
+      startTraining: 'Let\'s go',
       numVarInput: 'Number of variables',
       confirm: 'Confirm',
       varNaming: 'Variable naming',
@@ -151,6 +272,7 @@ export const i18n = new VueI18n({
       solution: 'Solution',
       ownSolution: 'Own Solution',
       signBit: 'Sign Bit',
+      load: 'Load',
       correctSolution: 'Solution',
       exponentBits: 'Exponent',
       fractionBits: 'Fraction',
@@ -170,6 +292,7 @@ export const i18n = new VueI18n({
       values: 'Values',
       // TODO: Übersetzen
       // general
+      arithmetic: 'Arithmetic',
       conversion: 'Conversion',
       conversionExercise1: 'Convert: ',
       conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
@@ -195,6 +318,8 @@ export const i18n = new VueI18n({
       subWithZero: 'A subtraction with 0 results in the other value',
       mulWithZero: 'A multiplication with 0 results always 0.',
       zeroDivision: 'A division by 0 is illegal!',
+      arithmeticFree: 'Free arithmetic',
+      conversionFree: 'Free conversion',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -247,10 +372,132 @@ export const i18n = new VueI18n({
       shift: 'shift',
       considerRepresentation: 'consider representation',
       consider1comma: 'The mantissa begins with an 1 in the standard form.',
+      // polyadic
+      ternary: 'ternary',
+      quaternary: 'quaternary',
+      quinary: 'quinary',
+      senary: 'senary',
+      septenary: 'septenary',
+      octal: 'octal',
+      novenary: 'novenary',
+      hexadecimal: 'hexadecimal',
+      hex: 'hexadecimal',
+      input: 'Input',
+      number: 'number',
+      representation: 'representation in original format',
+      // polyadic conversion
+      firstFormat: 'Initial format',
+      secondFormat: 'Target format',
+      doConversion: 'Convert:',
+      modus: 'modus',
+      to: 'to',
+      TenToPower: 'The conversion from the decimal system to an arbitrary one goes in two steps. Before the comma, the digits were converted with the use of the division algorithm. After the comma, the multiplication algorithm will be applied.',
+      PowerToTen: 'An arbitrary number system can be converted to the decimal system by summarizing all potentiated digits.',
+      PowerToPower: 'We convert an arbitrary number system into another within two steps via the decimal system. At first, the original number will be transferred into the decimal system be summarizing the potentiated digits. In the second step, we use the division- and multiplication algorithm to create the resulting number.',
+      noValuesBeforeComma: 'There are no values in front of the comma. Therefore, the division algorithm can be skipped.',
+      noValuesAfterComma: 'There are no values after the comma. Therefore, the multiplication algorithm can be skipped.',
+      firstToTen: '1. Summation of the potentiated digits',
+      secondToPower: '2. Conversion via division- and multiplication algorithm',
+      shortcutBinToHex: 'At the conversion from binary to hexadecimal, the values can be read directly.',
+      shortcutHexToBin: 'At the conversion from hexadecimal to binary, the values can be read directly.',
+      divisionAlgorithm: 'Division algorithm',
+      multiplicationAlgorithm: 'Multiplication algorithm',
+      summation: 'Summation',
+      factor: 'factor',
+      quotient: 'quotient',
+      remainder: 'remainder',
+      newBasis: 'new basis',
+      calcStep: 'calculation step',
+      summands: 'summands',
+      polyadicExercise1: 'Convert the value:',
+      polyadicExercise2: 'from the initial format: ',
+      polyadicExercise3: 'to the target format:',
+
+      exerciseArchive: 'Exercise Archive',
+      randomExercise: 'Random Exercise',
+      doCalculation: 'Calculate',
+      colorCoding: 'color coding',
+      mathDistribution: 'Distribution',
+      easy: 'easy',
+      difficultyMiddle: 'middle',
+      difficultyHard: 'hard',
+      sheet: 'sheet',
+      goal: 'Goal',
+      difficultyUC: 'Difficulty',
+
+      // Boolean Function Minimization
+      bf_infotext_or_interact_with_kv: 'Or directly interact with the KV-Diagram',
+      bf_infotext_kv_must_not_be_empty: 'The KV-Diagram must contains 1s and 0s',
+      bf_infotest_click_on_hidden_areas_to_make_visible: 'Click on hidden areas to reveal them',
+      bf_normal_forms: 'Normal Forms',
+      bf_disjunctiveNormalForm: 'Disjunctive normal form',
+      bf_conjunctiveNormalForm: 'Conjunctive normal form',
+      bf_disjunctiveMinimalForm: 'Disjunctive minimal form',
+      bf_conjunctiveMinimalForm: 'Conjunctive minimal form',
+      bf_quineMCCluskeyClasses: 'Quine MC Cluskey classes',
+      bf_primeTerms: 'Primeterms',
+      bf_primeImplicants: 'Primeimplicants',
+      bf_primeImplicates: 'Primeimplikates',
+      bf_primeCoverTable: 'Prime implicant chart / \'Cover Table\'', // prime implicant chart
+      bf_petrickExpression: 'Petrick Expression',
+      bf_minimalForms: 'Minimal Forms',
+      bf_tableWithCyclicRest: 'Table with cyclic rest',
+      bf_einstelle: 'One',
+      bf_nullstelle: 'Zero',
+      bf_einstellen: 'Ones',
+      bf_nullstellen: 'Zeros',
+      bf_goal_determine_DNF: 'determine DNF',
+      bf_goal_determine_KNF: 'determine KNF',
+      bf_goal_determine_prime_implicants: 'determine primeimplicants',
+      bf_goal_determine_prime_implicates: 'determine primeimplicates',
+
+      bf_covertable_step_description_initial: '<h4>Initial step:</h4>'
+          + 'Enter all base terms in the columns and all prime terms (PI) in the rows of the table. '
+          + 'If a prime term covers a field, mark that cell with an X. '
+          + 'The cost c of a primeterm is the number of its literals. The higher, the more complex (i.e. costly) the implementation in hardware. '
+          + '<br>Tip:<br>'
+          + 'A prime implicaNT covers a \'ONE\' exactly if all literals of the primeterm also occur in the same way in the base term.',
+      bf_covertable_step_description_core_found: '<h4>Core found:</h4>'
+        + 'The only primeterm that covers column {columnName} is term {rowName}. '
+        + 'Hence this primterm must definitely appear in our resulting function! '
+        + 'Mark the row as a \'core\' (Kern) and strike out the column.',
+      bf_covertable_step_description_cross_column_bc_covered: '<h4>Column already covered:</h4>'
+        + 'Column {columnName} is already being covered by primeterm {rowName}. '
+        + 'Strike out the column',
+      bf_covertable_step_description_cross_row_bc_covered: '<h4>Row already covered:</h4>'
+        + 'All X\'s of row {rowName} are already covered. '
+        + 'Cross out the row',
+      bf_covertable_step_description_row_domination: '<h4>Row dominance / Reihendominanz:</h4>'
+        + 'Row {dominatorName} dominates row {dominatedName}; '
+        + 'i.e. row {dominatorName} has markers wherever row {dominatedName} does as well (and possibly more!). '
+        + '=> cross the dominaTED row {dominatedName}. '
+        + '<br>Note that row dominance is only applicable, because row {dominatorName} costs less than, or the same as {dominatedName}; '
+        + 'or because there is no other row that covers the additional markers of {dominatorName} and costs less than {dominatorName} - {dominatedName}.',
+      bf_covertable_step_description_column_domination: '<h4>Column dominance / Spaltendominanz:</h4>'
+        + 'Column {dominatorName} dominates column {dominatedName}; '
+        + 'i.e. column {dominatorName} has markers wherever column {dominatedName} does as well (and possibly more!). '
+        + '=> Cross the dominaTING column {dominatorName}'
+        + '<br>Unlike with row dominance, column dominance doesn\'t require you to consider costs at all (/▽＼)',
+      bf_covertable_step_description_cyclic_rest: '<h4>Cyclic rest:</h4>'
+        + 'No rule of the prime table algorithm is applicable. This is referred to as a \'cyclic rest\' (ger: \'Zyklischer Rest\').'
+        + '<br>By setting up the Petrick-Expression (ger: Petrick Ausdruck) for the rest table, one is still able to determine a minimal form of the original function.',
+
+      bf_infoblob_random_exercise_selection: 'Difficulty states how many individual terms of some kind (e.g. minterms, primeimplicants) the boolean function should yield.',
+      bf_infoblob_petrick_statement: 'The algorithm consists of two phases:'
+        + '<ol>'
+        + '<li>Make terms that absorb each other easily visible through sorting (only shown if it has any effect)</li>'
+        + '<li>Multiply the first two terms with each other until the typical sum remains.</li>'
+        + '</ol>',
+
+      bf_distributionUC: 'Distribution',
+      bf_idempotenceUC: 'Idempotence',
+      bf_absorptionUC: 'Absorption',
+      bf_sortingUC: 'Sorting',
     },
     fr: {
       numVarInput: 'Nombre de Variables',
       confirm: 'Confirmer',
+      input: 'Entrée',
       varNaming: 'Nommage des Variables',
       kvDiagram: 'Table de Karnaugh',
       numeralSystem: 'Système de numération',
@@ -269,6 +516,7 @@ export const i18n = new VueI18n({
       signBit: 'Signe',
       correctSolution: 'Solution',
       exponentBits: 'Exposant',
+      load: 'Charger',
       fractionBits: 'Mantisse',
       attRound: 'N\'oubliez pas d\'arrondir!',
       attSolve: 'Veuillez essayer de résoudre l\'exercice au préalable!',
@@ -286,88 +534,199 @@ export const i18n = new VueI18n({
       values: 'Valeurs',
       // TODO: Übersetzen
       // general
+      arithmetic: 'Arithmétique',
       conversion: 'Conversion',
-      conversionExercise1: 'Convert: ',
-      conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
-      steps: 'steps',
+      conversionExercise1: 'Convertir: ',
+      conversionExercise2: 'en un nombre à virgule flottante IEEE avec un exposant de longueur de ',
+      steps: 'étapes',
       repeatMinuend: 'repeat\\ minuend',
-      doDivision: 'execute division',
-      doMultiplication: 'execute multiplication',
-      getDescription: 'Print',
-      approach: 'Approach',
-      gti: 'Foundations of Computer Engineering',
+      doDivision: 'réaliser la division',
+      doMultiplication: 'réaliser la multiplication',
+      getDescription: 'Imprimer',
+      approach: 'Approche',
+      gti: 'Fondements de l\'ingénierie informatique',
       disclaimer: 'Disclaimer:<br>'
-        + 'This is an automatically generated solution approach by the '
-        + 'GTI-Online-Website. Every output is completely <u>unofficial</u> and in the drafts state.<br>'
-        + 'We are making lots of efforts to build a correct and reliable tool for you. '
-        + 'Regardless, there may be failures in the solution or approach. That can especially '
-        + 'depend on your browser version. Please review before using it for instance in an exam.',
-      example: 'Example',
+      + 'Il s\'agit d\'une approche de solution générée automatiquement par le '
+      + 'GTI-Online-Website. Chaque sortie est complètement <u>non officielle</u> et à l\'état de brouillon.<br>'
+      + 'Nous faisons beaucoup d\'efforts pour construire un outil correct et fiable pour vous. '
+      + 'Néanmoins, il peut y avoir des défaillances dans la solution ou l\'approche. Cela peut notamment '
+      + 'dépendre de la version de votre navigateur. Veuillez vérifier avant de l\'utiliser, par exemple dans un examen.',
+      example: 'Exemple',
       composition: 'composition',
-      negativeSummand: 'An addition with a negative value is similar to a subtraction.',
-      negativeSubtrahend: 'A negative subtrahend is similar to a positive summand.',
-      negativeMinuendSubtrahend: 'Simplification for the case \\( - x - y \\rightarrow - (x + y) \\)',
-      addWithZero: 'An addition with 0 results in the other summand',
-      subWithZero: 'A subtraction with 0 results in the other value',
-      mulWithZero: 'A multiplication with 0 results always 0.',
-      divWithZero: 'A division with 0 in the numerator results always 0.',
-      zeroDivision: 'A division by 0 is illegal!',
+      negativeSummand: 'Une addition avec une valeur négative est similaire à une soustraction.',
+      negativeSubtrahend: 'Une soustraction négative est similaire à une addition positive.',
+      negativeMinuendSubtrahend: 'Simplification pour le cas \\( - x - y \rightarrow - (x + y) \\)',
+      addWithZero: 'Une addition avec 0 donne l\'autre somme',
+      subWithZero: 'Une soustraction avec 0 donne l\'autre valeur',
+      mulWithZero: 'Une multiplication avec 0 donne toujours 0',
+      divWithZero: 'Une division avec 0 au numérateur donne toujours 0.',
+      zeroDivision: 'Une division par 0 est illégale!',
+      arithmeticFree: 'Arithmétique libre',
+      conversionFree: 'Conversion libre',
+
       // values
-      value: 'value',
-      givenValues: 'values of the transmitted numbers',
-      leftValue: 'left value',
-      rightValue: 'right value',
-      firstSummand: '1. summand',
-      secondSummand: '2. summand',
-      firstFactor: '1. factor',
-      secondFactor: '2. factor',
+      value: 'valeur',
+      givenValues: 'valeurs des nombres transmis',
+      leftValue: 'valeur gauche',
+      rightValue: 'valeur de droite',
+      firstSummand: '1. sommande',
+      secondSummand: '2. sommande',
+      firstFactor: '1. facteur',
+      secondFactor: '2. facteur',
       minuend: 'minuend',
       subtrahend: 'subtrahend',
       numerator: 'numerator',
-      denominator: 'denominator',
-      sign: 'sign',
+      denominator: 'dénominateur',
+      sign: 'signe',
       // exponent
       exponent: 'exponent',
-      adjustExponents: 'The exponents of both numbers must be balanced.',
-      addExponents: 'The exponents of both numbers must be added.',
-      subtExponents: 'The exponents of both numbers must be subtracted.',
-      diffExponent: 'difference of the exponents',
-      smallerExponent: 'The smaller exponent will substracted from the bigger one',
-      resDiffExponent: 'hence this difference results',
-      newExponent: 'new exponent',
-      considerExponent: 'consider the exponent',
+      adjustExponents: 'Les exposants des deux nombres doivent être équilibrés',
+      addExponents: 'Les exposants des deux nombres doivent être additionnés.',
+      subtExponents: 'Les exposants des deux nombres doivent être soustraits.',
+      diffExponent: 'Différence des exposants',
+      smallerExponent: 'Le plus petit exposant sera soustrait du plus grand',
+      resDiffExponent: 'd\'où résulte cette différence',
+      newExponent: 'nouvel exposant',
+      considerExponent: 'considère l\'exposant',
       // mantissa
       mantissa: 'mantissa',
-      mulMantissa: 'The mantissa of both numbers must be multiplied.',
-      solutionIsNan: 'The mantissa can not be calculated because the input leads to NaN.',
-      solutionIsInf: 'The mantissa can not be calculated because the input leads to infinity.',
-      solutionIsZero: 'The mantissa can not be calculated because the input leads to zero.',
-      addMantissa: 'The mantissa of both numbers must be added.',
-      divMantissa: 'The mantissa of both numbers must be divided.',
-      newMantissa: 'new mantissa',
-      zeroMantissa: 'both mantissa are equal \\( \\rightarrow \\) the new mantissa is the 0-mantissa',
-      newMantissaIs: 'Hence the new mantissa is',
-      equalMantissa: 'Both mantissa are equal \\( \\rightarrow \\) the exponent will be incremented the mantissa remains',
-      equalMantissaDiv: 'Both mantissa are equal, no binary division will be executed',
-      adjustSmallerMantissa: 'Adjust the smaller mantissa',
-      shiftMantissa: 'Shift the smaller mantissa',
-      mantissaFloat: 'Mantissa inside the float',
-      mantissa1float: 'The leading 1 is not part of the float',
+      mulMantissa: 'La mantisse des deux nombres doit être multipliée',
+      solutionIsNan: 'La mantisse ne peut pas être calculée car l\'entrée conduit à NaN.',
+      solutionIsInf: 'La mantisse ne peut pas être calculée car l\'entrée mène à l\'infini.',
+      solutionIsZero: 'La mantisse ne peut pas être calculée car l\'entrée conduit à zéro.',
+      addMantissa: 'La mantisse des deux nombres doit être additionnée.',
+      divMantissa: 'La mantisse des deux nombres doit être divisée.',
+      newMantissa: 'Nouvelle mantisse',
+      zeroMantissa: 'les deux mantisses sont égales \\( \\rightarrow \\) la nouvelle mantisse est la mantisse 0',
+      newMantissaIs: 'La nouvelle mantisse est donc',
+      equalMantissa: 'Les deux mantisses sont égales \\( \\rightarrow \\) l\'exposant sera incrémenté la mantisse reste',
+      equalMantissaDiv: 'Les deux mantisses sont égales, aucune division binaire ne sera exécutée',
+      adjustSmallerMantissa: 'Ajuste la plus petite mantisse',
+      shiftMantissa: 'Décale la plus petite mantisse',
+      mantissaFloat: 'Mantisse à l\'intérieur du flottant',
+      mantissa1float: 'Le 1 initial ne fait pas partie du flottant',
       // twos complement
-      subtTwosComplement: 'Subtraction is similar to addition with the two\'s complement',
-      mantissaTwosComplement: 'Formation of the two\'s complement out of the mantissa',
-      switchBits: 'invert bits',
-      add1: 'add 1',
-      normalize: 'normalize',
+      subtTwosComplement: 'La soustraction est similaire à l\'addition avec le complément à deux',
+      mantissaTwosComplement: 'Formation du complément à deux à partir de la mantisse',
+      switchBits: 'Inverser les bits',
+      add1: 'Ajouter 1',
+      normalize: 'Normaliser',
       // shift, representation
-      shiftExpMant: 'The exponent\'s shift factor must be applied to the mantissa.',
+      shiftExpMant: 'Le facteur de décalage de l\'exposant doit être appliqué à la mantisse',
       shift: 'shift',
-      considerRepresentation: 'consider representation',
-      consider1comma: 'The mantissa begins with an 1 in the standard form.',
+      considerRepresentation: 'Tenir compte de la représentation',
+      consider1comma: 'La mantisse commence par un 1 dans la forme standard',
+      // polyadic conversion
+      firstFormat: 'format initial',
+      secondFormat: 'format cible',
+      doConversion: 'Convertir:',
+      modus: 'modus',
+      to: 'en',
+      TenToPower: 'La conversion du système décimal en un système arbitraire se fait en deux étapes. Avant la virgule, les chiffres sont convertis à l\'aide de l\'algorithme de division. Après la virgule, l\'algorithme de multiplication sera appliqué',
+      PowerToTen: 'Un système numérique arbitraire peut être converti en système décimal en résumant tous les chiffres potentialisés.',
+      PowerToPower: 'Nous convertissons un système numérique arbitraire en un autre en deux étapes via le système décimal. Dans un premier temps, le nombre original sera transféré dans le système décimal en résumant les chiffres potentialisés. Dans la deuxième étape, nous utilisons l\'algorithme de division et de multiplication pour créer le nombre résultant.',
+      noValuesBeforeComma: 'Il n\'y a pas de valeurs devant la virgule. Par conséquent, l\'algorithme de division peut être ignoré.',
+      noValuesAfterComma: 'Il n\'y a pas de valeur après la virgule. Par conséquent, l\'algorithme de multiplication peut être ignoré.',
+      firstToToen: '1. somme des chiffres potentialisés',
+      secondToPower: '2. conversion via l\'algorithme de division et de multiplication',
+      shortcutBinToHex: 'Lors de la conversion du binaire en hexadécimal, les valeurs peuvent être lues directement',
+      shortcutHexToBin: 'Lors de la conversion d\'hexadécimal en binaire, les valeurs peuvent être lues directement',
+      divisionAlgorithm: 'Algorithme de division',
+      multiplicationAlgorithm: 'Algorithme de multiplication',
+      summation: 'Sommation',
+      factor: 'Facteur',
+      quotient: 'Quotient',
+      remainder: 'reste',
+      newBasis: 'nouvelle base',
+      calcStep: 'étape de calcul',
+      summands: 'sommets',
+      polyadicExercise1: 'Convertissez la valeur :',
+      polyadicExercise2: 'à partir du format initial : ',
+      polyadicExercise3: 'au format cible :',
+
+      exerciseArchive: 'Archive d\'exercices',
+      randomExercise: 'Exercice aléatoire',
+      doCalculation: 'Calculer',
+      colorCoding: 'code couleur',
+      mathDistribution: 'Distribution',
+      easy: 'simple',
+      difficultyMiddle: 'moyenne',
+      difficultyHard: 'difficile',
+      feuille: 'feuille',
+      goal: 'Objectif',
+      difficultyUC: 'Difficulté',
+
+      // Boolean Function Minimization
+      bf_infotext_or_interact_with_kv: 'Ou interagir directement avec le Diagramme KV',
+      bf_infotext_kv_must_not_be_empty: 'Le Diagramme KV doit contenir des 1 et des 0',
+      bf_infotest_click_on_hidden_areas_to_make_visible: 'Cliquez sur les zones cachées pour les révéler',
+      bf_normal_forms: 'Formes normales',
+      bf_disjunctiveNormalForm: 'Forme normale disjonctive',
+      bf_conjunctiveNormalForm: 'Forme normale conjonctive',
+      bf_disjunctiveMinimalForm: 'Forme minimale disjonctive',
+      bf_conjunctiveMinimalForm: 'Forme minimale conjonctive',
+      bf_quineMCCluskeyClasses: 'Classes de méthode de Quine-Mc Cluskey',
+      bf_primeTerms: 'Primeterms',
+      bf_primeImplicants: 'Primo-implicants',
+      bf_primeImplicates: 'primo-implicats',
+      bf_primeCoverTable: 'Prime implicant chart / \'Cover Table\'',
+      bf_petrickExpression: 'Expression de Petrick',
+      bf_minimalForms: 'Formes minimales',
+      bf_tableWithCyclicRest: 'Table avec repos cyclique',
+      bf_einstelle: 'Un',
+      bf_nullstelle: 'Zéro',
+      bf_einstellen: 'Ones',
+      bf_nullstellen: 'Zéros',
+      bf_goal_determine_DNF: 'déterminer la DNF',
+      bf_goal_determine_KNF: 'déterminer la KNF',
+      bf_goal_determine_prime_implicants: 'déterminer les primo-implicants',
+      bf_goal_determine_prime_implicates: 'déterminer les primo-implicats',
+
+      bf_covertable_step_description_initial: '<h4>Étape initiale:</h4>'
+        + 'Saisissez tous les termes de base dans les colonnes et tous les termes premiers (PI) dans les lignes du tableau. '
+        + 'Si un terme premier couvre un champ, marquez cette cellule d\'un X. '
+        + 'Le coût c d\'un terme premier est le nombre de ses littéraux. Plus il est élevé, plus l\'implémentation en matériel est complexe (c\'est-à-dire coûteuse).'
+        + '<br>Tip:<br>'
+        + 'Un implicaNT premier couvre un \'ONE\' exactement si tous les littéraux du primeterm apparaissent également de la même manière dans le terme de base.',
+      bf_covertable_step_description_core_found: '<h4>Core found:</h4>'
+        + 'Le seul primeterm qui couvre la colonne {columnName} est le terme {rowName}. '
+        + 'Par conséquent, ce primeterme doit absolument apparaître dans notre fonction résultante! '
+        + 'Marquez la ligne comme une \'core\' (Kern) et rayez la colonne.',
+      bf_covertable_step_description_cross_column_bc_covered: '<h4>Colonne déjà couverte:</h4>'
+        + 'La colonne {columnName} est déjà couverte par le primeterm {rowName}. '
+        + 'Supprimez la colonne',
+      bf_covertable_step_description_cross_row_bc_covered: '<h4>Row already covered:</h4>'
+        + 'Tous les X de la ligne {rowName} sont déjà couverts. '
+        + 'Rayez la ligne',
+      bf_covertable_step_description_row_domination: '<h4>Row dominance / Reihendominanz:</h4>'
+        + 'La ligne {dominatorName} domine la ligne {dominatedName}; '
+        + 'c\'est-à-dire que la rangée {dominatorName} a des marqueurs partout où la rangée {dominatedName} en a aussi (et peut-être plus!). '
+        + '=> croise la ligne dominée {dominatedName}. '
+        + '<br>Notez que la dominance de rangée n\'est applicable, que parce que la rangée {dominatorName} coûte moins que, ou la même que {dominatedName}; '
+        + 'ou parce qu\'il n\'existe aucune autre rangée qui couvre les marqueurs supplémentaires de {dominatorName} et dont le coût est inférieur à {dominatorName} - {dominatedName}.',
+      bf_covertable_step_description_column_domination: '<h4>Column dominance / Spaltendominanz:</h4> '
+        + 'La colonne {dominatorName} domine la colonne {dominatedName}; '
+        + 'c\'est-à-dire que la colonne {dominatorName} a des marqueurs partout où la colonne {dominatedName} en a aussi (et peut-être plus!). '
+        + '=> Traverser la colonne dominante {dominatorName} '
+        + '<br>Contrairement à la dominance de ligne, la dominance de colonne ne nécessite pas du tout de considérer les coûts.',
+      bf_covertable_step_description_cyclique_rest: '<h4>Repos cyclique:</h4> '
+        + 'Aucune règle de l\'algorithme des tables premières n\'est applicable. On parle alors d\'un \'repos cyclique\' (ger : \'Zyklischer Rest\'). '
+        + '<br>En établissant l\'expression de Petrick (ger: Petrick Ausdruck) pour la table de repos, on est toujours capable de déterminer une forme minimale de la fonction originale.',
+      bf_infoblob_random_exercise_selection: 'La difficulté indique le nombre de termes individuels d\'un certain type (par exemple, les termes mineurs, les primo-implicants) que la fonction booléenne doit produire.',
+      bf_infoblob_petrick_statement: 'L\'algorithme se compose de deux phases:'
+        + '<ol>'
+        + '<li>Faire en sorte que les termes qui s\'absorbent les uns les autres soient facilement visibles grâce à un tri (affiché uniquement s\'il a un effet quelconque)</li>'
+        + '<li>Multiplier les deux premiers termes entre eux jusqu\'à ce que la somme typique subsiste.</li>'
+        + '</ol>',
+      bf_distributionUC: 'Distribution',
+      bf_idempotenceUC: 'Idempotence',
+      bf_absorptionUC: 'Absorption',
+      bf_sortingUC: 'Triage',
     },
     es: {
-      numVarInput: 'Número de Variables',
+      numVarInput: 'Número de variables',
       confirm: 'Confirmar',
+      input: 'Entrada',
       varNaming: 'Nombramiento variable',
       kvDiagram: 'Mapa de Karnaugh',
       numeralSystem: 'Sistema de numeración',
@@ -401,26 +760,27 @@ export const i18n = new VueI18n({
       fpformat: 'Formato de punto flotante',
       check: 'Comprobar',
       values: 'valore',
+      arithmetic: 'Aritmética',
+      conversion: 'Conversión',
+      conversionExercise1: 'Convertir: ',
+      conversionExercise2: 'en un número de punto flotante IEEE con una longitud de exponente de ',
+      steps: 'pasos',
       // TODO: Übersetzen
       // general
-      conversion: 'Conversion',
-      conversionExercise1: 'Convert: ',
-      conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
-      steps: 'steps',
       repeatMinuend: 'repeat\\ minuend',
-      doDivision: 'execute division',
-      doMultiplication: 'execute multiplication',
-      getDescription: 'Print',
-      approach: 'Approach',
-      gti: 'Foundations of Computer Engineering',
+      doDivision: 'realiza una división',
+      doMultiplication: 'realiza una multiplicación',
+      getDescription: 'Imprimir',
+      approach: 'Procedimiento',
+      gti: 'Fundamentos de la informática técnica',
       disclaimer: 'Disclaimer:<br>'
         + 'This is an automatically generated solution approach by the '
         + 'GTI-Online-Website. Every output is completely <u>unofficial</u> and in the drafts state.<br>'
         + 'We are making lots of efforts to build a correct and reliable tool for you. '
         + 'Regardless, there may be failures in the solution or approach. That can especially '
         + 'depend on your browser version. Please review before using it for instance in an exam.',
-      example: 'Example',
-      composition: 'composition',
+      example: 'Ejemplo',
+      composition: 'composición',
       negativeSummand: 'An addition with a negative value is similar to a subtraction.',
       negativeSubtrahend: 'A negative subtrahend is similar to a positive summand.',
       negativeMinuendSubtrahend: 'Simplification for the case \\( - x - y \\rightarrow - (x + y) \\)',
@@ -429,37 +789,39 @@ export const i18n = new VueI18n({
       mulWithZero: 'A multiplication with 0 results always 0.',
       divWithZero: 'A division with 0 in the numerator results always 0.',
       zeroDivision: 'A division by 0 is illegal!',
+      arithmeticFree: 'Free arithmetic',
+      conversionFree: 'Free conversion',
       // values
-      value: 'value',
+      value: 'valor',
       givenValues: 'values of the transmitted numbers',
-      leftValue: 'left value',
-      rightValue: 'right value',
-      firstSummand: '1. summand',
-      secondSummand: '2. summand',
+      leftValue: 'el valor de la izquierda',
+      rightValue: 'el valor de la derecha',
+      firstSummand: '1. sumario',
+      secondSummand: '2. sumario',
       firstFactor: '1. factor',
       secondFactor: '2. factor',
-      minuend: 'minuend',
-      subtrahend: 'subtrahend',
-      numerator: 'numerator',
-      denominator: 'denominator',
-      sign: 'sign',
+      minuend: 'minucioso',
+      subtrahend: 'restando',
+      numerator: 'numerador',
+      denominator: 'denominador',
+      sign: 'firma',
       // exponent
-      exponent: 'exponent',
-      adjustExponents: 'The exponents of both numbers must be balanced.',
-      addExponents: 'The exponents of both numbers must be added.',
-      subtExponents: 'The exponents of both numbers must be subtracted.',
-      diffExponent: 'difference of the exponents',
-      smallerExponent: 'The smaller exponent will substracted from the bigger one',
-      resDiffExponent: 'hence this difference results',
-      newExponent: 'new exponent',
-      considerExponent: 'consider the exponent',
+      exponent: 'exponente',
+      adjustExponents: 'Los exponentes de ambos números deben estar equilibrados.',
+      addExponents: 'Hay que sumar los exponentes de ambos números.',
+      subtExponents: 'Hay que restar los exponentes de ambos números.',
+      diffExponent: 'diferencia de los exponentes',
+      smallerExponent: 'El exponente menor se restará del mayor',
+      resDiffExponent: 'de ahí que esta diferencia resulte',
+      newExponent: 'nuevo exponente',
+      considerExponent: 'considere el exponente',
       // mantissa
-      mantissa: 'mantissa',
-      mulMantissa: 'The mantissa of both numbers must be multiplied.',
-      solutionIsNan: 'The mantissa can not be calculated because the input leads to NaN.',
-      solutionIsInf: 'The mantissa can not be calculated because the input leads to infinity.',
-      solutionIsZero: 'The mantissa can not be calculated because the input leads to zero.',
-      addMantissa: 'The mantissa of both numbers must be added.',
+      mantissa: 'mantisa',
+      mulMantissa: 'Hay que multiplicar la mantisa de ambos números.',
+      solutionIsNan: 'La mantisa no se puede calcular porque la entrada lleva a NaN.',
+      solutionIsInf: 'La mantisa no se puede calcular porque la entrada lleva al infinito',
+      solutionIsZero: 'La mantisa no se puede calcular porque la entrada lleva a cero.',
+      addMantissa: 'Hay que sumar la mantisa de ambos números.',
       divMantissa: 'The mantissa of both numbers must be divided.',
       newMantissa: 'new mantissa',
       zeroMantissa: 'both mantissa are equal \\( \\rightarrow \\) the new mantissa is the 0-mantissa',
@@ -481,6 +843,45 @@ export const i18n = new VueI18n({
       shift: 'shift',
       considerRepresentation: 'consider representation',
       consider1comma: 'The mantissa begins with an 1 in the standard form.',
+      // polydic
+      ternary: 'ternary',
+      quaternary: 'quaternary',
+      quinary: 'quinary',
+      senary: 'senary',
+      septenary: 'septenary',
+      octal: 'octal',
+      novenary: 'novenary',
+      hexadecimal: 'hexadecimal',
+      hex: 'hexadecimal',
+      number: 'number',
+      representation: 'representation in original format',
+      // polydic conversion
+      firstFormat: 'Initial format',
+      secondFormat: 'target format',
+      doConversion: 'Convert:',
+      modus: 'modus',
+      to: 'to',
+      TenToPower: 'The conversion from the decimal system to an arbitrary one goes in two steps. Before the comma, the digits were converted with the use of the division algorithm. After the comma, the multiplication algorithm will be applied.',
+      PowerToTen: 'An arbitrary number system can be converted to the decimal system by summarizing all potentiated digits.',
+      PowerToPower: 'We convert an arbitrary number system into another within two steps via the decimal system. At first, the original number will be transferred into the decimal system be summarizing the potentiated digits. In the second step, we use the division- and multiplication algorithm to create the resulting number.',
+      noValuesBeforeComma: 'There are no values in front of the comma. Therefore, the division algorithm can be skipped.',
+      noValuesAfterComma: 'There are no values after the comma. Therefore, the multiplication algorithm can be skipped.',
+      firstToTen: '1. Summation of the potentiated digits',
+      secondToPower: '2. Conversion via division- and multiplication algorithm',
+      shortcutBinToHex: 'At the conversion from binary to hexadecimal, the values can be read directly.',
+      shortcutHexToBin: 'At the conversion from hexadecimal to binary, the values can be read directly.',
+      divisionAlgorithm: 'Division algorithm',
+      multiplicationAlgorithm: 'Multiplication algorithm',
+      summation: 'Summation',
+      factor: 'factor',
+      quotient: 'quotient',
+      remainder: 'remainder',
+      newBasis: 'new basis',
+      calcStep: 'calculation step',
+      summands: 'summands',
+      polyadicExercise1: 'Convert the value:',
+      polyadicExercise2: 'from the initial format: ',
+      polyadicExercise3: 'to the target format:',
     },
     lt: {
       numVarInput: 'Numerus variabilium',
@@ -514,12 +915,14 @@ export const i18n = new VueI18n({
       operand: 'Operandus',
       decimal: 'Systema decima',
       binary: 'Systema binaria',
+      input: 'Inputa',
       inputNumber: 'Inputa numerum',
       fpformat: 'Forma commae adfluentis',
       check: 'Authentica',
       values: 'valōrēs',
       // TODO: Übersetzen
       // general
+      arithmetic: 'Arithmetic',
       conversion: 'Conversion',
       conversionExercise1: 'Convert: ',
       conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
@@ -546,6 +949,8 @@ export const i18n = new VueI18n({
       mulWithZero: 'A multiplication with 0 results always 0.',
       divWithZero: 'A division with 0 in the numerator results always 0.',
       zeroDivision: 'A division by 0 is illegal!',
+      arithmeticFree: 'Free arithmetic',
+      conversionFree: 'Free conversion',
       // values
       value: 'value',
       givenValues: 'values of the transmitted numbers',
@@ -598,6 +1003,45 @@ export const i18n = new VueI18n({
       shift: 'shift',
       considerRepresentation: 'consider representation',
       consider1comma: 'The mantissa begins with an 1 in the standard form.',
+      // polydic
+      ternary: 'ternary',
+      quaternary: 'quaternary',
+      quinary: 'quinary',
+      senary: 'senary',
+      septenary: 'septenary',
+      octal: 'octal',
+      novenary: 'novenary',
+      hexadecimal: 'hexadecimal',
+      hex: 'hexadecimal',
+      number: 'number',
+      representation: 'representation in original format',
+      // polydic conversion
+      firstFormat: 'Initial format',
+      secondFormat: 'Target format',
+      doConversion: 'Convert:',
+      modus: 'modus',
+      to: 'to',
+      TenToPower: 'The conversion from the decimal system to an arbitrary one goes in two steps. Before the comma, the digits were converted with the use of the division algorithm. After the comma, the multiplication algorithm will be applied.',
+      PowerToTen: 'An arbitrary number system can be converted to the decimal system by summarizing all potentiated digits.',
+      PowerToPower: 'We convert an arbitrary number system into another within two steps via the decimal system. At first, the original number will be transferred into the decimal system be summarizing the potentiated digits. In the second step, we use the division- and multiplication algorithm to create the resulting number.',
+      noValuesBeforeComma: 'There are no values in front of the comma. Therefore, the division algorithm can be skipped.',
+      noValuesAfterComma: 'There are no values after the comma. Therefore, the multiplication algorithm can be skipped.',
+      firstToTen: '1. Summation of the potentiated digits',
+      secondToPower: '2. Conversion via division- and multiplication algorithm',
+      shortcutBinToHex: 'At the conversion from binary to hexadecimal, the values can be read directly.',
+      shortcutHexToBin: 'At the conversion from hexadecimal to binary, the values can be read directly.',
+      divisionAlgorithm: 'Division algorithm',
+      multiplicationAlgorithm: 'Multiplication algorithm',
+      summation: 'Summation',
+      factor: 'factor',
+      quotient: 'quotient',
+      remainder: 'remainder',
+      newBasis: 'new basis',
+      calcStep: 'calculation step',
+      summands: 'summands',
+      polyadicExercise1: 'Convert the value:',
+      polyadicExercise2: 'from the initial format: ',
+      polyadicExercise3: 'to the target format:',
     },
   },
 });
