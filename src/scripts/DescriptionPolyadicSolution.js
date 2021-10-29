@@ -22,7 +22,10 @@ export class DescriptionPolyadicSolution {
     // set up tabular for visual the addition
     let bitString1 = this.watcher.steps.Input.data.bitString1;
     const beforeComma = this.watcher.steps.Input.data.beforeComma;
-    const afterComma = this.watcher.steps.Input.data.afterComma;
+    let afterComma = this.watcher.steps.Input.data.afterComma;
+    if (afterComma == null) {
+      afterComma = [];
+    }
     const resultString = this.watcher.steps.Result.data.bitString;
 
     const splittedResultString = resultString.split('.');
@@ -34,11 +37,7 @@ export class DescriptionPolyadicSolution {
     ) {
       bitString1 = `0${bitString1}`;
     }
-    for (
-      let i = beforeComma.length;
-      i < splittedResultString[0].length;
-      i += 1
-    ) {
+    for (let i = beforeComma.length; i < splittedResultString[0].length; i += 1) {
       beforeComma.unshift('0');
     }
     if (Array.isArray(splittedResultString) && (splittedResultString[1] !== undefined)) {
@@ -51,10 +50,7 @@ export class DescriptionPolyadicSolution {
           bitString1 = `${bitString1}0`;
         }
       }
-      for (let i = afterComma.length;
-        i < splittedResultString[1].length;
-        i += 1
-      ) {
+      for (let i = afterComma.length; i < splittedResultString[1].length; i += 1) {
         afterComma.push('0');
       }
     }
@@ -74,7 +70,6 @@ export class DescriptionPolyadicSolution {
       }
       carryBits.unshift(carryBit);
     }
-
 
     const row1 = [];
     const row2 = [];
@@ -131,7 +126,7 @@ export class DescriptionPolyadicSolution {
   /* eslint-disable */
   additionDescription(y1, y2, format) {
     // input
-    this.result.push({
+    /* this.result.push({
       name: `${this.imp.$t('values')}`,
       text: `${this.imp.$t('input')}`,
       subpanels: [
@@ -156,7 +151,7 @@ export class DescriptionPolyadicSolution {
           ].join(''),
         },
       ],
-    });
+    }); */
     this.getAdditionTable();
     console.log(this.table);
     console.log(this.watcher);
@@ -384,7 +379,7 @@ export class DescriptionPolyadicSolution {
 
   /* eslint-disable */
   subtractionDescription(y1, y2, format) {
-    // input
+    /* input
     this.result.push({
       name: `${this.imp.$t('values')}`,
       text: `${this.imp.$t('input')}`,
@@ -410,7 +405,7 @@ export class DescriptionPolyadicSolution {
           ].join(''),
         },
       ],
-    });
+    }); */
     // this.getSubtractionTable();
     this.result.push({
       name: `${this.imp.$t('subtraction')}`,
@@ -602,9 +597,9 @@ export class DescriptionPolyadicSolution {
     this.result.push({
       name: this.imp.$t('solution'),
       text: [
-        `${this.imp.$t('correctSolution')}: `,
+        `${this.imp.$t('solution')}: `,
         `\\(${resultString}\\) `,
-        `\\(\\hspace{2cm} \\)${this.imp.$t('value')}: \\(${resultValue}\\)`,
+        `\\(\\hspace{2cm} \\)${this.imp.$t('value')} (${this.imp.$t('decimal')}): \\(${resultValue}\\)`,
       ].join(''),
     });
   }

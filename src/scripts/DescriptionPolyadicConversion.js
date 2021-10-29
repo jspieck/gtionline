@@ -297,40 +297,20 @@ export class DescriptionPolyadicConversion {
   // eslint-disable-next-line no-unused-vars
   makeDescription(modus, format) {
     let solution;
-    let number;
+    // let number;
     if (Array.isArray(this.watcher)) {
       if (modus === 'PowerToTen') {
         solution = this.watcher[0].steps.Result.data.resultNumber;
-        number = this.watcher[0].steps.Input.data.number;
+        // number = this.watcher[0].steps.Input.data.number;
       } else {
         solution = this.watcher[1].steps.Result.data.resultNumber;
-        number = this.watcher[1].steps.Input.data.number;
+        // number = this.watcher[1].steps.Input.data.number;
       }
     } else {
       solution = this.watcher.steps.Result.data.resultNumber;
-      number = this.watcher.steps.Input.data.number;
+      // number = this.watcher.steps.Input.data.number;
     }
 
-    this.result.push({
-      name: `${this.imp.$t('values')}`,
-      text: `${this.imp.$t('input')}`,
-      subpanels: [
-        {
-          name: `${this.imp.$t('number')}: `,
-          text: [
-            `${this.imp.$t('representation')}: `, number.bitString,
-          ].join(''),
-        },
-        {
-          name: `${this.imp.$t('modus')}: `,
-          text: [
-            `${this.imp.$t('firstFormat')}: "${this.imp.$t(format[0])}" `,
-            `${this.imp.$t('to')} `,
-            `${this.imp.$t('secondFormat')} "${this.imp.$t(format[1])}"`,
-          ].join(''),
-        },
-      ],
-    });
     if (modus === 'ShortcutHexToBin') {
       this.getTableShortcutHexToBin();
       this.result.push({
@@ -431,9 +411,9 @@ export class DescriptionPolyadicConversion {
     this.result.push({
       name: this.imp.$t('solution'),
       text: [
-        `${this.imp.$t('correctSolution')}: `,
+        `${this.imp.$t('solution')}: `,
         `\\(${solutionString}\\) `,
-        `\\(\\hspace{2cm} \\)${this.imp.$t('value')}: \\(${solution.value}\\)`,
+        `\\(\\hspace{2cm} \\)${this.imp.$t('value')} (${(this.imp.$t('decimal'))}): \\(${solution.value}\\)`,
       ].join(''),
     });
   }

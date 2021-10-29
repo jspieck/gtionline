@@ -9,7 +9,7 @@
             <div>
               <FSelect :options="archivedExerciseTitles"
                 @input="selectArchivedExercise"/>
-              <button @click="loadArchivedExercise">Load</button>
+              <button @click="loadArchivedExercise">{{$t('load')}}</button>
             </div>
           </div>
           <div class="exercise-selection-container">
@@ -30,7 +30,7 @@
               {{$t('difficultyUC')}}:
               <FSelect :options="randomExercisesDifficulties" :sel="0"
                 @input="selectRandomExerciseDifficulty"/>
-              <button @click="generateRandomExercise">Load</button>
+              <button @click="generateRandomExercise">{{$t('load')}}</button>
             </div>
           </div>
         </div>

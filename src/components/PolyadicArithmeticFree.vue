@@ -23,7 +23,7 @@
             <td>
               <p>{{$t('firstFormat')}}</p>
               <FSelect :num="0" :sel="selectedFormat" @input="selectFormat"
-                         :options="formatOptions"/>
+                       :options="formatOptions"/>
             </td>
             <td>
               <p>{{$t('operand')}}</p>
@@ -135,16 +135,16 @@ export default {
     },
     formatOptions() {
       return {
-        decimal: `${this.$t('decimal')} (92,14)`,
-        binary: `${this.$t('binary')} (1,0011)`,
-        ternary: `${this.$t('ternary')} (2122,01)`,
-        quaternary: `${this.$t('quaternary')} (2132,03)`,
-        quinary: `${this.$t('quinary')} (4322,41)`,
-        senary: `${this.$t('senary')} (2523,04)`,
-        septenary: `${this.$t('septenary')} (6162,51)`,
-        octal: `${this.$t('octal')} (6373,01)`,
-        novenary: `${this.$t('novenary')} (8823,65)`,
-        hex: `${this.$t('hexadecimal')} (A53F0,08)`,
+        decimal: `${this.$t('decimal')} (Basis 10)`,
+        binary: `${this.$t('binary')} (Basis 2)`,
+        ternary: `${this.$t('ternary')} (Basis 3)`,
+        quaternary: `${this.$t('quaternary')} (Basis 4)`,
+        quinary: `${this.$t('quinary')} (Basis 5)`,
+        senary: `${this.$t('senary')} (Basis 6)`,
+        septenary: `${this.$t('septenary')} (Basis 7)`,
+        octal: `${this.$t('octal')} (Basis 8)`,
+        novenary: `${this.$t('novenary')} (Basis 9)`,
+        hex: `${this.$t('hexadecimal')} (Basis 10)`,
       };
     },
   },

@@ -4,14 +4,14 @@
     <div class="divMargin"/>
     <button v-on:click="generateExercise">{{$t('generate')}}</button>
     <div id="exerciseField" v-html="exerciseText"></div>
-    <h4>{{$t('ownSolution')}}</h4>
+    <!-- <h4>{{$t('ownSolution')}}</h4>
     <div class="solutionArea">
       <div class="solutionInput">
         <p>{{$t('signBit')}}</p>
         <input id="prop" :class="back" v-model="prop">
       </div>
       <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
-    </div>
+    </div> -->
     <h4>{{$t('correctSolution')}}</h4>
     <div style="position: relative">
       <div>
@@ -20,14 +20,15 @@
       <div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
       </div>
-    </div><div id="solution">
-    <Accordion :solutionDescription="solDescr">
-      <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
-        {{panel.text}}
-        <span v-if="index === solDescr.length - 1">{{solution}}</span>
-      </p>
-    </Accordion>
-  </div>
+    </div>
+    <div id="solution">
+      <Accordion :solutionDescription="solDescr">
+        <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
+          {{panel.text}}
+          <span v-if="index === solDescr.length - 1">{{solution}}</span>
+        </p>
+      </Accordion>
+    </div>
   </div>
 </template>
 
@@ -68,16 +69,16 @@ export default {
     },
     formatOptions() {
       return {
-        decimal: `${this.$t('decimal')} (92,14)`,
-        binary: `${this.$t('binary')} (1,0011)`,
-        ternary: `${this.$t('ternary')} (2122,01)`,
-        quaternary: `${this.$t('quaternary')} (2132,03)`,
-        quinary: `${this.$t('quinary')} (4322,41)`,
-        senary: `${this.$t('senary')} (2523,04)`,
-        septenary: `${this.$t('septenary')} (6162,51)`,
-        octal: `${this.$t('octal')} (6373,01)`,
-        novenary: `${this.$t('novenary')} (8823,65)`,
-        hex: `${this.$t('hexadecimal')} (A53F0,08)`,
+        decimal: `${this.$t('decimal')} (System zur Basis 10)`,
+        binary: `${this.$t('binary')} (System zur Basis 2)`,
+        ternary: `${this.$t('ternary')} (System zur Basis 3)`,
+        quaternary: `${this.$t('quaternary')} (System zur Basis 4)`,
+        quinary: `${this.$t('quinary')} (System zur Basis 5)`,
+        senary: `${this.$t('senary')} (System zur Basis 6)`,
+        septenary: `${this.$t('septenary')} (System zur Basis 7)`,
+        octal: `${this.$t('octal')} (System zur Basis 8)`,
+        novenary: `${this.$t('novenary')} (System zur Basis 9)`,
+        hex: `${this.$t('hexadecimal')} (System zur Basis 16)`,
       };
     },
   },
@@ -106,7 +107,7 @@ export default {
       });
     },
     drawExercise() {
-      this.exerciseText = `${this.$t('polyadicExercise1')} ${this.inputNum} ${this.$t('polyadicExercise2')} ${this.formatOptions[this.selectedFormat[0]]} ${this.$t('polyadicExercise3')} "${this.formatOptions[this.selectedFormat[1]]}".`;
+      this.exerciseText = `${this.$t('polyadicExercise1')} ${this.formatOptions[this.selectedFormat[0]]} ${this.inputNum} ${this.$t('polyadicExercise3')} ${this.formatOptions[this.selectedFormat[1]]}.`;
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();

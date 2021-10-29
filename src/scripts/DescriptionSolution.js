@@ -89,27 +89,8 @@ export class DescriptionSolution {
     const watcher = this.watcher;
     this.result.push({
       name: `${this.imp.$t('values')}`,
-      text: `${this.imp.$t('givenValues')}`,
-      subpanels: [
-        {
-          name: `${this.imp.$t('firstSummand')}: `,
-          text: [
-            `${this.imp.$t('value')}: `, y1.valueString,
-            `, ${this.imp.$t('sign')}: `, (y1.sign === 0 ? '+' : '-'),
-            `, ${this.imp.$t('mantissa')}: `, mantissaString1,
-            `, ${this.imp.$t('exponent')}: `, expString1,
-          ].join(''),
-        },
-        {
-          name: `${this.imp.$t('secondSummand')}: `,
-          text: [
-            `${this.imp.$t('value')}: `, y2.valueString,
-            `, ${this.imp.$t('sign')}: `, (y2.sign === 0 ? '+' : '-'),
-            `, ${this.imp.$t('mantissa')}: `, mantissaString2,
-            `, ${this.imp.$t('exponent')}: `, expString2,
-          ].join(''),
-        },
-      ],
+      text: `${this.imp.$t('firstSummand')}: ${this.imp.$t('sign')}: ${(y1.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString1} ${this.imp.$t('mantissa')}: ${mantissaString1}<br>`
+          + `${this.imp.$t('secondSummand')}: ${this.imp.$t('sign')}: ${(y2.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString2} ${this.imp.$t('mantissa')}: ${mantissaString2}`,
     });
     if (y1.isZero || y2.isZero) {
       this.result.push({
@@ -128,31 +109,7 @@ export class DescriptionSolution {
         watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
       ].join(''), watcher.steps.ResultEdgecase.data.edgecase);
       const decSol = converter.result;
-      this.result.push({
-        name: this.imp.$t('solution'),
-        text: [
-          `${this.imp.$t('correctSolution')}: `,
-          watcher.steps.Result.data.result.sign, ' ',
-          watcher.steps.Result.data.result.exponentBits.join(''), ' ',
-          watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
-          '\\( \\implies \\)',
-          ` ${this.imp.$t('decimal')}: ${decSol}`,
-        ].join(''),
-        subpanels: [
-          {
-            name: `${this.imp.$t('sign')}: `,
-            text: watcher.steps.Result.data.result.sign,
-          },
-          {
-            name: `${this.imp.$t('exponent')}: `,
-            text: watcher.steps.Result.data.result.exponentBits.join(''),
-          },
-          {
-            name: `${this.imp.$t('mantissa')}: `,
-            text: watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-          },
-        ],
-      });
+      this.createIEEESolutionBox(decSol, watcher.steps.Result.data.result);
     } else if (watcher.steps.ResultEdgecase.data.edgecase !== 'none') { // case: edgecase
       switch (watcher.steps.ResultEdgecase.data.edgecase) {
         case 'nan':
@@ -191,31 +148,7 @@ export class DescriptionSolution {
         watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
       ].join(''), watcher.steps.ResultEdgecase.data.edgecase);
       const decSol = converter.result;
-      this.result.push({
-        name: this.imp.$t('solution'),
-        text: [
-          `${this.imp.$t('correctSolution')}: `,
-          watcher.steps.Result.data.result.sign, ' ',
-          watcher.steps.Result.data.result.exponentBits.join(''), ' ',
-          watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
-          '\\( \\implies \\)',
-          ` ${this.imp.$t('decimal')}: ${decSol}`,
-        ].join(''),
-        subpanels: [
-          {
-            name: `${this.imp.$t('sign')}: `,
-            text: watcher.steps.Result.data.result.sign,
-          },
-          {
-            name: `${this.imp.$t('exponent')}: `,
-            text: watcher.steps.Result.data.result.exponentBits.join(''),
-          },
-          {
-            name: `${this.imp.$t('mantissa')}: `,
-            text: watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-          },
-        ],
-      });
+      this.createIEEESolutionBox(decSol, watcher.steps.Result.data.result);
     } else {
       if (watcher.steps.CalculateDeltaE.data.deltaE === 0) {
         this.result.push({
@@ -302,31 +235,7 @@ export class DescriptionSolution {
         this.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
       ].join(''), this.watcher.steps.ResultEdgecase.data.edgecase);
       const decSol = converter.result;
-      this.result.push({
-        name: this.imp.$t('solution'),
-        text: [
-          `${this.imp.$t('correctSolution')}: `,
-          this.watcher.steps.Result.data.result.sign, ' ',
-          this.watcher.steps.Result.data.result.exponentBits.join(''), ' ',
-          this.watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
-          '\\( \\implies \\)',
-          ` ${this.imp.$t('decimal')}: ${decSol}`,
-        ].join(''),
-        subpanels: [
-          {
-            name: `${this.imp.$t('sign')}: `,
-            text: this.watcher.steps.Result.data.result.sign,
-          },
-          {
-            name: `${this.imp.$t('exponent')}: `,
-            text: this.watcher.steps.Result.data.result.exponentBits.join(''),
-          },
-          {
-            name: `${this.imp.$t('mantissa')}: `,
-            text: this.watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-          },
-        ],
-      });
+      this.createIEEESolutionBox(decSol, watcher.steps.Result.data.result);
     }
   }
 
@@ -464,27 +373,8 @@ export class DescriptionSolution {
     const watcher = this.watcher;
     this.result.push({
       name: `${this.imp.$t('values')}`,
-      text: `${this.imp.$t('givenValues')}`,
-      subpanels: [
-        {
-          name: `${this.imp.$t('firstFactor')}: `,
-          text: [
-            `${this.imp.$t('value')}: `, y1.valueString,
-            `, ${this.imp.$t('sign')}: `, (y1.sign === 0 ? '+' : '-'),
-            `, ${this.imp.$t('mantissa')}: `, mantissaString1,
-            `, ${this.imp.$t('exponent')}: `, expString1,
-          ].join(''),
-        },
-        {
-          name: `${this.imp.$t('secondFactor')}: `,
-          text: [
-            `${this.imp.$t('value')}: `, y2.valueString,
-            `, ${this.imp.$t('sign')}: `, (y2.sign === 0 ? '+' : '-'),
-            `, ${this.imp.$t('mantissa')}: `, mantissaString2,
-            `, ${this.imp.$t('exponent')}: `, expString2,
-          ].join(''),
-        },
-      ],
+      text: `${this.imp.$t('firstFactor')}: ${this.imp.$t('sign')}: ${(y1.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString1} ${this.imp.$t('mantissa')}: ${mantissaString1}<br>`
+          + `${this.imp.$t('secondFactor')}: ${this.imp.$t('sign')}: ${(y2.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString2} ${this.imp.$t('mantissa')}: ${mantissaString2}`,
     });
     if (y1.isZero || y2.isZero) {
       this.result.push({
@@ -540,31 +430,7 @@ export class DescriptionSolution {
       watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
     ].join(''), watcher.steps.ResultEdgecase.data.edgecase);
     const decSol = converter.result;
-    this.result.push({
-      name: this.imp.$t('solution'),
-      text: [
-        `${this.imp.$t('correctSolution')}: `,
-        watcher.steps.Result.data.result.sign, ' ',
-        watcher.steps.Result.data.result.exponentBits.join(''), ' ',
-        watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
-        '\\( \\implies \\)',
-        ` ${this.imp.$t('decimal')}: ${decSol}`,
-      ].join(''),
-      subpanels: [
-        {
-          name: `${this.imp.$t('sign')}: `,
-          text: watcher.steps.Result.data.result.sign,
-        },
-        {
-          name: `${this.imp.$t('exponent')}: `,
-          text: watcher.steps.Result.data.result.exponentBits.join(''),
-        },
-        {
-          name: `${this.imp.$t('mantissa')}: `,
-          text: watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-        },
-      ],
-    });
+    this.createIEEESolutionBox(decSol, watcher.steps.Result.data.result);
   }
 
   // =========================================================================================
@@ -653,6 +519,28 @@ export class DescriptionSolution {
     ].join('');
   }
 
+  createIEEESolutionBox(decSol, result) {
+    this.result.push({
+      name: this.imp.$t('solution'),
+      text: [
+        `${this.imp.$t('solution')}: `,
+        result.sign, ' ',
+        result.exponentBits.join(''), ' ',
+        result.mantissaBits.join('').substring(1), ' ',
+        '\\( \\implies \\)',
+        ` ${this.imp.$t('decimal')}: ${decSol}`,
+      ].join('') + this.createIEEENumberBreakdown(result),
+    });
+  }
+
+  createIEEENumberBreakdown(result) {
+    return '<ul>'
+      + `<li>${this.imp.$t('sign')}: ${result.sign}</li>`
+      + `<li>${this.imp.$t('exponent')}: ${result.exponentBits.join('')}</li>`
+      + `<li>${this.imp.$t('mantissa')}: ${result.mantissaBits.join('').substring(1)}</li>`
+      + '</ul>';
+  }
+
   subtractionDescription(solution, _y1, _y2) {
     let y1;
     let y2;
@@ -673,27 +561,8 @@ export class DescriptionSolution {
     let actStep = 1;
     this.result.push({
       name: `${this.imp.$t('values')}`,
-      text: 'Werte der übertragenen Zahlen',
-      subpanels: [
-        {
-          name: `${this.imp.$t('minuend')}: `,
-          text: [
-            `${this.imp.$t('value')}: `, y1.valueString,
-            `, ${this.imp.$t('sign')}: `, (y1.sign === 0 ? '+' : '-'),
-            `, ${this.imp.$t('mantissa')}: `, mantissaString1,
-            `, ${this.imp.$t('exponent')}: `, expString1,
-          ].join(''),
-        },
-        {
-          name: `${this.imp.$t('subtrahend')}: `,
-          text: [
-            `${this.imp.$t('value')}: `, y2.valueString,
-            `, ${this.imp.$t('sign')}: `, (y2.sign === 0 ? '+' : '-'),
-            `, ${this.imp.$t('mantissa')}: `, mantissaString2,
-            `, ${this.imp.$t('exponent')}: `, expString2,
-          ].join(''),
-        },
-      ],
+      text: `${this.imp.$t('minuend')}: ${this.imp.$t('sign')}: ${(y1.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString1} ${this.imp.$t('mantissa')}: ${mantissaString1}<br>`
+          + `${this.imp.$t('subtrahend')}: ${this.imp.$t('sign')}: ${(y2.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString2} ${this.imp.$t('mantissa')}: ${mantissaString2}`,
     });
     const addWatcher = watcher.steps.Addition.data.addition;
     if (y1.isZero || y2.isZero) { // case: subtraction with zero
@@ -713,31 +582,7 @@ export class DescriptionSolution {
         addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
       ].join(''), addWatcher.steps.ResultEdgecase.data.edgecase);
       const decSol = converter.result;
-      this.result.push({
-        name: this.imp.$t('solution'),
-        text: [
-          `${this.imp.$t('correctSolution')}: `,
-          addWatcher.steps.Result.data.result.sign, ' ',
-          addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
-          addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
-          '\\( \\implies \\)',
-          ` ${this.imp.$t('decimal')}: ${decSol}`,
-        ].join(''),
-        subpanels: [
-          {
-            name: `${this.imp.$t('sign')}: `,
-            text: addWatcher.steps.Result.data.result.sign,
-          },
-          {
-            name: `${this.imp.$t('exponent')}: `,
-            text: addWatcher.steps.Result.data.result.exponentBits.join(''),
-          },
-          {
-            name: `${this.imp.$t('mantissa')}: `,
-            text: addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-          },
-        ],
-      });
+      this.createIEEESolutionBox(decSol, watcher.steps.Result.data.result);
     } else if (addWatcher.steps.ResultEdgecase.data.edgecase !== 'none') { // case: edgecase
       switch (addWatcher.steps.ResultEdgecase.data.edgecase) {
         case 'nan':
@@ -776,31 +621,7 @@ export class DescriptionSolution {
         addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
       ].join(''), addWatcher.steps.ResultEdgecase.data.edgecase);
       const decSol = converter.result;
-      this.result.push({
-        name: this.imp.$t('solution'),
-        text: [
-          `${this.imp.$t('correctSolution')}: `,
-          addWatcher.steps.Result.data.result.sign, ' ',
-          addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
-          addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
-          '\\( \\implies \\)',
-          ` ${this.imp.$t('decimal')}: ${decSol}`,
-        ].join(''),
-        subpanels: [
-          {
-            name: `${this.imp.$t('sign')}: `,
-            text: addWatcher.steps.Result.data.result.sign,
-          },
-          {
-            name: `${this.imp.$t('exponent')}: `,
-            text: addWatcher.steps.Result.data.result.exponentBits.join(''),
-          },
-          {
-            name: `${this.imp.$t('mantissa')}: `,
-            text: addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-          },
-        ],
-      });
+      this.createIEEESolutionBox(decSol, watcher.steps.Result.data.result);
     } else {
       if (addWatcher.steps.CalculateDeltaE.data.deltaE === 0) {
         this.result.push({
@@ -1013,32 +834,7 @@ export class DescriptionSolution {
           .substring(1),
       ].join(''), addWatcher.steps.ResultEdgecase.data.edgecase);
       const decSol = converter.result;
-      this.result.push({
-        name: this.imp.$t('solution'),
-        text: [
-          `${this.imp.$t('correctSolution')}: `,
-          addWatcher.steps.Result.data.result.sign, ' ',
-          addWatcher.steps.Result.data.result.exponentBits.join(''), ' ',
-          addWatcher.steps.Result.data.result.mantissaBits.join('')
-            .substring(1), ' ',
-          '\\( \\implies \\)',
-          ` ${this.imp.$t('decimal')}: ${decSol}`,
-        ].join(''),
-        subpanels: [
-          {
-            name: `${this.imp.$t('sign')}: `,
-            text: addWatcher.steps.Result.data.result.sign,
-          },
-          {
-            name: `${this.imp.$t('exponent')}: `,
-            text: addWatcher.steps.Result.data.result.exponentBits.join(''),
-          },
-          {
-            name: `${this.imp.$t('mantissa')}: `,
-            text: addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-          },
-        ],
-      });
+      this.createIEEESolutionBox(decSol, addWatcher.steps.Result.data.result);
     }
   }
 
@@ -1176,27 +972,8 @@ export class DescriptionSolution {
     const watcher = this.watcher;
     this.result.push({
       name: `${this.imp.$t('values')}`,
-      text: `${this.imp.$t('givenValues')}`,
-      subpanels: [
-        {
-          name: `${this.imp.$t('numerator')}: `,
-          text: [
-            `${this.imp.$t('value')}: `, y1.valueString,
-            `, ${this.imp.$t('sign')}: `, (y1.sign === 0 ? '+' : '-'),
-            `, ${this.imp.$t('mantissa')}: `, mantissaString1,
-            `, ${this.imp.$t('exponent')}: `, expString1,
-          ].join(''),
-        },
-        {
-          name: `${this.imp.$t('denominator')}: `,
-          text: [
-            `${this.imp.$t('value')}: `, y2.valueString,
-            `, ${this.imp.$t('sign')}: `, (y2.sign === 0 ? '+' : '-'),
-            `, ${this.imp.$t('mantissa')}: `, mantissaString2,
-            `, ${this.imp.$t('exponent')}: `, expString2,
-          ].join(''),
-        },
-      ],
+      text: `${this.imp.$t('numerator')}: ${this.imp.$t('sign')}: ${(y1.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString1} ${this.imp.$t('mantissa')}: ${mantissaString1}<br>`
+          + `${this.imp.$t('denominator')}: ${this.imp.$t('sign')}: ${(y2.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString2} ${this.imp.$t('mantissa')}: ${mantissaString2}`,
     });
     if (y1.isZero) {
       this.result.push({
@@ -1286,31 +1063,7 @@ export class DescriptionSolution {
       watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
     ].join(''), watcher.steps.ResultEdgecase.data.edgecase);
     const decSol = converter.result;
-    this.result.push({
-      name: this.imp.$t('solution'),
-      text: [
-        `${this.imp.$t('correctSolution')}: `,
-        watcher.steps.Result.data.result.sign, ' ',
-        watcher.steps.Result.data.result.exponentBits.join(''), ' ',
-        watcher.steps.Result.data.result.mantissaBits.join('').substring(1), ' ',
-        '\\( \\implies \\)',
-        ` ${this.imp.$t('decimal')}: ${decSol}`,
-      ].join(''),
-      subpanels: [
-        {
-          name: `${this.imp.$t('sign')}: `,
-          text: watcher.steps.Result.data.result.sign,
-        },
-        {
-          name: `${this.imp.$t('exponent')}: `,
-          text: watcher.steps.Result.data.result.exponentBits.join(''),
-        },
-        {
-          name: `${this.imp.$t('mantissa')}: `,
-          text: watcher.steps.Result.data.result.mantissaBits.join('').substring(1),
-        },
-      ],
-    });
+    this.createIEEESolutionBox(decSol, watcher.steps.Result.data.result);
   }
 
   makeDescriptionArithmetic(num1, num2, solutionString, operator) {
@@ -1375,21 +1128,7 @@ export class DescriptionSolution {
         solution.sign, ' ',
         solution.exponentBits.join(''), ' ',
         solution.mantissaBits.join('').substring(1), ' ',
-      ].join(''),
-      subpanels: [
-        {
-          name: `${this.imp.$t('sign')}: `,
-          text: solution.sign,
-        },
-        {
-          name: `${this.imp.$t('exponent')}: `,
-          text: solution.exponentBits.join(''),
-        },
-        {
-          name: `${this.imp.$t('mantissa')}: `,
-          text: solution.mantissaBits.join(''),
-        },
-      ],
+      ].join('') + this.createIEEENumberBreakdown(solution),
     });
   }
 }

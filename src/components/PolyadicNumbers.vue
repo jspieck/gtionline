@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      currentTab: 'free',
+      currentTab: 'conversionExercise',
     };
   },
   computed: {
