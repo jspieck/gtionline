@@ -38,6 +38,7 @@ import SolutionAccordion from './SolutionAccordion.vue';
 import * as solution from '../scripts/polyadicSolution';
 import * as description from '../scripts/DescriptionPolyadicConversion';
 import * as pdf from '../scripts/generatePdfPolyadicConversion';
+import { formatToPower } from '../scripts/polyadicUtil';
 
 export default {
   name: 'PolyadicConversionExercise',
@@ -126,103 +127,36 @@ export default {
       this.selectedFormat = [format1, format2];
       // generate input number
       let number = '';
-      const digitsBeforeComma = Math.floor(Math.random() * 8);
-      const digitsAfterComma = Math.floor(Math.random() * 8);
-      let digitValues = [];
-      switch (format1) {
-        case 'binary':
-          this.power[0] = 2;
-          digitValues = ['0', '1'];
-          break;
-        case 'ternary':
-          this.power[0] = 3;
-          digitValues = ['0', '1', '2'];
-          break;
-        case 'quaternary':
-          this.power[0] = 4;
-          digitValues = ['0', '1', '2', '3'];
-          break;
-        case 'quinary':
-          this.power[0] = 5;
-          digitValues = ['0', '1', '2', '3', '4'];
-          break;
-        case 'senary':
-          this.power[0] = 6;
-          digitValues = ['0', '1', '2', '3', '4', '5'];
-          break;
-        case 'septenary':
-          this.power[0] = 7;
-          digitValues = ['0', '1', '2', '3', '4', '5', '6'];
-          break;
-        case 'octal':
-          this.power[0] = 8;
-          digitValues = ['0', '1', '2', '3', '4', '5', '6', '7'];
-          break;
-        case 'novenary':
-          this.power[0] = 9;
-          digitValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8'];
-          break;
-        case 'decimal':
-          this.power[0] = 10;
-          digitValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-          break;
-        case 'hex':
-          this.power[0] = 16;
-          digitValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
-          break;
-        default:
-      }
-      switch (format2) {
-        case 'binary':
-          this.power[1] = 2;
-          break;
-        case 'ternary':
-          this.power[1] = 3;
-          break;
-        case 'quaternary':
-          this.power[1] = 4;
-          break;
-        case 'quinary':
-          this.power[1] = 5;
-          break;
-        case 'senary':
-          this.power[1] = 6;
-          break;
-        case 'septenary':
-          this.power[1] = 7;
-          break;
-        case 'octal':
-          this.power[1] = 8;
-          break;
-        case 'novenary':
-          this.power[1] = 9;
-          break;
-        case 'decimal':
-          this.power[1] = 10;
-          break;
-        case 'hex':
-          this.power[1] = 16;
-          break;
-        default:
+      const numDigitsBeforeComma = Math.floor(Math.random() * 4);
+      const numDigitsAfterComma = Math.floor(Math.random() * 4);
+      this.power[0] = formatToPower(format1);
+      this.power[1] = formatToPower(format2);
+
+      const digitValues = [];
+      for (let i = 0; i < this.power[0]; i += 1) {
+        digitValues.push(i.toString(this.power[0]));
       }
 
-      if (digitsBeforeComma > 0) {
-        for (let i = 0; i < digitsBeforeComma; i += 1) {
+      if (numDigitsBeforeComma > 0) {
+        for (let i = 0; i < numDigitsBeforeComma; i += 1) {
           number += digitValues[Math.floor(Math.random() * digitValues.length)];
         }
       } else {
         number = '0';
       }
-      if (digitsAfterComma > 0) {
+      number = number.replace(/^0+(?=\d)/, '');
+
+      if (numDigitsAfterComma > 0) {
         number += '.';
-        for (let i = 0; i < digitsAfterComma; i += 1) {
+        for (let i = 0; i < numDigitsAfterComma; i += 1) {
           number += digitValues[Math.floor(Math.random() * digitValues.length)];
         }
       }
 
-      if (((digitsBeforeComma > 0) || (digitsAfterComma > 0)) && (Math.random() < 0.5)) {
+      if (((numDigitsAfterComma > 0) || (numDigitsAfterComma > 0)) && (Math.random() < 0.5)) {
         number = `-${number}`;
       }
+      number = number.toUpperCase();
       this.inputNum = number;
       this.generated = true;
       this.recalculate();

@@ -67,6 +67,7 @@ import SolutionAccordion from './SolutionAccordion.vue';
 import * as description from '../scripts/DescriptionPolyadicConversion';
 import * as pdf from '../scripts/generatePdfPolyadicConversion';
 import * as solution from '../scripts/polyadicSolution';
+import { formatToPower } from '../scripts/polyadicUtil';
 
 export default {
   name: 'PolyadicConversionFree',
@@ -76,16 +77,16 @@ export default {
   },
   data() {
     let hasdefault = false;
-    const format1 = 'decimal';
-    /* if (window.sessionStorage.getItem('PCF_format1')) {
+    let format1 = 'decimal';
+    if (window.sessionStorage.getItem('PCF_format1')) {
       format1 = window.sessionStorage.getItem('PCF_format1');
       hasdefault = true;
-    } */
-    const format2 = 'decimal';
-    /* if (window.sessionStorage.getItem('PCF_format2')) {
+    }
+    let format2 = 'decimal';
+    if (window.sessionStorage.getItem('PCF_format2')) {
       format2 = window.sessionStorage.getItem('PCF_format2');
       hasdefault = true;
-    } */
+    }
     let input = '';
     if (window.sessionStorage.getItem('PCF_inputNum')) {
       input = window.sessionStorage.getItem('PCF_inputNum');
@@ -129,7 +130,10 @@ export default {
   },
   mounted() {
     if (this.default) {
-      this.recalculate();
+      this.power[0] = formatToPower(this.selectedFormat[0]);
+      this.power[1] = formatToPower(this.selectedFormat[1]);
+      this.checkFormat(this.inputNum);
+      // this.recalculate();
     }
   },
   watch: {
@@ -154,46 +158,15 @@ export default {
     },
     selectFormat(num, val) {
       this.selectedFormat[num] = val;
-      switch (val) {
-        case 'binary':
-          this.power[num] = 2;
-          break;
-        case 'ternary':
-          this.power[num] = 3;
-          break;
-        case 'quaternary':
-          this.power[num] = 4;
-          break;
-        case 'quinary':
-          this.power[num] = 5;
-          break;
-        case 'senary':
-          this.power[num] = 6;
-          break;
-        case 'septenary':
-          this.power[num] = 7;
-          break;
-        case 'octal':
-          this.power[num] = 8;
-          break;
-        case 'novenary':
-          this.power[num] = 9;
-          break;
-        case 'decimal':
-          this.power[num] = 10;
-          break;
-        case 'hex':
-          this.power[num] = 16;
-          break;
-        default:
-      }
+      this.power[num] = formatToPower(val);
       this.checkFormat(this.inputNum);
     },
     checkFormat(conv) {
       this.backFormat = '';
       const format = this.selectedFormat[0];
-      const convert = conv.replace(/\s/g, '');
+      const convert = conv.replace(/\s/g, '').toUpperCase();
       let commaFound = false;
+      this.backSol = '';
       for (let i = 0; i < convert.length; i += 1) {
         switch (format) {
           case 'binary':
@@ -263,7 +236,7 @@ export default {
             break;
           default:
         }
-        if ((convert[i] === '+' || convert[i] === '-') && i > 1) {
+        if ((convert[i] === '+' || convert[i] === '-') && i > 0) {
           this.backFormat = 'incorrectInput';
           return false;
         }
@@ -287,6 +260,7 @@ export default {
     computeSolution() {
       // calc solution
       const polyadicSolution = new solution.PolyadicSolution();
+      console.log(this.power, this.selectedFormat);
       polyadicSolution.convertFormat(this.inputNum, this.power[0], this.power[1]);
       this.watcher = JSON.parse(JSON.stringify(polyadicSolution.watcher));
       this.solution = polyadicSolution.result;
