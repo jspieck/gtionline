@@ -30,79 +30,54 @@ export class DescriptionPolyadicSolution {
 
     const splittedResultString = resultString.split('.');
     const splittedBitString1 = bitString1.split('.');
-    for (
-      let i = splittedBitString1[0].length;
-      i < splittedResultString[0].length;
-      i += 1
-    ) {
-      bitString1 = `0${bitString1}`;
-    }
+    bitString1 = `${'0'.repeat(splittedResultString[0].length - splittedBitString1[0].length)}${bitString1}`;
     for (let i = beforeComma.length; i < splittedResultString[0].length; i += 1) {
       beforeComma.unshift('0');
     }
-    if (Array.isArray(splittedResultString) && (splittedResultString[1] !== undefined)) {
-      if (Array.isArray(splittedBitString1) && (splittedBitString1[1] !== undefined)) {
-        for (
-          let i = splittedBitString1[1].length;
-          i < splittedResultString[1].length;
-          i += 1
-        ) {
-          bitString1 = `${bitString1}0`;
-        }
+    if (Array.isArray(splittedResultString) && (splittedResultString[1] != null)) {
+      if (Array.isArray(splittedBitString1) && (splittedBitString1[1] != null)) {
+        bitString1 = `${bitString1}${'0'.repeat(splittedResultString[1].length - splittedBitString1[1].length)}`;
       }
       for (let i = afterComma.length; i < splittedResultString[1].length; i += 1) {
         afterComma.push('0');
       }
     }
 
-    const carryBits = [];
-    for (let i = 0; i < beforeComma.length; i += 1) {
-      let carryBit = this.watcher.steps.constructResult.data[`overflowBeforeComma${i}`];
-      if (carryBit === undefined) {
-        carryBit = 0;
-      }
-      carryBits.unshift(carryBit);
-    }
-    for (let i = 0; i < afterComma.length; i += 1) {
-      let carryBit = this.watcher.steps.constructResult.data[`overflowAfterComma${i}`];
-      if (carryBit === undefined) {
-        carryBit = 0;
-      }
-      carryBits.unshift(carryBit);
-    }
-
-    const row1 = [];
-    const row2 = [];
-    const row3 = [];
-    const tabdef = [];
-    row1.push('&');
-    row2.push('+&');
-    row3.push('&');
-    tabdef.push('{');
-    for (let i = 0; i < resultString.length; i += 1) {
-      tabdef.push('c');
-    }
-    tabdef.push('}');
+    const row1 = ['&'];
+    const row2 = ['+&'];
+    const rowCarry = ['&'];
+    const row3 = ['&'];
+    const tabdef = `{${'c'.repeat(resultString.length)}}`;
 
     for (let i = 0; i < bitString1.length; i += 1) {
       row1.push(` ${bitString1[i]}`);
       row1.push('&');
     }
-    let countCarry = 0;
+    console.log(this.watcher.steps);
     for (let i = 0; i < beforeComma.length; i += 1) {
-      row2.push(` ${beforeComma[i]}_{${carryBits[countCarry]}}`);
+      row2.push(` ${beforeComma[i]}`);
+      let carryBit = this.watcher.steps.constructResult.data[`overflowBeforeComma${i}`];
+      if (carryBit == null) {
+        carryBit = ' ';
+      }
+      rowCarry.push(`\\scriptsize{${carryBit}} &`);
       row2.push('&');
-      countCarry += 1;
     }
     if (afterComma.length > 0) {
       row2.push(' .&');
+      rowCarry.push(' &');
     }
     for (let i = 0; i < afterComma.length - 1; i += 1) {
-      row2.push(` ${afterComma[i]}_{${carryBits[countCarry]}}`);
+      row2.push(` ${afterComma[i]}`);
+      let carryBit = this.watcher.steps.constructResult.data[`overflowAfterComma${i}`];
+      if (carryBit == null) {
+        carryBit = ' ';
+      }
+      rowCarry.push(`\\scriptsize{${carryBit}} &`);
       row2.push('&');
-      countCarry += 1;
     }
     row2.push(` ${afterComma[afterComma.length - 1]}`);
+    rowCarry.push(' ');
 
     for (let i = 0; i < resultString.length; i += 1) {
       row3.push(` ${resultString[i]}`);
@@ -112,11 +87,14 @@ export class DescriptionPolyadicSolution {
     row1.push(' \\\\ ');
     row2.pop();
     row2.push(' \\\\ ');
+    rowCarry.pop();
+    rowCarry.push(' \\\\ ');
     row3.pop();
     this.table = [
-      `\\begin{array} ${tabdef.join('')}`,
+      `\\begin{array} ${tabdef}`,
       `${row1.join('')}`,
       `${row2.join('')}`,
+      `${rowCarry.join('')}`,
       '\\hline',
       `${row3.join('')}`,
       '\\end{array}',
@@ -125,36 +103,9 @@ export class DescriptionPolyadicSolution {
 
   /* eslint-disable */
   additionDescription(y1, y2, format) {
-    // input
-    /* this.result.push({
-      name: `${this.imp.$t('values')}`,
-      text: `${this.imp.$t('input')}`,
-      subpanels: [
-        {
-          name: `${this.imp.$t('firstSummand')}: `,
-          text: [
-            `${this.imp.$t('representation')}: `, y1.bitString,
-            `\\(\\hspace{2cm} \\)${this.imp.$t('value')}: \\(${y2.value}\\)`
-          ].join(''),
-        },
-        {
-          name: `${this.imp.$t('secondSummand')}: `,
-          text: [
-            `${this.imp.$t('representation')}: `, y2.bitString,
-            `\\(\\hspace{2cm} \\)${this.imp.$t('value')}: \\(${y2.value}\\)`
-          ].join(''),
-        },
-        {
-          name: `${this.imp.$t('format')}: `,
-          text: [
-            `${this.imp.$t(format)}`,
-          ].join(''),
-        },
-      ],
-    }); */
     this.getAdditionTable();
-    console.log(this.table);
-    console.log(this.watcher);
+    // console.log(this.table);
+    // console.log(this.watcher);
     this.result.push({
       name: `${this.imp.$t('addition')}`,
       text: `\\(${this.table}\\)`,
@@ -379,35 +330,12 @@ export class DescriptionPolyadicSolution {
 
   /* eslint-disable */
   subtractionDescription(y1, y2, format) {
-    /* input
+    this.getSubtractionTable();
     this.result.push({
-      name: `${this.imp.$t('values')}`,
-      text: `${this.imp.$t('input')}`,
-      subpanels: [
-        {
-          name: `${this.imp.$t('minuend')}: `,
-          text: [
-            `${this.imp.$t('representation')}: `, y1.bitString,
-            `\\(\\hspace{2cm} \\)${this.imp.$t('value')}: \\(${y1.value}\\)`
-          ].join(''),
-        },
-        {
-          name: `${this.imp.$t('subtrahend')}: `,
-          text: [
-            `${this.imp.$t('representation')}: `, y2.bitString,
-            `\\(\\hspace{2cm} \\)${this.imp.$t('value')}: \\(${y2.value}\\)`
-          ].join(''),
-        },
-        {
-          name: `${this.imp.$t('format')}: `,
-          text: [
-            `${this.imp.$t(format)}`,
-          ].join(''),
-        },
-      ],
-    }); */
-    // this.getSubtractionTable();
-    this.result.push({
+      name: `${this.imp.$t('subtraction')}`,
+      text: `\\(${this.table}\\)`,
+    });
+    /* this.result.push({
       name: `${this.imp.$t('subtraction')}`,
       text: `${this.imp.$t('shortcutHexToBin')}`,
       subpanels: [
@@ -416,8 +344,7 @@ export class DescriptionPolyadicSolution {
           text: `\\(${this.table}\\)`,
         },
       ],
-    });
-    
+    }); */
   }
   /* eslint-enable */
 

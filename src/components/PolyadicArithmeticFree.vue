@@ -106,7 +106,7 @@ export default {
     return {
       selectedFormat: format,
       operator: op,
-      power: 10,
+      // power: 10,
       mouseDown: false,
       solution: '',
       solutionObject: '',
@@ -122,13 +122,16 @@ export default {
     };
   },
   computed: {
+    power() {
+      return this.formatToPower(this.selectedFormat);
+    },
     solDescr() {
       return this.solutionSteps;
     },
     operationOptions() {
       return {
         add: `${this.$t('addition')} (+)`,
-        sub: `${this.$t('subtraction')} (-)`,
+        // sub: `${this.$t('subtraction')} (-)`,
         // mul: `${this.$t('multiplication')} (*)`,
         // div: `${this.$t('division')} (/)`,
       };
@@ -179,42 +182,36 @@ export default {
       this.operator = val;
       this.recalculate();
     },
+
+    formatToPower(format) {
+      switch (format) {
+        case 'binary':
+          return 2;
+        case 'ternary':
+          return 3;
+        case 'quaternary':
+          return 4;
+        case 'quinary':
+          return 5;
+        case 'senary':
+          return 6;
+        case 'septenary':
+          return 7;
+        case 'octal':
+          return 8;
+        case 'novenary':
+          return 9;
+        case 'decimal':
+          return 10;
+        case 'hex':
+          return 16;
+        default:
+          return 10;
+      }
+    },
     // eslint-disable-next-line no-unused-vars
     selectFormat(num, val) {
       this.selectedFormat = val;
-      switch (this.selectedFormat) {
-        case 'binary':
-          this.power = 2;
-          break;
-        case 'ternary':
-          this.power = 3;
-          break;
-        case 'quaternary':
-          this.power = 4;
-          break;
-        case 'quinary':
-          this.power = 5;
-          break;
-        case 'senary':
-          this.power = 6;
-          break;
-        case 'septenary':
-          this.power = 7;
-          break;
-        case 'octal':
-          this.power = 8;
-          break;
-        case 'novenary':
-          this.power = 9;
-          break;
-        case 'decimal':
-          this.power = 10;
-          break;
-        case 'hex':
-          this.power = 16;
-          break;
-        default:
-      }
       if (this.checkFormat(this.inputNums[0]) && this.checkFormat(this.inputNums[1])) {
         this.recalculate();
       }
