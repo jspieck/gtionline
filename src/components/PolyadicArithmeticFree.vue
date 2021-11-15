@@ -74,6 +74,7 @@ import SolutionAccordion from './SolutionAccordion.vue';
 import * as description from '../scripts/DescriptionPolyadicSolution';
 import * as pdf from '../scripts/generatePdfPolyadicConversion';
 import * as solution from '../scripts/polyadicSolution';
+import { formatToPower } from '../scripts/polyadicUtil';
 
 export default {
   name: 'PolyadicConversionFree',
@@ -123,7 +124,7 @@ export default {
   },
   computed: {
     power() {
-      return this.formatToPower(this.selectedFormat);
+      return formatToPower(this.selectedFormat);
     },
     solDescr() {
       return this.solutionSteps;
@@ -183,32 +184,6 @@ export default {
       this.recalculate();
     },
 
-    formatToPower(format) {
-      switch (format) {
-        case 'binary':
-          return 2;
-        case 'ternary':
-          return 3;
-        case 'quaternary':
-          return 4;
-        case 'quinary':
-          return 5;
-        case 'senary':
-          return 6;
-        case 'septenary':
-          return 7;
-        case 'octal':
-          return 8;
-        case 'novenary':
-          return 9;
-        case 'decimal':
-          return 10;
-        case 'hex':
-          return 16;
-        default:
-          return 10;
-      }
-    },
     // eslint-disable-next-line no-unused-vars
     selectFormat(num, val) {
       this.selectedFormat = val;

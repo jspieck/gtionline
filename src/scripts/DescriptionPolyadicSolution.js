@@ -56,11 +56,27 @@ export class DescriptionPolyadicSolution {
     console.log(this.watcher.steps);
     for (let i = 0; i < beforeComma.length; i += 1) {
       row2.push(` ${beforeComma[i]}`);
-      let carryBit = this.watcher.steps.constructResult.data[`overflowBeforeComma${i}`];
-      if (carryBit == null) {
-        carryBit = ' ';
+      if (i !== beforeComma.length - 1) {
+        let carryBit = 0;
+        if (this.watcher.steps.constructResult.data[`overflowBeforeComma${0}`] != null) {
+          carryBit = this.watcher.steps.constructResult.data[`overflowBeforeComma${i}`];
+        } else {
+          carryBit = this.watcher.steps.constructResult.data[`overflowBeforeComma${i + 1}`];
+        }
+        if (carryBit == null) {
+          carryBit = ' ';
+        }
+        rowCarry.push(`\\scriptsize{${carryBit}} &`);
+      } else {
+        /* eslint-disable */
+        if (this.watcher.steps.constructResult.data[`overflowAfterComma${0}`] != null) {
+          const carryBit = this.watcher.steps.constructResult.data[`overflowAfterComma${0}`];
+          rowCarry.push(`\\scriptsize{${carryBit}} &`);
+        } else {
+          rowCarry.push('&');
+        }
+        /* eslint-enable */
       }
-      rowCarry.push(`\\scriptsize{${carryBit}} &`);
       row2.push('&');
     }
     if (afterComma.length > 0) {
@@ -69,11 +85,15 @@ export class DescriptionPolyadicSolution {
     }
     for (let i = 0; i < afterComma.length - 1; i += 1) {
       row2.push(` ${afterComma[i]}`);
-      let carryBit = this.watcher.steps.constructResult.data[`overflowAfterComma${i}`];
-      if (carryBit == null) {
-        carryBit = ' ';
+      if (i !== beforeComma.length - 1) {
+        let carryBit = this.watcher.steps.constructResult.data[`overflowAfterComma${i + 1}`];
+        if (carryBit == null) {
+          carryBit = ' ';
+        }
+        rowCarry.push(`\\scriptsize{${carryBit}} &`);
+      } else {
+        rowCarry.push('&');
       }
-      rowCarry.push(`\\scriptsize{${carryBit}} &`);
       row2.push('&');
     }
     row2.push(` ${afterComma[afterComma.length - 1]}`);

@@ -11768,7 +11768,7 @@ var NumberPolyadic = /*#__PURE__*/function () {
           } else {
             numAfterComma[_i2] = res.toString(this.power).toUpperCase();
             breakAfterComma = true;
-            this.watcher = this.watcher.step('constructResult').saveVariable("overflowAfterComma".concat(_i2), 0);
+            // this.watcher = this.watcher.step('constructResult').saveVariable("overflowAfterComma".concat(_i2), 0);
             break;
           }
         }
@@ -11808,7 +11808,7 @@ var NumberPolyadic = /*#__PURE__*/function () {
             }
           } else {
             numBeforeComma[_i4] = _res.toString(this.power).toUpperCase();
-            this.watcher = this.watcher.step('constructResult').saveVariable("overflowBeforeComma".concat(_i4), 1);
+            // this.watcher = this.watcher.step('constructResult').saveVariable("overflowBeforeComma".concat(_i4), 0);
             break;
           }
         }
