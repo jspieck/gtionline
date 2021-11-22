@@ -54,6 +54,7 @@ export class DescriptionPolyadicSolution {
       row1.push('&');
     }
     console.log(this.watcher.steps);
+    let carrySet = false;
     for (let i = 0; i < beforeComma.length; i += 1) {
       row2.push(` ${beforeComma[i]}`);
       if (i !== beforeComma.length - 1) {
@@ -65,6 +66,8 @@ export class DescriptionPolyadicSolution {
         }
         if (carryBit == null) {
           carryBit = ' ';
+        } else {
+          carrySet = true;
         }
         rowCarry.push(`\\scriptsize{${carryBit}} &`);
       } else {
@@ -72,6 +75,7 @@ export class DescriptionPolyadicSolution {
         if (this.watcher.steps.constructResult.data[`overflowAfterComma${0}`] != null) {
           const carryBit = this.watcher.steps.constructResult.data[`overflowAfterComma${0}`];
           rowCarry.push(`\\scriptsize{${carryBit}} &`);
+          carrySet = true;
         } else {
           rowCarry.push('&');
         }
@@ -89,6 +93,8 @@ export class DescriptionPolyadicSolution {
         let carryBit = this.watcher.steps.constructResult.data[`overflowAfterComma${i + 1}`];
         if (carryBit == null) {
           carryBit = ' ';
+        } else {
+          carrySet = true;
         }
         rowCarry.push(`\\scriptsize{${carryBit}} &`);
       } else {
@@ -114,11 +120,14 @@ export class DescriptionPolyadicSolution {
       `\\begin{array} ${tabdef}`,
       `${row1.join('')}`,
       `${row2.join('')}`,
-      `${rowCarry.join('')}`,
-      '\\hline',
-      `${row3.join('')}`,
-      '\\end{array}',
-    ].join('');
+    ];
+    if (carrySet) {
+      this.table.push(`${rowCarry.join('')}`);
+    }
+    this.table.push('\\hline');
+    this.table.push(`${row3.join('')}`);
+    this.table.push('\\end{array}');
+    this.table = this.table.join('');
   }
 
   /* eslint-disable */

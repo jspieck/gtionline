@@ -130,12 +130,12 @@
           {{$t('negativeMinuendSubtrahend')}}
         </label>
       </div>
-      <div class="pdfGen">
+      <!-- <div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
       </div>
       <div class="mobile_pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
-      </div>
+      </div> -->
     </div>
     <div id="solution">
       <Accordion :solutionDescription="solDescr">
@@ -505,10 +505,15 @@ export default {
             }
             this.computeSolution();
           }
+          this.$nextTick(() => {
+            if (window.MathJax) {
+              window.MathJax.typeset(); // https://github.com/mathjax/MathJax/issues/2557
+            }
+          });
         }
         if (this.xCoord - e.pageX > blockSize) {
           this.xCoord -= blockSize;
-          if (this.exponentBits > 1) {
+          if (this.exponentBits > 2) {
             this.exponentBits -= 1;
             if (this.nums[0] !== this.falseFormatOutput) {
               this.convertFormat(0);
@@ -518,11 +523,16 @@ export default {
             }
             this.computeSolution();
           }
+          this.$nextTick(() => {
+            if (window.MathJax) {
+              window.MathJax.typeset(); // https://github.com/mathjax/MathJax/issues/2557
+            }
+          });
         }
       }
     },
     expandFraction() {
-      this.exponentBits = Math.max(this.exponentBits - 1, 1);
+      this.exponentBits = Math.max(this.exponentBits - 1, 2);
       this.recalculate();
     },
     expandExponent() {

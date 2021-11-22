@@ -110,6 +110,8 @@ export default {
 .accordion-body__contents {
   padding: 1.5em 1.5em;
   font-size: .85em;
+  text-align: justify;
+  text-align-last: center;
 }
 
 .accordion__item.active:last-child .accordion-header {

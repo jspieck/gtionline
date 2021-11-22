@@ -231,7 +231,7 @@ export default {
         }
         if (this.xCoord - e.pageX > blockSize) {
           this.xCoord -= blockSize;
-          if (this.exponentBits > 1) {
+          if (this.exponentBits > 2) {
             this.exponentBits -= 1;
             if (this.nums[0] !== this.falseFormatOutput) {
               this.convertFormat(0);
@@ -245,7 +245,7 @@ export default {
       }
     },
     expandFraction() {
-      this.exponentBits -= 1;
+      this.exponentBits = Math.max(this.exponentBits - 1, 2);
       if (this.generated) {
         this.recalculate();
         this.drawExercise();
@@ -253,7 +253,7 @@ export default {
       }
     },
     expandExponent() {
-      this.exponentBits += 1;
+      this.exponentBits = Math.min(this.exponentBits + 1, this.numBits - 2);
       if (this.generated) {
         this.recalculate();
         this.drawExercise();

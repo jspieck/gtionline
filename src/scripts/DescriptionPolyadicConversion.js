@@ -355,12 +355,12 @@ export class DescriptionPolyadicConversion {
         text: `${this.imp.$t('TenToPower')}`,
         subpanels: [
           {
-            name: `${this.imp.$t('divisionAlgorithm')}`,
-            text: `\\(${this.tableTenToPowerBeforeComma}\\)`,
+            name: `1) ${this.imp.$t('divisionAlgorithm')}`,
+            text: `\\(${this.tableTenToPowerBeforeComma}\\)</br></br> ${this.imp.$t('polyadicDivisionDescription')}`,
           },
           {
-            name: `${this.imp.$t('multiplicationAlgorithm')}`,
-            text: `\\(${this.tableTenToPowerAfterComma}\\)`,
+            name: `2) ${this.imp.$t('multiplicationAlgorithm')}`,
+            text: `\\(${this.tableTenToPowerAfterComma}\\)</br></br> ${this.imp.$t('polyadicMultiplicationDescription')}`,
           },
         ],
       });
@@ -373,16 +373,16 @@ export class DescriptionPolyadicConversion {
         text: `${this.imp.$t('PowerToPower')}`,
         subpanels: [
           {
-            name: `${this.imp.$t('summation')}`,
+            name: `1) ${this.imp.$t('summation')}`,
             text: `\\(${this.tablePowerToTen}\\)`,
           },
           {
-            name: `${this.imp.$t('divisionAlgorithm')}`,
-            text: `\\(${this.tableTenToPowerBeforeComma}\\)`,
+            name: `2) ${this.imp.$t('divisionAlgorithm')}`,
+            text: `\\(${this.tableTenToPowerBeforeComma}\\)</br></br> ${this.imp.$t('polyadicDivisionDescription')}`,
           },
           {
-            name: `${this.imp.$t('multiplicationAlgorithm')}`,
-            text: `\\(${this.tableTenToPowerAfterComma}\\)`,
+            name: `3) ${this.imp.$t('multiplicationAlgorithm')}`,
+            text: `\\(${this.tableTenToPowerAfterComma}\\)</br></br> ${this.imp.$t('polyadicMultiplicationDescription')}`,
           },
         ],
       });

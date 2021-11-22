@@ -44,9 +44,9 @@
       <div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
       </div>
-      <div class="mobile_pdfGen">
+      <!-- <div class="mobile_pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
-      </div>
+      </div> -->
     </div>
     <div id="solution">
       <Accordion :solutionDescription="solDescr">

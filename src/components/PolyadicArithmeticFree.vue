@@ -271,6 +271,11 @@ export default {
             break;
           default:
         }
+        if (convert[i] === '-') {
+          // TODO only placeholder until subtraction works
+          this.backFormat = 'incorrectInput';
+          return false;
+        }
         if ((convert[i] === '+' || convert[i] === '-') && i > 1) {
           this.backFormat = 'incorrectInput';
           return false;

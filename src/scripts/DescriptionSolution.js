@@ -31,9 +31,11 @@ export class DescriptionSolution {
     const row1 = [];
     const row2 = [];
     const row3 = [];
+    const rowCarry = [];
     const tabdef = [];
     row1.push('&');
     row2.push('+&');
+    rowCarry.push('&');
     row3.push('&');
     tabdef.push('{');
     for (let i = mantissa1.length; i <= cols; i += 1) {
@@ -45,25 +47,38 @@ export class DescriptionSolution {
     for (let i = carryBits.length; i <= cols; i += 1) {
       carryBits.unshift(0);
     }
-    for (let i = 0; i < cols; i += 1) {
+    for (let i = 0; i < cols + 1; i += 1) {
       tabdef.push('c');
-      row1.push(` ${mantissa1[i]}`);
+      if (i === 2) {
+        row1.push(',');
+        row2.push(',');
+        rowCarry.push('');
+        row3.push(',');
+      } else {
+        const index = i > 2 ? i - 1 : i;
+        row1.push(` ${mantissa1[index]}`);
+        row2.push(` ${mantissa2[index]}`);
+        rowCarry.push(`\\scriptsize{${carryBits[index]}}`);
+        row3.push(` ${result[index]}`);
+      }
       row1.push('&');
-      row2.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
+      rowCarry.push('&');
       row2.push('&');
-      row3.push(` ${result[i]}`);
       row3.push('&');
     }
     tabdef.push('}');
     row1.pop();
     row1.push('\\\\ ');
     row2.pop();
+    rowCarry.pop();
+    rowCarry.push('\\\\ ');
     row2.push('\\\\ ');
     row3.pop();
     this.table = [
       `\\begin{array} ${tabdef.join('')}`,
       `${row1.join('')}`,
       `${row2.join('')}`,
+      `${rowCarry.join('')}`,
       '\\hline',
       `${row3.join('')}`,
       '\\end{array}',
@@ -197,22 +212,16 @@ export class DescriptionSolution {
             {
               name: `${this.imp.$t('newMantissa')}`,
               text: [
+                `${this.imp.$t('consider1comma')} `,
                 `${this.imp.$t('newMantissaIs')}`,
-                ': \<br\> \<br\>',
+                '\<br\> \<br\>',
                 '\\(',
                 this.table,
                 '\\)',
+                '\<br\> \<br\>',
+                watcher.steps.AddMantissa.data.shift !== 0 ? `${this.imp.$t('mantissaNormalize', { shift: watcher.steps.Normalize.data.shift, exponent: watcher.steps.Normalize.data.finalExpBits.join('') })} \<br\>` : '',
+                `${this.imp.$t('mantissa1float')} ${watcher.steps.AddMantissa.data.normalizedMantissa.join('')}`,
               ].join(''),
-            },
-            {
-              name: `${this.imp.$t('considerRepresentation')}`,
-              text: `${this.imp.$t('consider1comma')}`,
-              subsubpanels: [
-                {
-                  name: `${this.imp.$t('mantissaFloat')}`,
-                  text: `${this.imp.$t('mantissa1float')}: ${this.watcher.steps.AddMantissa.data.normalizedMantissa.join('')}`,
-                },
-              ],
             },
           ],
         });
