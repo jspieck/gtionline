@@ -458,22 +458,25 @@ export class DescriptionSolution {
     const row2 = [];
     const row3 = [];
     const row4 = [];
+    const rowCarry = [];
     const row5 = [];
     const tabdef = [];
-    if (addWatcher.steps.AddMantissa.data.sign1 === 0
+    console.log(addWatcher.steps.AddMantissa);
+    if (addWatcher.steps.AddMantissa.data.sign1 === 1
+      && addWatcher.steps.AddMantissa.data.sign2 === 0) {
+      row1.push('-&');
+      row2.push('+&');
+    } else if (addWatcher.steps.AddMantissa.data.sign1 === 0
       && addWatcher.steps.AddMantissa.data.sign2 === 1) {
       row1.push('&');
       row2.push('-&');
-    } else if (addWatcher.steps.AddMantissa.data.sign1 === 0
-      && addWatcher.steps.AddMantissa.data.sign2 === 1) {
-      row1.push('-&');
-      row2.push('+&');
     } else {
       row1.push('-&');
       row2.push('-&');
     }
     row3.push('&');
     row4.push('+&');
+    rowCarry.push('\\scriptsize{+}&');
     row5.push('=&');
     tabdef.push('{');
     for (let i = originalMantissa1.length; i <= cols; i += 1) {
@@ -499,8 +502,10 @@ export class DescriptionSolution {
       row2.push('&');
       row3.push(` ${mantissa1[i]}`);
       row3.push('&');
-      row4.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
+      row4.push(` ${mantissa2[i]}`);
       row4.push('&');
+      rowCarry.push(` \\scriptsize{${carryBits[i]}}`);
+      rowCarry.push('&');
       row5.push(` ${result[i]}`);
       row5.push('&');
     }
@@ -513,15 +518,18 @@ export class DescriptionSolution {
     row3.push('\\\\ ');
     row4.pop();
     row4.push('\\\\ ');
+    rowCarry.pop();
+    rowCarry.push('\\\\ ');
     row5.pop();
 
     this.table = [
       `\\begin{array} ${tabdef.join('')}`,
       `${row1.join('')}`,
       `${row2.join('')}`,
-      '\\hline_\{Complement\}',
+      '\\hline_{Complement:} \\\\[-8mm]',
       `${row3.join('')}`,
       `${row4.join('')}`,
+      `${rowCarry.join('')}`,
       '\\hline',
       `${row5.join('')}`,
       '\\end{array}',
@@ -532,10 +540,7 @@ export class DescriptionSolution {
     this.result.push({
       name: this.imp.$t('solution'),
       text: [
-        `${this.imp.$t('solution')}: `,
-        result.sign, ' ',
-        result.exponentBits.join(''), ' ',
-        result.mantissaBits.join('').substring(1), ' ',
+        `${this.imp.$t('solution')}: ${result.sign} ${result.exponentBits.join('')} ${result.mantissaBits.join('').substring(1)}`,
         '\\( \\implies \\)',
         ` ${this.imp.$t('decimal')}: ${decSol}`,
       ].join('') + this.createIEEENumberBreakdown(result),
@@ -651,19 +656,13 @@ export class DescriptionSolution {
                         [ ${addWatcher.steps.CalculateDeltaE.data.expN2Bits.join('')} ] :=  ${addWatcher.steps.CalculateDeltaE.data.expN2}) \\) `,
                 `${this.imp.$t('resDiffExponent')}: `,
                 addWatcher.steps.CalculateDeltaE.data.deltaE,
+                '</br>',
+                ` ${this.imp.$t('shiftMantissa')}: \\( `,
+                addWatcher.steps.CalculateDeltaE.data.preShift.join(''),
+                `\\overset{\\text{Shift: ${addWatcher.steps.CalculateDeltaE.data.deltaE} }}{\\rightarrow}`,
+                addWatcher.steps.AddMantissa.data.mantissa2.join(''),
+                '\\)',
               ].join(''),
-              subsubpanels: [
-                {
-                  name: `${this.imp.$t('adjustSmallerMantissa')}`,
-                  text: [
-                    ` ${this.imp.$t('shiftMantissa')}: \\( `,
-                    addWatcher.steps.CalculateDeltaE.data.preShift.join(''),
-                    `\\overset{\\text{Shift: ${addWatcher.steps.CalculateDeltaE.data.deltaE} }}{\\rightarrow}`,
-                    addWatcher.steps.AddMantissa.data.mantissa2.join(''),
-                    '\\)',
-                  ].join(''),
-                },
-              ],
             },
           ],
         });
@@ -671,165 +670,82 @@ export class DescriptionSolution {
       if (!addWatcher.steps.AddMantissa.data.equalMantissa) { // case: not equal mantissa
         if (addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data.negate) {
           actStep += 1;
+          const mantissa1Str = addWatcher.steps.AddMantissa.data.mantissa1.join('');
+          const flippedBits = addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data.flippedArray.join('');
+          const oneAdded = addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data.oneAdded.join('');
+          const normalizedArray = addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data.normalizedArray.join('');
           this.result.push({
             name: `${this.imp.$t('step')} ${actStep}`,
             text: `${this.imp.$t('subtTwosComplement')}`,
             subpanels:
-              [
-                {
-                  name: [
-                    `${this.imp.$t('mantissaTwosComplement')}: \\(`,
-                    addWatcher.steps.AddMantissa.data.mantissa1.join(''),
-                    '\\)',
-                  ].join(''),
-                  text: `${this.imp.$t('steps')}`,
-                  subsubpanels: [
-                    {
-                      name: `${this.imp.$t('switchBits')}`,
-                      text: [
-                        '\\(',
-                        addWatcher.steps.AddMantissa.data.mantissa1.join(''),
-                        '\\rightarrow',
-                        addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                          .flippedArray.join(''),
-                        '\\)',
-                      ].join(''),
-                    },
-                    {
-                      name: `${this.imp.$t('add1')}`,
-                      text: [
-                        '\\(',
-                        addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                          .flippedArray.join(''),
-                        '\\rightarrow',
-                        addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                          .oneAdded.join(''),
-                        '\\)',
-                      ].join(''),
-                    },
-                    {
-                      name: `${this.imp.$t('normalize')}`,
-                      text: [
-                        '\\(',
-                        addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                          .oneAdded.join(''),
-                        '\\rightarrow',
-                        addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data
-                          .normalizedArray.join(''),
-                        '\\)',
-                      ].join(''),
-                    },
-                  ],
-                },
-              ],
+            [
+              {
+                name: `${this.imp.$t('mantissaTwosComplement')}: \\(${mantissa1Str}\\)`,
+                text: `${this.imp.$t('switchBits')}: \\(${mantissa1Str} \\rightarrow ${flippedBits}\\)\<br\>`
+                  + `${this.imp.$t('add1')}: \\(${flippedBits} \\rightarrow ${oneAdded}\\)\<br\>`
+                  + `${this.imp.$t('normalize')}: \\(${oneAdded} \\rightarrow ${normalizedArray}\\)`,
+              },
+            ],
           });
         }
         if (addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data.negate) {
           actStep += 1;
+          const mantissa2Str = addWatcher.steps.AddMantissa.data.mantissa2.join('');
+          const flippedBits = addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data.flippedArray.join('');
+          const oneAdded = addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data.oneAdded.join('');
+          const normalizedArray = addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data.normalizedArray.join('');
           this.result.push({
             name: `${this.imp.$t('step')} ${actStep}`,
             text: `${this.imp.$t('subtTwosComplement')}`,
             subpanels:
               [
                 {
-                  name: [
-                    `${this.imp.$t('mantissaTwosComplement')}: \\(`,
-                    addWatcher.steps.AddMantissa.data.mantissa2.join(''),
-                    '\\)',
-                  ].join(''),
-                  text: `${this.imp.$t('steps')}`,
-                  subsubpanels: [
-                    {
-                      name: `${this.imp.$t('switchBits')}`,
-                      text: [
-                        '\\(',
-                        addWatcher.steps.AddMantissa.data.mantissa2.join(''),
-                        '\\rightarrow',
-                        addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                          .flippedArray.join(''),
-                        '\\)',
-                      ].join(''),
-                    },
-                    {
-                      name: `${this.imp.$t('add1')}`,
-                      text: [
-                        '\\(',
-                        addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                          .flippedArray.join(''),
-                        '\\rightarrow',
-                        addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                          .oneAdded.join(''),
-                        '\\)',
-                      ].join(''),
-                    },
-                    {
-                      name: `${this.imp.$t('normalize')}`,
-                      text: [
-                        '\\(',
-                        addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                          .oneAdded.join(''),
-                        '\\rightarrow',
-                        addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data
-                          .normalizedArray.join(''),
-                        '\\)',
-                      ].join(''),
-                    },
-                  ],
+                  name: `${this.imp.$t('mantissaTwosComplement')}: \\(${mantissa2Str}\\)`,
+                  text: `${this.imp.$t('switchBits')}: \\(${mantissa2Str} \\rightarrow ${flippedBits}\\)\<br\>`
+                    + `${this.imp.$t('add1')}: \\(${flippedBits} \\rightarrow ${oneAdded}\\)\<br\>`
+                    + `${this.imp.$t('normalize')}: \\(${oneAdded} \\rightarrow ${normalizedArray}\\)`,
                 },
               ],
           });
         }
         this.getSubtractionTable();
         actStep += 1;
+        let mantissaDescription = [
+          `${this.imp.$t('newMantissaIs')}`,
+          '\<br\> \<br\>',
+          `\\( ${this.table} \\)`,
+          '\<br\> \<br\>',
+        ];
+        if (addWatcher.steps.AddMantissa.data.sign) {
+          mantissaDescription.push(`${this.imp.$t('mantissaComplement')} `);
+        }
+        mantissaDescription.push(`${this.imp.$t('consider1comma')} `);
+        if (addWatcher.steps.AddMantissa.data.shift !== 0) {
+          mantissaDescription.push(`${this.imp.$t('mantissaNormalize', { shift: addWatcher.steps.Normalize.data.shift, exponent: addWatcher.steps.Normalize.data.finalExpBits.join('') })} \<br\>`);
+        }
+        mantissaDescription.push(`${this.imp.$t('mantissa1float')} ${addWatcher.steps.AddMantissa.data.normalizedMantissa.join('')}`);
+        mantissaDescription = mantissaDescription.join('');
+
         this.result.push({
           name: `${this.imp.$t('step')} ${actStep}`,
           text: `${this.imp.$t('addMantissa')}`,
           subpanels: [
             {
               name: `${this.imp.$t('newMantissa')}`,
-              text: [
-                `${this.imp.$t('newMantissaIs')}`,
-                ': \<br\> \<br\>',
-                '\\(',
-                this.table,
-                '\\)',
-              ].join(''),
-            },
-            {
-              name: `${this.imp.$t('considerRepresentation')}`,
-              text: `${this.imp.$t('consider1comma')}`,
-              subsubpanels: [
-                {
-                  name: `${this.imp.$t('mantissaFloat')}`,
-                  text: `${this.imp.$t('mantissa1float')}: ${addWatcher.steps.AddMantissa.data.normalizedMantissa.join('')}`,
-                },
-              ],
+              text: mantissaDescription,
             },
           ],
         });
       } else { // case: equal mantissa
         actStep += 1;
+        const mantissaDescription = [
+          `${this.imp.$t('subtraction')} ${this.imp.$t('mantissa')}`,
+          `${this.imp.$t('consider1comma')} ${this.imp.$t('mantissa1float')} ${addWatcher.steps.AddMantissa.data.normalizedMantissa.join('')}`,
+        ].join('');
+
         this.result.push({
           name: `${this.imp.$t('step')} ${actStep}`,
-          text: [
-            `${this.imp.$t('subtraction')} ${this.imp.$t('mantissa')}`,
-          ].join(''),
-          subpanels: [
-            {
-              name: `${this.imp.$t('newMantissa')}`,
-              text: `${this.imp.$t('zeroMantissa')}`,
-            },
-            {
-              name: `${this.imp.$t('considerRepresentation')}`,
-              text: `${this.imp.$t('consider1comma')}`,
-              subsubpanels: [
-                {
-                  name: `${this.imp.$t('mantissaFloat')}`,
-                  text: `${this.imp.$t('mantissa1float')}: ${addWatcher.steps.AddMantissa.data.normalizedMantissa.join('')}`,
-                },
-              ],
-            },
-          ],
+          text: mantissaDescription,
         });
       }
       const converter = new convertFormat.FormatConversions(

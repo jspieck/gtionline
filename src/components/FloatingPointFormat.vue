@@ -202,8 +202,9 @@ export default {
       length = parseInt(window.sessionStorage.getItem('FPF_numBits'), 10);
       hasdefault = true;
     }
+    const bitRangeName = this.numBitsToBitRange(length);
     return {
-      selectedFormat: [format1, 'ieee', operator, format2, 'ieee', 'sixteen'], // 0: input left, 1: converted left, 2: operand, 3: input right, 4: converted right, 5: bit range
+      selectedFormat: [format1, 'ieee', operator, format2, 'ieee', bitRangeName], // 0: input left, 1: converted left, 2: operand, 3: input right, 4: converted right, 5: bit range
       mouseDown: false,
       solution: '',
       solutionObject: '',
@@ -249,9 +250,9 @@ export default {
     },
     bitrangeOptions() {
       return {
-        eight: '8 bit',
-        sixteen: '16 bit',
-        thirtytwo: '32 bit',
+        eight: '8 Bit',
+        sixteen: '16 Bit',
+        thirtytwo: '32 Bit',
         // sixtyfour: '64 bit',
       };
     },
@@ -297,6 +298,9 @@ export default {
           window.MathJax.typeset(); // https://github.com/mathjax/MathJax/issues/2557
         }
       });
+    },
+    numBitsToBitRange(numBits) {
+      return { 8: 'eight', 16: 'sixteen', 32: 'thirtytwo' }[numBits];
     },
     selectBitRange(num, val) {
       this.selectedFormat[num] = val;

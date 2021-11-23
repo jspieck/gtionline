@@ -122,6 +122,7 @@ export const i18n = new VueI18n({
       mantissaFloat: 'Mantisse im Float',
       mantissaNormalize: 'Damit die Mantisse mit einer führenden 1 beginnt, müssen wir die Mantisse normalisieren, indem wir den Shift von {shift} anwenden. Diesen Shift müssen wir auch auf den Exponenten verrechnen, wodurch sich der neue Exponent {exponent} ergibt',
       mantissa1float: 'Schließlich entfernen wir die führende 1 der Mantisse, um die Mantissenbits der IEEE-754 Repräsentation zu erhalten. Die Mantissebits lauten demnach:',
+      mantissaComplement: 'Die Mantisse ist negativ. Wir müssen also das Komplement bilden und das Vorzeichenbit setzen.',
       // twos complement
       subtTwosComplement: 'Subtraktion entspricht der Addition mit dem Zweierkomplement',
       mantissaTwosComplement: 'Bildung Zweierkomplement aus Mantisse',
