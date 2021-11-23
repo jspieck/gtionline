@@ -220,26 +220,12 @@ export default {
           this.xCoord += blockSize;
           if (this.exponentBits + 1 < this.numBits - 1) {
             this.exponentBits += 1;
-            if (this.nums[0] !== this.falseFormatOutput) {
-              this.convertFormat(0);
-            }
-            if (this.nums[1] !== this.falseFormatOutput) {
-              this.convertFormat(1);
-            }
-            this.computeSolution();
           }
         }
         if (this.xCoord - e.pageX > blockSize) {
           this.xCoord -= blockSize;
           if (this.exponentBits > 2) {
             this.exponentBits -= 1;
-            if (this.nums[0] !== this.falseFormatOutput) {
-              this.convertFormat(0);
-            }
-            if (this.nums[1] !== this.falseFormatOutput) {
-              this.convertFormat(1);
-            }
-            this.computeSolution();
           }
         }
       }
