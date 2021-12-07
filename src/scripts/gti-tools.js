@@ -11767,8 +11767,9 @@ var NumberPolyadic = /*#__PURE__*/function () {
             this.watcher = this.watcher.step('constructResult').saveVariable("overflowAfterComma".concat(_i2), 1);
           } else {
             numAfterComma[_i2] = res.toString(this.power).toUpperCase();
-            breakAfterComma = true;
-            // this.watcher = this.watcher.step('constructResult').saveVariable("overflowAfterComma".concat(_i2), 0);
+            breakAfterComma = true; // this.watcher = this.watcher.step('constructResult')
+            //   .saveVariable(`overflowAfterComma${i}`, 0);
+
             break;
           }
         }
@@ -11807,8 +11808,9 @@ var NumberPolyadic = /*#__PURE__*/function () {
               numBeforeComma.unshift('1');
             }
           } else {
-            numBeforeComma[_i4] = _res.toString(this.power).toUpperCase();
-            // this.watcher = this.watcher.step('constructResult').saveVariable("overflowBeforeComma".concat(_i4), 0);
+            numBeforeComma[_i4] = _res.toString(this.power).toUpperCase(); // this.watcher = this.watcher.step('constructResult')
+            //   .saveVariable(`overflowBeforeComma${i}`, 1);
+
             break;
           }
         }
@@ -11967,7 +11969,7 @@ var NumberPolyadic = /*#__PURE__*/function () {
       this.arr = resultArray;
     }
     /**
-     * Add a float to the actual polydic
+     * Add a float to the actual polyadic
      * @param {*} input : String, Float to add
      */
 
@@ -12837,7 +12839,7 @@ var BooleanFunction$1 = /*#__PURE__*/function () {
     value: function toLatex() {
       var literalNames = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ['x0', 'x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7'];
       var reverseOrder = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-      return this.computeString(literalNames, '+', '', '\\overline{', '}', '\\left(', '\\right)', reverseOrder);
+      return this.computeString(literalNames, '+', '', '\\bar{', '}', '\\left(', '\\right)', reverseOrder);
     }
     /**
        * @returns Returns deep cloned version of this BooleanFunction.

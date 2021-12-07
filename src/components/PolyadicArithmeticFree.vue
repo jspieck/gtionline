@@ -300,8 +300,8 @@ export default {
       // calc solution
       const polyadicSolution = new solution.PolyadicSolution();
       polyadicSolution.calcArithmeticSolution(
-        this.inputNums[0],
-        this.inputNums[1],
+        this.inputNums[0].replace(',', '.'),
+        this.inputNums[1].replace(',', '.'),
         this.power,
         this.operator,
       );
@@ -310,8 +310,8 @@ export default {
       // construct description
       const descr = new description.DescriptionPolyadicSolution(this, this.watcher);
       descr.makeDescription(
-        this.inputNums[0],
-        this.inputNums[1],
+        this.inputNums[0].replace(',', '.'),
+        this.inputNums[1].replace(',', '.'),
         this.power,
         this.operator,
       );
