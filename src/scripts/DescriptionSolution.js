@@ -486,10 +486,20 @@ export class DescriptionSolution {
       originalMantissa2.unshift(0);
     }
     for (let i = mantissa1.length; i <= cols; i += 1) {
-      mantissa1.unshift(0);
+      if (addWatcher.steps.AddMantissa.data.sign1 === 0) {
+        mantissa1.unshift(0);
+      } else {
+        // Mantissa is in the complement: fill up with 1s
+        mantissa1.unshift(1);
+      }
     }
     for (let i = mantissa2.length; i <= cols; i += 1) {
-      mantissa2.unshift(0);
+      if (addWatcher.steps.AddMantissa.data.sign2 === 0) {
+        mantissa2.unshift(0);
+      } else {
+        // Mantissa is in the complement: fill up with 1s
+        mantissa2.unshift(1);
+      }
     }
     for (let i = carryBits.length; i <= cols; i += 1) {
       carryBits.unshift(0);
