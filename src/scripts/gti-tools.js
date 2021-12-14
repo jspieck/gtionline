@@ -10508,7 +10508,7 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
         normalizedMatissa = roundArray(normalizedMatissa, manBitNum, toRound, n1.base);
       }
 
-      this.watcher = this.watcher.step('CalculateExp').saveVariable('notShifted', n1.E + n2.E - n1.bias);
+      this.watcher = this.watcher.step('CalculateExp').saveVariable('E1', n1.E).saveVariable('E2', n2.E).saveVariable('bias', n1.bias).saveVariable('notShifted', n1.E + n2.E - n1.bias);
       this.watcher = this.watcher.step('MulMantissa').saveVariable('normalizedMantissa', normalizedMatissa);
       var finalE = n1.E + n2.E - n1.bias + shift; // caluclates the exponent bits
 

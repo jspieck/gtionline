@@ -1,67 +1,72 @@
 <template>
 <div class="floatingPoint">
-  <tabs :tabs="tabs" :currentTab="currentTab" @onClick="handleClick" updated="this.$t('exercises')"
-  :wrapper-class="'default-tabs'" :tab-class="'default-tabs__item'"
-  :tab-active-class="'default-tabs__item_active'" :line-class="'default-tabs__active-line'"/>
-  <div class="tab" v-if="currentTab === 'exercises'">
-    <h3 class="title">{{$t('exercises')}}</h3>
-    <fpe/>
-  </div>
-  <div class="tab" v-if="currentTab === 'free'">
-    <h3 class="title">{{$t('freeCalculation')}}</h3>
-    <fpf/>
-  </div>
-  <div class="tab" v-if="currentTab === 'convert'">
-    <h3 class="title">{{$t('conversion')}}</h3>
-    <fpc/>
-  </div>
+  <tabs v-model="selectedTab">
+    <tab
+      v-for="(tab, i) in tabs"
+      :key="`t${i}`"
+      :val="tab"
+      :label="$t(tab)"
+      :indicator="true"
+    />
+  </tabs>
+  <tab-panels
+    v-model="selectedTab"
+    :animate="true"
+    :swipeable="true"
+  >
+    <tab-panel val="conversion">
+      <h3 class="title">{{$t('conversion')}}</h3>
+      <fpc/>
+    </tab-panel>
+    <tab-panel val="exercises">
+      <h3 class="title">{{$t('exercises')}}</h3>
+      <fpe/>
+    </tab-panel>
+    <tab-panel val="freeCalculation">
+      <h3 class="title">{{$t('freeCalculation')}}</h3>
+      <fpf/>
+    </tab-panel>
+  </tab-panels>
 </div>
 </template>
 
 <script>
-// eslint-disable-next-line
-import Tabs from 'vue-tabs-with-active-line';
+import { defineComponent, reactive, toRefs } from 'vue';
+import {
+  Tabs, Tab, TabPanels, TabPanel,
+} from 'vue3-tabs';
 import FloatingPointFormat from './FloatingPointFormat.vue';
 import FloatingPointExercises from './FloatingPointExercises.vue';
 import FloatingPointConversion from './FloatingPointConversion.vue';
 
-export default {
+const tabs = ['conversion', 'exercises', 'freeCalculation'];
+
+export default defineComponent({
   name: 'TinyTabs',
   components: {
     fpc: FloatingPointConversion,
     fpe: FloatingPointExercises,
     fpf: FloatingPointFormat,
-    tabs: Tabs,
+    Tabs,
+    Tab,
+    TabPanels,
+    TabPanel,
   },
   data() {
     return {
-      currentTab: 'free',
+      selectedTab: 'freeCalculation',
     };
   },
-  computed: {
-    tabs() {
-      return [
-        {
-          title: this.$t('conversion'),
-          value: 'convert',
-        },
-        {
-          title: this.$t('exercises'),
-          value: 'exercises',
-        },
-        {
-          title: this.$t('freeCalculation'),
-          value: 'free',
-        },
-      ];
-    },
+  setup() {
+    const state = reactive({
+      selectedTab: tabs[1],
+    });
+    return {
+      tabs,
+      ...toRefs(state),
+    };
   },
-  methods: {
-    handleClick(newTab) {
-      this.currentTab = newTab;
-    },
-  },
-};
+});
 </script>
 
 <style lang="scss">
@@ -131,9 +136,13 @@ body{
     width: 95% !important;
   }
 }
+.tabs {
+  justify-content: center;
+  cursor: pointer;
+}
 .tab {
   margin: auto;
-  width: 1240px;
+  /* width: 1240px; */
   padding: 8px;
   background: #ffffff5e;
 }

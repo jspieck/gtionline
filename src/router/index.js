@@ -1,15 +1,9 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-import PrettyCheckbox from 'pretty-checkbox-vue';
 import FloatingPointArithmetic from '@/components/FloatingPointArithmetic.vue';
 import PolyadicNumbers from '@/components/PolyadicNumbers.vue';
 import BooleanFunctionMinimizer from '@/components/BooleanFunctionMinimizer.vue';
 import KVDiagram from '@/components/KVDiagram.vue';
 import DescriptionPDF from '@/components/DescriptionPDF.vue';
 import Home from '../views/Home.vue';
-
-Vue.use(VueRouter);
-Vue.use(PrettyCheckbox);
 
 const routes = [
   {
@@ -52,10 +46,4 @@ const routes = [
   },
 ];
 
-const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes,
-});
-
-export default router;
+export default routes;

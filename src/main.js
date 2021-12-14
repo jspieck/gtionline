@@ -1,16 +1,21 @@
-import Vue from 'vue';
+import { createApp } from 'vue';
+import { createRouter, createWebHistory } from 'vue-router';
+import PrettyCheckbox from 'pretty-checkbox-vue';
+import Tabs from 'vue3-tabs';
 // import VueHtmlToPaper from 'vue-html-to-paper';
 import App from './App.vue';
-import router from './router';
+import routes from './router';
 import { i18n } from './scripts/i18n';
 
-Vue.config.productionTip = false;
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
+  routes,
+});
 
-new Vue({
-  router,
-  i18n,
-  render: h => h(App),
-}).$mount('#app');
+// router, i18n, render: h => h(App),
+const app = createApp(App);
+
+app.use(router);
 
 const options = {
   name: '_blank',
@@ -22,4 +27,9 @@ const options = {
 };
 
 // Vue.use(VueHtmlToPaper, options);
-Vue.use(options);
+app.use(options);
+app.use(PrettyCheckbox);
+app.use(i18n);
+app.use(Tabs);
+
+app.mount('#app');

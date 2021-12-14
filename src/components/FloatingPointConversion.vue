@@ -60,9 +60,9 @@
       <div>
         <label class="attention">{{$t('attSolve')}}</label>
       </div>
-      <div class="pdfGen">
+      <!-- <div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
-      </div>
+      </div> -->
     </div><div id="solution">
     <Accordion :solutionDescription="solDescr">
       <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">

@@ -7,7 +7,7 @@
           <div class="exercise-selection-container">
             <div class="exercise-selection-container-tooltip">{{$t('exerciseArchive')}}:</div>
             <div>
-              <FSelect :options="archivedExerciseTitles"
+              <FSelect :options="archivedExerciseTitles" :sel="0"
                 @input="selectArchivedExercise"/>
               <button @click="loadArchivedExercise">{{$t('load')}}</button>
             </div>
@@ -767,7 +767,7 @@ export default {
       return indices;
     },
     archivedExerciseTitles() {
-      return bfGetArchivedExerciseTitles();
+      return bfGetArchivedExerciseTitles(this.$t('sheet'), this.$t('bf_tableWithCyclicRest'));
     },
   },
   methods: {
@@ -903,9 +903,10 @@ export default {
         return;
       }
 
+      console.log(this.$t('sheet'), this.$t('bf_tableWithCyclicRest'), index);
       const kvdiagramVue = this.$refs.childKVDiagram;
       kvdiagramVue.setKVDiagram(
-        bfLoadArchivedExercise(index).data,
+        bfLoadArchivedExercise(this.$t('sheet'), this.$t('bf_tableWithCyclicRest'), index).data,
       );
 
       this.someOptimizationsFinished = false;

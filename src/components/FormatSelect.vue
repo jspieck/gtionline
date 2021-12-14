@@ -2,8 +2,7 @@
   <div class="selectBox" :disabled="isDisabled">
     <select class="fpfSelect" v-model="selectedOption" :disabled="isDisabled"
       @input="event => { $emit('input', num, event.target.value) }">
-      <option v-for="(name, option) in options" :value="option"
-        v-bind:key="option">{{name}}</option>
+      <option v-for="(name, option) in options" :value="option" :key="option">{{name}}</option>
     </select>
   </div>
 </template>
@@ -12,8 +11,10 @@
 export default {
   name: 'FormatSelect',
   props: ['num', 'sel', 'options', 'isDisabled'],
+  emits: ['input'],
   created() {
     this.selectedOption = this.sel;
+    console.log(`Select was created: ${this.selectedOption}`);
   },
   data() {
     return {

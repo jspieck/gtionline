@@ -13,10 +13,16 @@
     <div class="mtop">
       <label>{{$t('varNaming')}}:</label>
       <div class="divMargin"/>
-      <p-radio v-for="radio in radios" name="varRadio" class="p-default p-round p-smooth p-pulse"
+      <div class="radioCounter">
+        <label v-for="radio in radios" :key="radio.value" class="p-default p-round p-smooth p-pulse">
+          <input name="varRadio" class="mj" ref="radios" type="radio" v-model="varNamingScheme" :value="radio.value" />
+          <div class="radioSvg" v-html="toSvg(radio.name)"/>
+        </label>
+      </div>
+      <!-- <p-radio v-for="radio in radios" name="varRadio" class="p-default p-round p-smooth p-pulse"
       :key="radio.value" color="primary" v-model="varNamingScheme" :value="radio.value">
         <p class="mj" ref="radios" v-html="toSvg(radio.name)"/>
-      </p-radio>
+      </p-radio> -->
     </div>
 
     <svg id="kvContainer" :width="svgWidth" :height="svgHeight">
@@ -41,6 +47,7 @@
 </template>
 
 <script>
+import { reactive } from 'vue';
 import { KVDiagram } from '@/scripts/gti-tools';
 import FormatSelect from './FormatSelect.vue';
 
@@ -54,7 +61,7 @@ export default {
       numVariables: 4,
       paddingBase: 27,
       blockWidth: 40,
-      diagram: [],
+      diagram: reactive([]),
       legitStates: ['0', '1', '-'],
       barHeight: 3,
       barDistance: 10,
@@ -245,7 +252,8 @@ export default {
       for (let y = 0; y < values.length; y += 1) {
         for (let x = 0; x < values[y].length; x += 1) {
           const flatPos = y * this.cellsHorizontal + x;
-          this.$set(this.diagram[flatPos], 'number', this.legitStates.indexOf(values[y][x]));
+          // this.$set(this.diagram[flatPos], 'number', this.legitStates.indexOf(values[y][x]));
+          this.diagram[flatPos].number = this.legitStates.indexOf(values[y][x]);
         }
       }
     },
@@ -262,14 +270,15 @@ export default {
       return this.paddingVertical + Math.floor(i / this.cellsHorizontal) * this.blockWidth;
     },
     changeNumber(i) {
-      this.$set(this.diagram[i], 'number', (this.diagram[i].number + 1) % this.legitStates.length);
+      // this.$set(this.diagram[i], 'number', (this.diagram[i].number + 1) % this.legitStates.length);
+      this.diagram[i].number = (this.diagram[i].number + 1) % this.legitStates.length;
     },
     setNumVar() {
       // const numVarsBefore = this.numVariables;
       // const [numVar] = this.selectedFormat[0];
       const numVar = this.selectedFormat[0];
       this.numVariables = parseInt(numVar, 10);
-      this.diagram = [];
+      this.diagram = reactive([]);
       for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
         this.diagram.push({ number: 0 });
       }
@@ -300,13 +309,9 @@ export default {
 .mtop {
   margin-top: 20px;
 }
-.mj {
-  margin: 0;
-  margin-left: -10px;
-  display: inline-block;
-}
-.mj .MathJax_SVG_Display {
-  margin: 0;
+.radioCounter {
+  display: flex;
+  flex-direction: row;
 }
 .indexNumber {
   font-size: 12px;
@@ -314,6 +319,16 @@ export default {
 .divMargin {
   display: inline-block;
   width: 10px;
+}
+.p-default {
+  margin-right: 10px;
+}
+.radioSvg {
+  display: inline-block;
+  vertical-align: 0.9em;
+  svg {
+    vertical-align: 0;
+  }
 }
 #kvContainer {
   margin-top: 20px;

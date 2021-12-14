@@ -1,178 +1,76 @@
 <template>
 <div class="polyadic">
-  <tabs :tabs="tabs" :currentTab="currentTab" @onClick="handleClick" updated="this.$t('exercises')"
-  :wrapper-class="'default-tabs'" :tab-class="'default-tabs__item'"
-  :tab-active-class="'default-tabs__item_active'" :line-class="'default-tabs__active-line'"/>
-  <div class="tab" v-if="currentTab === 'conversionExercise'">
-    <h3 class="title">{{$t('conversion')}}</h3>
-    <pce/>
-  </div>
-  <div class="tab" v-if="currentTab === 'conversionFree'">
-    <h3 class="title">{{$t('conversion')}}</h3>
-    <pcf/>
-  </div>
-  <div class="tab" v-if="currentTab === 'arithmeticFree'">
-    <h3 class="title">{{$t('arithmetic')}}</h3>
-    <paf/>
-  </div>
+  <tabs v-model="selectedTab">
+    <tab
+      v-for="(tab, i) in tabs"
+      :key="`t${i}`"
+      :val="tab"
+      :label="$t(tab)"
+      :indicator="true"
+    />
+  </tabs>
+  <tab-panels
+    v-model="selectedTab"
+    :animate="true"
+    :swipeable="true"
+  >
+    <tab-panel val="conversionExercise">
+      <h3 class="title">{{$t('conversionExercise')}}</h3>
+      <pce/>
+    </tab-panel>
+    <tab-panel val="conversion">
+      <h3 class="title">{{$t('conversion')}}</h3>
+      <pcf/>
+    </tab-panel>
+    <tab-panel val="arithmeticFree">
+      <h3 class="title">{{$t('arithmetic')}}</h3>
+      <paf/>
+    </tab-panel>
+  </tab-panels>
 </div>
 </template>
 
 <script>
-// eslint-disable-next-line
-import Tabs from 'vue-tabs-with-active-line';
+import { defineComponent, reactive, toRefs } from 'vue';
+import {
+  Tabs, Tab, TabPanels, TabPanel,
+} from 'vue3-tabs';
 import PolyadicConversionExercise from './PolyadicConversionExercise.vue';
 import PolyadicConversionFree from './PolyadicConversionFree.vue';
 import PolyadicArithmeticFree from './PolyadicArithmeticFree.vue';
 
-export default {
+const tabs = ['conversionExercise', 'conversion', 'arithmeticFree'];
+
+export default defineComponent({
   name: 'TinyTabs',
   components: {
     pce: PolyadicConversionExercise,
     pcf: PolyadicConversionFree,
     paf: PolyadicArithmeticFree,
-    tabs: Tabs,
+    Tabs,
+    Tab,
+    TabPanels,
+    TabPanel,
   },
   data() {
     return {
-      currentTab: 'conversionExercise',
+      selectedTab: 'conversionExercise',
     };
   },
-  computed: {
-    tabs() {
-      return [
-        {
-          title: `${this.$t('conversion')} ${this.$t('exercises')}`,
-          value: 'conversionExercise',
-        },
-        {
-          title: this.$t('conversion'),
-          value: 'conversionFree',
-        },
-        {
-          title: this.$t('arithmeticFree'),
-          value: 'arithmeticFree',
-        },
-      ];
-    },
+  setup() {
+    const state = reactive({
+      selectedTab: tabs[1],
+    });
+    return {
+      tabs,
+      ...toRefs(state),
+    };
   },
-  methods: {
-    handleClick(newTab) {
-      this.currentTab = newTab;
-    },
-  },
-};
+});
 </script>
 
 <style lang="scss">
 body{
   overflow-y: scroll;
-}
-
-.default-tabs {
-  position: relative;
-  margin: 10px auto;
-  display: inline-block;
-
-  &__item {
-    display: inline-block;
-    margin: 0 5px;
-    padding: 0 10px;
-    padding-bottom: 8px;
-    font-size: 16px;
-    color: gray;
-    background: none;
-    text-decoration: none;
-    border: none;
-    background-color: transparent;
-    border-bottom: 2px solid transparent;
-    cursor: pointer;
-    border-radius: 0;
-    transition: all 0.25s;
-
-    &_active {
-      color: black;
-      border-bottom: 2px solid gray;
-    }
-
-    &:hover {
-      background: none;
-      border-radius: 0;
-      border-bottom: 2px solid gray;
-      color: black;
-    }
-
-    &:focus {
-      outline: none;
-      border-bottom: 2px solid gray;
-      color: black;
-    }
-
-    &:first-child {
-      margin-left: 0;
-    }
-
-    &:last-child {
-      margin-right: 0;
-    }
-  }
-  &__active-line {
-    display: none;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 2px;
-    background-color: black;
-    transition: transform 0.4s ease, width 0.4s ease;
-  }
-}
-@media screen and (max-width: 1400px) {
-  .tab {
-    width: 95% !important;
-  }
-}
-.tab {
-  margin: auto;
-  width: 1240px;
-  padding: 8px;
-  background: #ffffff5e;
-}
-
-.tinytabs {
-  margin: auto;
-  width: 1240px;
-  padding: 8px;
-
-  .tabs {
-    margin-left: 15px;
-    display: flex;
-    flex-flow: row wrap;
-
-    .tab {
-      margin: 0 3px 2px 0;
-      background: #ffffff5e;
-      display: block;
-      padding: 12px 15px;
-      text-decoration: none;
-      color: #666;
-      border-radius: 3px 3px 0 0;
-
-      &.sel {
-        background: #fff;
-        color: #333;
-        text-shadow: none;
-      }
-      .close {
-        padding-left: 5px;
-      }
-    }
-  }
-  .section {
-    background: #ffffff5e;
-    overflow: hidden;
-    padding: 15px;
-    clear: both;
-    border-radius: 3px;
-  }
 }
 </style>

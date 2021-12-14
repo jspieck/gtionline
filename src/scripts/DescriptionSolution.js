@@ -398,18 +398,50 @@ export class DescriptionSolution {
         this.numBits,
       );
       converter.binToDec(expString1);
-      const leftVal = converter.result;
+      // const leftVal = converter.result;
       converter.binToDec(expString2);
-      const rightVal = converter.result;
+      // const rightVal = converter.result;
+      console.log(watcher);
+      let curE = watcher.steps.CalculateExp.data.notShifted;
+      const exponentIntermediateResult = [];
+      const expBitNum = watcher.steps.Result.data.result.expBitNum;
+      for (let i = 0; i < expBitNum; i += 1) {
+        exponentIntermediateResult.unshift(curE % 2);
+        curE = Math.floor(curE / 2);
+      }
       this.result.push({
         name: `${this.imp.$t('step')} 1`,
         text: [
-          `${this.imp.$t('addExponents')}. (${this.imp.$t('newExponent')}: `,
-          leftVal + rightVal,
-          ')',
-        ].join(''),
+          this.imp.$t('addExponents'),
+          this.imp.$t('newExponent', {
+            E1: watcher.steps.CalculateExp.data.E1,
+            E2: watcher.steps.CalculateExp.data.E2,
+            Bias: watcher.steps.CalculateExp.data.bias,
+            Result: watcher.steps.CalculateExp.data.notShifted,
+            ExpBits: exponentIntermediateResult.join(''),
+          }),
+        ].join(' '),
       });
       this.getMultiplicationTable();
+      const mantissaDescription = [
+        `${this.imp.$t('newMantissaIs')}`,
+        '\<br\> \<br\>',
+        `\\( ${this.table} \\)`,
+        '\<br\> \<br\>',
+      ];
+      console.log(watcher);
+      mantissaDescription.push(`${this.imp.$t('consider1comma')} `);
+      if (watcher.steps.MulMantissa.data.shift !== 0) {
+        const descriptionText = this.imp.$t('mantissaNormalize', {
+          shift: watcher.steps.MulMantissa.data.shift,
+          exponent: watcher.steps.Result.data.result.exponentBits.join(''),
+        });
+        mantissaDescription.push(`${descriptionText} \<br\>`);
+      }
+      mantissaDescription.push(`${this.imp.$t('mantissa1float')} ${watcher.steps.MulMantissa.data.normalizedMantissa.join('')}`);
+
+      const mantissaDescriptionStr = mantissaDescription.join('');
+
       this.result.push({
         name: `${this.imp.$t('step')} 2`,
         text: [
@@ -418,20 +450,12 @@ export class DescriptionSolution {
         subpanels: [
           {
             name: `${this.imp.$t('doMultiplication')}`,
-            text: `\\(${this.table}\\)`,
-          },
-          {
-            name: `${this.imp.$t('considerRepresentation')}`,
-            text: `${this.imp.$t('consider1comma')}`,
-          },
-          {
-            name: `${this.imp.$t('newMantissa')}`,
-            text: `${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('')
-              .substring(1)}`,
+            text: mantissaDescriptionStr,
           },
         ],
       });
     }
+
     const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
     converter.ieeeToDec([
       watcher.steps.Result.data.result.sign, ' ',
@@ -731,7 +755,11 @@ export class DescriptionSolution {
         }
         mantissaDescription.push(`${this.imp.$t('consider1comma')} `);
         if (addWatcher.steps.AddMantissa.data.shift !== 0) {
-          mantissaDescription.push(`${this.imp.$t('mantissaNormalize', { shift: addWatcher.steps.Normalize.data.shift, exponent: addWatcher.steps.Normalize.data.finalExpBits.join('') })} \<br\>`);
+          const descriptionText = this.imp.$t('mantissaNormalize', {
+            shift: addWatcher.steps.Normalize.data.shift,
+            exponent: addWatcher.steps.Normalize.data.finalExpBits.join(''),
+          });
+          mantissaDescription.push(`${descriptionText} \<br\>`);
         }
         mantissaDescription.push(`${this.imp.$t('mantissa1float')} ${addWatcher.steps.AddMantissa.data.normalizedMantissa.join('')}`);
         mantissaDescription = mantissaDescription.join('');

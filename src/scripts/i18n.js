@@ -1,9 +1,6 @@
-import Vue from 'vue';
-import VueI18n from 'vue-i18n';
+import { createI18n } from 'vue-i18n';
 
-Vue.use(VueI18n);
-
-export const i18n = new VueI18n({
+export const i18n = createI18n({
   locale: 'de',
   fallbackLocale: 'de',
   messages: {
@@ -13,6 +10,7 @@ export const i18n = new VueI18n({
       homePageText: 'Ziel dieser Webseite ist das Vertiefen der Kenntnisse aus der Vorlesung und zugehörigen Übung zu ausgewählten Themenschwerpunkten. Wählen Sie im Menü das Thema aus, zu dem sie Übungsaufgaben lösen möchten.',
       startTraining: 'Los geht\'s',
       numVarInput: 'Anzahl an Variablen',
+      conversionExercise: 'Konversions Aufgaben',
       confirm: 'Bestätigen',
       varNaming: 'Benennung der Variablen',
       kvDiagram: 'KV-Diagramm',
@@ -102,7 +100,7 @@ export const i18n = new VueI18n({
       diffExponent: 'Differenz Exponent',
       smallerExponent: 'Es wird immer der kleinere vom größeren Exponenten subtrahiert',
       resDiffExponent: 'daher ergibt sich eine Differenz von',
-      newExponent: 'neuer Exponent',
+      newExponent: 'Der neue Exponent ergibt sich als \\( E_{\'{neu}\'} = E_1 + E_2 - BIAS = %{E1} + %{E2} - %{Bias} = %{Result}\\, (%{ExpBits})\\)',
       considerExponent: 'Exponent beachten',
       // mantissa
       mantissa: 'Mantisse',
