@@ -399,7 +399,7 @@ $arrow-size: 12px;
   background: $freshBlue;
   break-after: auto;
 }
-.bits::v-deep select {
+.bits :deep(select) {
   color: white;
   background: #0d336f;
 }
@@ -418,7 +418,7 @@ $arrow-size: 12px;
   border-right: 1px solid white;
 }
 
-.mobile_bits::v-deep select {
+.mobile_bits :deep(select) {
   color: white;
   background: #0d336f;
 }

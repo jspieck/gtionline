@@ -55,28 +55,11 @@ export default {
           id: 1,
           label: this.$t('functionMin'),
           link: 'bfminimizer',
-          // items: [
-          //   {
-          //     id: 2,
-          //     label: this.$t('kvDiagram'),
-          //     link: '/kvdiagram',
-          //   },
-          //   {
-          //     id: 3,
-          //     label: 'Quine/McCluskey',
-          //     link: '/quinemccluskey',
-          //   },
-          //   {
-          //     id: 4,
-          //     label: 'Nelson-Petrick',
-          //     link: '/nelsonpetrick',
-          //   },
-          //   {
-          //     id: 5,
-          //     label: 'Boolean-Function Minimierung',
-          //     link: '/bfminimizer',
-          //   },
-          // ],
+        },
+        {
+          id: 2,
+          label: this.$t('impressum'),
+          link: 'impressum',
         },
       ];
     },

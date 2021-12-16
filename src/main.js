@@ -2,10 +2,20 @@ import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import PrettyCheckbox from 'pretty-checkbox-vue';
 import Tabs from 'vue3-tabs';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import {
+  faEnvelope, faUserFriends, faRoad, faUniversity,
+} from '@fortawesome/free-solid-svg-icons';
 // import VueHtmlToPaper from 'vue-html-to-paper';
 import App from './App.vue';
 import routes from './router';
 import { i18n } from './scripts/i18n';
+
+library.add(faEnvelope);
+library.add(faUserFriends);
+library.add(faRoad);
+library.add(faUniversity);
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -26,6 +36,7 @@ const options = {
   ],
 };
 
+app.component('font-awesome-icon', FontAwesomeIcon);
 // Vue.use(VueHtmlToPaper, options);
 app.use(options);
 app.use(PrettyCheckbox);
