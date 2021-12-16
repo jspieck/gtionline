@@ -88,23 +88,25 @@ export default {
     Accordion: SolutionAccordion,
   },
   data() {
+    const useCookies = false;
     let hasdefault = false;
     let input = '';
-    if (window.sessionStorage.getItem('Conv_fp1')) {
+    if (useCookies && window.sessionStorage.getItem('Conv_fp1')) {
       input = window.sessionStorage.getItem('Conv_fp1');
       hasdefault = true;
     }
     let expBits = 5;
-    if (window.sessionStorage.getItem('Conv_expBits')) {
+    if (useCookies && window.sessionStorage.getItem('Conv_expBits')) {
       expBits = parseInt(window.sessionStorage.getItem('Conv_expBits'), 10);
       hasdefault = true;
     }
     let length = 16;
-    if (window.sessionStorage.getItem('Conv_numBits')) {
+    if (useCookies && window.sessionStorage.getItem('Conv_numBits')) {
       length = parseInt(window.sessionStorage.getItem('Conv_numBits'), 10);
       hasdefault = true;
     }
     return {
+      useCookies,
       selectedFormat: '',
       mouseDown: false,
       solution: '',
@@ -149,9 +151,11 @@ export default {
   },
   methods: {
     saveVals() {
-      window.sessionStorage.setItem('Conv_fp1', this.fp1);
-      window.sessionStorage.setItem('Conv_expBits', this.exponentBits);
-      window.sessionStorage.setItem('Conv_numBits', this.numBits);
+      if (this.useCookies) {
+        window.sessionStorage.setItem('Conv_fp1', this.fp1);
+        window.sessionStorage.setItem('Conv_expBits', this.exponentBits);
+        window.sessionStorage.setItem('Conv_numBits', this.numBits);
+      }
     },
     recalculate() {
       const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);

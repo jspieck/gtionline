@@ -76,23 +76,25 @@ export default {
     Accordion: SolutionAccordion,
   },
   data() {
+    const useCookies = false;
     let hasdefault = false;
     let format1 = 'decimal';
-    if (window.sessionStorage.getItem('PCF_format1')) {
+    if (useCookies && window.sessionStorage.getItem('PCF_format1')) {
       format1 = window.sessionStorage.getItem('PCF_format1');
       hasdefault = true;
     }
     let format2 = 'decimal';
-    if (window.sessionStorage.getItem('PCF_format2')) {
+    if (useCookies && window.sessionStorage.getItem('PCF_format2')) {
       format2 = window.sessionStorage.getItem('PCF_format2');
       hasdefault = true;
     }
     let input = '';
-    if (window.sessionStorage.getItem('PCF_inputNum')) {
+    if (useCookies && window.sessionStorage.getItem('PCF_inputNum')) {
       input = window.sessionStorage.getItem('PCF_inputNum');
       hasdefault = true;
     }
     return {
+      useCookies,
       selectedFormat: [format1, format2], // 0: in format, 1: out format
       power: [10, 10],
       mouseDown: false,
@@ -143,9 +145,11 @@ export default {
   },
   methods: {
     saveVals() {
-      window.sessionStorage.setItem('PCF_format1', this.selectedFormat[0]);
-      window.sessionStorage.setItem('PCF_format2', this.selectedFormat[1]);
-      window.sessionStorage.setItem('PCF_inputNum', this.inputNum);
+      if (this.useCookies) {
+        window.sessionStorage.setItem('PCF_format1', this.selectedFormat[0]);
+        window.sessionStorage.setItem('PCF_format2', this.selectedFormat[1]);
+        window.sessionStorage.setItem('PCF_inputNum', this.inputNum);
+      }
     },
     recalculate() {
       this.saveVals();
@@ -472,6 +476,10 @@ $arrow-size: 12px;
 
 #jaxHelper {
   visibility: hidden;
+}
+
+h3 {
+  margin-bottom: 0;
 }
 
 .solutionInput {

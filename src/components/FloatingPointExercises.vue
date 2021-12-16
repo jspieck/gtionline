@@ -62,33 +62,35 @@ export default {
     Accordion: SolutionAccordion,
   },
   data() {
+    const useCookies = false;
     let hasdefault = false;
     let input1 = '';
-    if (window.sessionStorage.getItem('Exer_fp1')) {
+    if (useCookies && window.sessionStorage.getItem('Exer_fp1')) {
       input1 = window.sessionStorage.getItem('Exer_fp1');
       hasdefault = true;
     }
     let input2 = '';
-    if (window.sessionStorage.getItem('Exer_fp2')) {
+    if (useCookies && window.sessionStorage.getItem('Exer_fp2')) {
       input2 = window.sessionStorage.getItem('Exer_fp2');
       hasdefault = true;
     }
     let operator = 'add';
-    if (window.sessionStorage.getItem('Exer_operator')) {
+    if (useCookies && window.sessionStorage.getItem('Exer_operator')) {
       operator = window.sessionStorage.getItem('Exer_operator');
       hasdefault = true;
     }
     let expBits = 5;
-    if (window.sessionStorage.getItem('Exer_expBits')) {
+    if (useCookies && window.sessionStorage.getItem('Exer_expBits')) {
       expBits = parseInt(window.sessionStorage.getItem('Exer_expBits'), 10);
       hasdefault = true;
     }
     let length = 16;
-    if (window.sessionStorage.getItem('Exer_numBits')) {
+    if (useCookies && window.sessionStorage.getItem('Exer_numBits')) {
       length = parseInt(window.sessionStorage.getItem('Exer_numBits'), 10);
       hasdefault = true;
     }
     return {
+      useCookies,
       selectedFormat: [operator],
       mouseDown: false,
       exponentBits: expBits,
@@ -133,20 +135,24 @@ export default {
   },
   methods: {
     saveVals() {
-      window.sessionStorage.setItem('Exer_fp1', this.fp1);
-      window.sessionStorage.setItem('Exer_fp2', this.fp2);
-      window.sessionStorage.setItem('Exer_operator', this.selectedFormat[0]);
-      window.sessionStorage.setItem('Exer_expBits', this.exponentBits);
-      window.sessionStorage.setItem('Exer_numBits', this.numBits);
+      if (this.useCookies) {
+        window.sessionStorage.setItem('Exer_fp1', this.fp1);
+        window.sessionStorage.setItem('Exer_fp2', this.fp2);
+        window.sessionStorage.setItem('Exer_operator', this.selectedFormat[0]);
+        window.sessionStorage.setItem('Exer_expBits', this.exponentBits);
+        window.sessionStorage.setItem('Exer_numBits', this.numBits);
+      }
     },
     downloadPdf() {
-      window.sessionStorage.setItem('FPF_operator', this.selectedFormat[0]);
-      window.sessionStorage.setItem('FPF_format1', 'ieee');
-      window.sessionStorage.setItem('FPF_format2', 'ieee');
-      window.sessionStorage.setItem('FPF_inputNums1', this.fp1);
-      window.sessionStorage.setItem('FPF_inputNums2', this.fp2);
-      window.sessionStorage.setItem('FPF_expBits', this.exponentBits);
-      window.sessionStorage.setItem('FPF_numBits', this.numBits);
+      if (this.useCookies) {
+        window.sessionStorage.setItem('FPF_operator', this.selectedFormat[0]);
+        window.sessionStorage.setItem('FPF_format1', 'ieee');
+        window.sessionStorage.setItem('FPF_format2', 'ieee');
+        window.sessionStorage.setItem('FPF_inputNums1', this.fp1);
+        window.sessionStorage.setItem('FPF_inputNums2', this.fp2);
+        window.sessionStorage.setItem('FPF_expBits', this.exponentBits);
+        window.sessionStorage.setItem('FPF_numBits', this.numBits);
+      }
       this.computeSolution();
       const descr = new pdf.PdfDescription(
         this,

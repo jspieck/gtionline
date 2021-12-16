@@ -166,44 +166,46 @@ export default {
     Accordion: SolutionAccordion,
   },
   data() {
+    const useCookies = false;
     let hasdefault = false;
     let operator = 'add';
-    if (window.sessionStorage.getItem('FPF_operator')) {
+    if (useCookies && window.sessionStorage.getItem('FPF_operator')) {
       operator = window.sessionStorage.getItem('FPF_operator');
       hasdefault = true;
     }
     let format1 = 'decimal';
-    if (window.sessionStorage.getItem('FPF_format1')) {
+    if (useCookies && window.sessionStorage.getItem('FPF_format1')) {
       format1 = window.sessionStorage.getItem('FPF_format1');
       hasdefault = true;
     }
     let format2 = 'decimal';
-    if (window.sessionStorage.getItem('FPF_format2')) {
+    if (useCookies && window.sessionStorage.getItem('FPF_format2')) {
       format2 = window.sessionStorage.getItem('FPF_format2');
       hasdefault = true;
     }
     let input1 = '';
-    if (window.sessionStorage.getItem('FPF_inputNums1')) {
+    if (useCookies && window.sessionStorage.getItem('FPF_inputNums1')) {
       input1 = window.sessionStorage.getItem('FPF_inputNums1');
       hasdefault = true;
     }
     let input2 = '';
-    if (window.sessionStorage.getItem('FPF_inputNums2')) {
+    if (useCookies && window.sessionStorage.getItem('FPF_inputNums2')) {
       input2 = window.sessionStorage.getItem('FPF_inputNums2');
       hasdefault = true;
     }
     let expBits = 5;
-    if (window.sessionStorage.getItem('FPF_expBits')) {
+    if (useCookies && window.sessionStorage.getItem('FPF_expBits')) {
       expBits = parseInt(window.sessionStorage.getItem('FPF_expBits'), 10);
       hasdefault = true;
     }
     let length = 16;
-    if (window.sessionStorage.getItem('FPF_numBits')) {
+    if (useCookies && window.sessionStorage.getItem('FPF_numBits')) {
       length = parseInt(window.sessionStorage.getItem('FPF_numBits'), 10);
       hasdefault = true;
     }
     const bitRangeName = this.numBitsToBitRange(length);
     return {
+      useCookies,
       selectedFormat: [format1, 'ieee', operator, format2, 'ieee', bitRangeName], // 0: input left, 1: converted left, 2: operand, 3: input right, 4: converted right, 5: bit range
       mouseDown: false,
       solution: '',
@@ -279,13 +281,15 @@ export default {
   },
   methods: {
     saveVals() {
-      window.sessionStorage.setItem('FPF_operator', this.selectedFormat[2]);
-      window.sessionStorage.setItem('FPF_format1', this.selectedFormat[0]);
-      window.sessionStorage.setItem('FPF_format2', this.selectedFormat[3]);
-      window.sessionStorage.setItem('FPF_inputNums1', this.inputNums[0]);
-      window.sessionStorage.setItem('FPF_inputNums2', this.inputNums[1]);
-      window.sessionStorage.setItem('FPF_expBits', this.exponentBits);
-      window.sessionStorage.setItem('FPF_numBits', this.numBits);
+      if (this.useCookies) {
+        window.sessionStorage.setItem('FPF_operator', this.selectedFormat[2]);
+        window.sessionStorage.setItem('FPF_format1', this.selectedFormat[0]);
+        window.sessionStorage.setItem('FPF_format2', this.selectedFormat[3]);
+        window.sessionStorage.setItem('FPF_inputNums1', this.inputNums[0]);
+        window.sessionStorage.setItem('FPF_inputNums2', this.inputNums[1]);
+        window.sessionStorage.setItem('FPF_expBits', this.exponentBits);
+        window.sessionStorage.setItem('FPF_numBits', this.numBits);
+      }
     },
     recalculate() {
       this.saveVals();

@@ -7,6 +7,10 @@ body {
   margin: 0;
 }
 
+table {
+  border-spacing: 10px 0px;
+}
+
 button{
   height: 36px;
   padding: 0 10px;
@@ -50,8 +54,10 @@ h3 {
   border-bottom: 1px solid #c1c1c1;
   font-weight: 600;
   color: #273849;
-  margin-top: 10px;
   padding-bottom: 0.7em;
+  width: 1000px;
+  margin: auto;
+  margin-top: 15px;
 }
 
 .attention {

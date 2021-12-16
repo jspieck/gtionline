@@ -5,7 +5,7 @@ import Tabs from 'vue3-tabs';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
-  faEnvelope, faUserFriends, faRoad, faUniversity,
+  faEnvelope, faUserFriends, faRoad, faUniversity, faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons';
 // import VueHtmlToPaper from 'vue-html-to-paper';
 import App from './App.vue';
@@ -16,6 +16,7 @@ library.add(faEnvelope);
 library.add(faUserFriends);
 library.add(faRoad);
 library.add(faUniversity);
+library.add(faInfoCircle);
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),

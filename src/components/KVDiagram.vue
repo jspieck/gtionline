@@ -3,10 +3,8 @@
     <!-- <h3>{{$t('kvDiagram')}}</h3> -->
     <div>
       <label>{{$t('numVarInput')}}:</label>
-      <div class="divMargin"/>
       <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0
               :options="operationOptions"/>
-      <div class="divMargin"/>
       <button @click="setNumVar()">{{$t('confirm')}}</button>
     </div>
 
@@ -322,6 +320,9 @@ export default {
 }
 .p-default {
   margin-right: 10px;
+}
+.selectBox {
+  margin: 0 10px;
 }
 .radioSvg {
   display: inline-block;

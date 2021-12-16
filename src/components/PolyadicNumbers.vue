@@ -12,7 +12,7 @@
   <tab-panels
     v-model="selectedTab"
     :animate="true"
-    :swipeable="true"
+    :swipeable="false"
   >
     <tab-panel val="conversionExercise">
       <h3 class="title">{{$t('conversionExercise')}}</h3>

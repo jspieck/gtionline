@@ -83,28 +83,30 @@ export default {
     Accordion: SolutionAccordion,
   },
   data() {
+    const useCookies = false;
     let hasdefault = false;
     let format = 'decimal';
-    if (window.sessionStorage.getItem('PAF_format')) {
+    if (useCookies && window.sessionStorage.getItem('PAF_format')) {
       format = window.sessionStorage.getItem('PAF_format');
       hasdefault = true;
     }
     let input1 = '';
-    if (window.sessionStorage.getItem('PAF_inputNums1')) {
+    if (useCookies && window.sessionStorage.getItem('PAF_inputNums1')) {
       input1 = window.sessionStorage.getItem('PAF_inputNums2');
       hasdefault = true;
     }
     let input2 = '';
-    if (window.sessionStorage.getItem('PAF_inputNums2')) {
+    if (useCookies && window.sessionStorage.getItem('PAF_inputNums2')) {
       input2 = window.sessionStorage.getItem('PAF_inputNums2');
       hasdefault = true;
     }
     let op = 'add';
-    if (window.sessionStorage.getItem('PAF_operator')) {
+    if (useCookies && window.sessionStorage.getItem('PAF_operator')) {
       op = window.sessionStorage.getItem('PAF_operator');
       hasdefault = true;
     }
     return {
+      useCookies,
       selectedFormat: format,
       operator: op,
       // power: 10,
@@ -164,10 +166,12 @@ export default {
   },
   methods: {
     saveVals() {
-      window.sessionStorage.setItem('PAF_format', this.selectedFormat);
-      window.sessionStorage.setItem('PAF_inputNums1', this.inputNums[0]);
-      window.sessionStorage.setItem('PAF_inputNums2', this.inputNums[1]);
-      window.sessionStorage.setItem('PAF_operator', this.operator);
+      if (this.useCookies) {
+        window.sessionStorage.setItem('PAF_format', this.selectedFormat);
+        window.sessionStorage.setItem('PAF_inputNums1', this.inputNums[0]);
+        window.sessionStorage.setItem('PAF_inputNums2', this.inputNums[1]);
+        window.sessionStorage.setItem('PAF_operator', this.operator);
+      }
     },
     recalculate() {
       this.saveVals();

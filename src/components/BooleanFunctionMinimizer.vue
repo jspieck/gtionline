@@ -377,7 +377,7 @@ export default {
   data() {
     return {
       // archivedExercises: ['Blatt 5: 1d)', 'Blatt 7: 1b)', 'Blatt 8: 1a)'],
-      archivedExerciseSelectedIndex: -1,
+      archivedExerciseSelectedIndex: 0,
 
       randomExerciseDifficultySelectedIndex: 0,
       randomExerciseGoalSelectedIndex: 0,
@@ -1092,6 +1092,8 @@ export default {
       width: 100% !important;
     }
   }
+
+
   .tab {
     margin: auto;
     // width: 1240px;
@@ -1101,6 +1103,7 @@ export default {
   }
 
   .boolean-function-input-container {
+    margin-top: 20px;
     // .boolean-function-input-container-divider {
     //   // margin: 5px 0 5px 0;
     // }
@@ -1128,10 +1131,6 @@ export default {
       .exercise-selection-container-subsection {
         margin-bottom: .5em;
       }
-
-      button {
-        margin-left: .5em;
-      }
     }
 
     .boolean-function-button-optimize {
@@ -1140,8 +1139,8 @@ export default {
   }
 
   .bf-main-accordion-container {
-    width: 60%;
-    margin:auto;
+    width: 1000px;
+    margin: auto;
   }
   // .optimizationsContainer {
   //   font-size: 1.2em;
@@ -1234,6 +1233,10 @@ export default {
     }
   }
 
+  .selectBox {
+    margin: 0 10px;
+  }
+
   .bf-petrick-statement-subcontainer {
     // NOTE: holds a single petrick expression line + math expl.
     margin: .4em;
@@ -1250,7 +1253,7 @@ export default {
   }
 
   .horizontalbar {
-    width: 90%;
+    width: 1000px;
     margin: 1.5em auto 1.5em auto;
     height: 1px;
     background-color: rgba($lightBlue, 0.5);

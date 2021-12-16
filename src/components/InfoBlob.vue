@@ -1,6 +1,7 @@
 <template>
     <div class="infoblob-container">
-        <div class="infoblob-i">i</div>
+        <!-- <div class="infoblob-i">i</div> -->
+        <font-awesome-icon icon="info-circle"/>
         <div class="infoblob-text-container">
             <slot />
             <!-- <span>
@@ -33,17 +34,17 @@ $infoblob-border-radius: 5px;
 
     cursor: pointer;
 
-    background-color: #2196f3;
+    // background-color: #2196f3;
     display: inline-block;
 
-    width: 17px;
-    font-size: 16px;
-    border-width: 1px;
+    width: 25px;
+    font-size: 20px;
+    // border-width: 1px;
     border-radius: $infoblob-border-radius;
-    border-style: solid;
+    // border-style: solid;
 
-    border-color: white;
-    color: white;
+    // border-color: white;
+    color: green;
 }
 
 .infoblob-container:hover {
