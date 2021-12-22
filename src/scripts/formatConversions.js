@@ -22,17 +22,18 @@ export class FormatConversions {
   binToIEEE(num) {
     this.result = '';
     const bias = this.getBias();
-    const fRep = num.replace(',', '.');
-    const fParts = fRep.split('.');
+    const fParts = num.replace(',', '.').split('.');
+    let preCommaStr = fParts[0];
+    const afterCommaStr = fParts[1];
     // extract sign
     let sign = 0;
-    if (fParts[0][0] === '-') {
+    if (preCommaStr[0] === '-') {
       sign = 1;
-      fParts[0] = fParts[0].substring(1);
+      preCommaStr = preCommaStr.substring(1);
     }
     // get zero
     let isZero = true;
-    for (const c of [fParts[0], fParts[1]].join('')) {
+    for (const c of [preCommaStr, afterCommaStr].join('')) {
       if (c !== '0') {
         isZero = false;
         break;
@@ -45,24 +46,39 @@ export class FormatConversions {
       return;
     }
     // trim leading zeroes
-    const preDecimal = fParts[0].replace(/^0+/, '');
+    const preDecimal = preCommaStr.replace(/^0+/, '');
+    console.log(preDecimal);
     // transform to 1,xxx format
     let mantisse = preDecimal.substring(1);
-    const correction = preDecimal === '';
+    console.log('Mantisse');
+    console.log(mantisse);
+    let correction = preDecimal === '' ? 1 : 0;
     const shiftNumber = mantisse.length;
     const numBitsMantisse = this.numBits - this.exponentBits - 1;
-    if (fParts[1] != null) {
-      mantisse += fParts[1];
+    // fParts[1] are the digits after the comma
+    if (afterCommaStr != null) {
+      mantisse += afterCommaStr;
     }
-    if (correction) {
-      mantisse = mantisse.slice(1);
+    console.log(mantisse);
+    if (correction === 1) {
+      // find one
+      let i = 0;
+      for (i; i < mantisse.length; i += 1) {
+        if (i === 1) {
+          mantisse = mantisse.slice(i + 1);
+          correction = i + 1;
+          break;
+        }
+      }
     }
+    console.log(mantisse);
     if (mantisse.length > numBitsMantisse) {
       mantisse = tool.roundArray(mantisse, numBitsMantisse);
     }
     if (mantisse.length < numBitsMantisse) {
       mantisse += '0'.repeat(numBitsMantisse - mantisse.length);
     }
+    console.log(mantisse);
     let exponent = (shiftNumber + bias - correction).toString(2);
     // fill with leading zeroes
     if (exponent.length > this.exponentBits) {

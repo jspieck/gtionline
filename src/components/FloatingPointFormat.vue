@@ -421,6 +421,7 @@ export default {
           converted = converter.result;
         } else if (secondFormat === 'ieee') {
           converter.decToBin(toConvert);
+          console.log(converter.result);
           converter.binToIEEE(converter.result);
           converted = converter.result;
         }
