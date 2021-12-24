@@ -35,6 +35,7 @@ body {
   // color: #2c3e50;
   min-height: 100%;
   background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  // background: linear-gradient(90deg, rgba(3,9,18,1) 0%, rgba(4,18,52,1) 20%, rgba(4,18,52,1) 80%, rgba(3,9,18,1) 100%);
 }
 
 #nav {

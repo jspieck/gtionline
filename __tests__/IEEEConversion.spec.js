@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { describe, test } from '@jest/globals';
+import * as convertFormat from '../src/scripts/formatConversions';
 import {
   getIEEEFromString as getIEEE,
 } from '../src/scripts/gti-tools';
@@ -222,5 +223,53 @@ describe('Conversion to IEEE', () => {
     checkArray(expectedArray, result);
     const expectedMantissa = [1, 1, 1, 1, 0, 1, 0, 0, 0];
     checkMantissa(expectedMantissa, result);
+  });
+
+  test('Convert 0.25 to 0 01101 0000000000', () => {
+    const exponentBits = 5;
+    const numBits = 16;
+    const converter = new convertFormat.FormatConversions(exponentBits, numBits);
+    converter.decToBin('0.25');
+    converter.binToIEEE(converter.result);
+    const result = converter.result;
+    const expectedArray = [
+      0, // sign bit
+      0, 1, 1, 0, 1, // exp
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // man
+    ];
+    const floatRepresentation = getIEEE(exponentBits, result);
+    checkArray(expectedArray, floatRepresentation);
+  });
+
+  test('Convert 0.125 to 0 01100 0000000000', () => {
+    const exponentBits = 5;
+    const numBits = 16;
+    const converter = new convertFormat.FormatConversions(exponentBits, numBits);
+    converter.decToBin('0.125');
+    converter.binToIEEE(converter.result);
+    const result = converter.result;
+    const expectedArray = [
+      0, // sign bit
+      0, 1, 1, 0, 0, // exp
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // man
+    ];
+    const floatRepresentation = getIEEE(exponentBits, result);
+    checkArray(expectedArray, floatRepresentation);
+  });
+
+  test('Convert 0.1 to 0 01011 1001100110', () => {
+    const exponentBits = 5;
+    const numBits = 16;
+    const converter = new convertFormat.FormatConversions(exponentBits, numBits);
+    converter.decToBin('0.1');
+    converter.binToIEEE(converter.result);
+    const result = converter.result;
+    const expectedArray = [
+      0, // sign bit
+      0, 1, 0, 1, 1, // exp
+      1, 0, 0, 1, 1, 0, 0, 1, 1, 0, // man
+    ];
+    const floatRepresentation = getIEEE(exponentBits, result);
+    checkArray(expectedArray, floatRepresentation);
   });
 });

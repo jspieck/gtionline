@@ -50,36 +50,30 @@ export class FormatConversions {
     console.log(preDecimal);
     // transform to 1,xxx format
     let mantisse = preDecimal.substring(1);
-    console.log('Mantisse');
-    console.log(mantisse);
-    let correction = preDecimal === '' ? 1 : 0;
-    const shiftNumber = mantisse.length;
+    // console.log('Mantisse');
+    // console.log(mantisse);
+    const expBasis = mantisse.length;
     const numBitsMantisse = this.numBits - this.exponentBits - 1;
     // fParts[1] are the digits after the comma
     if (afterCommaStr != null) {
       mantisse += afterCommaStr;
     }
-    console.log(mantisse);
-    if (correction === 1) {
-      // find one
-      let i = 0;
-      for (i; i < mantisse.length; i += 1) {
-        if (i === 1) {
-          mantisse = mantisse.slice(i + 1);
-          correction = i + 1;
-          break;
-        }
-      }
+    let shiftFactor = 0;
+    // eslint-disable-next-line
+    // console.log("Before Correction", mantisse);
+    if (preDecimal === '') {
+      shiftFactor = mantisse.indexOf('1') + 1;
+      mantisse = mantisse.slice(shiftFactor);
     }
-    console.log(mantisse);
+    // console.log(shiftFactor, mantisse);
     if (mantisse.length > numBitsMantisse) {
       mantisse = tool.roundArray(mantisse, numBitsMantisse);
     }
     if (mantisse.length < numBitsMantisse) {
       mantisse += '0'.repeat(numBitsMantisse - mantisse.length);
     }
-    console.log(mantisse);
-    let exponent = (shiftNumber + bias - correction).toString(2);
+    // console.log(mantisse);
+    let exponent = (expBasis + bias - shiftFactor).toString(2);
     // fill with leading zeroes
     if (exponent.length > this.exponentBits) {
       // TODO Number is too big and cannot be displayed
