@@ -3,6 +3,7 @@ import PolyadicNumbers from '@/components/PolyadicNumbers.vue';
 import BooleanFunctionMinimizer from '@/components/BooleanFunctionMinimizer.vue';
 import KVDiagram from '@/components/KVDiagram.vue';
 import DescriptionPDF from '@/components/DescriptionPDF.vue';
+import Cmos from '@/components/Cmos.vue';
 import Home from '../views/Home.vue';
 
 const routes = [
@@ -43,6 +44,11 @@ const routes = [
     path: '/descriptionpdf',
     name: 'DescriptionPDF',
     component: DescriptionPDF,
+  },
+  {
+    path: '/cmos',
+    name: 'Cmos',
+    component: Cmos,
   },
 ];
 
