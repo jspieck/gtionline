@@ -131,11 +131,6 @@ body{
     transition: transform 0.4s ease, width 0.4s ease;
   }
 }
-@media screen and (max-width: 1400px) {
-  .tab {
-    width: 95% !important;
-  }
-}
 .tabs {
   justify-content: center;
   cursor: pointer;

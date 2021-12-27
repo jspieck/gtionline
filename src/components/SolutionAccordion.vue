@@ -102,7 +102,7 @@ export default {
 }
 
 .accordion-body {
-  background: #fcfcfc;
+  background: #ffffff5e;
   color: #353535;
   display: none;
 }

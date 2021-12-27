@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div class="about bodyContainer">
     <h2>{{$t('herausgeber')}}</h2>
     <p><span class="icon"><font-awesome-icon icon="user-friends"/></span> <span class="info">Marcel Brand, Christian Heidorn, Jan Spieck, Michael Witterauf</span></p>
     <p><span class="icon"><font-awesome-icon icon="road"/></span> <span class="info">Cauerstraße 11</span></p>
@@ -20,9 +20,7 @@
 
 <style>
   .about {
-    width: 1000px;
-    margin: auto;
-    text-align: left;
+    text-align: left !important;
   }
   .info {
     font-size: 18px;

@@ -350,6 +350,7 @@ export class DescriptionPolyadicConversion {
     } else if (modus === 'TenToPower') {
       this.getTableTenToPowerBeforeComma();
       this.getTableTenToPowerAfterComma();
+      console.log(this.tableTenToPowerBeforeComma);
       this.result.push({
         name: `${this.imp.$t('conversion')}`,
         text: `${this.imp.$t('TenToPower')}`,
@@ -368,6 +369,7 @@ export class DescriptionPolyadicConversion {
       this.getTablePowerToTen();
       this.getTableTenToPowerBeforeComma();
       this.getTableTenToPowerAfterComma();
+      console.log(this.tableTenToPowerBeforeComma);
       this.result.push({
         name: `${this.imp.$t('conversion')}`,
         text: `${this.imp.$t('PowerToPower')}`,

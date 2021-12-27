@@ -1,5 +1,5 @@
 <template>
-  <div class="fp-exercise">
+  <div class="fp-exercise bodyContainer">
     <h4>{{$t('generateEx')}}</h4>
     <div class="divMargin"/>
     <button v-on:click="generateExercise">{{$t('generate')}}</button>
@@ -215,7 +215,7 @@ export default {
 $arrow-size: 12px;
 
 #exerciseField {
-  width: 663px;
+  width: calc(100% - 30px);
   display: block;
   margin: 15px auto;
   text-align: justify;

@@ -1,5 +1,5 @@
 <template>
-  <div class="fp-exercise">
+  <div class="fp-exercise bodyContainer">
     <h4>{{$t('fpformat')}}</h4>
     <div class="formatContainer" v-on:mousemove="sliderMouseMove">
       <div class="sign">VB</div>
@@ -258,7 +258,7 @@ export default {
 $arrow-size: 12px;
 
 #exerciseField {
-  width: 663px;
+  width: calc(100% - 30px);
   display: block;
   margin: 15px auto;
   text-align: justify;

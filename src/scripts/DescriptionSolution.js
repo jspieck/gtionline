@@ -413,7 +413,7 @@ export class DescriptionSolution {
         name: `${this.imp.$t('step')} 1`,
         text: [
           this.imp.$t('addExponents'),
-          this.imp.$t('newExponent', {
+          this.imp.$t('newExponentMultiplication', {
             E1: watcher.steps.CalculateExp.data.E1,
             E2: watcher.steps.CalculateExp.data.E2,
             Bias: watcher.steps.CalculateExp.data.bias,
@@ -946,41 +946,45 @@ export class DescriptionSolution {
         ].join(''),
       });
     } else {
-      const converter = new convertFormat.FormatConversions(
-        this.exponentBits,
-        this.numBits,
-      );
-      converter.binToDec(expString1);
-      const leftVal = converter.result;
-      converter.binToDec(expString2);
-      const rightVal = converter.result;
       this.result.push({
         name: `${this.imp.$t('step')} 1`,
         text: [
-          `${this.imp.$t('subtExponents')} (${this.imp.$t('newExponent')}: \\(`,
-          leftVal - rightVal,
-          '\\) )',
+          `${this.imp.$t('subtExponents')} ${this.imp.$t('newExponentDivision', {
+            E1: watcher.steps.Exponent.data.E1,
+            E2: watcher.steps.Exponent.data.E2,
+            Bias: watcher.steps.Exponent.data.Bias,
+            Result: watcher.steps.Exponent.data.EUnshifted,
+          })}`,
         ].join(''),
       });
+
+      console.log(watcher);
       if (!watcher.steps.Result.data.result.isNaN) {
         if (!watcher.steps.Division.data.equalMantissa) { // case not equal mantissa
           this.getDivisionTable();
+          const mantissaDescriptionParts = [
+            `${this.imp.$t('newMantissaIs')}`,
+            '\<br\> \<br\>',
+            `\\( ${this.table} \\)`,
+            '\<br\> \<br\>',
+          ];
+          if (watcher.steps.Exponent.data.Shift !== 0) {
+            const descriptionText = this.imp.$t('mantissaNormalize', {
+              shift: watcher.steps.Exponent.data.Shift,
+              exponent: watcher.steps.Result.data.result.exponentBits.join(''),
+            });
+            mantissaDescriptionParts.push(`${descriptionText} \<br\>`);
+          }
+          mantissaDescriptionParts.push(`${this.imp.$t('mantissa1float')} ${solution.mantissaBits.join('').substring(1)}`);
+          const mantissaDescription = mantissaDescriptionParts.join('');
+
           this.result.push({
             name: `${this.imp.$t('step')} 2`,
             text: `${this.imp.$t('divMantissa')}`,
             subpanels: [
               {
                 name: `${this.imp.$t('doDivision')}`,
-                text: `\\(${this.table}\\)`,
-              },
-              {
-                name: `${this.imp.$t('considerRepresentation')}`,
-                text: `${this.imp.$t('consider1comma')}`,
-              },
-              {
-                name: `${this.imp.$t('newMantissa')}`,
-                text: `${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('')
-                  .substring(1)}`,
+                text: mantissaDescription,
               },
             ],
           });
@@ -991,12 +995,7 @@ export class DescriptionSolution {
             subpanels: [
               {
                 name: `${this.imp.$t('doDivision')}`,
-                text: `${this.imp.$t('equalMantissaDiv')}`,
-              },
-              {
-                name: `${this.imp.$t('newMantissa')}`,
-                text: `${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('')
-                  .substring(1)}`,
+                text: `${this.imp.$t('equalMantissaDiv', { Mantissa: solution.mantissaBits.join('').substring(1) })}`,
               },
             ],
           });
@@ -1008,12 +1007,7 @@ export class DescriptionSolution {
           subpanels: [
             {
               name: `${this.imp.$t('doDivision')}`,
-              text: `${this.imp.$t('solutionIsNan')}`,
-            },
-            {
-              name: `${this.imp.$t('newMantissa')}`,
-              text: `${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('')
-                .substring(1)}`,
+              text: `${this.imp.$t('solutionIsNan')} ${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('').substring(1)}`,
             },
           ],
         });

@@ -10634,7 +10634,7 @@ var DivisionIEEE = /*#__PURE__*/function () {
           similar = false;
         }
 
-        k++;
+        k += 1;
       }
 
       var unnormalizedMantissa = [];
@@ -10663,14 +10663,12 @@ var DivisionIEEE = /*#__PURE__*/function () {
             break;
           }
 
-          i++;
-          shift--;
+          i += 1;
+          shift -= 1;
         }
 
-        this.watcher = this.watcher.step('Division').saveVariable('divMantissa', _toConsumableArray(normalizedMantissa));
-
         if (operation.firstNegativeStep) {
-          shift--;
+          shift -= 1;
         }
 
         if (shift === unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] === 0) {
@@ -10686,7 +10684,7 @@ var DivisionIEEE = /*#__PURE__*/function () {
         normalizedMantissa = [0];
       }
 
-      for (var _i = 1; _i <= manBitNum; _i++) {
+      for (var _i = 1; _i <= manBitNum; _i += 1) {
         var num = _i < unnormalizedMantissa.length ? unnormalizedMantissa[_i] : 0;
         normalizedMantissa.push(num);
       }
@@ -10695,11 +10693,13 @@ var DivisionIEEE = /*#__PURE__*/function () {
       var curE = finalE;
       var exponentBits = [];
 
-      for (var _i2 = 0; _i2 < expBitNum; _i2++) {
+      for (var _i2 = 0; _i2 < expBitNum; _i2 += 1) {
         exponentBits.unshift(curE % 2);
         curE = Math.floor(curE / 2);
-      } // Check if newly calculated ieee is equal to inf
+      }
 
+      this.watcher = this.watcher.step('Exponent').saveVariable('E1', n1.E).saveVariable('E2', n2.E).saveVariable('Bias', n1.bias).saveVariable('Shift', shift).saveVariable('EUnshifted', n1.E - n2.E + n1.bias).saveVariable('FinalE', finalE);
+      this.watcher = this.watcher.step('Mantissa').saveVariable('unnormalizedMantissa', _toConsumableArray(unnormalizedMantissa)).saveVariable('normalizedMantissa', _toConsumableArray(normalizedMantissa)); // Check if newly calculated ieee is equal to inf
 
       if (finalE >= Math.pow(2, expBitNum) - 1) {
         var _infArray2 = [sign];

@@ -1,7 +1,7 @@
 <template>
   <!--v-on:mouseenter="sliderMouseUp" v-on:mouseleave="sliderMouseUp"
   v-on:mouseup="sliderMouseUp"-->
-  <div class="fp-arithmetic">
+  <div class="fp-arithmetic bodyContainer">
     <h4>{{$t('fpformat')}}</h4>
     <FSelect class="bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
       :options="bitrangeOptions">

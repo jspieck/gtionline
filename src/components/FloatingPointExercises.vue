@@ -1,5 +1,5 @@
 <template>
-  <div class="fp-exercise">
+  <div class="fp-exercise bodyContainer">
     <h4>{{$t('generateEx')}}</h4>
     <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0
               :options="operationOptions"/>
@@ -234,7 +234,7 @@ export default {
 $arrow-size: 12px;
 
 #exerciseField {
-  width: 663px;
+  width: calc(100% - 30px);
   display: block;
   margin: 15px auto;
   text-align: justify;
@@ -399,11 +399,5 @@ $arrow-size: 12px;
   right: 180px;
   top: 0px;
   line-height: 40px;
-}
-
-@media screen and (max-width: 815px) {
-  #exerciseField {
-    width: 90%;
-  }
 }
 </style>

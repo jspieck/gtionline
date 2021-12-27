@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div>
     <TheNavigationBar></TheNavigationBar>
     <div id="content">
       <router-view />
@@ -27,6 +27,15 @@ html {
 body {
   height: 100%;
 }
+.bodyContainer {
+  width: 1000px;
+  margin: auto;
+}
+@media screen and (max-width: 1000px) {
+  .bodyContainer {
+    width: 100%;
+  }
+}
 #app {
   font-family: 'Source Sans Pro', 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -49,6 +58,14 @@ body {
       color: #42b983;
     }
   }
+}
+
+.tab:hover {
+  background: #ababab5e;
+}
+
+.menu li:hover {
+  background: #ffffff2b;
 }
 
 h4{

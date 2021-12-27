@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="tab">
+    <div class="mainarea">
       <h3>{{$t('functionMin')}}</h3>
       <div class="boolean-function-input-container">
         <div>
@@ -1085,7 +1085,7 @@ export default {
 
 <style scoped lang="scss">
   @media screen and (max-width: 1400px) {
-    .tab {
+    .mainarea {
       width: 95% !important;
     }
     .bf-main-accordion-container {
@@ -1094,12 +1094,11 @@ export default {
   }
 
 
-  .tab {
+  .mainarea {
     margin: auto;
     // width: 1240px;
     padding: 8px;
     padding-bottom: 1.5em;
-    background: $transparentWhite;
   }
 
   .boolean-function-input-container {
@@ -1117,6 +1116,7 @@ export default {
       padding: .8em;
       margin-left: .8em;
       margin-right: .8em;
+      background: #ffffff47;
     }
 
     .exercise-selection-container {

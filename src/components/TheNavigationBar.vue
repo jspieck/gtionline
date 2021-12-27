@@ -5,9 +5,7 @@
     <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
     <ul class="menu">
       <li v-for="submenu in menu" v-bind:key="submenu.id">
-        <a v-if="submenu.link === undefined">{{submenu.label}}</a>
-        <router-link v-else :to="`${submenu.link}`">{{submenu.label}}</router-link>
-
+        <router-link :to="`${submenu.link}`">{{submenu.label}}</router-link>
         <ul class="navbar-dropdown" v-if="submenu.items !== undefined">
           <li v-for="item in submenu.items" v-bind:key="item.id">
             <router-link :to="`${item.link}`">{{item.label}}</router-link>
@@ -38,6 +36,7 @@ export default {
         {
           id: 0,
           label: this.$t('numeralSystem'),
+          link: '/polyadic',
           items: [
             {
               id: 0,
@@ -106,7 +105,6 @@ export default {
 
   li {
     display: inline-block;
-    padding: 0.4em 1em;
     position: relative;
     text-align: left;
     border-bottom: 1px solid #0d336f26;
@@ -120,6 +118,8 @@ export default {
       cursor: pointer;
       text-decoration: none;
       color: white;
+      padding: 0.4em 1em;
+      line-height: 2.0;
     }
   }
 
