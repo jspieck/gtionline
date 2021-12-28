@@ -57,6 +57,11 @@ export default {
         },
         {
           id: 2,
+          label: 'CMOS',
+          link: 'cmos',
+        },
+        {
+          id: 3,
           label: this.$t('impressum'),
           link: 'impressum',
         },

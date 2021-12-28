@@ -3,7 +3,7 @@
     <p>Bitte geben Sie ihren CMOS-Eintrag ein.</p>
     <input id="cmosInput" v-model="cmosFormula"/>
     <button @click="generateCmos()">Generiere</button>
-    <div v-html="cmosOutput"></div>
+    <div id="cmosOutput" v-html="cmosOutput"></div>
   </div>
 </template>
 
@@ -51,7 +51,7 @@ export default {
       const scale = 100;
       this.cmosOutput = this.toMathJax(codeGenerator.buildSVG(cmosVisual, toLaTeX, scale));
       this.cmosOutput = this.cmosOutput.replaceAll('text', 'foreignobject');
-      this.cmosOutput = this.cmosOutput.replaceAll('<foreignobject', '<foreignobject width=400 height=80 transform="translate(-20, -20)"');
+      this.cmosOutput = this.cmosOutput.replaceAll('<foreignobject', '<foreignobject width=400 height=80 transform="translate(-25, -25)"');
       console.log(this.cmosOutput);
       this.$nextTick(() => {
         if (window.MathJax) {
@@ -66,5 +66,13 @@ export default {
 <style>
   foreignObject {
     text-align: left;
+  }
+  .cmosContainer {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+  #cmosOutput {
+    width: 100%;
+    overflow-x: auto;
   }
 </style>
