@@ -274,6 +274,26 @@ export const i18n = createI18n({
       bf_idempotenceUC: 'Idempotenz',
       bf_absorptionUC: 'Absorption',
       bf_sortingUC: 'Sortierung',
+
+      bf_infoblob_functionMin: 'Auf dieser Seite befinden sich verschiedene Verfahren zur Funktionsminimierung',
+      bf_disjunctiveNormalForm_explanation: 'Bei der disjunktiven Normalform handelt es sich um eine Disjunktion (Veroderung) aller Minterme (1en) einer Funktion. '
+        + 'Jeder Minterm entspricht genau einer 1 in der Funktion, es müssen darin alle Literale negiert oder nicht negiert vorkommen.',
+      bf_conjunctiveNormalForm_explanation: 'Bei der konjunktiven Normalform handelt es sich um eine Konjunktion (Verundung) aller Maxterme (0en) einer Funktion. '
+        + 'Die 0en werden bei Maxtermen nicht etwa ausgewählt (wie 1en bei Mintermen), sondern ausgeschlossen. ' // Wird oft in der Übung gefragt
+        + 'Jeder Maxterm entspricht genau einer 0 in der Funktion, es müssen darin alle Literale negiert oder nicht negiert vorkommen.',
+      bf_quineMCCluskeyClasses_explanation: 'Beim Quine/McCluskey Verfahren handelt es sich um ein Minimierungsverfahren, mit welchem die Primterme einer Funktion bestimmt werden können.',
+      bf_infoblob_quineMCCluskeyClasses_colorCoding: 'Alle bei der Reduktion verwendeten Terme werden beim Quine/McCluskey Verfahren normalerweise gestrichen. '
+        + 'Wenn die Farbkodierung aktiv ist, werden sie stattdessen hellgrau dargestellt. ',
+      bf_infoblob_quineMCCluskeyClasses_01: 'Normalerweise schreiben wir die Min-, bzw. Maxterme in die einzelnen Klassen. '
+        + 'Es kann alternativ aber auch mit 0en (für negierte Literale) und 1en (für nicht negierte Literale) gearbeitet werden, '
+        + 'wobei die Postion dieser bestimmt, um welches Literal es sich handelt.',
+      bf_primeTerms_explanation: 'Terme mit minimaler Anzahl von Literalen, die nur Einsstellen bzw. Nullstellen überdecken. ',
+      bf_bf_primeImplicants_explanation: 'PrimimplikaNTe sind Primterme, die nur EINstellen (mit Freistellen) überdecken. ',
+      bf_primeImplicates_explanation: 'Primimplikate sind Primterme, die nur Nullstellen (mit Freistellen) überdecken. ',
+      bf_disjunctiveMinimalForm_explanation: 'Disjunktion von durch Konjunktion verknüpfter Literale, die (ohne diese Form zu verletzen) nicht weiter vereinfacht werden kann '
+        + '(vereinfachte DNF).',
+      bf_conjunctiveMinimalForm_explanation: 'Konjunktion von durch Disjunktion verknüpfter Literale, die (ohne diese Form zu verletzen) nicht weiter vereinfacht werden kann '
+        + '(vereinfachte KNF).',
     },
     en: {
       homePageText: 'The goal of GTI-Online is to deepen the knowledge of selected topics learned in the lecture and corresponding exercise. Select in the menu a topic and start practicing.',
@@ -517,6 +537,26 @@ export const i18n = createI18n({
       bf_idempotenceUC: 'Idempotence',
       bf_absorptionUC: 'Absorption',
       bf_sortingUC: 'Sorting',
+
+      bf_infoblob_functionMin: 'On this page you can find different procedures for minimizing function',
+      bf_disjunctiveNormalForm_explanation: 'The disjunctive normal form is a disjunction (combination of the terms using or operators) of all minterms (1s) of a function. '
+        + 'Each minterm corresponds exactly to a 1 in the function, all literals must occur negated or not negated.',
+      bf_conjunctiveNormalForm_explanation: 'The conjunctive normal form is a conjunction (combination of the terms using and operators) of all maxterms (0s) of a function. '
+        + 'The 0s are not selected in maxterms (like 1s in minterms), but excluded. ' // Wird oft in der Übung gefragt
+        + 'Each maxterm corresponds exactly to a 0 in the function, all literals must occur negated or not negated.',
+      bf_quineMCCluskeyClasses_explanation: 'The Quine/McCluskey algorithm is a minimization algorithm with which the primeterms of a function can be determined.',
+      bf_infoblob_quineMCCluskeyClasses_colorCoding: 'All terms used in the reduction are normally crossed out in the Quine/McCluskey algorithm. '
+        + 'If color coding is active, they are displayed in light gray instead.',
+      bf_infoblob_quineMCCluskeyClasses_01: 'Normally we write the min or max terms into the individual classes. '
+        + 'Alternatively, we can also work with 0s (for negated literals) and 1s (for non-negated literals), '
+        + 'whereby the position of these determines which literal it is.',
+      bf_primeTerms_explanation: 'Terms with a minimum number of literals covering only ones or zeros.',
+      bf_bf_primeImplicants_explanation: 'Primimplicants are primterms that cover only ones (with don\'t cares).',
+      bf_primeImplicates_explanation: 'Primimplicates are primterms which cover only zeros (with don\'t cares) .',
+      bf_disjunctiveMinimalForm_explanation: 'Disjunction of literals linked by conjunction, which cannot be further simplified (without violating this form) '
+        + '(simplified DNF).',
+      bf_conjunctiveMinimalForm_explanation: 'Conjunction of literals linked by disjunction, which cannot be further simplified (without violating this form) '
+        + '(simplified KNF).',
     },
     fr: {
       numVarInput: 'Nombre de Variables',

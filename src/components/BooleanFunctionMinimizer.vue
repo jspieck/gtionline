@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="mainarea">
-      <h3>{{$t('functionMin')}}</h3>
+      <h3>{{$t('functionMin')}}
+      <InfoBlob>
+        <span v-html="$t('bf_infoblob_functionMin')"></span>
+      </InfoBlob></h3>
       <div class="boolean-function-input-container">
         <div>
           <div class="exercise-selection-container">
@@ -85,6 +88,7 @@
                     {{$t('bf_disjunctiveNormalForm')}} (DNF)
                   </template>
                   <template v-slot:accordion-item-body>
+                    {{$t('bf_disjunctiveNormalForm_explanation')}}<br>
                     <span class="svg-text" v-html="toSvg(dnf)"></span>
                   </template>
                 </AccordionItem>
@@ -93,6 +97,7 @@
                     {{$t('bf_conjunctiveNormalForm')}} (KNF)
                   </template>
                   <template v-slot:accordion-item-body>
+                    {{$t('bf_conjunctiveNormalForm_explanation')}}<br>
                     <span class="svg-text" v-html="toSvg(knf)"></span>
                   </template>
                 </AccordionItem>
@@ -105,11 +110,15 @@
               {{$t('bf_quineMCCluskeyClasses')}}
             </template>
             <template v-slot:accordion-item-body>
+                {{$t('bf_quineMCCluskeyClasses_explanation')}}
               <div class="quine-classes-toggle-switch-container">
                 <div>
                   <ToggleSwitch v-on:toggle="changeQuineClassesDisplayStyle" checkedDefault=true />
                   <span>
                     {{$t('colorCoding')}}
+                    <InfoBlob>
+                        <span v-html="$t('bf_infoblob_quineMCCluskeyClasses_colorCoding')"></span>
+                    </InfoBlob>
                   </span>
                 </div>
 
@@ -117,6 +126,9 @@
                   <ToggleSwitch v-on:toggle="changeQuineClassesBinaryDisplayStyle" checkedDefault=false />
                   <span>
                     01-0
+                    <InfoBlob>
+                        <span v-html="$t('bf_infoblob_quineMCCluskeyClasses_01')"></span>
+                    </InfoBlob>
                   </span>
                 </div>
               </div>
@@ -183,12 +195,14 @@
               {{$t('bf_primeTerms')}}
             </template>
             <template v-slot:accordion-item-body>
+              {{$t('bf_primeTerms_explanation')}}
               <Accordion>
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
                     {{$t('bf_primeImplicants')}}
                   </template>
                   <template v-slot:accordion-item-body>
+                      {{$t('bf_bf_primeImplicants_explanation')}} <br>
                     <span v-for="i in primeTermsMin.length" :key="`primeTermMinID_${i}`">
                       <!-- Term + potential comma -->
                       <span class="svg-text term" v-html="toSvg(primeTermsMin[i-1] + `${i-1 < primeTermsMin.length - 1 ? ',' : ''}`)"/>
@@ -200,6 +214,7 @@
                     {{$t('bf_primeImplicates')}}
                   </template>
                   <template v-slot:accordion-item-body>
+                      {{$t('bf_primeImplicates_explanation')}} <br>
                     <span v-for="i in primeTermsMax.length" :key="`primeTermMaxID_${i}`">
                       <!-- Term + potential comma -->
                       <span class="svg-text term" v-html="toSvg(primeTermsMax[i-1] + `${i-1 < primeTermsMax.length - 1 ? ',' : ''}`)"/>
@@ -325,6 +340,7 @@
                     {{$t('bf_disjunctiveMinimalForm')}} (DMF)
                   </template>
                   <template v-slot:accordion-item-body>
+                    {{$t('bf_disjunctiveMinimalForm_explanation')}} <br>
                     <span class="svg-text" v-html="toSvg(dmf)"></span>
                   </template>
                 </AccordionItem>
@@ -333,6 +349,7 @@
                     {{$t('bf_conjunctiveMinimalForm')}} (KMF)
                   </template>
                   <template v-slot:accordion-item-body>
+                    {{$t('bf_conjunctiveMinimalForm_explanation')}} <br>
                     <span class="svg-text" v-html="toSvg(kmf)"></span>
                   </template>
                 </AccordionItem>
