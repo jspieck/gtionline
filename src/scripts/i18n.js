@@ -294,6 +294,14 @@ export const i18n = createI18n({
         + '(vereinfachte DNF).',
       bf_conjunctiveMinimalForm_explanation: 'Konjunktion von durch Disjunktion verknüpfter Literale, die (ohne diese Form zu verletzen) nicht weiter vereinfacht werden kann '
         + '(vereinfachte KNF).',
+
+      // CMOS
+      cmos_infoblob_description: 'Bei CMOS handelt es sich um eine Zusammensetzung aus einem komplementären NMOS-Schaltnetz (Pull-Down-Netzwerk, da mit Erdung verbunden) '
+        + 'und PMOS-Schaltnetz (Pull-Up-Netzwerk, da mit Versorgunsspannung verbunden). '
+        + 'Dadurch wird im festen Schaltzustand weniger Energie verbraucht, da PDN und PUN komplementär sind und somit nur bei Schalten kurz gleichzeitig leiten. '
+        + 'Es wird jedoch mehr Fläche auf dem Chip benötigt.',
+      cmos_infoblob_input_description: 'Für ODER-Gatter kann \'+\' genutzt werden, für UND-Gatter \'*\' und für die Negation \'~\'. Variablen können beliebige Namen haben '
+        + '(Achtung: ab wird als eine Variable betrachtet, nicht als Verundung von a und b).',
     },
     en: {
       homePageText: 'The goal of GTI-Online is to deepen the knowledge of selected topics learned in the lecture and corresponding exercise. Select in the menu a topic and start practicing.',
@@ -557,6 +565,12 @@ export const i18n = createI18n({
         + '(simplified DNF).',
       bf_conjunctiveMinimalForm_explanation: 'Conjunction of literals linked by disjunction, which cannot be further simplified (without violating this form) '
         + '(simplified KNF).',
+
+      // CMOS
+      cmos_infoblob_description: 'CMOS is a composition of a complementary NMOS  network (pull-down network, since connected to ground) and PMOS network (pull-up network, since connected to supply voltage) '
+      + 'As a result, less energy is consumed in the fixed switching state, since PDN and PUN are complementary and thus only conduct simultaneously for a short time during switching. '
+      + 'However, more area is required on the chip.',
+      cmos_infoblob_input_description: 'For OR gates \'+\' can be used, for AND gates \'*\' and for negation \'~\'. Variables can have arbitrary names (Attention: ab is considered as one variable, not as a * b).',
     },
     fr: {
       numVarInput: 'Nombre de Variables',

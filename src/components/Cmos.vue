@@ -1,6 +1,13 @@
 <template>
   <div class="cmosContainer bodyContainer">
-    <p>Bitte geben Sie ihren CMOS-Eintrag ein.</p>
+    <InfoBlob>
+        <span v-html="$t('cmos_infoblob_description')"></span>
+    </InfoBlob>
+    <p>Bitte geben Sie ihren CMOS-Eintrag ein.
+        <InfoBlob>
+            <span v-html="$t('cmos_infoblob_input_description')"></span>
+        </InfoBlob>
+    </p>
     <input id="cmosInput" v-model="cmosFormula"/>
     <button @click="generateCmos()">Generiere</button>
     <div id="cmosOutput" v-html="cmosOutput"></div>
