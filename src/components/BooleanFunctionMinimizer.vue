@@ -1,8 +1,7 @@
 <template>
   <div>
     <div class="mainarea">
-      <h3>{{$t('functionMin')}}
-      <InfoBlob>
+      <h3>{{$t('functionMin')}}<InfoBlob>
         <span v-html="$t('bf_infoblob_functionMin')"></span>
       </InfoBlob></h3>
       <div class="boolean-function-input-container">

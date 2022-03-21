@@ -45,6 +45,8 @@ $infoblob-border-radius: 5px;
 
     // border-color: white;
     color: green;
+    margin-left: 5px;
+    white-space: normal;
 }
 
 .infoblob-container:hover {
@@ -73,16 +75,16 @@ $infoblob-border-radius: 5px;
     // margin-left: -50%;
     // margin-right: -50%;
     // transform: translateX(-50%);
-
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     width: 300px;
-    padding: .4em;
-    border-style: solid;
-    border-color: black;
-    border-width: 1px;
+    padding: 10px;
     border-radius: .3em;
     border-top-left-radius: 0;
 
     white-space: normal;
+    font-weight: 400;
+    font-size: 16px;
+    text-align: center;
 }
 
 @media screen and (max-width: 800px) {

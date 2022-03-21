@@ -5,12 +5,15 @@ export const i18n = createI18n({
   fallbackLocale: 'de',
   messages: {
     de: {
+      sequentialCircuit: 'Beispiel eines Schaltwerks bestehend aus zwei D-Flipflops und mehreren Multiplexern.',
       polyadicDivisionDescription: 'Die Vorkommastellen ergeben sich aus den Ziffern des Rests, indem man diese von unten nach oben ausliest.',
       polyadicMultiplicationDescription: 'Die Nachkommastellen ergeben sich aus den Ziffern des Rests, indem man diese von oben nach unten ausliest.',
       homePageText: 'Ziel dieser Webseite ist das Vertiefen der Kenntnisse aus der Vorlesung und zugehörigen Übung zu ausgewählten Themenschwerpunkten. Wählen Sie im Menü das Thema aus, zu dem sie Übungsaufgaben lösen möchten.',
       startTraining: 'Los geht\'s',
+      polyFreeIntro: 'Üben Sie die polyadische Arithmetik mit eigenen Zahlenwerten in Ihrem Wunschsystem.',
+      polyConvGenIntro: 'Üben Sie die Konversion zwischen polyadischen Systemen anhand generierter Übungsaufgaben.',
       numVarInput: 'Anzahl an Variablen',
-      conversionExercise: 'Konversions Aufgaben',
+      conversionExercise: 'Aufgaben zur Konversion',
       impressum: 'Impressum',
       herausgeber: 'Herausgeber',
       representedByHeader: 'Vertreten durch',
@@ -124,6 +127,7 @@ export const i18n = createI18n({
       newExponentDivision: 'Der neue Exponent ergibt sich als \\( E_{\'{neu}\'} = E_1 - E_2 + BIAS = %{E1} - %{E2} + %{Bias} = %{Result} \\)',
       newExponentMultiplication: 'Der neue Exponent ergibt sich als \\( E_{\'{neu}\'} = E_1 + E_2 - BIAS = %{E1} + %{E2} - %{Bias} = %{Result}\\, (%{ExpBits})\\)',
       considerExponent: 'Exponent beachten',
+      fpExerciseText: 'Es seien die Gleitkommazahlen \\( fp_1 \\) und \\( fp_2 \\) im 16 Bit Gleitkommaformat gegeben. Berechnen Sie die %{op1} \\( fp_1 %{op2} fp_2 \\) ohne die Binärdarstellung zu verlassen und geben Sie diese wieder als Gleitkommazahl an:',
       // mantissa
       mantissa: 'Mantisse',
       solutionIsNan: 'Die Mantisse muss nicht berechnet werden, da das Ergebnis sicher NaN ist.',
@@ -300,13 +304,19 @@ export const i18n = createI18n({
         + 'und PMOS-Schaltnetz (Pull-Up-Netzwerk, da mit Versorgunsspannung verbunden). '
         + 'Dadurch wird im festen Schaltzustand weniger Energie verbraucht, da PDN und PUN komplementär sind und somit nur bei Schalten kurz gleichzeitig leiten. '
         + 'Es wird jedoch mehr Fläche auf dem Chip benötigt.',
-      cmos_infoblob_input_description: 'Für ODER-Gatter kann \'+\' genutzt werden, für UND-Gatter \'*\' und für die Negation \'~\'. Variablen können beliebige Namen haben '
-        + '(Achtung: ab wird als eine Variable betrachtet, nicht als Verundung von a und b).',
+      cmos_infoblob_input_description: 'Hinweis: Für ODER-Gatter kann \'+\' genutzt werden, für UND-Gatter \'*\' und für die Negation \'~\'. Variablen können beliebige Namen haben '
+        + '(Achtung: \'ab\' wird als eine Variable betrachtet, nicht als Verundung von \'a\' und \'b\').',
+      enter_cmos: 'Bitte geben Sie ihren CMOS-Eintrag ein.',
     },
     en: {
+      polyadicMultiplicationDescription: 'The digits after the decimal point are obtained from the digits of the remainder by reading them from top to bottom.',
+      polyadicDivisionDescription: 'The digits before the decimal point result from the digits of the remainder by reading them from bottom to top.',
+      enter_cmos: 'Please enter your CMOS formula.',
+      sequentialCircuit: 'Example of a sequential circuit comprising two D-flipflops and multiplexers.',
       homePageText: 'The goal of GTI-Online is to deepen the knowledge of selected topics learned in the lecture and corresponding exercise. Select in the menu a topic and start practicing.',
       startTraining: 'Let\'s go',
       numVarInput: 'Number of variables',
+      fpExerciseText: 'Let \\( fp_1 \\) and \\( fp_2 \\) be given as floating point numbers in 16 bit floating point format. Compute the %{op1} \\( fp_1 %{op2} fp_2 \\) without leaving the binary representation and specify it again as a floating point number:',
       confirm: 'Confirm',
       varNaming: 'Variable naming',
       kvDiagram: 'Karnaugh Map',
@@ -317,6 +327,7 @@ export const i18n = createI18n({
       exercises: 'Exercises',
       generateEx: 'Generate Exercise',
       generate: 'Generate',
+      polyFreeIntro: 'Practice polyadic arithmetic with your own numerical values in your desired system.',
       addition: 'Addition',
       subtraction: 'Subtraction',
       multiplication: 'Multiplication',
@@ -346,6 +357,7 @@ export const i18n = createI18n({
       // general
       arithmetic: 'Arithmetic',
       conversion: 'Conversion',
+      conversionExercise: 'Exercises for conversion',
       conversionExercise1: 'Convert: ',
       conversionExercise2: 'into a IEEE-Floatingpointnumber with exponent lenght of: ',
       steps: 'steps',
@@ -373,7 +385,7 @@ export const i18n = createI18n({
       arithmeticFree: 'Free arithmetic',
       conversionFree: 'Free conversion',
       // values
-      value: 'value',
+      value: 'Value',
       givenValues: 'values of the transmitted numbers',
       leftValue: 'left value',
       rightValue: 'right value',
@@ -455,11 +467,11 @@ export const i18n = createI18n({
       divisionAlgorithm: 'Division algorithm',
       multiplicationAlgorithm: 'Multiplication algorithm',
       summation: 'Summation',
-      factor: 'factor',
-      quotient: 'quotient',
-      remainder: 'remainder',
-      newBasis: 'new basis',
-      calcStep: 'calculation step',
+      factor: 'Factor',
+      quotient: 'Quotient',
+      remainder: 'Remainder',
+      newBasis: 'Base_{{new}}',
+      calcStep: 'calculation\\ step',
       summands: 'summands',
       polyadicExercise1: 'Convert the value:',
       polyadicExercise2: 'from the initial format: ',
@@ -546,7 +558,7 @@ export const i18n = createI18n({
       bf_absorptionUC: 'Absorption',
       bf_sortingUC: 'Sorting',
 
-      bf_infoblob_functionMin: 'On this page you can find different procedures for minimizing function',
+      bf_infoblob_functionMin: 'On this page you can find different procedures for minimizing boolean expressions.',
       bf_disjunctiveNormalForm_explanation: 'The disjunctive normal form is a disjunction (combination of the terms using or operators) of all minterms (1s) of a function. '
         + 'Each minterm corresponds exactly to a 1 in the function, all literals must occur negated or not negated.',
       bf_conjunctiveNormalForm_explanation: 'The conjunctive normal form is a conjunction (combination of the terms using and operators) of all maxterms (0s) of a function. '
@@ -567,12 +579,15 @@ export const i18n = createI18n({
         + '(simplified KNF).',
 
       // CMOS
-      cmos_infoblob_description: 'CMOS is a composition of a complementary NMOS  network (pull-down network, since connected to ground) and PMOS network (pull-up network, since connected to supply voltage) '
+      cmos_infoblob_description: 'CMOS is a composition of a complementary NMOS  network (pull-down network, since connected to ground) and PMOS network (pull-up network, since connected to supply voltage).\n '
       + 'As a result, less energy is consumed in the fixed switching state, since PDN and PUN are complementary and thus only conduct simultaneously for a short time during switching. '
       + 'However, more area is required on the chip.',
-      cmos_infoblob_input_description: 'For OR gates \'+\' can be used, for AND gates \'*\' and for negation \'~\'. Variables can have arbitrary names (Attention: ab is considered as one variable, not as a * b).',
+      cmos_infoblob_input_description: 'Note: For OR gates \'+\' can be used, for AND gates \'*\' and for negation \'~\'. Variables can have arbitrary names (Attention: \'ab\' is considered as one variable, not as \'a\' mutiplied by \'b\').',
     },
     fr: {
+      fpExerciseText: 'On donne les nombres à virgule flottante \\( fp_1 \\) et \\( fp_2 \\) au format 16 bits à virgule flottante. Calculez le %{op1} \\( fp_1 %{op2} fp_2 \\) sans quitter la représentation binaire et redonnez le sous forme de nombre à virgule flottante:',
+      polyadicDivisionDescription: 'Les chiffres avant la virgule sont obtenus à partir des chiffres du reste, en les lisant de bas en haut.',
+      polyadicMultiplicationDescription: 'Les chiffres après la virgule sont obtenus à partir des chiffres du reste, en les lisant de haut en bas.',
       numVarInput: 'Nombre de Variables',
       confirm: 'Confirmer',
       input: 'Entrée',
@@ -603,6 +618,7 @@ export const i18n = createI18n({
       operationSelect: 'Configurer le calcul',
       firstFloatingPoint: 'Premier numéro à virgule flottante',
       secondFloatingPoint: 'Deuxième numéro à virgule flottante',
+      polyFreeIntro: 'Entraînez-vous à l\'arithmétique polyadique avec vos propres valeurs numériques dans le système de votre choix.',
       operand: 'Operand',
       decimal: 'Décimale',
       binary: 'Binaire',
@@ -643,7 +659,7 @@ export const i18n = createI18n({
       conversionFree: 'Conversion libre',
 
       // values
-      value: 'valeur',
+      value: 'Valeur',
       givenValues: 'valeurs des nombres transmis',
       leftValue: 'valeur gauche',
       rightValue: 'valeur de droite',
@@ -715,8 +731,8 @@ export const i18n = createI18n({
       factor: 'Facteur',
       quotient: 'Quotient',
       remainder: 'reste',
-      newBasis: 'nouvelle base',
-      calcStep: 'étape de calcul',
+      newBasis: 'Base_{{nouvelle}}',
+      calcStep: 'étape\\ de\\ calcul',
       summands: 'sommets',
       polyadicExercise1: 'Convertissez la valeur :',
       polyadicExercise2: 'à partir du format initial : ',
@@ -955,7 +971,7 @@ export const i18n = createI18n({
       quotient: 'quotient',
       remainder: 'remainder',
       newBasis: 'new basis',
-      calcStep: 'calculation step',
+      calcStep: 'calculation\\ step',
       summands: 'summands',
       polyadicExercise1: 'Convert the value:',
       polyadicExercise2: 'from the initial format: ',
@@ -1030,7 +1046,7 @@ export const i18n = createI18n({
       arithmeticFree: 'Free arithmetic',
       conversionFree: 'Free conversion',
       // values
-      value: 'value',
+      value: 'Value',
       givenValues: 'values of the transmitted numbers',
       leftValue: 'left value',
       rightValue: 'right value',
@@ -1115,7 +1131,7 @@ export const i18n = createI18n({
       quotient: 'quotient',
       remainder: 'remainder',
       newBasis: 'new basis',
-      calcStep: 'calculation step',
+      calcStep: 'calculation\\ step',
       summands: 'summands',
       polyadicExercise1: 'Convert the value:',
       polyadicExercise2: 'from the initial format: ',

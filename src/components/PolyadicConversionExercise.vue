@@ -1,5 +1,6 @@
 <template>
   <div class="fp-exercise bodyContainer">
+    <p class="introduction">{{$t('polyConvGenIntro')}}</p>
     <h4>{{$t('generateEx')}}</h4>
     <div class="divMargin"/>
     <button v-on:click="generateExercise">{{$t('generate')}}</button>

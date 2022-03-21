@@ -23,7 +23,10 @@
       </div>
     </div>
     <div class="imageContainer">
-      <img class="startImg" src="../assets/gtionline.svg"/>
+      <div class="startImg">
+        <img src="../assets/gtionline.svg"/>
+        <p class="imgDescription">{{$t('sequentialCircuit')}}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -38,6 +41,14 @@ export default {
   #content .home {
     padding: 0;
     margin-top: -64px;
+  }
+
+  img {
+    width: 80%;
+  }
+
+  .imgDescription {
+    color: white;
   }
 
   .startImg {

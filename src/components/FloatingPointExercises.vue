@@ -177,7 +177,9 @@ export default {
         sub: [this.$t('subtraction'), '-'],
         div: [this.$t('division'), '/'],
       };
-      this.exerciseText = `Es seien die Gleitkommazahlen \\( fp_1 \\) und \\( fp_2 \\) im 16 Bit Gleitkommaformat gegeben. Berechnen Sie die ${opNames[operation][0]} \\( fp_1 ${opNames[operation][1]} fp_2 \\) ohne die Binärdarstellung zu verlassen und geben Sie diese wieder als Gleitkommazahl an:
+      // `Es seien die Gleitkommazahlen \\( fp_1 \\) und \\( fp_2 \\) im 16 Bit Gleitkommaformat gegeben. Berechnen Sie die ${opNames[operation][0]} \\( fp_1 ${opNames[operation][1]} fp_2 \\) ohne die Binärdarstellung zu verlassen und geben Sie diese wieder als Gleitkommazahl an:
+      const introText = this.$t('fpExerciseText', { op1: opNames[operation][0], op2: opNames[operation][1] });
+      this.exerciseText = `${introText} 
 
           \\( fp_1 = \\text{${this.fp1}} \\)\n
           \\( fp_2 = \\text{${this.fp2}} \\)`;
@@ -242,6 +244,7 @@ $arrow-size: 12px;
   padding: 10px 15px;
   border-radius: 10px;
   white-space: pre-line;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .solutionInput {

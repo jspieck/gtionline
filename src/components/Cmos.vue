@@ -1,15 +1,14 @@
 <template>
-  <div class="cmosContainer bodyContainer">
-    <InfoBlob>
+  <div class="cmosContainer">
+    <div class="bodyContainer">
+      <h3>CMOS<InfoBlob>
         <span v-html="$t('cmos_infoblob_description')"></span>
-    </InfoBlob>
-    <p>Bitte geben Sie ihren CMOS-Eintrag ein.
-        <InfoBlob>
-            <span v-html="$t('cmos_infoblob_input_description')"></span>
-        </InfoBlob>
-    </p>
-    <input id="cmosInput" v-model="cmosFormula"/>
-    <button @click="generateCmos()">Generiere</button>
+      </InfoBlob></h3>
+      <p>{{$t('enter_cmos')}}</p>
+      <p>{{$t('cmos_infoblob_input_description')}}</p>
+      <input id="cmosInput" v-model="cmosFormula"/>
+      <button @click="generateCmos()">{{$t('generate')}}</button>
+    </div>
     <div id="cmosOutput" v-html="cmosOutput"></div>
   </div>
 </template>
@@ -18,9 +17,13 @@
 import {
   CMOSBuilder, parseBooleanFunction, SVGGenerator, CMOSVisualBuilder, toLaTeX,
 } from '@/scripts/gti-tools';
+import InfoBlob from './InfoBlob.vue';
 
 export default {
   name: 'KVDiagram',
+  components: {
+    InfoBlob,
+  },
   data() {
     return {
       cmosFormula: '',
