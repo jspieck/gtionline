@@ -229,5 +229,7 @@
   "bf_conjunctiveMinimalForm_explanation": "Konjunktion von durch Disjunktion verknüpfter Literale, die (ohne diese Form zu verletzen) nicht weiter vereinfacht werden kann (vereinfachte KNF).",
   "cmos_infoblob_description": "Bei CMOS handelt es sich um eine Zusammensetzung aus einem komplementären NMOS-Schaltnetz (Pull-Down-Netzwerk, da mit Erdung verbunden) und PMOS-Schaltnetz (Pull-Up-Netzwerk, da mit Versorgunsspannung verbunden). Dadurch wird im festen Schaltzustand weniger Energie verbraucht, da PDN und PUN komplementär sind und somit nur bei Schalten kurz gleichzeitig leiten. Es wird jedoch mehr Fläche auf dem Chip benötigt.",
   "cmos_infoblob_input_description": "Hinweis: Für ODER-Gatter kann '+' genutzt werden, für UND-Gatter '*' und für die Negation '~'. Variablen können beliebige Namen haben (Achtung: 'ab' wird als eine Variable betrachtet, nicht als Verundung von 'a' und 'b').",
-  "enter_cmos": "Bitte geben Sie ihren CMOS-Eintrag ein."
+  "enter_cmos": "Bitte geben Sie ihren CMOS-Eintrag ein.",
+  "polyadicExercise2": "vom initialen Format:",
+  "newExponent": "Neuer Exponent"
 }

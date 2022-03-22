@@ -201,15 +201,12 @@
   "bf_covertable_step_description_row_domination": "<h4>Row dominance / Reihendominanz:</h4>Row {dominatorName} dominates row {dominatedName}; i.e. row {dominatorName} has markers wherever row {dominatedName} does as well (and possibly more!). => cross the dominaTED row {dominatedName}. <br>Note that row dominance is only applicable, because row {dominatorName} costs less than, or the same as {dominatedName}; or because there is no other row that covers the additional markers of {dominatorName} and costs less than {dominatorName} - {dominatedName}.",
   "bf_covertable_step_description_column_domination": "<h4>Column dominance / Spaltendominanz:</h4>Column {dominatorName} dominates column {dominatedName}; i.e. column {dominatorName} has markers wherever column {dominatedName} does as well (and possibly more!). => Cross the dominaTING column {dominatorName}<br>Unlike with row dominance, column dominance doesn't require you to consider costs at all.",
   "bf_covertable_step_description_cyclic_rest": "<h4>Cyclic rest:</h4>No rule of the prime table algorithm is applicable. This is referred to as a 'cyclic rest' (ger: 'Zyklischer Rest').<br>By setting up the Petrick-Expression (ger: Petrick Ausdruck) for the rest table, one is still able to determine a minimal form of the original function.",
-
   "bf_infoblob_random_exercise_selection": "Difficulty states how many individual terms of some kind (e.g. minterms, primeimplicants) the boolean function should yield.",
   "bf_infoblob_petrick_statement": "The algorithm consists of two phases:<ol><li>Make terms that absorb each other easily visible through sorting (only shown if it has any effect)</li><li>Multiply the first two terms with each other until the typical sum remains.</li></ol>",
-
   "bf_distributionUC": "Distribution",
   "bf_idempotenceUC": "Idempotence",
   "bf_absorptionUC": "Absorption",
   "bf_sortingUC": "Sorting",
-
   "bf_infoblob_functionMin": "On this page you can find different procedures for minimizing boolean expressions.",
   "bf_disjunctiveNormalForm_explanation": "The disjunctive normal form is a disjunction (combination of the terms using or operators) of all minterms (1s) of a function. Each minterm corresponds exactly to a 1 in the function, all literals must occur negated or not negated.",
   "bf_conjunctiveNormalForm_explanation": "The conjunctive normal form is a conjunction (combination of the terms using and operators) of all maxterms (0s) of a function. The 0s are not selected in maxterms (like 1s in minterms), but excluded. Each maxterm corresponds exactly to a 0 in the function, all literals must occur negated or not negated.",
@@ -222,5 +219,17 @@
   "bf_disjunctiveMinimalForm_explanation": "Disjunction of literals linked by conjunction, which cannot be further simplified (without violating this form) (simplified DNF).",
   "bf_conjunctiveMinimalForm_explanation": "Conjunction of literals linked by disjunction, which cannot be further simplified (without violating this form) (simplified KNF).",
   "cmos_infoblob_description": "CMOS is a composition of a complementary NMOS  network (pull-down network, since connected to ground) and PMOS network (pull-up network, since connected to supply voltage).\n As a result, less energy is consumed in the fixed switching state, since PDN and PUN are complementary and thus only conduct simultaneously for a short time during switching. However, more area is required on the chip.",
-  "cmos_infoblob_input_description": "Note: For OR gates '+' can be used, for AND gates '*' and for negation '~'. Variables can have arbitrary names (Attention: 'ab' is considered as one variable, not as 'a' mutiplied by 'b')."
+  "cmos_infoblob_input_description": "Note: For OR gates '+' can be used, for AND gates '*' and for negation '~'. Variables can have arbitrary names (Attention: 'ab' is considered as one variable, not as 'a' mutiplied by 'b').",
+  "contactPersonHeader": "Contact persons for the content",
+  "herausgeber": "Publisher",
+  "divWithZero": "For a division with 0 in the numerator, the result is always 0.",
+  "impressum": "Impressum",
+  "representedByHeader": "Represented by",
+  "representedBy": "Chair of Computer Science 12 is a public law institution within the Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU). According to Art. 20, 21 BayHSchG, FAU, as a state institution and self-governing body under public law, is represented externally by the President.",
+  "haftungsauschlussHeader": "Disclaimer",
+  "mantissaComplement": "The mantissa is negative. So we have to form the complement and set the sign bit.",
+  "mantissaNormalize": "To make the mantissa start with a leading 1, we need to normalize the mantissa by applying the shift of {shift}. We also have to apply this shift to the exponent, which results in the new exponent {exponent}.",
+  "newExponentDivision": "The new exponent results as \\( E_{'{neu}'} = E_1 - E_2 + BIAS = %{E1} - %{E2} + %{Bias} = %{Result} \\)",
+  "newExponentMultiplication": "The new exponent results as \\( E_{'{neu}'} = E_1 + E_2 - BIAS = %{E1} + %{E2} - %{Bias} = %{Result}\\, (%{ExpBits})\\)",
+  "haftungsauschlussBody": "The respective institutions are responsible for the content of other websites. All information provided on this website has been compiled and checked to the best of our knowledge and belief. However, we cannot guarantee that the information provided is up-to-date, correct, complete or available at all times. A contractual relationship with the users of the Internet offer does not come about. We are not liable for any damage caused by the use of this internet offer. This exclusion of liability does not apply if the provisions of §839 of the German Civil Code (liability for breach of official duty) are relevant. No liability is accepted for any damage caused by malware or the installation or use of software when calling up or downloading data. As a service provider, we are responsible for our own content on these pages in accordance with § 7 para.1 TMG under the general laws. According to § 8 to 10 TMG we are not obligated to monitor transmitted or stored information or to investigate circumstances that indicate illegal activity. Obligations to remove or block the use of information under the general laws remain unaffected. However, liability in this regard is only possible from the point in time at which a concrete infringement of the law becomes known. If we become aware of any such infringements, we will remove the relevant content immediately. The operator expressly reserves the right to change, supplement or delete individual web pages, web services or the entire offer without separate announcement or to cease publication temporarily or permanently."
 }
