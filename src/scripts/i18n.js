@@ -1,10 +1,19 @@
 import { createI18n } from 'vue-i18n';
+import trDe from '@/locales/de.json';
+import trEn from '@/locales/en.json';
+import trFr from '@/locales/fr.json';
+import trEs from '@/locales/es.json';
 
 export const i18n = createI18n({
   locale: 'de',
   fallbackLocale: 'de',
   messages: {
-    de: {
+    /* de: {
+      fpExerciseIntro: 'Üben Sie die Arithmetik zwischen Gleitkommazahlen im Format nach IEEE-754 anhand generierter Aufgaben.',
+      fpFormatSelectionSimple: 'Zur Auswahl eines eigenen Formats legen Sie die Verteilung der Bits zwischen Exponenten und Mantisse fest.',
+      fpFormatSelection: 'Zur Auswahl eines eigenen Formats wählen Sie zuerst die Anzahl an Bits der Gleitkommazahl aus und legen Sie dann die Verteilung der Bits zwischen Exponenten und Mantisse fest.',
+      fpArithIntro: 'Üben Sie die Arithmetik zwischen Gleitkommazahlen im Format nach IEEE-754 oder einem daran angelehnten selbstdefinierten Format.',
+      fpConvIntro: 'Üben Sie die Konversion zwischen dem Dezimalsystem und dem Gleitkommazahl Format nach IEEE-754 oder einem daran angelehnten selbstdefinierten Format anhand generierter Übungsaufgaben.',
       sequentialCircuit: 'Beispiel eines Schaltwerks bestehend aus zwei D-Flipflops und mehreren Multiplexern.',
       polyadicDivisionDescription: 'Die Vorkommastellen ergeben sich aus den Ziffern des Rests, indem man diese von unten nach oben ausliest.',
       polyadicMultiplicationDescription: 'Die Nachkommastellen ergeben sich aus den Ziffern des Rests, indem man diese von oben nach unten ausliest.',
@@ -12,6 +21,7 @@ export const i18n = createI18n({
       startTraining: 'Los geht\'s',
       polyFreeIntro: 'Üben Sie die polyadische Arithmetik mit eigenen Zahlenwerten in Ihrem Wunschsystem.',
       polyConvGenIntro: 'Üben Sie die Konversion zwischen polyadischen Systemen anhand generierter Übungsaufgaben.',
+      polyConvIntro: 'Üben Sie die Konversion zwischen polyadischen Systemen, die Sie frei auswählen können.',
       numVarInput: 'Anzahl an Variablen',
       conversionExercise: 'Aufgaben zur Konversion',
       impressum: 'Impressum',
@@ -309,6 +319,13 @@ export const i18n = createI18n({
       enter_cmos: 'Bitte geben Sie ihren CMOS-Eintrag ein.',
     },
     en: {
+      fpExerciseIntro: 'Practice arithmetic between floating point numbers in IEEE-754 format using generated exercises',
+      fpFormatSelectionSimple: 'To select a custom format, specify the distribution of bits between exponents and mantissa.',
+      fpFormatSelection: 'To select a custom format, first select the number of bits of the floating point number, and then specify the distribution of bits between exponents and mantissa.',
+      fpArithIntro: 'Practice arithmetic between floating point numbers in the format according to IEEE-754 or a self-defined format based on it.',
+      fpConvIntro: 'Practice conversion between the decimal system and floating-point number format according to IEEE-754 or a self-defined format based on it, using generated practice problems.',
+      polyConvIntro: 'Practice conversion between polyadic systems that you can freely choose.',
+      polyConvGenIntro: 'Practice the conversion between polyadic systems by solving generated exercises.',
       polyadicMultiplicationDescription: 'The digits after the decimal point are obtained from the digits of the remainder by reading them from top to bottom.',
       polyadicDivisionDescription: 'The digits before the decimal point result from the digits of the remainder by reading them from bottom to top.',
       enter_cmos: 'Please enter your CMOS formula.',
@@ -585,6 +602,13 @@ export const i18n = createI18n({
       cmos_infoblob_input_description: 'Note: For OR gates \'+\' can be used, for AND gates \'*\' and for negation \'~\'. Variables can have arbitrary names (Attention: \'ab\' is considered as one variable, not as \'a\' mutiplied by \'b\').',
     },
     fr: {
+      fpExerciseIntro: 'Entraînez-vous à l\'arithmétique entre nombres à virgule flottante au format IEEE-754 à l\'aide d\'exercices générés',
+      fpFormatSelectionSimple: 'Pour choisir votre propre format, définissez la répartition des bits entre l\'exposant et la mantisse',
+      fpFormatSelection: 'Pour choisir un format personnalisé, sélectionnez d\'abord le nombre de bits du nombre à virgule flottante, puis définissez la répartition des bits entre les exposants et les mantisses.',
+      fpArithIntro: 'Entraînez-vous à l\'arithmétique entre nombres à virgule flottante dans le format IEEE-754 ou dans un format défini par l\'utilisateur qui s\'en inspire',
+      fpConvIntro: 'Entraînez-vous à la conversion entre le système décimal et le format de nombres à virgule flottante IEEE-754 ou un format défini par l\'utilisateur qui s\'en inspire, à l\'aide d\'exercices générés',
+      polyConvIntro: 'Entraînez-vous à la conversion entre des systèmes polyadiques que vous pouvez choisir librement.',
+      polyConvGenIntro: 'Pratiquez la conversion entre systèmes polyadiques en résolvant les exercices générés.',
       fpExerciseText: 'On donne les nombres à virgule flottante \\( fp_1 \\) et \\( fp_2 \\) au format 16 bits à virgule flottante. Calculez le %{op1} \\( fp_1 %{op2} fp_2 \\) sans quitter la représentation binaire et redonnez le sous forme de nombre à virgule flottante:',
       polyadicDivisionDescription: 'Les chiffres avant la virgule sont obtenus à partir des chiffres du reste, en les lisant de bas en haut.',
       polyadicMultiplicationDescription: 'Les chiffres après la virgule sont obtenus à partir des chiffres du reste, en les lisant de haut en bas.',
@@ -818,6 +842,13 @@ export const i18n = createI18n({
       bf_sortingUC: 'Triage',
     },
     es: {
+      fpExerciseIntro: 'Practicar aritmética entre números de punto flotante en formato IEEE-754 utilizando tareas generadas',
+      fpFormatSelectionSimple: 'Para seleccionar un formato personalizado, especifica la distribución de bits entre los exponentes y la mantisa',
+      fpFormatSelection: 'Para seleccionar su propio formato, seleccione primero el número de bits del número en coma flotante y luego especifique la distribución de bits entre los exponentes y la mantisa',
+      fpArithIntro: 'Practique la aritmética entre números de punto flotante en el formato según IEEE-754 o un formato autodefinido basado en él',
+      fpConvIntro: 'Practique la conversión entre el sistema decimal y el formato de números de punto flotante según IEEE-754 o un formato autodefinido basado en él, utilizando ejercicios generados',
+      polyConvIntro: 'Practica la conversión entre sistemas poliádicos que puedes elegir libremente.',
+      polyConvGenIntro: 'Practique la conversión entre sistemas poliádicos resolviendo los ejercicios generados.',
       numVarInput: 'Número de variables',
       confirm: 'Confirmar',
       input: 'Entrada',
@@ -976,7 +1007,11 @@ export const i18n = createI18n({
       polyadicExercise1: 'Convert the value:',
       polyadicExercise2: 'from the initial format: ',
       polyadicExercise3: 'to the target format:',
-    },
+    }, */
+    de: trDe,
+    en: trEn,
+    fr: trFr,
+    es: trEs,
     lt: {
       numVarInput: 'Numerus variabilium',
       confirm: 'Adfirmare',

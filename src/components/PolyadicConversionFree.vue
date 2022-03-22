@@ -1,7 +1,6 @@
 <template>
-  <!--v-on:mouseenter="sliderMouseUp" v-on:mouseleave="sliderMouseUp"
-  v-on:mouseup="sliderMouseUp"-->
   <div class="fp-arithmetic bodyContainer">
+    <p class="introduction">{{$t('polyConvIntro')}}</p>
     <div id="fpOperationTable" class="fpOperationTable">
       <div class="container">
         <table>

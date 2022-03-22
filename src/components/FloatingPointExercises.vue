@@ -1,47 +1,51 @@
 <template>
-  <div class="fp-exercise bodyContainer">
-    <h4>{{$t('generateEx')}}</h4>
-    <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0
-              :options="operationOptions"/>
-    <div class="divMargin"/>
-    <button v-on:click="generateExercise">{{$t('generate')}}</button>
-    <div id="exerciseField" v-html="exerciseText"></div>
-    <h4>{{$t('ownSolution')}}</h4>
-    <label class="attention">{{$t('attRound')}}</label>
-    <div class="solutionArea">
-      <div class="solutionInput">
-        <p>{{$t('signBit')}}</p>
-        <input id="propVB" :class="backVB" v-model="propVB">
-      </div>
+  <div class="fp-exercise pageContainer">
+    <h3 class="title">{{$t('exercises')}}</h3>
+    <div class="bodyContainer">
+      <p class="introduction">{{$t('fpExerciseIntro')}}</p>
+      <h4>{{$t('generateEx')}}</h4>
+      <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0
+                :options="operationOptions"/>
       <div class="divMargin"/>
-      <div class="solutionInput">
-        <p>{{$t('exponentBits')}}</p>
-        <input id="propE" :class="backE" v-model="propE">
+      <button v-on:click="generateExercise">{{$t('generate')}}</button>
+      <div id="exerciseField" v-html="exerciseText"></div>
+      <h4>{{$t('ownSolution')}}</h4>
+      <label class="attention">{{$t('attRound')}}</label>
+      <div class="solutionArea">
+        <div class="solutionInput">
+          <p>{{$t('signBit')}}</p>
+          <input id="propVB" :class="backVB" v-model="propVB">
+        </div>
+        <div class="divMargin"/>
+        <div class="solutionInput">
+          <p>{{$t('exponentBits')}}</p>
+          <input id="propE" :class="backE" v-model="propE">
+        </div>
+        <div class="divMargin"/>
+        <div class="solutionInput">
+          <p>{{$t('fractionBits')}}</p>
+          <input id="propM" :class="backM" v-model="propM">
+        </div>
+        <div class="divMargin"/>
+        <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
       </div>
-      <div class="divMargin"/>
-      <div class="solutionInput">
-        <p>{{$t('fractionBits')}}</p>
-        <input id="propM" :class="backM" v-model="propM">
+      <h4>{{$t('correctSolution')}}</h4>
+      <div style="position: relative">
+        <div>
+          <label class="attention">{{$t('attSolve')}}</label>
+        </div>
+        <!-- <div class="pdfGen">
+          <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
+        </div> -->
       </div>
-      <div class="divMargin"/>
-      <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
-    </div>
-    <h4>{{$t('correctSolution')}}</h4>
-    <div style="position: relative">
-      <div>
-        <label class="attention">{{$t('attSolve')}}</label>
+      <div id="solution">
+        <Accordion :solutionDescription="solDescr">
+          <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
+            {{panel.text}}
+            <span v-if="index === solDescr.length - 1">{{solution}}</span>
+          </p>
+        </Accordion>
       </div>
-      <!-- <div class="pdfGen">
-        <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
-      </div> -->
-    </div>
-    <div id="solution">
-      <Accordion :solutionDescription="solDescr">
-        <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
-          {{panel.text}}
-          <span v-if="index === solDescr.length - 1">{{solution}}</span>
-        </p>
-      </Accordion>
     </div>
   </div>
 </template>
@@ -234,18 +238,6 @@ export default {
 
 <style scoped lang="scss">
 $arrow-size: 12px;
-
-#exerciseField {
-  width: calc(100% - 30px);
-  display: block;
-  margin: 15px auto;
-  text-align: justify;
-  background: $transparentWhite;
-  padding: 10px 15px;
-  border-radius: 10px;
-  white-space: pre-line;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-}
 
 .solutionInput {
   display: inline-block;

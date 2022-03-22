@@ -1,34 +1,36 @@
 <template>
-  <div class="fp-exercise bodyContainer">
-    <p class="introduction">{{$t('polyConvGenIntro')}}</p>
-    <h4>{{$t('generateEx')}}</h4>
-    <div class="divMargin"/>
-    <button v-on:click="generateExercise">{{$t('generate')}}</button>
-    <div id="exerciseField" v-html="exerciseText"></div>
-    <!-- <h4>{{$t('ownSolution')}}</h4>
-    <div class="solutionArea">
-      <div class="solutionInput">
-        <p>{{$t('signBit')}}</p>
-        <input id="prop" :class="back" v-model="prop">
-      </div>
-      <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
-    </div> -->
-    <h4>{{$t('correctSolution')}}</h4>
-    <div style="position: relative">
-      <div>
-        <label class="attention">{{$t('attSolve')}}</label>
-      </div>
-      <!-- <div class="pdfGen">
-        <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
+  <div class="fp-exercise pageContainer">
+    <div class="bodyContainer">
+      <p class="introduction">{{$t('polyConvGenIntro')}}</p>
+      <h4>{{$t('generateEx')}}</h4>
+      <div class="divMargin"/>
+      <button v-on:click="generateExercise">{{$t('generate')}}</button>
+      <div id="exerciseField" v-html="exerciseText"></div>
+      <!-- <h4>{{$t('ownSolution')}}</h4>
+      <div class="solutionArea">
+        <div class="solutionInput">
+          <p>{{$t('signBit')}}</p>
+          <input id="prop" :class="back" v-model="prop">
+        </div>
+        <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
       </div> -->
-    </div>
-    <div id="solution">
-      <Accordion :solutionDescription="solDescr">
-        <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
-          {{panel.text}}
-          <span v-if="index === solDescr.length - 1">{{solution}}</span>
-        </p>
-      </Accordion>
+      <h4>{{$t('correctSolution')}}</h4>
+      <div style="position: relative">
+        <div>
+          <label class="attention">{{$t('attSolve')}}</label>
+        </div>
+        <!-- <div class="pdfGen">
+          <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
+        </div> -->
+      </div>
+      <div id="solution">
+        <Accordion :solutionDescription="solDescr">
+          <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
+            {{panel.text}}
+            <span v-if="index === solDescr.length - 1">{{solution}}</span>
+          </p>
+        </Accordion>
+      </div>
     </div>
   </div>
 </template>
@@ -214,17 +216,6 @@ export default {
 
 <style scoped lang="scss">
 $arrow-size: 12px;
-
-#exerciseField {
-  width: calc(100% - 30px);
-  display: block;
-  margin: 15px auto;
-  text-align: justify;
-  background: $transparentWhite;
-  padding: 10px 15px;
-  border-radius: 10px;
-  white-space: pre-line;
-}
 
 .container {
   display: flex;

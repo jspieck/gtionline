@@ -4,7 +4,7 @@
     <input class="menu-btn" type="checkbox" id="menu-btn" />
     <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
     <ul class="menu">
-      <li v-for="submenu in menu" v-bind:key="submenu.id">
+      <li v-for="submenu in menu" v-bind:key="submenu.id" @click="selectedId = submenu.id" :class="selectedId == submenu.id ? 'selectedNav' : ''">
         <router-link :to="`${submenu.link}`">{{submenu.label}}</router-link>
         <ul class="navbar-dropdown" v-if="submenu.items !== undefined">
           <li v-for="item in submenu.items" v-bind:key="item.id">
@@ -28,40 +28,35 @@ export default {
     LSelect: LanguageSelect,
   },
   data() {
-    return {};
+    return {
+      selectedId: 0,
+    };
   },
   computed: {
     menu() {
       return [
         {
           id: 0,
-          label: this.$t('numeralSystem'),
+          label: this.$t('polyadic'),
           link: '/polyadic',
-          items: [
-            {
-              id: 0,
-              label: this.$t('polyadic'),
-              link: '/polyadic',
-            },
-            {
-              id: 1,
-              label: this.$t('floatingPoint'),
-              link: '/fparithmetic',
-            },
-          ],
         },
         {
           id: 1,
+          label: this.$t('floatingPoint'),
+          link: '/fparithmetic',
+        },
+        {
+          id: 2,
           label: this.$t('functionMin'),
           link: 'bfminimizer',
         },
         {
-          id: 2,
+          id: 3,
           label: 'CMOS',
           link: 'cmos',
         },
         {
-          id: 3,
+          id: 4,
           label: this.$t('impressum'),
           link: 'impressum',
         },
@@ -78,6 +73,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.selectedNav {
+  background: #0000004f;
+}
 #logo {
   height: 40px;
   width: 100px;

@@ -1,76 +1,81 @@
 <template>
-  <div class="fp-exercise bodyContainer">
-    <h4>{{$t('fpformat')}}</h4>
-    <div class="formatContainer" v-on:mousemove="sliderMouseMove">
-      <div class="sign">VB</div>
-      <div class="exponent" :style="{ width:
-        (60 + this.exponentBits * (this.containerWidth / (this.numBits - 1)))+ 'px' }">
-        <div v-on:click="expandFraction" class="expandExponent">
-          <div class="arrowLeft">
-            <div class='arrowMask'></div>
+  <div class="fp-exercise pageContainer">
+    <h3 class="title">{{$t('conversion')}}</h3>
+    <div class="bodyContainer">
+      <p class="introduction">{{$t('fpConvIntro')}}</p>
+      <h4>{{$t('fpformat')}}</h4>
+      <p class="introduction">{{$t('fpFormatSelectionSimple')}}</p>
+      <div class="formatContainer" v-on:mousemove="sliderMouseMove">
+        <div class="sign">VB</div>
+        <div class="exponent" :style="{ width:
+          (60 + this.exponentBits * (this.containerWidth / (this.numBits - 1)))+ 'px' }">
+          <div v-on:click="expandFraction" class="expandExponent">
+            <div class="arrowLeft">
+              <div class='arrowMask'></div>
+            </div>
           </div>
+          E({{exponentBits}})
+          <div v-on:mousedown="sliderMouseDown" class="slider"/>
         </div>
-        E({{exponentBits}})
-        <div v-on:mousedown="sliderMouseDown" class="slider"/>
-      </div>
-      <div class="fraction" :style="{ width: (60 + (this.numBits - this.exponentBits - 1) *
-        (this.containerWidth / (this.numBits - 1))) + 'px' }">
-        <div v-on:click="expandExponent" class="expandFraction">
-          <div class="arrowRight">
-            <div class="arrowMask"></div>
+        <div class="fraction" :style="{ width: (60 + (this.numBits - this.exponentBits - 1) *
+          (this.containerWidth / (this.numBits - 1))) + 'px' }">
+          <div v-on:click="expandExponent" class="expandFraction">
+            <div class="arrowRight">
+              <div class="arrowMask"></div>
+            </div>
           </div>
+          M({{(numBits - exponentBits - 1)}})
         </div>
-        M({{(numBits - exponentBits - 1)}})
+      </div>
+      <div class="mobile_formatContainer" v-on:mousemove="sliderMouseMove">
+        <div class="mobile_sign">Sign(1)</div>
+        <div v-on:click="expandExponent" class="mobile_exponent">
+          Exponent({{exponentBits}}) &uarr;
+        </div>
+        <div v-on:click="expandFraction" class="mobile_fraction">
+          Mantisse({{(numBits - exponentBits - 1)}}) &darr;
+        </div>
+      </div>
+      <h4>{{$t('generateEx')}}</h4>
+      <div class="divMargin"/>
+      <button v-on:click="generateExercise">{{$t('generate')}}</button>
+      <div id="exerciseField" v-html="exerciseText"></div>
+      <h4>{{$t('ownSolution')}}</h4>
+      <div class="solutionArea">
+        <div class="solutionInput">
+          <p>{{$t('signBit')}}</p>
+          <input id="propVB" :class="backVB" v-model="propVB">
+        </div>
+        <div class="divMargin"/>
+        <div class="solutionInput">
+          <p>{{$t('exponentBits')}}</p>
+          <input id="propE" :class="backE" v-model="propE">
+        </div>
+        <div class="divMargin"/>
+        <div class="solutionInput">
+          <p>{{$t('fractionBits')}}</p>
+          <input id="propM" :class="backM" v-model="propM">
+        </div>
+        <div class="divMargin"/>
+        <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
+      </div>
+      <h4>{{$t('correctSolution')}}</h4>
+      <div style="position: relative">
+        <div>
+          <label class="attention">{{$t('attSolve')}}</label>
+        </div>
+        <!-- <div class="pdfGen">
+          <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
+        </div> -->
+      </div><div id="solution">
+        <Accordion :solutionDescription="solDescr">
+          <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
+            {{panel.text}}
+            <span v-if="index === solDescr.length - 1">{{solution}}</span>
+          </p>
+        </Accordion>
       </div>
     </div>
-    <div class="mobile_formatContainer" v-on:mousemove="sliderMouseMove">
-      <div class="mobile_sign">Sign(1)</div>
-      <div v-on:click="expandExponent" class="mobile_exponent">
-        Exponent({{exponentBits}}) &uarr;
-      </div>
-      <div v-on:click="expandFraction" class="mobile_fraction">
-        Mantisse({{(numBits - exponentBits - 1)}}) &darr;
-      </div>
-    </div>
-    <h4>{{$t('generateEx')}}</h4>
-    <div class="divMargin"/>
-    <button v-on:click="generateExercise">{{$t('generate')}}</button>
-    <div id="exerciseField" v-html="exerciseText"></div>
-    <h4>{{$t('ownSolution')}}</h4>
-    <div class="solutionArea">
-      <div class="solutionInput">
-        <p>{{$t('signBit')}}</p>
-        <input id="propVB" :class="backVB" v-model="propVB">
-      </div>
-      <div class="divMargin"/>
-      <div class="solutionInput">
-        <p>{{$t('exponentBits')}}</p>
-        <input id="propE" :class="backE" v-model="propE">
-      </div>
-      <div class="divMargin"/>
-      <div class="solutionInput">
-        <p>{{$t('fractionBits')}}</p>
-        <input id="propM" :class="backM" v-model="propM">
-      </div>
-      <div class="divMargin"/>
-      <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
-    </div>
-    <h4>{{$t('correctSolution')}}</h4>
-    <div style="position: relative">
-      <div>
-        <label class="attention">{{$t('attSolve')}}</label>
-      </div>
-      <!-- <div class="pdfGen">
-        <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
-      </div> -->
-    </div><div id="solution">
-    <Accordion :solutionDescription="solDescr">
-      <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
-        {{panel.text}}
-        <span v-if="index === solDescr.length - 1">{{solution}}</span>
-      </p>
-    </Accordion>
-  </div>
   </div>
 </template>
 
@@ -256,17 +261,6 @@ export default {
 
 <style scoped lang="scss">
 $arrow-size: 12px;
-
-#exerciseField {
-  width: calc(100% - 30px);
-  display: block;
-  margin: 15px auto;
-  text-align: justify;
-  background: $transparentWhite;
-  padding: 10px 15px;
-  border-radius: 10px;
-  white-space: pre-line;
-}
 
 .container {
   display: flex;

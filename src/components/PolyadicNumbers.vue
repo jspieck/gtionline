@@ -11,7 +11,7 @@
   </tabs>
   <tab-panels
     v-model="selectedTab"
-    :animate="true"
+    :animate="false"
     :swipeable="false"
   >
     <tab-panel val="conversionExercise">

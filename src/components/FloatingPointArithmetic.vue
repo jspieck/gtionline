@@ -11,19 +11,16 @@
   </tabs>
   <tab-panels
     v-model="selectedTab"
-    :animate="true"
+    :animate="false"
     :swipeable="false"
   >
     <tab-panel val="conversion">
-      <h3 class="title">{{$t('conversion')}}</h3>
       <fpc/>
     </tab-panel>
     <tab-panel val="exercises">
-      <h3 class="title">{{$t('exercises')}}</h3>
       <fpe/>
     </tab-panel>
     <tab-panel val="freeCalculation">
-      <h3 class="title">{{$t('freeCalculation')}}</h3>
       <fpf/>
     </tab-panel>
   </tab-panels>

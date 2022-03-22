@@ -11,6 +11,24 @@ table {
   border-spacing: 10px 0px;
 }
 
+.bodyContainer {
+  background: #ffffff33;
+  padding: 15px;
+  border-top: 1px solid #c1c1c1;
+}
+
+#exerciseField {
+  width: calc(100% - 30px);
+  display: block;
+  margin: 15px auto;
+  text-align: justify;
+  background: $transparentWhite;
+  padding: 10px 15px;
+  border-radius: 10px;
+  white-space: pre-line;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
 button{
   height: 36px;
   padding: 0 10px;
@@ -51,7 +69,6 @@ input{
 
 h3 {
   font-size: 24px;
-  border-bottom: 1px solid #c1c1c1;
   font-weight: 600;
   color: #273849;
   padding-bottom: 0.7em;

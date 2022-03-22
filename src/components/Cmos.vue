@@ -1,13 +1,15 @@
 <template>
   <div class="cmosContainer">
-    <div class="bodyContainer">
+    <div class="pageContainer">
       <h3>CMOS<InfoBlob>
         <span v-html="$t('cmos_infoblob_description')"></span>
       </InfoBlob></h3>
-      <p>{{$t('enter_cmos')}}</p>
-      <p>{{$t('cmos_infoblob_input_description')}}</p>
-      <input id="cmosInput" v-model="cmosFormula"/>
-      <button @click="generateCmos()">{{$t('generate')}}</button>
+      <div class="bodyContainer">
+        <p>{{$t('enter_cmos')}}</p>
+        <p>{{$t('cmos_infoblob_input_description')}}</p>
+        <input id="cmosInput" v-model="cmosFormula"/>
+        <button @click="generateCmos()">{{$t('generate')}}</button>
+      </div>
     </div>
     <div id="cmosOutput" v-html="cmosOutput"></div>
   </div>
