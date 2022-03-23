@@ -3,9 +3,9 @@
     <!-- <h3>{{$t('kvDiagram')}}</h3> -->
     <div>
       <label>{{$t('numVarInput')}}:</label>
-      <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0
+      <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0 class="leftMargin10"
               :options="operationOptions"/>
-      <button @click="setNumVar()">{{$t('confirm')}}</button>
+      <button @click="setNumVar()" class="leftMargin10">{{$t('confirm')}}</button>
     </div>
 
     <div class="mtop">
@@ -320,9 +320,6 @@ export default {
 }
 .p-default {
   margin-right: 10px;
-}
-.selectBox {
-  margin: 0 10px;
 }
 .radioSvg {
   display: inline-block;

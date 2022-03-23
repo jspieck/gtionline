@@ -36,7 +36,6 @@
       </div>
     </div>
     <div class="solutionArea">
-      <div class="divMargin"/>
       <div class="solutionInput">
         <p>{{$t('ownSolution')}}</p>
         <input id="propSol" :class="backSol" v-model="propSol">
@@ -58,10 +57,24 @@
     </div>
     <div id="solution">
       <Accordion :solutionDescription="solDescr">
-        <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
-          {{panel.text}}
-          <span v-if="index === solDescr.length - 1">{{solution}}</span>
-        </p>
+        <AccordionItem v-for="panel in solDescr" v-bind:key="panel.name">
+          <template v-slot:accordion-item-title>
+            {{panel.name}}
+          </template>
+          <template v-slot:accordion-item-body>
+            <span v-html="panel.text"></span>
+            <Accordion v-if="panel.subpanels != null">
+              <AccordionItem v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name">
+                <template v-slot:accordion-item-title>
+                  {{subpanel.name}}
+                </template>
+                <template v-slot:accordion-item-body>
+                  <span v-html="subpanel.text"></span>
+                </template>
+              </AccordionItem>
+            </Accordion>
+          </template>
+        </AccordionItem>
       </Accordion>
     </div>
     <div id="jaxHelper"></div>
@@ -71,7 +84,8 @@
 <script>
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
 import FormatSelect from './FormatSelect.vue';
-import SolutionAccordion from './SolutionAccordion.vue';
+import Accordion from './EmbeddedAccordion.vue';
+import AccordionItem from './EmbeddedAccordionItem.vue';
 import * as description from '../scripts/DescriptionPolyadicSolution';
 import * as pdf from '../scripts/generatePdfPolyadicConversion';
 import * as solution from '../scripts/polyadicSolution';
@@ -81,7 +95,8 @@ export default {
   name: 'PolyadicConversionFree',
   components: {
     FSelect: FormatSelect,
-    Accordion: SolutionAccordion,
+    Accordion,
+    AccordionItem,
   },
   data() {
     const useCookies = false;
@@ -142,16 +157,16 @@ export default {
     },
     formatOptions() {
       return {
-        decimal: `${this.$t('decimal')} (Basis 10)`,
-        binary: `${this.$t('binary')} (Basis 2)`,
-        ternary: `${this.$t('ternary')} (Basis 3)`,
-        quaternary: `${this.$t('quaternary')} (Basis 4)`,
-        quinary: `${this.$t('quinary')} (Basis 5)`,
-        senary: `${this.$t('senary')} (Basis 6)`,
-        septenary: `${this.$t('septenary')} (Basis 7)`,
-        octal: `${this.$t('octal')} (Basis 8)`,
-        novenary: `${this.$t('novenary')} (Basis 9)`,
-        hex: `${this.$t('hexadecimal')} (Basis 10)`,
+        decimal: `${this.$t('decimal')} (${this.$t('basis')} 10)`,
+        binary: `${this.$t('binary')} (${this.$t('basis')} 2)`,
+        ternary: `${this.$t('ternary')} (${this.$t('basis')} 3)`,
+        quaternary: `${this.$t('quaternary')} (${this.$t('basis')} 4)`,
+        quinary: `${this.$t('quinary')} (${this.$t('basis')} 5)`,
+        senary: `${this.$t('senary')} (${this.$t('basis')} 6)`,
+        septenary: `${this.$t('septenary')} (${this.$t('basis')} 7)`,
+        octal: `${this.$t('octal')} (${this.$t('basis')} 8)`,
+        novenary: `${this.$t('novenary')} (${this.$t('basis')} 9)`,
+        hex: `${this.$t('hexadecimal')} (${this.$t('basis')} 16)`,
       };
     },
   },
@@ -375,14 +390,6 @@ $arrow-size: 12px;
   flex-grow: 1;
 }
 
-.fpOperationTable{
-  margin: auto;
-  margin-top: 20px;
-  display: inline-flex;
-  flex-flow: row wrap;
-  align-items: stretch;
-}
-
 .divMargin{
   display: inline-block;
   width: 10px;
@@ -444,28 +451,6 @@ $arrow-size: 12px;
   display: inline-flex;
   flex-direction: column;
   font-size: 14px;
-}
-
-.bits {
-  position: relative;
-  margin: 10px;
-  font-size: 14px;
-  color: white;
-  width: 80px;
-  height: 40px;
-  line-height: 40px;
-  background: $freshBlue;
-  break-after: auto;
-}
-.bits :deep(select) {
-  color: white;
-  background: #0d336f;
-}
-
-.bits selectBox {
-  width: 80% !important;
-  border: none;
-  background-color: transparent;
 }
 
 .mobile_bits {

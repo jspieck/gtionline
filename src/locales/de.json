@@ -98,8 +98,8 @@
   "addExponents": "Die Exponenten beider Zahlen müssen addiert werden.",
   "subtExponents": "Die Exponenten beider Zahlen müssen subtrahiert werden.",
   "diffExponent": "Differenz Exponent",
-  "smallerExponent": "Es wird immer der kleinere vom größeren Exponenten subtrahiert",
-  "resDiffExponent": "daher ergibt sich eine Differenz von",
+  "smallerExponent": "Es wird immer der kleinere vom größeren Exponenten subtrahiert.",
+  "resDiffExponent": "Daher ergibt sich eine Differenz von",
   "newExponentDivision": "Der neue Exponent ergibt sich als \\( E_{'{neu}'} = E_1 - E_2 + BIAS = %{E1} - %{E2} + %{Bias} = %{Result} \\)",
   "newExponentMultiplication": "Der neue Exponent ergibt sich als \\( E_{'{neu}'} = E_1 + E_2 - BIAS = %{E1} + %{E2} - %{Bias} = %{Result}\\, (%{ExpBits})\\)",
   "considerExponent": "Exponent beachten",
@@ -231,5 +231,9 @@
   "cmos_infoblob_input_description": "Hinweis: Für ODER-Gatter kann '+' genutzt werden, für UND-Gatter '*' und für die Negation '~'. Variablen können beliebige Namen haben (Achtung: 'ab' wird als eine Variable betrachtet, nicht als Verundung von 'a' und 'b').",
   "enter_cmos": "Bitte geben Sie ihren CMOS-Eintrag ein.",
   "polyadicExercise2": "vom initialen Format:",
-  "newExponent": "Neuer Exponent"
+  "newExponent": "Neuer Exponent",
+  "systemInBase": "System zur Basis",
+  "basis": "Basis",
+  "minterms": "Minterme",
+  "maxterms": "Maxterme"
 }

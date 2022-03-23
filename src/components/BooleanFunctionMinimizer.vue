@@ -24,13 +24,13 @@
               </span>
             </div>
             <div class="exercise-selection-container-subsection">
-              {{$t('goal')}}:
-              <FSelect :options="randomExercisesGoalsTitles" :sel="0"
+              <span>{{$t('goal')}}:</span>
+              <FSelect :options="randomExercisesGoalsTitles" class="leftMargin10" :sel="0"
                 @input="selectRandomExerciseGoal"/>
             </div>
             <div>
-              {{$t('difficultyUC')}}:
-              <FSelect :options="randomExercisesDifficulties" :sel="0"
+              <span>{{$t('difficultyUC')}}:</span>
+              <FSelect :options="randomExercisesDifficulties" :sel="0" class="leftMargin10"
                 @input="selectRandomExerciseDifficulty"/>
               <button @click="generateRandomExercise">{{$t('load')}}</button>
             </div>
@@ -58,37 +58,30 @@
       </span>
 
       <div v-else class="bf-main-accordion-container">
-        <span style="padding-top:3px">
-          Minterme
+        <span style="padding-top:3px; padding-right:10px;">
+          {{$t('minterms')}}
         </span>
         <ToggleSwitch v-on:toggle="toggleMinMaxTerms" checkedDefault=false />
-        <span style="padding-top:3px">
-          Maxterme
+        <span style="padding-top:3px; padding-left:10px;">
+          {{$t('maxterms')}}
         </span>
 
         <Accordion>
-          <!-- <AccordionItem>
-            <template v-slot:accordion-item-title>
-              Normalformen
-            </template>
-            <template v-slot:accordion-item-body>
-              <div> DNF: <span class="svg-text" v-html="toSvg(dnf)"></span> </div>
-              <div> KNF: <span class="svg-text" v-html="toSvg(knf)"></span> </div>
-            </template>
-          </AccordionItem> -->
           <AccordionItem>
             <template v-slot:accordion-item-title>
               {{$t('bf_normal_forms')}}
             </template>
             <template v-slot:accordion-item-body>
-              <Accordion>
+              <Accordion class="emptyAccordionParentBody">
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
                     {{$t('bf_disjunctiveNormalForm')}} (DNF)
                   </template>
                   <template v-slot:accordion-item-body>
-                    {{$t('bf_disjunctiveNormalForm_explanation')}}<br>
-                    <span class="svg-text" v-html="toSvg(dnf)"></span>
+                    <span>{{$t('bf_disjunctiveNormalForm_explanation')}}</span>
+                    <div class="overflowXContainer">
+                      <span class="svg-text" v-html="toSvg(dnf)"></span>
+                    </div>
                   </template>
                 </AccordionItem>
                 <AccordionItem>
@@ -96,8 +89,10 @@
                     {{$t('bf_conjunctiveNormalForm')}} (KNF)
                   </template>
                   <template v-slot:accordion-item-body>
-                    {{$t('bf_conjunctiveNormalForm_explanation')}}<br>
-                    <span class="svg-text" v-html="toSvg(knf)"></span>
+                    <span>{{$t('bf_conjunctiveNormalForm_explanation')}}</span>
+                    <div class="overflowXContainer">
+                      <span class="svg-text" v-html="toSvg(knf)"/>
+                    </div>
                   </template>
                 </AccordionItem>
               </Accordion>
@@ -109,12 +104,11 @@
               {{$t('bf_quineMCCluskeyClasses')}}
             </template>
             <template v-slot:accordion-item-body>
-                {{$t('bf_quineMCCluskeyClasses_explanation')}}
+              <span style="text-align: left">{{$t('bf_quineMCCluskeyClasses_explanation')}}</span>
               <div class="quine-classes-toggle-switch-container">
                 <div>
                   <ToggleSwitch v-on:toggle="changeQuineClassesDisplayStyle" checkedDefault=true />
-                  <span>
-                    {{$t('colorCoding')}}
+                  <span>{{$t('colorCoding')}}
                     <InfoBlob>
                         <span v-html="$t('bf_infoblob_quineMCCluskeyClasses_colorCoding')"></span>
                     </InfoBlob>
@@ -123,15 +117,14 @@
 
                 <div>
                   <ToggleSwitch v-on:toggle="changeQuineClassesBinaryDisplayStyle" checkedDefault=false />
-                  <span>
-                    01-0
+                  <span>01-0
                     <InfoBlob>
                         <span v-html="$t('bf_infoblob_quineMCCluskeyClasses_01')"></span>
                     </InfoBlob>
                   </span>
                 </div>
               </div>
-              <div class="small-info-text">{{$t('bf_infotest_click_on_hidden_areas_to_make_visible')}}</div>
+              <div class="smallTopBottomMargin">{{$t('bf_infotest_click_on_hidden_areas_to_make_visible')}}:</div>
               <!-- Quine Cluskey classes have been reversed in script section for easy access here -->
               <!-- loop through Q_X -->
               <div v-for="(qlayer, qi) in quineClassesCurrent" :key="`quineClassLayerMin_${qi}`">
@@ -165,7 +158,7 @@
                     <span class="svg-text" v-html="toSvg('\\}')"></span>
                   </div>
                 </div>
-                <div class="horizontalbar" v-if="qi < quineClassesCurrent.length - 2"></div>
+                <div class="horizontalbarfull" v-if="qi < quineClassesCurrent.length - 2"></div>
               </div>
 
             </template>
@@ -201,11 +194,13 @@
                     {{$t('bf_primeImplicants')}}
                   </template>
                   <template v-slot:accordion-item-body>
-                      {{$t('bf_bf_primeImplicants_explanation')}} <br>
-                    <span v-for="i in primeTermsMin.length" :key="`primeTermMinID_${i}`">
-                      <!-- Term + potential comma -->
-                      <span class="svg-text term" v-html="toSvg(primeTermsMin[i-1] + `${i-1 < primeTermsMin.length - 1 ? ',' : ''}`)"/>
-                    </span>
+                    {{$t('bf_bf_primeImplicants_explanation')}} <br>
+                    <div class="overflowXContainer">
+                      <span v-for="i in primeTermsMin.length" :key="`primeTermMinID_${i}`">
+                        <!-- Term + potential comma -->
+                        <span class="svg-text term" v-html="toSvg(primeTermsMin[i-1] + `${i-1 < primeTermsMin.length - 1 ? ',' : ''}`)"/>
+                      </span>
+                    </div>
                   </template>
                 </AccordionItem>
                 <AccordionItem>
@@ -214,10 +209,12 @@
                   </template>
                   <template v-slot:accordion-item-body>
                       {{$t('bf_primeImplicates_explanation')}} <br>
-                    <span v-for="i in primeTermsMax.length" :key="`primeTermMaxID_${i}`">
-                      <!-- Term + potential comma -->
-                      <span class="svg-text term" v-html="toSvg(primeTermsMax[i-1] + `${i-1 < primeTermsMax.length - 1 ? ',' : ''}`)"/>
-                    </span>
+                      <div class="overflowXContainer">
+                        <span v-for="i in primeTermsMax.length" :key="`primeTermMaxID_${i}`">
+                          <!-- Term + potential comma -->
+                          <span class="svg-text term" v-html="toSvg(primeTermsMax[i-1] + `${i-1 < primeTermsMax.length - 1 ? ',' : ''}`)"/>
+                        </span>
+                      </div>
                   </template>
                 </AccordionItem>
               </Accordion>
@@ -235,21 +232,13 @@
                   <!-- Empty cells in top left -->
                   <td></td>
                   <td :class="primeTableColorMatrixObj.matrix[0][0]"> PI </td>
-
-                  <!-- Base terms -->
-                  <!-- <th v-for="(bt, col) in primeTableCurrent.baseTerms" :key="`primeTableCurrentTR_${col}`"
-                     class="svg-text" v-html="toSvg(bt.toLatex(literalNames))"
-                      :class="[
-                        primeTableColorMatrixObj.matrix[col+1][0],
-                        (primeTableColorMatrixObj.highlightedCellRow === 0 && primeTableColorMatrixObj.highlightedCellColumn === col+1) ? 'primetable-highlighted-cell' : ''
-                      ]"
-                  /> -->
-
                   <!-- Base terms -->
                   <th v-for="(bt, col) in primeTableCurrent.baseTerms" :key="`primeTableCurrentTR_${col}`"
                       :class="[
                         primeTableColorMatrixObj.matrix[col+1][0],
-                        (primeTableColorMatrixObj.highlightedCellRow === 0 && primeTableColorMatrixObj.highlightedCellColumn === col+1) ? 'primetable-highlighted-cell' : ''
+                        (primeTableColorMatrixObj.highlightedCellRow === 0
+                        && primeTableColorMatrixObj.highlightedCellColumn === col+1)
+                        ? 'primetable-highlighted-cell' : ''
                       ]"
                   >
                   {{primeTableBaseTermIndices[col]}}
@@ -289,13 +278,22 @@
                 <button @click='primetableStepBackward' :disabled="primetableCurrentStepIndex === 0">
                   &larr;
                 </button>
-                {{$t('step')}}
-                <span>{{primetableCurrentStepIndex}} / {{primetableStepsAmount}}</span>
+                <span class="control-text">{{$t('step')}}
+                  <span>{{primetableCurrentStepIndex}} / {{primetableStepsAmount}}</span>
+                </span>
                 <button @click='primetableStepForward' :disabled="primetableCurrentStepIndex === primetableStepsAmount">
                   &rarr;
                 </button>
               </div>
-              <div class="bf-primetable-step-explanation" v-html="primeTableCurrentExplanation"></div>
+              <div class="explanation-text">
+                <div class="hiddenLongText" v-html="this.$t('bf_covertable_step_description_initial', {
+                   ifMinTermsEinstelleElseNullstelle: this.$t('bf_einstelle'),
+                    ifMinTermsEinstellenElseNullstellen: this.$t('bf_einstelle'),
+                    ifMinTermsNullstelleElseEinstelle: this.$t('bf_einstelle'),
+                    ifMinTermsNullstellenElseEinstellen: this.$t('bf_einstelle'),
+                })"></div>
+                <div class="bf-primetable-step-explanation" v-html="primeTableCurrentExplanation"></div>
+              </div>
             </template>
           </AccordionItem>
 
@@ -333,14 +331,16 @@
               {{$t('bf_minimalForms')}}
             </template>
             <template v-slot:accordion-item-body>
-              <Accordion>
+              <Accordion class="emptyAccordionParentBody">
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
                     {{$t('bf_disjunctiveMinimalForm')}} (DMF)
                   </template>
                   <template v-slot:accordion-item-body>
                     {{$t('bf_disjunctiveMinimalForm_explanation')}} <br>
-                    <span class="svg-text" v-html="toSvg(dmf)"></span>
+                    <div class="overflowXContainer">
+                      <span class="svg-text" v-html="toSvg(dmf)"></span>
+                    </div>
                   </template>
                 </AccordionItem>
                 <AccordionItem>
@@ -349,7 +349,9 @@
                   </template>
                   <template v-slot:accordion-item-body>
                     {{$t('bf_conjunctiveMinimalForm_explanation')}} <br>
-                    <span class="svg-text" v-html="toSvg(kmf)"></span>
+                    <div class="overflowXContainer">
+                      <span class="svg-text" v-html="toSvg(kmf)"></span>
+                    </div>
                   </template>
                 </AccordionItem>
               </Accordion>
@@ -1172,29 +1174,37 @@ export default {
   }
   .quine-classes-toggle-switch-container {
     text-align: left;
-    font-size: 0.8em;
+    /* font-size: 0.8em; */
 
     div {
       padding-top: 3px;
+    }
+    span {
+      margin-left: 10px;
     }
   }
   .quine-classes-reduced-term-colored {
     color: rgba(gray, .8);
   }
   .bf-primetable {
-    margin-left: auto;
-    margin-right: auto;
-    border-style: solid;
-    border-width: 2px;
+    margin-bottom: 1em;
+    margin-left: 0;
+    text-align: center;
+    border-spacing: 0;
+    border-left: none;
     border-collapse: collapse;
-    border-color: black;
+    background: #ffffffd4;
+    border-radius: 10px;
+
+    tr:first-child {
+      border-bottom: 1px solid black;
+    }
 
     th, td {
-      border-style: solid;
-      border-width: 1px;
       // padding: 2px 3px 2px 3px;
       width: 1.1em;
-      font-size: 1.2em
+      font-size: 1.2em;
+      padding: 10px;
     }
 
     .primetable-cell-core {
@@ -1207,7 +1217,7 @@ export default {
       background-color: red;
     }
     .primetable-cell-default {
-      background-color: white;
+      background-color: transparent;
     }
 
     .primetable-highlighted-cell {
@@ -1217,15 +1227,29 @@ export default {
   }
   .bf-primetable-controls {
     margin-top: 4px;
-    button {
-      margin: 0 4px 0 4px;
-    }
     button:disabled {
       background-color: $lightBlue;
     }
+    .control-text {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
   }
+
+  .explanation-text {
+    position: relative;
+  }
+
+  .hiddenLongText {
+    visibility: hidden;
+    padding-top: 1.33em;
+  }
+
   .bf-primetable-step-explanation {
+    position: absolute;
     text-align: justify;
+    top: 0;
+    left: 0;
   }
 
   .bf-petrick-statement-container {
@@ -1239,9 +1263,7 @@ export default {
 
       .petrick-statement-infoblob-ol {
         text-align: left;
-        margin-block-start: .5em;
         margin-block-end: 0;
-        padding-inline-start: 20px;
         li {
             margin-bottom: .5em;
         }
@@ -1250,7 +1272,7 @@ export default {
   }
 
   .selectBox {
-    margin: 0 10px;
+    margin-right: 10px;
   }
 
   .bf-petrick-statement-subcontainer {
@@ -1270,6 +1292,12 @@ export default {
 
   .horizontalbar {
     width: 1000px;
+    margin: 1.5em auto 1.5em auto;
+    height: 1px;
+    background-color: rgba($lightBlue, 0.5);
+  }
+
+  .horizontalbarfull {
     margin: 1.5em auto 1.5em auto;
     height: 1px;
     background-color: rgba($lightBlue, 0.5);

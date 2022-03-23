@@ -7,85 +7,89 @@
       <p class="introduction">{{$t('fpArithIntro')}}</p>
       <h4>{{$t('fpformat')}}</h4>
       <p class="introduction">{{$t('fpFormatSelection')}}</p>
-      <FSelect class="bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
-        :options="bitrangeOptions">
-      </FSelect>
-      <FSelect class="mobile_bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
-        :options="bitrangeOptions">
-      </FSelect>
-      <div class="formatContainer" v-on:mousemove="sliderMouseMove">
-        <div class="sign">VB</div>
-        <div class="exponent" :style="{ width:
-          (60 + this.exponentBits * (this.containerWidth / (this.numBits - 1)))+ 'px' }">
-          <div v-on:click="expandFraction" class="expandExponent">
-            <div class="arrowLeft">
-              <div class='arrowMask'></div>
+      <div class="floatingPointFormatSelection">
+        <FSelect class="bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
+          :options="bitrangeOptions">
+        </FSelect>
+        <FSelect class="mobile_bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
+          :options="bitrangeOptions">
+        </FSelect>
+        <div class="formatContainer" v-on:mousemove="sliderMouseMove">
+          <div class="sign">VB</div>
+          <div class="exponent" :style="{ width:
+            (60 + this.exponentBits * (this.containerWidth / (this.numBits - 1)))+ 'px' }">
+            <div v-on:click="expandFraction" class="expandExponent">
+              <div class="arrowLeft">
+                <div class='arrowMask'></div>
+              </div>
             </div>
+            E({{exponentBits}})
+            <div v-on:mousedown="sliderMouseDown" class="slider"/>
           </div>
-          E({{exponentBits}})
-          <div v-on:mousedown="sliderMouseDown" class="slider"/>
-        </div>
-        <div class="fraction" :style="{ width: (60 + (this.numBits - this.exponentBits - 1) *
-          (this.containerWidth / (this.numBits - 1))) + 'px' }">
-          <div v-on:click="expandExponent" class="expandFraction">
-            <div class="arrowRight">
-              <div class="arrowMask"></div>
+          <div class="fraction" :style="{ width: (60 + (this.numBits - this.exponentBits - 1) *
+            (this.containerWidth / (this.numBits - 1))) + 'px' }">
+            <div v-on:click="expandExponent" class="expandFraction">
+              <div class="arrowRight">
+                <div class="arrowMask"></div>
+              </div>
             </div>
+            M({{(numBits - exponentBits - 1)}})
           </div>
-          M({{(numBits - exponentBits - 1)}})
         </div>
-      </div>
-      <div class="mobile_formatContainer" v-on:mousemove="sliderMouseMove">
-        <div class="mobile_sign">Sign(1)</div>
-        <div v-on:click="expandExponent" class="mobile_exponent">
-          Exponent({{exponentBits}}) &uarr;
-        </div>
-        <div v-on:click="expandFraction" class="mobile_fraction">
-          Mantisse({{(numBits - exponentBits - 1)}}) &darr;
+        <div class="mobile_formatContainer" v-on:mousemove="sliderMouseMove">
+          <div class="mobile_sign">Sign(1)</div>
+          <div v-on:click="expandExponent" class="mobile_exponent">
+            Exponent({{exponentBits}}) &uarr;
+          </div>
+          <div v-on:click="expandFraction" class="mobile_fraction">
+            Mantisse({{(numBits - exponentBits - 1)}}) &darr;
+          </div>
         </div>
       </div>
       <h4>{{$t('operationSelect')}}</h4>
-      <div id="fpOperationTable" class="fpOperationTable">
-        <div class="container">
-          <div>{{$t('firstFloatingPoint')}}</div>
-          <table id="fpfTable1" class="floatingPointInput">
-            <tr>
-              <td>
-                <input id="fpfInput0" v-model="inputNums[0]" :placeholder="this.$t('inputNumber') "
-                  @input="checkAndConvertFormat(0)"/>
-              </td>
-              <td><FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
-                :options="formatOptions"/></td>
-            </tr>
-            <tr>
-              <td><input id="fpfInput1" v-model="nums[0]" disabled></td>
-              <td><FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal" :isDisabled="true"
-                :options="formatOptions"/></td>
-            </tr>
-          </table>
-        </div>
-        <div class="container">
-          <div>{{$t('operand')}}</div>
-          <div class="operand">
-            <FSelect :num="2" :sel="selectedFormat[2]" @input="selectOp"
-              :options="operationOptions"/>
+      <div class="fpOperationContainer">
+        <div id="fpOperationTable" class="fpOperationTable">
+          <div class="container">
+            <div>{{$t('firstFloatingPoint')}}</div>
+            <table id="fpfTable1" class="floatingPointInput">
+              <tr>
+                <td>
+                  <input id="fpfInput0" v-model="inputNums[0]" :placeholder="this.$t('inputNumber') "
+                    @input="checkAndConvertFormat(0)"/>
+                </td>
+                <td><FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
+                  :options="formatOptions"/></td>
+              </tr>
+              <tr>
+                <td><input id="fpfInput1" v-model="nums[0]" disabled></td>
+                <td><FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal" :isDisabled="true"
+                  :options="formatOptions"/></td>
+              </tr>
+            </table>
           </div>
-        </div>
-        <div class="container">
-          <div>{{$t('secondFloatingPoint')}}</div>
-          <table id="fpfTable2" class="floatingPointInput">
-            <tr>
-              <td><input id="fpfInput2" v-model="inputNums[1]" :placeholder="this.$t('inputNumber')"
-                @input="checkAndConvertFormat(1)"></td>
-              <td><FSelect :num="3" :sel="selectedFormat[3]" @input="selectVal"
-                :options="formatOptions"/></td>
-            </tr>
-            <tr>
-              <td><input id="fpfInput3" v-model="nums[1]" disabled></td>
-              <td><FSelect :num="4" :sel="selectedFormat[4]" @input="selectVal" :isDisabled="true"
-                :options="formatOptions"/></td>
-            </tr>
-          </table>
+          <div class="container">
+            <div>{{$t('operand')}}</div>
+            <div class="operand">
+              <FSelect :num="2" :sel="selectedFormat[2]" @input="selectOp"
+                :options="operationOptions"/>
+            </div>
+          </div>
+          <div class="container">
+            <div>{{$t('secondFloatingPoint')}}</div>
+            <table id="fpfTable2" class="floatingPointInput">
+              <tr>
+                <td><input id="fpfInput2" v-model="inputNums[1]" :placeholder="this.$t('inputNumber')"
+                  @input="checkAndConvertFormat(1)"></td>
+                <td><FSelect :num="3" :sel="selectedFormat[3]" @input="selectVal"
+                  :options="formatOptions"/></td>
+              </tr>
+              <tr>
+                <td><input id="fpfInput3" v-model="nums[1]" disabled></td>
+                <td><FSelect :num="4" :sel="selectedFormat[4]" @input="selectVal" :isDisabled="true"
+                  :options="formatOptions"/></td>
+              </tr>
+            </table>
+          </div>
         </div>
       </div>
       <div class="solutionArea">
@@ -142,11 +146,31 @@
         </div> -->
       </div>
       <div id="solution">
-        <Accordion :solutionDescription="solDescr">
+        <!-- <Accordion :solutionDescription="solDescr">
           <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
             {{panel.text}}
             <span v-if="index === solDescr.length - 1">{{solution}}</span>
           </p>
+        </Accordion> -->
+        <Accordion :solutionDescription="solDescr">
+          <AccordionItem v-for="panel in solDescr" v-bind:key="panel.name">
+            <template v-slot:accordion-item-title>
+              {{panel.name}}
+            </template>
+            <template v-slot:accordion-item-body>
+              <span v-html="panel.text"></span>
+              <Accordion v-if="panel.subpanels != null">
+                <AccordionItem v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name">
+                  <template v-slot:accordion-item-title>
+                    {{subpanel.name}}
+                  </template>
+                  <template v-slot:accordion-item-body>
+                    <span v-html="subpanel.text"></span>
+                  </template>
+                </AccordionItem>
+              </Accordion>
+            </template>
+          </AccordionItem>
         </Accordion>
       </div>
       <div id="jaxHelper"></div>
@@ -157,7 +181,8 @@
 <script>
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
 import FormatSelect from './FormatSelect.vue';
-import SolutionAccordion from './SolutionAccordion.vue';
+import Accordion from './EmbeddedAccordion.vue';
+import AccordionItem from './EmbeddedAccordionItem.vue';
 import * as description from '../scripts/DescriptionSolution';
 import * as checker from '../scripts/checkSolution';
 import * as pdf from '../scripts/generatePdf';
@@ -168,7 +193,8 @@ export default {
   name: 'FloatingPointArithmetic',
   components: {
     FSelect: FormatSelect,
-    Accordion: SolutionAccordion,
+    Accordion,
+    AccordionItem,
   },
   data() {
     const useCookies = false;
@@ -567,14 +593,6 @@ $arrow-size: 12px;
   flex-grow: 1;
 }
 
-.fpOperationTable{
-  margin: auto;
-  margin-top: 20px;
-  display: inline-flex;
-  flex-flow: row wrap;
-  align-items: stretch;
-}
-
 .divMargin{
   display: inline-block;
   width: 10px;
@@ -589,16 +607,7 @@ $arrow-size: 12px;
   flex-direction: column;
   -ms-flex-positive: 1;
   flex-grow: 1;
-}
-
-.floatingPointInput{
-  margin: 10px;
-  display: inline-block;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  background: $transparentWhite;
-  position: relative;
+  margin: 0 20px;
 }
 
 .formatContainer {
@@ -628,28 +637,6 @@ $arrow-size: 12px;
   z-index: 1;
   background: none;
   cursor: ew-resize;
-}
-
-.bits {
-  position: relative;
-  margin: 10px;
-  font-size: 14px;
-  color: white;
-  width: 80px;
-  height: 40px;
-  line-height: 40px;
-  background: $freshBlue;
-  break-after: auto;
-}
-.bits :deep(select) {
-  color: white;
-  background: #0d336f;
-}
-
-.bits selectBox {
-  width: 80% !important;
-  border: none;
-  background-color: transparent;
 }
 
 .mobile_bits {

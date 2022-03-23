@@ -39,11 +39,31 @@
         </div> -->
       </div>
       <div id="solution">
-        <Accordion :solutionDescription="solDescr">
+        <!-- <Accordion :solutionDescription="solDescr">
           <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
             {{panel.text}}
             <span v-if="index === solDescr.length - 1">{{solution}}</span>
           </p>
+        </Accordion> -->
+        <Accordion :solutionDescription="solDescr">
+          <AccordionItem v-for="panel in solDescr" v-bind:key="panel.name">
+            <template v-slot:accordion-item-title>
+              {{panel.name}}
+            </template>
+            <template v-slot:accordion-item-body>
+              <span v-html="panel.text"></span>
+              <Accordion v-if="panel.subpanels != null">
+                <AccordionItem v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name">
+                  <template v-slot:accordion-item-title>
+                    {{subpanel.name}}
+                  </template>
+                  <template v-slot:accordion-item-body>
+                    <span v-html="subpanel.text"></span>
+                  </template>
+                </AccordionItem>
+              </Accordion>
+            </template>
+          </AccordionItem>
         </Accordion>
       </div>
     </div>
@@ -53,7 +73,9 @@
 <script>
 import * as randomIEEE from '../scripts/randomIEEE';
 import FormatSelect from './FormatSelect.vue';
-import SolutionAccordion from './SolutionAccordion.vue';
+// import SolutionAccordion from './SolutionAccordion.vue';
+import Accordion from './EmbeddedAccordion.vue';
+import AccordionItem from './EmbeddedAccordionItem.vue';
 import * as solution from '../scripts/ieeeSolution';
 import * as checker from '../scripts/checkSolution';
 import * as description from '../scripts/DescriptionSolution';
@@ -63,7 +85,9 @@ export default {
   name: 'FloatingPointArithmetic',
   components: {
     FSelect: FormatSelect,
-    Accordion: SolutionAccordion,
+    // Accordion: SolutionAccordion,
+    Accordion,
+    AccordionItem,
   },
   data() {
     const useCookies = false;
@@ -134,6 +158,13 @@ export default {
       if (this.default) {
         this.drawExercise();
         this.computeSolution();
+      }
+    });
+  },
+  updated() {
+    this.$nextTick(() => {
+      if (window.MathJax) {
+        window.MathJax.typeset();
       }
     });
   },

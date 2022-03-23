@@ -7,7 +7,7 @@
       </div>
       <div class="linkHome">
         <router-link
-          to="/fparithmetic"
+          to="/polyadic"
           custom
           v-slot="{ href, navigate, isActive, isExactActive }"
         >
@@ -37,7 +37,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   #content .home {
     padding: 0;
     margin-top: -64px;
@@ -72,7 +72,7 @@ export default {
   .home {
     display: flex;
     flex-direction: row;
-    background: #0d336f;
+    background: $freshBlue;
   }
 
   .imageContainer {

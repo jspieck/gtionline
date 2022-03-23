@@ -3,7 +3,6 @@
     <div class="bodyContainer">
       <p class="introduction">{{$t('polyConvGenIntro')}}</p>
       <h4>{{$t('generateEx')}}</h4>
-      <div class="divMargin"/>
       <button v-on:click="generateExercise">{{$t('generate')}}</button>
       <div id="exerciseField" v-html="exerciseText"></div>
       <!-- <h4>{{$t('ownSolution')}}</h4>
@@ -25,10 +24,24 @@
       </div>
       <div id="solution">
         <Accordion :solutionDescription="solDescr">
-          <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
-            {{panel.text}}
-            <span v-if="index === solDescr.length - 1">{{solution}}</span>
-          </p>
+          <AccordionItem v-for="panel in solDescr" v-bind:key="panel.name">
+            <template v-slot:accordion-item-title>
+              {{panel.name}}
+            </template>
+            <template v-slot:accordion-item-body>
+              <span v-html="panel.text"></span>
+              <Accordion v-if="panel.subpanels != null">
+                <AccordionItem v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name">
+                  <template v-slot:accordion-item-title>
+                    {{subpanel.name}}
+                  </template>
+                  <template v-slot:accordion-item-body>
+                    <span v-html="subpanel.text"></span>
+                  </template>
+                </AccordionItem>
+              </Accordion>
+            </template>
+          </AccordionItem>
         </Accordion>
       </div>
     </div>
@@ -37,7 +50,8 @@
 
 <script>
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
-import SolutionAccordion from './SolutionAccordion.vue';
+import Accordion from './EmbeddedAccordion.vue';
+import AccordionItem from './EmbeddedAccordionItem.vue';
 import * as solution from '../scripts/polyadicSolution';
 import * as description from '../scripts/DescriptionPolyadicConversion';
 import * as pdf from '../scripts/generatePdfPolyadicConversion';
@@ -46,7 +60,8 @@ import { formatToPower } from '../scripts/polyadicUtil';
 export default {
   name: 'PolyadicConversionExercise',
   components: {
-    Accordion: SolutionAccordion,
+    Accordion,
+    AccordionItem,
   },
   data() {
     return {
@@ -73,16 +88,16 @@ export default {
     },
     formatOptions() {
       return {
-        decimal: `${this.$t('decimal')} (System zur Basis 10)`,
-        binary: `${this.$t('binary')} (System zur Basis 2)`,
-        ternary: `${this.$t('ternary')} (System zur Basis 3)`,
-        quaternary: `${this.$t('quaternary')} (System zur Basis 4)`,
-        quinary: `${this.$t('quinary')} (System zur Basis 5)`,
-        senary: `${this.$t('senary')} (System zur Basis 6)`,
-        septenary: `${this.$t('septenary')} (System zur Basis 7)`,
-        octal: `${this.$t('octal')} (System zur Basis 8)`,
-        novenary: `${this.$t('novenary')} (System zur Basis 9)`,
-        hex: `${this.$t('hexadecimal')} (System zur Basis 16)`,
+        decimal: `${this.$t('decimal')} (${this.$t('systemInBase')}  10)`,
+        binary: `${this.$t('binary')} (${this.$t('systemInBase')} 2)`,
+        ternary: `${this.$t('ternary')} (${this.$t('systemInBase')} 3)`,
+        quaternary: `${this.$t('quaternary')} (${this.$t('systemInBase')} 4)`,
+        quinary: `${this.$t('quinary')} (${this.$t('systemInBase')} 5)`,
+        senary: `${this.$t('senary')} (${this.$t('systemInBase')} 6)`,
+        septenary: `${this.$t('septenary')} (${this.$t('systemInBase')} 7)`,
+        octal: `${this.$t('octal')} (${this.$t('systemInBase')} 8)`,
+        novenary: `${this.$t('novenary')} (${this.$t('systemInBase')} 9)`,
+        hex: `${this.$t('hexadecimal')} (${this.$t('systemInBase')} 16)`,
       };
     },
   },
@@ -224,14 +239,6 @@ $arrow-size: 12px;
   flex-grow: 1;
 }
 
-.fpOperationTable{
-  margin: auto;
-  margin-top: 20px;
-  display: inline-flex;
-  flex-flow: row wrap;
-  align-items: stretch;
-}
-
 .divMargin{
   display: inline-block;
   width: 10px;
@@ -246,16 +253,6 @@ $arrow-size: 12px;
   flex-direction: column;
   -ms-flex-positive: 1;
   flex-grow: 1;
-}
-
-.floatingPointInput{
-  margin: 10px;
-  display: inline-block;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  background: $transparentWhite;
-  position: relative;
 }
 
 .formatContainer {
@@ -285,28 +282,6 @@ $arrow-size: 12px;
   z-index: 1;
   background: none;
   cursor: ew-resize;
-}
-
-.bits {
-  position: relative;
-  margin: 10px;
-  font-size: 14px;
-  color: white;
-  width: 80px;
-  height: 40px;
-  line-height: 40px;
-  background: $freshBlue;
-  break-after: auto;
-}
-.bits :deep(select) {
-  color: white;
-  background: #0d336f;
-}
-
-.bits selectBox {
-  width: 80% !important;
-  border: none;
-  background-color: transparent;
 }
 
 .mobile_bits {

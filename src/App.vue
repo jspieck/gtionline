@@ -26,10 +26,12 @@ html {
 }
 body {
   height: 100%;
+  line-height: 25px;
 }
 .bodyContainer {
   width: 1000px;
   margin: auto;
+  text-align: left;
 }
 @media screen and (max-width: 1000px) {
   .bodyContainer {
@@ -68,9 +70,9 @@ body {
   background: #ffffff2b;
 }
 
-h4{
+h4 {
   font-size: 18px;
-  margin-top: 40px;
+  /* margin-top: 40px; */
 }
 
 #content {

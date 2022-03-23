@@ -5,35 +5,37 @@
       <p class="introduction">{{$t('fpConvIntro')}}</p>
       <h4>{{$t('fpformat')}}</h4>
       <p class="introduction">{{$t('fpFormatSelectionSimple')}}</p>
-      <div class="formatContainer" v-on:mousemove="sliderMouseMove">
-        <div class="sign">VB</div>
-        <div class="exponent" :style="{ width:
-          (60 + this.exponentBits * (this.containerWidth / (this.numBits - 1)))+ 'px' }">
-          <div v-on:click="expandFraction" class="expandExponent">
-            <div class="arrowLeft">
-              <div class='arrowMask'></div>
+      <div class="floatingPointFormatSelection">
+        <div class="formatContainer" v-on:mousemove="sliderMouseMove">
+          <div class="sign">VB</div>
+          <div class="exponent" :style="{ width:
+            (60 + this.exponentBits * (this.containerWidth / (this.numBits - 1)))+ 'px' }">
+            <div v-on:click="expandFraction" class="expandExponent">
+              <div class="arrowLeft">
+                <div class='arrowMask'></div>
+              </div>
             </div>
+            E({{exponentBits}})
+            <div v-on:mousedown="sliderMouseDown" class="slider"/>
           </div>
-          E({{exponentBits}})
-          <div v-on:mousedown="sliderMouseDown" class="slider"/>
-        </div>
-        <div class="fraction" :style="{ width: (60 + (this.numBits - this.exponentBits - 1) *
-          (this.containerWidth / (this.numBits - 1))) + 'px' }">
-          <div v-on:click="expandExponent" class="expandFraction">
-            <div class="arrowRight">
-              <div class="arrowMask"></div>
+          <div class="fraction" :style="{ width: (60 + (this.numBits - this.exponentBits - 1) *
+            (this.containerWidth / (this.numBits - 1))) + 'px' }">
+            <div v-on:click="expandExponent" class="expandFraction">
+              <div class="arrowRight">
+                <div class="arrowMask"></div>
+              </div>
             </div>
+            M({{(numBits - exponentBits - 1)}})
           </div>
-          M({{(numBits - exponentBits - 1)}})
         </div>
-      </div>
-      <div class="mobile_formatContainer" v-on:mousemove="sliderMouseMove">
-        <div class="mobile_sign">Sign(1)</div>
-        <div v-on:click="expandExponent" class="mobile_exponent">
-          Exponent({{exponentBits}}) &uarr;
-        </div>
-        <div v-on:click="expandFraction" class="mobile_fraction">
-          Mantisse({{(numBits - exponentBits - 1)}}) &darr;
+        <div class="mobile_formatContainer" v-on:mousemove="sliderMouseMove">
+          <div class="mobile_sign">Sign(1)</div>
+          <div v-on:click="expandExponent" class="mobile_exponent">
+            Exponent({{exponentBits}}) &uarr;
+          </div>
+          <div v-on:click="expandFraction" class="mobile_fraction">
+            Mantisse({{(numBits - exponentBits - 1)}}) &darr;
+          </div>
         </div>
       </div>
       <h4>{{$t('generateEx')}}</h4>
@@ -69,10 +71,24 @@
         </div> -->
       </div><div id="solution">
         <Accordion :solutionDescription="solDescr">
-          <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
-            {{panel.text}}
-            <span v-if="index === solDescr.length - 1">{{solution}}</span>
-          </p>
+          <AccordionItem v-for="panel in solDescr" v-bind:key="panel.name">
+            <template v-slot:accordion-item-title>
+              {{panel.name}}
+            </template>
+            <template v-slot:accordion-item-body>
+              <span v-html="panel.text"></span>
+              <Accordion v-if="panel.subpanels != null">
+                <AccordionItem v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name">
+                  <template v-slot:accordion-item-title>
+                    {{subpanel.name}}
+                  </template>
+                  <template v-slot:accordion-item-body>
+                    <span v-html="subpanel.text"></span>
+                  </template>
+                </AccordionItem>
+              </Accordion>
+            </template>
+          </AccordionItem>
         </Accordion>
       </div>
     </div>
@@ -85,12 +101,14 @@ import { getIEEEFromString } from '@/scripts/gti-tools';
 import * as checker from '../scripts/checkSolution';
 import * as convertFormat from '../scripts/formatConversions';
 import * as description from '../scripts/DescriptionSolution';
-import SolutionAccordion from './SolutionAccordion.vue';
+import Accordion from './EmbeddedAccordion.vue';
+import AccordionItem from './EmbeddedAccordionItem.vue';
 
 export default {
   name: 'FloatingPointConversion',
   components: {
-    Accordion: SolutionAccordion,
+    Accordion,
+    AccordionItem,
   },
   data() {
     const useCookies = false;
@@ -269,14 +287,6 @@ $arrow-size: 12px;
   flex-grow: 1;
 }
 
-.fpOperationTable{
-  margin: auto;
-  margin-top: 20px;
-  display: inline-flex;
-  flex-flow: row wrap;
-  align-items: stretch;
-}
-
 .divMargin{
   display: inline-block;
   width: 10px;
@@ -291,16 +301,6 @@ $arrow-size: 12px;
   flex-direction: column;
   -ms-flex-positive: 1;
   flex-grow: 1;
-}
-
-.floatingPointInput{
-  margin: 10px;
-  display: inline-block;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  background: $transparentWhite;
-  position: relative;
 }
 
 .formatContainer {
@@ -330,28 +330,6 @@ $arrow-size: 12px;
   z-index: 1;
   background: none;
   cursor: ew-resize;
-}
-
-.bits {
-  position: relative;
-  margin: 10px;
-  font-size: 14px;
-  color: white;
-  width: 80px;
-  height: 40px;
-  line-height: 40px;
-  background: $freshBlue;
-  break-after: auto;
-}
-.bits :deep(select) {
-  color: white;
-  background: #0d336f;
-}
-
-.bits selectBox {
-  width: 80% !important;
-  border: none;
-  background-color: transparent;
 }
 
 .mobile_bits {

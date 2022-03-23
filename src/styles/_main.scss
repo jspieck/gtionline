@@ -9,12 +9,106 @@ body {
 
 table {
   border-spacing: 10px 0px;
+  margin-left: -10px;
 }
 
 .bodyContainer {
   background: #ffffff33;
   padding: 15px;
   border-top: 1px solid #c1c1c1;
+}
+
+.leftMargin10 {
+  margin-left: 10px;
+}
+
+.smallTopBottomMargin {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.emptyAccordionParentBody {
+  margin-top: 0;
+}
+
+.overflowXContainer {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+
+.bits {
+  position: relative;
+  margin: 10px;
+  margin-left: 0;
+  font-size: 14px;
+  color: white;
+  width: 80px;
+  height: 40px;
+  line-height: 40px;
+  background: $freshBlue;
+  break-after: auto;
+}
+
+.bits :deep(select) {
+  color: white;
+  background: $freshBlue;
+}
+
+.floatingPointInput{
+  margin: 10px 0;
+  display: inline-block;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: $transparentWhite;
+  position: relative;
+}
+
+ /* .fpOperationContainer {
+  text-align: center; 
+} */
+
+.fpOperationTable{
+  margin: auto;
+  display: inline-flex;
+  flex-flow: row wrap;
+  align-items: stretch;
+  text-align: center;
+}
+
+.floatingPointFormatSelection {
+  text-align: center;
+}
+
+.bits selectBox {
+  width: 80% !important;
+  border: none;
+  background-color: transparent;
+}
+
+.mobile_bits {
+  height: 40px;
+  line-height: 40px;
+  color: white;
+  background: $freshBlue;
+  border-right: 1px solid white;
+}
+
+.mobile_bits :deep(select) {
+  color: white;
+  background: #0d336f;
+}
+
+.mobile_bits selectBox {
+  width: 60% !important;
+  border: none;
+  background-color: transparent;
+  color: white !important;
+}
+
+ul {
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 #exerciseField {

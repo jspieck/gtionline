@@ -4,8 +4,8 @@
     <input class="menu-btn" type="checkbox" id="menu-btn" />
     <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
     <ul class="menu">
-      <li v-for="submenu in menu" v-bind:key="submenu.id" @click="selectedId = submenu.id" :class="selectedId == submenu.id ? 'selectedNav' : ''">
-        <router-link :to="`${submenu.link}`">{{submenu.label}}</router-link>
+      <li v-for="submenu in menu" v-bind:key="submenu.id">
+        <router-link active-class="selectedNav" :to="`${submenu.link}`">{{submenu.label}}</router-link>
         <ul class="navbar-dropdown" v-if="submenu.items !== undefined">
           <li v-for="item in submenu.items" v-bind:key="item.id">
             <router-link :to="`${item.link}`">{{item.label}}</router-link>
@@ -29,7 +29,6 @@ export default {
   },
   data() {
     return {
-      selectedId: 0,
     };
   },
   computed: {
@@ -74,7 +73,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .selectedNav {
-  background: #0000004f;
+  background: $fresherBlue;
 }
 #logo {
   height: 40px;

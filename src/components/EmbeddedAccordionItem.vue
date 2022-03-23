@@ -32,11 +32,21 @@ export default {
       if (e.target.classList.contains('accordion-item-header')) {
         e.target.classList.toggle('active');
       }
+      this.$nextTick(() => {
+        if (window.MathJax) {
+          window.MathJax.typeset();
+        }
+      });
       e.preventDefault();
     },
     toggleExpandSideways(e) {
       this.expandedSideways = !this.expandedSideways;
       console.log('target: ', e.target);
+      this.$nextTick(() => {
+        if (window.MathJax) {
+          window.MathJax.typeset();
+        }
+      });
 
       if (e.target.classList.contains('accordion-item-expand-sideways-toggle')) {
         // e.target.classList.toggle('active');
@@ -53,19 +63,20 @@ export default {
 <style scoped lang="scss">
 
   .accordion-item-header {
-    background-color: $brightBlue;
+    background-color: $freshBlue;
 
     text-align: left;
-    padding: .5em;
-    padding-left: 1em;
+    padding: 12px;
+    padding-left: 1.5em;
     color: white;
-
-    border-style: solid;
-    border-width: 1px;
-    border-color: black;
-    border-top-style: none;
-
+    border-bottom: 1px solid #3a4ba4;
     cursor: pointer;
+
+    &:hover {
+      background-color: $fresherBlue;
+      position: relative;
+      z-index: 5;
+    }
   }
 
   .accordion-item-header:after {
@@ -84,17 +95,13 @@ export default {
   }
 
   .accordion-item-body {
-    background-color: white;
-    margin-left: .5em;
-    margin-right: .1em;
-
-    border-style: solid;
-    border-width: 1px;
     border-top-style: none;
     border-bottom-style: none;
-    // border-bottom-left-radius: .3em;
-
     padding: 1em;
+    overflow-x: auto;
+    background: #ffffff5e;
+    text-align: left;
+    padding: 1.5em;
 
     overflow-x: auto;
 
@@ -104,7 +111,7 @@ export default {
       font-size: 1.4em;
 
       padding-top: .08em;
-      background-color: $brightBlue;
+      background-color: $freshBlue;
     }
     .accordion-item-expand-sideways-toggle:hover {
       background-color: transparent;
@@ -142,11 +149,11 @@ export default {
 
   }
 
-  .accordion-item:first-child {
+  /* .accordion-item:first-child {
     .accordion-item-header {
       border-top-style: solid;
     }
-  }
+  } */
   .accordion-item:last-child {
     .accordion-item-body {
       border-bottom-style: solid;

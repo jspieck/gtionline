@@ -63,7 +63,7 @@ $infoblob-border-radius: 5px;
 .infoblob-text-container {
     // visibility: hidden;
     display: none;
-    z-index: 1;
+    z-index: 100;
     position: absolute;
     background-color: white;
     color: black;
