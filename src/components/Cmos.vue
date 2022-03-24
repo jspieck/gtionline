@@ -12,12 +12,13 @@
       </div>
     </div>
     <div id="cmosOutput" v-html="cmosOutput"></div>
+    <pre><code class="tex2jax_ignore">{{latex}}</code></pre>
   </div>
 </template>
 
 <script>
 import {
-  CMOSBuilder, parseBooleanFunction, SVGGenerator, CMOSVisualBuilder, toLaTeX,
+  CMOSBuilder, parseBooleanFunction, SVGGenerator, CMOSVisualBuilder, toLaTeX, LatexGenerator,
 } from '@/scripts/gti-tools';
 import InfoBlob from './InfoBlob.vue';
 
@@ -28,6 +29,7 @@ export default {
   },
   data() {
     return {
+      latex: '',
       cmosFormula: '',
       cmosOutput: '',
     };
@@ -60,7 +62,10 @@ export default {
       const visBuilder = new CMOSVisualBuilder();
       const cmosVisual = visBuilder.buildHull(cmos, { channelWidth: 0.4 });
       const codeGenerator = new SVGGenerator();
+      const latexGenerator = new LatexGenerator();
       const scale = 100;
+      window.MathJax.options.ignoreHtmlClass = 'tex2jax_ignore';
+      this.latex = latexGenerator.buildLatex(cmosVisual, toLaTeX);
       this.cmosOutput = this.toMathJax(codeGenerator.buildSVG(cmosVisual, toLaTeX, scale));
       this.cmosOutput = this.cmosOutput.replaceAll('text', 'foreignobject');
       this.cmosOutput = this.cmosOutput.replaceAll('<foreignobject', '<foreignobject width=400 height=80 transform="translate(-25, -25)"');

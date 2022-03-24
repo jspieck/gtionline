@@ -250,9 +250,11 @@ export default {
     },
     selectOp(num, val) {
       this.selectedFormat[num] = val;
+      this.computeSolution();
     },
     computeSolution() {
       const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
+      console.log(this.selectedFormat[0]);
       ieeeSolution.computeSolution(this.fp1, this.fp2, this.selectedFormat[0]);
       const watcher = ieeeSolution.watcher;
       this.watcher = watcher;

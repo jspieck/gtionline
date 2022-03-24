@@ -190,8 +190,6 @@ export default {
       converter.decToBin(this.fp1.toString());
       converter.binToIEEE(converter.result);
       this.solutionObject = getIEEEFromString(this.exponentBits, converter.result);
-    },
-    drawExercise() {
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();
@@ -209,7 +207,6 @@ export default {
       this.fp1 = number;
       this.generated = true;
       this.recalculate();
-      this.drawExercise();
       this.saveVals();
     },
     checkSolution() {
@@ -251,12 +248,14 @@ export default {
           this.xCoord += blockSize;
           if (this.exponentBits + 1 < this.numBits - 1) {
             this.exponentBits += 1;
+            this.recalculate();
           }
         }
         if (this.xCoord - e.pageX > blockSize) {
           this.xCoord -= blockSize;
           if (this.exponentBits > 2) {
             this.exponentBits -= 1;
+            this.recalculate();
           }
         }
       }
@@ -265,7 +264,6 @@ export default {
       this.exponentBits = Math.max(this.exponentBits - 1, 2);
       if (this.generated) {
         this.recalculate();
-        this.drawExercise();
         this.saveVals();
       }
     },
@@ -273,7 +271,6 @@ export default {
       this.exponentBits = Math.min(this.exponentBits + 1, this.numBits - 2);
       if (this.generated) {
         this.recalculate();
-        this.drawExercise();
         this.saveVals();
       }
     },
