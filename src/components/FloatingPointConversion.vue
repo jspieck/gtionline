@@ -140,7 +140,6 @@ export default {
       numBits: length,
       falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
-      exerciseText: '',
       watcher: '',
       propVB: '',
       backVB: '',
@@ -155,6 +154,12 @@ export default {
   computed: {
     solDescr() {
       return this.solutionSteps;
+    },
+    exerciseText() {
+      if (this.fp1 === '') {
+        return '';
+      }
+      return `${this.$t('conversionExercise1')} \\( fp= \\text{${this.fp1}} \\) ${this.$t('conversionExercise2')} ${this.exponentBits}`;
     },
   },
   mounted() {
@@ -187,7 +192,6 @@ export default {
       this.solutionObject = getIEEEFromString(this.exponentBits, converter.result);
     },
     drawExercise() {
-      this.exerciseText = `${this.$t('conversionExercise1')} \\( fp= \\text{${this.fp1}} \\) ${this.$t('conversionExercise2')} ${this.exponentBits}`;
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();

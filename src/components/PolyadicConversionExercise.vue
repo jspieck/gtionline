@@ -74,7 +74,6 @@ export default {
       solutionSteps: [],
       falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
-      exerciseText: '',
       watcher: '',
       prop: '',
       back: '',
@@ -99,6 +98,12 @@ export default {
         novenary: `${this.$t('novenary')} (${this.$t('systemInBase')} 9)`,
         hex: `${this.$t('hexadecimal')} (${this.$t('systemInBase')} 16)`,
       };
+    },
+    exerciseText() {
+      if (this.inputNum === '') {
+        return '';
+      }
+      return `${this.$t('polyadicExercise1')} ${this.formatOptions[this.selectedFormat[0]]} ${this.inputNum} ${this.$t('polyadicExercise3')} ${this.formatOptions[this.selectedFormat[1]]}.`;
     },
   },
   mounted() {
@@ -126,7 +131,6 @@ export default {
       });
     },
     drawExercise() {
-      this.exerciseText = `${this.$t('polyadicExercise1')} ${this.formatOptions[this.selectedFormat[0]]} ${this.inputNum} ${this.$t('polyadicExercise3')} ${this.formatOptions[this.selectedFormat[1]]}.`;
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();

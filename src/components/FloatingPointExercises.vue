@@ -123,7 +123,6 @@ export default {
       mouseDown: false,
       exponentBits: expBits,
       numBits: length,
-      exerciseText: '',
       propVB: '',
       backVB: '',
       propE: '',
@@ -151,6 +150,24 @@ export default {
     },
     solDescr() {
       return this.solutionSteps;
+    },
+    exerciseText() {
+      if (this.fp1 === '') {
+        return '';
+      }
+      const operation = this.selectedFormat[0];
+      const opNames = {
+        add: [this.$t('addition'), '+'],
+        mul: [this.$t('multiplication'), '\\cdot'],
+        sub: [this.$t('subtraction'), '-'],
+        div: [this.$t('division'), '/'],
+      };
+      // `Es seien die Gleitkommazahlen \\( fp_1 \\) und \\( fp_2 \\) im 16 Bit Gleitkommaformat gegeben. Berechnen Sie die ${opNames[operation][0]} \\( fp_1 ${opNames[operation][1]} fp_2 \\) ohne die Binärdarstellung zu verlassen und geben Sie diese wieder als Gleitkommazahl an:
+      const introText = this.$t('fpExerciseText', { op1: opNames[operation][0], op2: opNames[operation][1] });
+      return `${introText} 
+
+          \\( fp_1 = \\text{${this.fp1}} \\)\n
+          \\( fp_2 = \\text{${this.fp2}} \\)`;
     },
   },
   mounted() {
@@ -205,19 +222,6 @@ export default {
       this.backM = checkSolution.backM;
     },
     drawExercise() {
-      const operation = this.selectedFormat[0];
-      const opNames = {
-        add: [this.$t('addition'), '+'],
-        mul: [this.$t('multiplication'), '\\cdot'],
-        sub: [this.$t('subtraction'), '-'],
-        div: [this.$t('division'), '/'],
-      };
-      // `Es seien die Gleitkommazahlen \\( fp_1 \\) und \\( fp_2 \\) im 16 Bit Gleitkommaformat gegeben. Berechnen Sie die ${opNames[operation][0]} \\( fp_1 ${opNames[operation][1]} fp_2 \\) ohne die Binärdarstellung zu verlassen und geben Sie diese wieder als Gleitkommazahl an:
-      const introText = this.$t('fpExerciseText', { op1: opNames[operation][0], op2: opNames[operation][1] });
-      this.exerciseText = `${introText} 
-
-          \\( fp_1 = \\text{${this.fp1}} \\)\n
-          \\( fp_2 = \\text{${this.fp2}} \\)`;
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();
