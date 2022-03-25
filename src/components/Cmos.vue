@@ -12,7 +12,7 @@
       </div>
     </div>
     <div id="cmosOutput" v-html="cmosOutput"></div>
-    <pre><code class="tex2jax_ignore">{{latex}}</code></pre>
+    <highlightjs lang="tex" :code="latex"/>
   </div>
 </template>
 

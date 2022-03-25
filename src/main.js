@@ -7,6 +7,9 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faEnvelope, faUserFriends, faRoad, faUniversity, faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons';
+import hljs from 'highlight.js/lib/core';
+import latex from 'highlight.js/lib/languages/latex';
+import hljsVuePlugin from '@highlightjs/vue-plugin';
 // import VueHtmlToPaper from 'vue-html-to-paper';
 import App from './App.vue';
 import routes from './router';
@@ -22,6 +25,8 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
+
+hljs.registerLanguage('tex', latex);
 
 // router, i18n, render: h => h(App),
 const app = createApp(App);
@@ -43,5 +48,6 @@ app.use(options);
 app.use(PrettyCheckbox);
 app.use(i18n);
 app.use(Tabs);
+app.use(hljsVuePlugin);
 
 app.mount('#app');
