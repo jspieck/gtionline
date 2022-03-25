@@ -15,9 +15,7 @@
       </div> -->
       <h4>{{$t('correctSolution')}}</h4>
       <div style="position: relative">
-        <div>
-          <label class="attention">{{$t('attSolve')}}</label>
-        </div>
+        <AttentionBanner :text="$t('attSolve')"/>
         <!-- <div class="pdfGen">
           <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
         </div> -->
@@ -50,6 +48,7 @@
 
 <script>
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
+import AttentionBanner from './AttentionBanner.vue';
 import Accordion from './EmbeddedAccordion.vue';
 import AccordionItem from './EmbeddedAccordionItem.vue';
 import * as solution from '../scripts/polyadicSolution';
@@ -62,6 +61,7 @@ export default {
   components: {
     Accordion,
     AccordionItem,
+    AttentionBanner,
   },
   data() {
     return {

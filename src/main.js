@@ -5,7 +5,7 @@ import Tabs from 'vue3-tabs';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
-  faEnvelope, faUserFriends, faRoad, faUniversity, faInfoCircle,
+  faEnvelope, faUserFriends, faRoad, faUniversity, faInfoCircle, faAngleDown,
 } from '@fortawesome/free-solid-svg-icons';
 import hljs from 'highlight.js/lib/core';
 import latex from 'highlight.js/lib/languages/latex';
@@ -20,6 +20,7 @@ library.add(faUserFriends);
 library.add(faRoad);
 library.add(faUniversity);
 library.add(faInfoCircle);
+library.add(faAngleDown);
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),

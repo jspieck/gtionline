@@ -20,6 +20,7 @@
     "core-js": "^3.6.5",
     "fontkit": "^1.8.1",
     "highlight.js": "^11.5.0",
+    "mathjax": "^3.2.0",
     "pdfjs-dist": "^2.7.570",
     "pretty-checkbox-vue": "^1.1.9",
     "vue": "^3.2.26",

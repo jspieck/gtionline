@@ -63,9 +63,7 @@
       </div>
       <h4>{{$t('correctSolution')}}</h4>
       <div style="position: relative">
-        <div>
-          <label class="attention">{{$t('attSolve')}}</label>
-        </div>
+        <AttentionBanner :text="$t('attSolve')"/>
         <!-- <div class="pdfGen">
           <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
         </div> -->
@@ -98,6 +96,7 @@
 <script>
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
 import { getIEEEFromString } from '@/scripts/gti-tools';
+import AttentionBanner from './AttentionBanner.vue';
 import * as checker from '../scripts/checkSolution';
 import * as convertFormat from '../scripts/formatConversions';
 import * as description from '../scripts/DescriptionSolution';
@@ -109,6 +108,7 @@ export default {
   components: {
     Accordion,
     AccordionItem,
+    AttentionBanner,
   },
   data() {
     const useCookies = false;

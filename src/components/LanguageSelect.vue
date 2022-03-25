@@ -3,6 +3,7 @@
     <div class="selected" :class="{open: open}" @click="open = !open">
       <img class="langImg" :src="selected.img"/>
       {{ selected.nameLong }}
+      <font-awesome-icon class="angleDown" icon="angle-down"/>
     </div>
     <div class="items" :class="{selectHide: !open}">
       <div class="item" v-for="lang of languages" :key="lang.name"
@@ -104,19 +105,28 @@ export default {
   padding-left: 8px;
   cursor: pointer;
   user-select: none;
-  padding-right: 25px;
+  padding-right: 30px;
   vertical-align: middle;
 
   &.open {
     border-radius: 6px 6px 0px 0px;
   }
 
-  &:after {
+  /* &:after {
     content: "\f3d0";
     font-family: IonIcons;
     font-size: 1.2em;
     position:absolute;
     right: 10px;
+    transition: .3s all;
+    transform: rotate(0deg);
+    pointer-events: none;
+  } */
+  .angleDown {
+    font-size: 1.5em;
+    position:absolute;
+    right: 10px;
+    top: 9px;
     transition: .3s all;
     transform: rotate(0deg);
     pointer-events: none;

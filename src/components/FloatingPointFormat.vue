@@ -128,15 +128,13 @@
       <h4>{{$t('correctSolution')}}</h4>
       <div style="position: relative">
         <div>
-          <label class="attention" v-if="denominatorZero === false">{{$t('attSolve')}}</label>
-          <label class="attention" v-if="negativeSummand">{{$t('negativeSummand')}}</label>
-          <label class="attention" v-if="negativeSubtrahend">{{$t('negativeSubtrahend')}}</label>
-          <label class="attention" v-if="denominatorZero">{{$t('zeroDivision')}}</label>
+          <AttentionBanner v-if="denominatorZero === false" :text="$t('attSolve')"/>
+          <AttentionBanner v-if="negativeSummand" :text="$t('negativeSummand')"/>
+          <AttentionBanner v-if="negativeSubtrahend" :text="$t('negativeSubtrahend')"/>
+          <AttentionBanner v-if="denominatorZero" :text="$t('zeroDivision')"/>
         </div>
         <div>
-          <label class="attention" v-if="negativeMinuendSubtrahend">
-            {{$t('negativeMinuendSubtrahend')}}
-          </label>
+          <AttentionBanner v-if="negativeMinuendSubtrahend" :text="$t('negativeMinuendSubtrahend')"/>
         </div>
         <!-- <div class="pdfGen">
           <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
@@ -180,6 +178,7 @@
 
 <script>
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
+import AttentionBanner from './AttentionBanner.vue';
 import FormatSelect from './FormatSelect.vue';
 import Accordion from './EmbeddedAccordion.vue';
 import AccordionItem from './EmbeddedAccordionItem.vue';
@@ -195,6 +194,7 @@ export default {
     FSelect: FormatSelect,
     Accordion,
     AccordionItem,
+    AttentionBanner,
   },
   data() {
     const useCookies = false;

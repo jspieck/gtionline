@@ -10,7 +10,7 @@
       <button v-on:click="generateExercise">{{$t('generate')}}</button>
       <div id="exerciseField" v-html="exerciseText"></div>
       <h4>{{$t('ownSolution')}}</h4>
-      <label class="attention">{{$t('attRound')}}</label>
+      <AttentionBanner :text="$t('attRound')"/>
       <div class="solutionArea">
         <div class="solutionInput">
           <p>{{$t('signBit')}}</p>
@@ -31,9 +31,7 @@
       </div>
       <h4>{{$t('correctSolution')}}</h4>
       <div style="position: relative">
-        <div>
-          <label class="attention">{{$t('attSolve')}}</label>
-        </div>
+        <AttentionBanner :text="$t('attSolve')"/>
         <!-- <div class="pdfGen">
           <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
         </div> -->
@@ -71,6 +69,7 @@
 </template>
 
 <script>
+import AttentionBanner from './AttentionBanner.vue';
 import * as randomIEEE from '../scripts/randomIEEE';
 import FormatSelect from './FormatSelect.vue';
 // import SolutionAccordion from './SolutionAccordion.vue';
@@ -88,6 +87,7 @@ export default {
     // Accordion: SolutionAccordion,
     Accordion,
     AccordionItem,
+    AttentionBanner,
   },
   data() {
     const useCookies = false;

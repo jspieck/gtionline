@@ -4,6 +4,7 @@
       @input="event => { $emit('input', num, event.target.value) }">
       <option v-for="(name, option) in options" :value="option" :key="option">{{name}}</option>
     </select>
+    <font-awesome-icon class="angleDown" icon="angle-down"/>
   </div>
 </template>
 
@@ -59,9 +60,18 @@ select{
   border: none;
   display: inline-block;
 
-  &:after {
+  /* &:after {
     content: "\f3d0";
     font-family: IonIcons;
+    font-size: 1.2em;
+    position:absolute;
+    right: 10px;
+    top: 7px;
+    transition: .3s all;
+    transform: rotate(0deg);
+    pointer-events: none;
+  } */
+  .angleDown {
     font-size: 1.2em;
     position:absolute;
     right: 10px;
@@ -73,5 +83,10 @@ select{
   &[disabled=disabled]:after{
     content: "";
   }
+}
+
+.bits .angleDown {
+  font-size: 1.5em;
+  top: 10px;
 }
 </style>

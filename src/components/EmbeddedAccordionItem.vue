@@ -3,6 +3,7 @@
     <!-- Item title -->
     <div class="accordion-item-header" @click="doclick">
       <slot name="accordion-item-title"></slot>
+      <font-awesome-icon class="angleDown" icon="angle-down"/>
     </div>
     <!-- Item body -->
     <div class="accordion-item-body" v-if="this.expanded === true" ref="accordion_item_body">
@@ -79,18 +80,15 @@ export default {
     }
   }
 
-  .accordion-item-header:after {
-    content: "\f3d0";
-    font-family: IonIcons;
-    font-size: 1.2em;
+  .angleDown {
+    font-size: 1.5em;
     float: right;
     position: relative;
-    top: -2px;
     transition: .3s all;
     transform: rotate(0deg);
   }
 
-  .accordion-item-header.active:after {
+  .accordion-item-header.active .angleDown {
     transform: rotate(-180deg);
   }
 
