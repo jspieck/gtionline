@@ -12,7 +12,10 @@
       </div>
     </div>
     <div id="cmosOutput" v-html="cmosOutput"></div>
-    <highlightjs lang="tex" :code="latex"/>
+    <h3>Tikz Code</h3>
+    <div class="codeContainer">
+      <highlightjs lang="tex" :code="latex"/>
+    </div>
   </div>
 </template>
 
@@ -65,7 +68,7 @@ export default {
       const latexGenerator = new LatexGenerator();
       const scale = 100;
       window.MathJax.options.ignoreHtmlClass = 'tex2jax_ignore';
-      this.latex = latexGenerator.buildLatex(cmosVisual, toLaTeX);
+      this.latex = latexGenerator.buildLatex(cmosVisual, toLaTeX).trim();
       this.cmosOutput = this.toMathJax(codeGenerator.buildSVG(cmosVisual, toLaTeX, scale));
       this.cmosOutput = this.cmosOutput.replaceAll('text', 'foreignobject');
       this.cmosOutput = this.cmosOutput.replaceAll('<foreignobject', '<foreignobject width=400 height=80 transform="translate(-25, -25)"');
@@ -80,16 +83,49 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
   foreignObject {
     text-align: left;
   }
+
   .cmosContainer {
     width: 100% !important;
     box-sizing: border-box;
   }
+
   #cmosOutput {
     width: 100%;
     overflow-x: auto;
   }
+
+  .codeContainer {
+    background: #fafafa;
+    font-size: 20px;
+    text-align: left;
+    padding: 15px;
+    width: 1000px;
+    margin: auto;
+    line-height: 30px;
+    border-left: 3px solid $freshBlue;
+  }
+
+  pre {
+    margin: 0;
+    counter-reset: line;
+  }
+
+  /* pre span {
+    display: block;
+    counter-increment: line;
+  }
+
+  pre span:before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    border-right: 1px solid #ddd;
+    padding: 0 .5em;
+    margin-right: .5em;
+    color: #888
+  } */
 </style>
