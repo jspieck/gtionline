@@ -23,6 +23,10 @@ library.add(faInfoCircle);
 library.add(faAngleDown);
 
 const router = createRouter({
+  mode: 'history',
+  base: process.env.NODE_ENV === 'production'
+    ? '/materials/gti/'
+    : '/',
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
