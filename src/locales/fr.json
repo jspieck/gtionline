@@ -194,7 +194,7 @@
   "bf_sortingUC": "Triage",
   "contactPersonHeader": "Personnes de contact pour le contenu",
   "herausgeber": "Éditeur",
-  "impressum": "Impressum",
+  "impressum": "Mentions légales",
   "representedByHeader": "Représenté par",
   "representedBy": "La chaire d'informatique 12 est une institution de droit public au sein de la Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU). Conformément aux articles 20 et 21 de la BayHSchG, la FAU, en tant qu'établissement public et collectivité autonome de droit public, est représentée à l'extérieur par son président.",
   "haftungsauschlussHeader": "Clause de non-responsabilité",
@@ -235,5 +235,9 @@
   "systemInBase": "Système à la base",
   "basis": "Base",
   "minterms": "Termes minimaux",
-  "maxterms": "Termes maximaux"
+  "maxterms": "Termes maximaux",
+  "impressumText": "Vous trouverez les mentions légales sous :",
+  "and": " et",
+  "weThank": "Nous remercions les personnes suivantes pour leur aide à la création de ce site:",
+  "Danksagung": "Remerciements"
 }

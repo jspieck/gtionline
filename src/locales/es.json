@@ -132,7 +132,7 @@
   "cmos_infoblob_input_description": "Nota: Para OR se puede usar ' ', para AND '*' y para negación '~'. \nLas variables pueden tener nombres arbitrarios (Atención: 'ab' se considera como una variable, no como 'a' multiplicada por 'b').",
   "contactPersonHeader": "Personas de contacto para el contenido",
   "herausgeber": "Editorial",
-  "impressum": "Impressum",
+  "impressum": "Pie de imprenta",
   "representedByHeader": "Representado por",
   "representedBy": "La Cátedra de Informática 12 es una institución de derecho público de la Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU). De acuerdo con los artículos 20 y 21 de la BayHSchG, la FAU, como institución estatal y organismo autónomo de derecho público, está representada externamente por el Presidente.",
   "haftungsauschlussHeader": "Descargo de responsabilidad",
@@ -235,5 +235,9 @@
   "systemInBase": "Sistema de base",
   "basis": "Base",
   "minterms": "Minitérminos",
-  "maxterms": "Maxitérminos"
+  "maxterms": "Maxitérminos",
+  "impressumText": "Puede encontrar el pie de imprenta en:",
+  "and": " y",
+  "weThank": "Nos gustaría agradecer a las siguientes personas su ayuda en la creación de este sitio web:",
+  "Danksagung": "Agradecimiento"
 }

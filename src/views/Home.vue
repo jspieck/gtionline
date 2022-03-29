@@ -160,6 +160,7 @@ export default {
     .headerHome{
       padding: 20px;
       padding-left: 20px;
+      height: auto;
     }
   }
 

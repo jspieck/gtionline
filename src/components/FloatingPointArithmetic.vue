@@ -67,10 +67,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-body{
-  overflow-y: scroll;
-}
-
 .default-tabs {
   position: relative;
   margin: 10px auto;

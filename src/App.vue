@@ -24,20 +24,24 @@ export default {
 html {
   height: 100%;
 }
+
 body {
   height: 100%;
   line-height: 25px;
 }
+
 .bodyContainer {
   width: 1000px;
   margin: auto;
   text-align: left;
 }
+
 @media screen and (max-width: 1000px) {
   .bodyContainer {
     width: 100%;
   }
 }
+
 #app {
   font-family: 'Source Sans Pro', 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

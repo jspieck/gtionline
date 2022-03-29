@@ -1,9 +1,10 @@
 <template>
   <div class="navbar">
-    <a href="/" ><img id="logo" src="../assets/logo.svg"></a>
+    <!--<div class="hamburger" @click="responsive = !responsive"><font-awesome-icon class="bars" icon="bars"/></div> -->
     <input class="menu-btn" type="checkbox" id="menu-btn" />
     <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
-    <ul class="menu">
+    <router-link class="logoContainer" to="/" ><img id="logo" src="../assets/logo.svg"></router-link>
+    <!-- <ul class="menu" :class="responsive ? 'responsive' : ''">
       <li v-for="submenu in menu" v-bind:key="submenu.id">
         <router-link active-class="selectedNav" :to="`${submenu.link}`">{{submenu.label}}</router-link>
         <ul class="navbar-dropdown" v-if="submenu.items !== undefined">
@@ -12,7 +13,10 @@
           </li>
         </ul>
       </li>
-    </ul>
+    </ul> -->
+    <div class="menu" :class="responsive ? 'responsive' : ''">
+      <router-link class="routerLink" v-for="submenu in menu" v-bind:key="submenu.id" active-class="selectedNav" :to="`${submenu.link}`"><span>{{submenu.label}}</span></router-link>
+    </div>
     <div id="languageDropdown">
       <LSelect @input="chooseLang"/>
     </div>
@@ -29,6 +33,7 @@ export default {
   },
   data() {
     return {
+      responsive: false,
     };
   },
   computed: {
@@ -56,8 +61,8 @@ export default {
         },
         {
           id: 4,
-          label: this.$t('impressum'),
-          link: 'impressum',
+          label: this.$t('contact'),
+          link: 'contact',
         },
       ];
     },
@@ -74,13 +79,12 @@ export default {
 <style scoped lang="scss">
 .selectedNav {
   background: $fresherBlue;
+  border-radius: 15px;
 }
+
 #logo {
   height: 40px;
   width: 100px;
-  position: absolute;
-  left: 10px;
-  top: 13px;
 }
 
 #languageDropdown {
@@ -96,12 +100,33 @@ export default {
   display: block;
   background-color: $freshBlue;
   color: white;
-  z-index: 2;
+  z-index: 102;
 
   ul {
     list-style-type: none;
     li:hover > .navbar-dropdown {
       display: block;
+    }
+  }
+
+  .routerLink {
+    display: inline-block;
+    position: relative;
+    text-align: left;
+    border-bottom: 1px solid #0d336f26;
+    text-decoration: none;
+
+    &:hover {
+      color: $freshYellow;
+    }
+
+    span {
+      white-space: nowrap;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+      padding: 0.4em 1em;
+      line-height: 2.0;
     }
   }
 
@@ -128,28 +153,11 @@ export default {
   .menu-btn {
     display: none;
   }
-  .menu-btn:checked ~ .menu {
-    max-height: 240px;
-    overflow: visible;
-  }
-  .menu-btn:checked ~ .menu-icon .navicon {
-    background: transparent;
-  }
-  .menu-btn:checked ~ .menu-icon .navicon:before {
-    transform: rotate(-45deg);
-  }
-  .menu-btn:checked ~ .menu-icon .navicon:after {
-    transform: rotate(45deg);
-  }
-  .menu-btn:checked ~ .menu-icon:not(.steps) .navicon:before,
-  .menu-btn:checked ~ .menu-icon:not(.steps) .navicon:after {
-    top: 0;
-  }
 
   .menu-icon {
     cursor: pointer;
     display: block;
-    float: right;
+    float: left;
     padding: 28px 20px;
     position: relative;
     user-select: none;
@@ -187,6 +195,10 @@ export default {
   }
 }
 
+.hamburger {
+  display: none;
+}
+
 @media (min-width: 768px) {
   .navbar {
     .menu {
@@ -197,6 +209,96 @@ export default {
     }
     .menu-icon {
       display: none;
+    }
+  }
+  #content {
+    padding-top: 102px;
+  }
+  #logo {
+    position: absolute;
+    left: 10px;
+    top: 13px;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .hamburger {
+    cursor: pointer;
+    display: block;
+    width: 40px;
+    float: left;
+    margin-top: 14px;
+    margin-left: 10px;
+    font-size: 24px;
+  }
+
+  ::v-deep .longLanugageName {
+    display: none;
+  }
+
+  .logoContainer {
+    display: block;
+    margin-top: 7px;
+    margin-right: 50px;
+  }
+
+  #languageDropdown {
+    top: 8px;
+  }
+
+  /* .menu-btn:checked ~ .menu {
+    max-height: 240px;
+    overflow: visible;
+  } */
+
+  .menu-btn:checked ~ .menu-icon .navicon {
+    background: transparent;
+  }
+  .menu-btn:checked ~ .menu-icon .navicon:before {
+    transform: rotate(-45deg);
+  }
+  .menu-btn:checked ~ .menu-icon .navicon:after {
+    transform: rotate(45deg);
+  }
+  .menu-btn:checked ~ .menu-icon:not(.steps) .navicon:before,
+  .menu-btn:checked ~ .menu-icon:not(.steps) .navicon:after {
+    top: 0;
+  }
+
+  .menu-btn:checked ~ .menu {
+    position: relative;
+    li, .routerLink {
+      float: none;
+      display: block;
+      text-align: left;
+      padding: 5px 0;
+    }
+  }
+
+  .navbar {
+    .menu {
+      clear: none;
+      max-height: none;
+      overflow: visible;
+      margin: 0;
+      li, .routerLink {
+        display: none;
+      }
+    }
+
+    .menu.responsive {
+      position: relative;
+      li, .routerLink {
+        float: none;
+        display: block;
+        text-align: left;
+        padding: 5px 0;
+      }
+    }
+
+    .menu-icon {
+      display: block;
     }
   }
   #content {

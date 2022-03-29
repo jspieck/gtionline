@@ -235,5 +235,10 @@
   "systemInBase": "System zur Basis",
   "basis": "Basis",
   "minterms": "Minterme",
-  "maxterms": "Maxterme"
+  "maxterms": "Maxterme",
+  "contact": "Kontakt",
+  "impressumText": "Sie finden das Impressum unter: ",
+  "and": " und",
+  "weThank": "Wir danken den folgenden Personen für ihre Mithilfe beim Erstellen dieser Webseite:",
+  "Danksagung": "Danksagung"
 }

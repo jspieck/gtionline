@@ -226,53 +226,55 @@
               {{$t('bf_primeCoverTable')}}
             </template>
             <template v-slot:accordion-item-body>
-              <table class="bf-primetable">
-                <!-- Top row -->
-                <tr>
-                  <!-- Empty cells in top left -->
-                  <td></td>
-                  <td :class="primeTableColorMatrixObj.matrix[0][0]"> PI </td>
-                  <!-- Base terms -->
-                  <th v-for="(bt, col) in primeTableCurrent.baseTerms" :key="`primeTableCurrentTR_${col}`"
-                      :class="[
-                        primeTableColorMatrixObj.matrix[col+1][0],
-                        (primeTableColorMatrixObj.highlightedCellRow === 0
-                        && primeTableColorMatrixObj.highlightedCellColumn === col+1)
-                        ? 'primetable-highlighted-cell' : ''
-                      ]"
-                  >
-                  {{primeTableBaseTermIndices[col]}}
-                  </th>
+              <div class="primeTableContainer">
+                <table class="bf-primetable">
+                  <!-- Top row -->
+                  <tr>
+                    <!-- Empty cells in top left -->
+                    <td></td>
+                    <td :class="primeTableColorMatrixObj.matrix[0][0]"> PI </td>
+                    <!-- Base terms -->
+                    <th v-for="(bt, col) in primeTableCurrent.baseTerms" :key="`primeTableCurrentTR_${col}`"
+                        :class="[
+                          primeTableColorMatrixObj.matrix[col+1][0],
+                          (primeTableColorMatrixObj.highlightedCellRow === 0
+                          && primeTableColorMatrixObj.highlightedCellColumn === col+1)
+                          ? 'primetable-highlighted-cell' : ''
+                        ]"
+                    >
+                    {{primeTableBaseTermIndices[col]}}
+                    </th>
 
-                  <!-- Cost column -->
-                  <th v-html="toSvg('c_{i}')" class="svg-text"/>
-                </tr>
+                    <!-- Cost column -->
+                    <th v-html="toSvg('c_{i}')" class="svg-text"/>
+                  </tr>
 
-                <!-- body of table -->
-                <tr v-for="(pt, row) in primeTableCurrent.primeTerms" :key="`primeTableCurrentRow_${row}`">
-                  <!-- prime term on the left -->
-                  <td>{{nthLetter(row + 1)}}</td>
-                  <th class="svg-text" v-html="toSvg(pt.toLatex(literalNames))"
-                      :class="[
-                        primeTableColorMatrixObj.matrix[0][row+1],
-                        (primeTableColorMatrixObj.highlightedCellRow === row + 1 && primeTableColorMatrixObj.highlightedCellColumn === 0) ? 'primetable-highlighted-cell' : ''
-                      ]"
-                  />
+                  <!-- body of table -->
+                  <tr v-for="(pt, row) in primeTableCurrent.primeTerms" :key="`primeTableCurrentRow_${row}`">
+                    <!-- prime term on the left -->
+                    <td>{{nthLetter(row + 1)}}</td>
+                    <th class="svg-text" v-html="toSvg(pt.toLatex(literalNames))"
+                        :class="[
+                          primeTableColorMatrixObj.matrix[0][row+1],
+                          (primeTableColorMatrixObj.highlightedCellRow === row + 1 && primeTableColorMatrixObj.highlightedCellColumn === 0) ? 'primetable-highlighted-cell' : ''
+                        ]"
+                    />
 
-                  <!-- Crosses -->
-                  <td v-for="col in primeTableCurrent.coverTable.length" :key="`primeTableCurrentCell_${row}_${col}`"
-                      :class="primeTableColorMatrixObj.matrix[col][row+1]"
-                  >
-                    <span v-if="primeTableCurrent.coverTable[col-1][row] === true"
-                        :class="(primeTableColorMatrixObj.highlightedCellRow === row + 1 && primeTableColorMatrixObj.highlightedCellColumn === col) ? 'primetable-highlighted-cell' : ''">
-                      X
-                    </span>
-                  </td>
+                    <!-- Crosses -->
+                    <td v-for="col in primeTableCurrent.coverTable.length" :key="`primeTableCurrentCell_${row}_${col}`"
+                        :class="primeTableColorMatrixObj.matrix[col][row+1]"
+                    >
+                      <span v-if="primeTableCurrent.coverTable[col-1][row] === true"
+                          :class="(primeTableColorMatrixObj.highlightedCellRow === row + 1 && primeTableColorMatrixObj.highlightedCellColumn === col) ? 'primetable-highlighted-cell' : ''">
+                        X
+                      </span>
+                    </td>
 
-                  <!-- Cost -->
-                  <td>{{primeTableCurrent.primeTerms[row].getTerms().length}}</td>
-                </tr>
-              </table>
+                    <!-- Cost -->
+                    <td>{{primeTableCurrent.primeTerms[row].getTerms().length}}</td>
+                  </tr>
+                </table>
+              </div>
 
               <div class="bf-primetable-controls">
                 <button @click='primetableStepBackward' :disabled="primetableCurrentStepIndex === 0">
@@ -1271,6 +1273,10 @@ export default {
     }
   }
 
+  .primeTableContainer {
+    overflow-x: scroll;
+  }
+
   .selectBox {
     margin-right: 10px;
   }
@@ -1295,6 +1301,11 @@ export default {
     margin: 1.5em auto 1.5em auto;
     height: 1px;
     background-color: rgba($lightBlue, 0.5);
+  }
+  @media(max-width: 1060px){
+    .horizontalbar {
+      width: 50%;
+    }
   }
 
   .horizontalbarfull {

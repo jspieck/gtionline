@@ -5,6 +5,7 @@ import KVDiagram from '@/components/KVDiagram.vue';
 import DescriptionPDF from '@/components/DescriptionPDF.vue';
 import Cmos from '@/components/Cmos.vue';
 import Home from '../views/Home.vue';
+import Contact from '../views/Contact.vue';
 
 const routes = [
   {
@@ -13,12 +14,12 @@ const routes = [
     component: Home,
   },
   {
-    path: '/impressum',
-    name: 'impressum',
+    path: '/contact',
+    name: 'contact',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Impressum.vue'),
+    component: Contact,
   },
   {
     path: '/fparithmetic',

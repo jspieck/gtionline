@@ -3,7 +3,7 @@
     <p class="introduction">{{$t('polyConvIntro')}}</p>
     <div id="fpOperationTable" class="fpOperationTable">
       <div class="container">
-        <table>
+        <table class="polyadicTable">
           <tr>
             <td>
               <div class="solutionInput">
@@ -477,36 +477,5 @@ h3 {
   .mobile_pdfGen{
     display: none;
   };
-}
-
-@media(max-width: 1000px){
-  tr{
-    display: inline;
-  }
-  td{
-    display: block;
-    margin: 10px 0;
-  }
-  .selectBox{
-    width: 100%;
-  }
-}
-
-@media(max-width: 650px){
-  .fpOperationTable {
-    display: block;
-  }
-  tr{
-    display: inline-block;
-  }
-  td{
-    display: inline-block;
-  }
-  .selectBox{
-    width: 100%;
-  }
-  .container{
-    display: inline-block;
-  }
 }
 </style>

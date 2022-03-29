@@ -39,8 +39,8 @@ export default {
 
 <style scoped lang="scss">
 
-// the central dependency all other measurements are calculated from:
-$toggleswitch-travel: 1.4em;
+// the central dependency all other measurements are calculated from: (originally 1.4em)
+$toggleswitch-travel: 1.3em;
 
 $toggleswitch-width: ($toggleswitch-travel/26)*60;
 $toggleswitch-height: ($toggleswitch-travel/26)*34;
@@ -79,6 +79,7 @@ $toggleswitch-top-displacement: ($toggleswitch-travel/26)*4;
   right: 0;
   bottom: 0;
   background-color: #ccc;
+  background: linear-gradient(160deg, #F1F4FF, #F9FAFF);
   -webkit-transition: .3s;
   transition: .3s;
 }
@@ -91,12 +92,14 @@ $toggleswitch-top-displacement: ($toggleswitch-travel/26)*4;
   left: $toggleswitch-knob-bottomleft-pos;
   bottom: $toggleswitch-knob-bottomleft-pos;
   background-color: white;
+  background: linear-gradient(90deg, #4F97FF, #275EFE);
   -webkit-transition: .3s;
   transition: .3s;
 }
 
 input:checked + .slider {
   background-color: #2196F3;
+  background: linear-gradient(90deg, #4F97FF, #275EFE);
 }
 
 input:focus + .slider {
@@ -107,6 +110,7 @@ input:checked + .slider:before {
   -webkit-transform: translateX($toggleswitch-travel);
   -ms-transform: translateX($toggleswitch-travel);
   transform: translateX($toggleswitch-travel);
+  background: linear-gradient(160deg, #F1F4FF, #F9FAFF);
 }
 
 /* Rounded sliders */

@@ -14,7 +14,8 @@
     <div id="cmosOutput" v-html="cmosOutput"></div>
     <h3>Tikz Code</h3>
     <div class="codeContainer">
-      <highlightjs lang="tex" :code="latex"/>
+      <!-- <highlightjs lang="tex" :code="latex"/> -->
+      <pre><code><span v-for="(line, lineNumber) in latex" v-bind:key="lineNumber" v-html="line" class="codeLine"/></code></pre>
     </div>
   </div>
 </template>
@@ -23,6 +24,7 @@
 import {
   CMOSBuilder, parseBooleanFunction, SVGGenerator, CMOSVisualBuilder, toLaTeX, LatexGenerator,
 } from '@/scripts/gti-tools';
+import hljs from 'highlight.js/lib/common';
 import InfoBlob from './InfoBlob.vue';
 
 export default {
@@ -68,7 +70,8 @@ export default {
       const latexGenerator = new LatexGenerator();
       const scale = 100;
       window.MathJax.options.ignoreHtmlClass = 'tex2jax_ignore';
-      this.latex = latexGenerator.buildLatex(cmosVisual, toLaTeX).trim();
+      const latex = latexGenerator.buildLatex(cmosVisual, toLaTeX).trim();
+      this.latex = hljs.highlight(latex, { language: 'tex' }).value.split('\n');
       this.cmosOutput = this.toMathJax(codeGenerator.buildSVG(cmosVisual, toLaTeX, scale));
       this.cmosOutput = this.cmosOutput.replaceAll('text', 'foreignobject');
       this.cmosOutput = this.cmosOutput.replaceAll('<foreignobject', '<foreignobject width=400 height=80 transform="translate(-25, -25)"');
@@ -102,11 +105,12 @@ export default {
     background: #fafafa;
     font-size: 20px;
     text-align: left;
-    padding: 15px;
+    /* padding: 15px 0; */
     width: 1000px;
     margin: auto;
     line-height: 30px;
-    border-left: 3px solid $freshBlue;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    /* border-left: 3px solid $freshBlue; */
   }
 
   pre {
@@ -128,4 +132,26 @@ export default {
     margin-right: .5em;
     color: #888
   } */
+
+  span.codeLine::before {
+    content: counter(codeLine);
+    display: inline-block;
+    color: #5079d4;
+    text-align: right;
+    width: 2em;
+    padding-right: 0.5em;
+    border-right: 2px solid $freshBlue;
+    margin-right: 1em;
+    background: #f2f2f2;
+  }
+  span.codeLine {
+    counter-increment: codeLine;
+    display: block;
+  }
+  span.codeLine:first-child::before  {
+    padding-top: 10px;
+  }
+   span.codeLine:last-child::before  {
+    padding-bottom: 10px;
+  }
 </style>

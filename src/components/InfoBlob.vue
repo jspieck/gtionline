@@ -44,7 +44,7 @@ $infoblob-border-radius: 5px;
     // border-style: solid;
 
     // border-color: white;
-    color: green;
+    color: #275EFE; // green;
     margin-left: 5px;
     white-space: normal;
 }

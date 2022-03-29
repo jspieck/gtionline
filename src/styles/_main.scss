@@ -105,7 +105,7 @@ table {
 
 .mobile_bits :deep(select) {
   color: white;
-  background: #0d336f;
+  background: $freshBlue;
 }
 
 .mobile_bits selectBox {
@@ -172,15 +172,34 @@ input{
 
 h3 {
   font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
   color: #273849;
+  color: $fresherBlue;
   padding-bottom: 0.7em;
   width: 100%;
   margin: auto;
   margin-top: 15px;
 }
 
- 
+.title {
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+.bodyContainer {
+  box-sizing: border-box;
+}
+
+.selectBox {
+  width: fit-content;
+}
+
+@media (max-width: 768px) {
+  #content > div {
+    padding: 0;
+  }
+}
 
 @media screen and (max-width: 470px) {
   .attention {
@@ -191,6 +210,51 @@ h3 {
 @media screen and (max-width: 1000px) {
   .attention {
     width: 100%;
+  }
+}
+
+@media(max-width: 1060px){
+  .floatingPointInput tr, .polyadicTable tr{
+    display: inline;
+  }
+  .floatingPointInput td, .polyadicTable td{
+    display: block;
+    margin: 10px 0;
+  }
+  /* .selectBox {
+    width: 100%;
+  } */
+  .selectBox.mobile_bits, .selectBox.bits {
+    width: auto;
+  }
+  .horizontalbar {
+    width: 50%;
+  }
+}
+
+@media(max-width: 650px){
+  .fpOperationTable {
+    display: block;
+  }
+  .floatingPointInput tr, .polyadicTable tr {
+    display: inline-block;
+  }
+  .floatingPointInput td, .polyadicTable td {
+    display: inline-block;
+    vertical-align: top;
+    margin: 5px 0;
+  }
+  /* .selectBox{
+    width: 100%;
+  } */
+  .selectBox.mobile_bits, .selectBox.bits {
+    width: auto;
+  }
+  .container{
+    display: inline-block;
+  }
+  .horizontalbar {
+    width: 50%;
   }
 }
 
