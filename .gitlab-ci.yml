@@ -9,7 +9,8 @@ pages:
     paths:
       - node_modules/
   script:
-    - npm install --progress=false
+    - npm install -g npm@latest
+    - npm install
     - npm run build
     - rm -rf public
     - mkdir public
