@@ -9,10 +9,11 @@ pages:
     paths:
       - node_modules/
   script:
-    - npm run build
-    - rm -rf public
-    - mkdir public
-    - cp -r dist/* public
+    - ls
+    # - npm run build
+    # - rm -rf public
+    # - mkdir public
+    # - cp -r dist/* public
   artifacts:
     paths:
       - public
