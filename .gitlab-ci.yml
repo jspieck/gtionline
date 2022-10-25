@@ -3,14 +3,17 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Pages/Brunch.gitlab-ci.yml
 # Full project: https://gitlab.com/pages/brunch
-image: node:12.17.0
+image: node:latest
 pages:
   cache:
     paths:
       - node_modules/
   script:
-    - npm install -g brunch
-    - brunch build --production
+    - npm install --progress=false
+    - npm run build
+    - rm -rf public
+    - mkdir public
+    - cp -r dist/* public
   artifacts:
     paths:
       - public
