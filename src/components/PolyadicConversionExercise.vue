@@ -149,7 +149,7 @@ export default {
       this.selectedFormat = [format1, format2];
       // generate input number
       let number = '';
-      const numDigitsBeforeComma = Math.floor(Math.random() * 4);
+      const numDigitsBeforeComma = Math.floor(1 + Math.random() * 3);
       const numDigitsAfterComma = Math.floor(Math.random() * 4);
       this.power[0] = formatToPower(format1);
       this.power[1] = formatToPower(format2);
