@@ -220,7 +220,7 @@
   "bf_conjunctiveMinimalForm_explanation": "Conjunction of literals linked by disjunction, which cannot be further simplified (without violating this form) (simplified KNF).",
   "cmos_infoblob_description": "CMOS is a composition of a complementary NMOS  network (pull-down network, since connected to ground) and PMOS network (pull-up network, since connected to supply voltage).\n As a result, less energy is consumed in the fixed switching state, since PDN and PUN are complementary and thus only conduct simultaneously for a short time during switching. However, more area is required on the chip.",
   "cmos_infoblob_input_description": "Note: For OR gates '+' can be used, for AND gates '*' and for negation '~'. Variables can have arbitrary names (Attention: 'ab' is considered as one variable, not as 'a' multiplied by 'b').",
-  "contactPersonHeader": "Contact persons for the content",
+  "contactPersonHeader": "Contact",
   "herausgeber": "Publisher",
   "divWithZero": "For a division with 0 in the numerator, the result is always 0.",
   "impressum": "Imprint",
@@ -240,5 +240,6 @@
   "impressumText": "The imprint can be found at: ",
   "and": ", and",
   "weThank": "We would like to thank the following people for their help at creating this website:",
-  "Danksagung": "Acknowledgement"
+  "Danksagung": "Acknowledgement",
+  "thankProfessorTeich": "The materials on this page are based on the lecture GTI by Professor Dr.-Ing. Jürgen Teich of the Friedrich-Alexander-University (FAU). We thank him for his expertise and patronage."
 }

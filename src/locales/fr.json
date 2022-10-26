@@ -192,7 +192,7 @@
   "bf_idempotenceUC": "Idempotence",
   "bf_absorptionUC": "Absorption",
   "bf_sortingUC": "Triage",
-  "contactPersonHeader": "Personnes de contact pour le contenu",
+  "contactPersonHeader": "Contact",
   "herausgeber": "Éditeur",
   "impressum": "Mentions légales",
   "representedByHeader": "Représenté par",
@@ -239,5 +239,6 @@
   "impressumText": "Vous trouverez les mentions légales sous :",
   "and": " et",
   "weThank": "Nous remercions les personnes suivantes pour leur aide à la création de ce site:",
-  "Danksagung": "Remerciements"
+  "Danksagung": "Remerciements",
+  "thankProfessorTeich": "Le matériel de cette page est basé sur le cours GTI du professeur Dr. Jürgen Teich de l'université Friedrich-Alexander-Universität (FAU). Nous le remercions pour son expertise et son parrainage."
 }

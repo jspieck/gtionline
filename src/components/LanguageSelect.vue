@@ -20,7 +20,7 @@ import germanFlag from '../assets/germanFlag.svg';
 import americanFlag from '../assets/americanFlag.svg';
 import frenchFlag from '../assets/frenchFlag.svg';
 import spanishFlag from '../assets/spanishFlag.svg';
-import latinFlag from '../assets/latinFlag.svg';
+// import latinFlag from '../assets/latinFlag.svg';
 
 export default {
   name: 'LanguageSelect',
@@ -51,11 +51,11 @@ export default {
           nameLong: 'Spanish',
           img: spanishFlag,
         },
-        {
+        /* {
           name: 'lt',
           nameLong: 'Latin',
           img: latinFlag,
-        },
+        }, */
       ],
       selected: null,
       open: false,
