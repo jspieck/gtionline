@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import PrettyCheckbox from 'pretty-checkbox-vue';
 import Tabs from 'vue3-tabs';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -24,11 +24,10 @@ library.add(faAngleDown);
 library.add(faBars);
 
 const router = createRouter({
-  mode: 'history',
   base: process.env.NODE_ENV === 'production'
-    ? '/materials/gti/'
+    ? '/gtionline/'
     : '/',
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(process.env.BASE_URL),
   routes,
 });
 

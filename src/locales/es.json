@@ -130,7 +130,7 @@
   "polyadicExercise2": "del formato inicial:",
   "polyadicExercise3": "al formato de destino:",
   "cmos_infoblob_input_description": "Nota: Para OR se puede usar ' ', para AND '*' y para negación '~'. \nLas variables pueden tener nombres arbitrarios (Atención: 'ab' se considera como una variable, no como 'a' multiplicada por 'b').",
-  "contactPersonHeader": "Personas de contacto para el contenido",
+  "contactPersonHeader": "Contacto",
   "herausgeber": "Editorial",
   "impressum": "Pie de imprenta",
   "representedByHeader": "Representado por",
@@ -239,5 +239,6 @@
   "impressumText": "Puede encontrar el pie de imprenta en:",
   "and": " y",
   "weThank": "Nos gustaría agradecer a las siguientes personas su ayuda en la creación de este sitio web:",
-  "Danksagung": "Agradecimiento"
+  "Danksagung": "Agradecimiento",
+  "thankProfessorTeich": "Los materiales de esta página se basan en la lección de la GTI impartida por el profesor Dr.-Ing. Jürgen Teich de la Friedrich-Alexander-Universität (FAU). Le agradecemos su experiencia y patrocinio."
 }

@@ -17,7 +17,7 @@
   "impressum": "Impressum",
   "herausgeber": "Herausgeber",
   "representedByHeader": "Vertreten durch",
-  "contactPersonHeader": "Kontaktpersonen für den Inhalt",
+  "contactPersonHeader": "Kontakt",
   "representedBy": "Lehrstuhl für Informatik 12 ist eine Einrichtung des Öffentlichen Rechts innerhalb der Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU). Gemäß Art. 20, 21 BayHSchG wird die FAU als staatliche Einrichtung und Selbstverwaltungskörperschaft des öffentlichen Rechts nach außen durch den Präsidenten vertreten.",
   "haftungsauschlussHeader": "Haftungsausschluss",
   "haftungsauschlussBody": "Für die Inhalte anderer Webangebote sind die jeweiligen Einrichtungen verantwortlich. Alle auf dieser Internetseite bereitgestellten Informationen haben wir nach bestem Wissen und Gewissen erarbeitet und geprüft. Eine Gewähr für die jederzeitige Aktualität, Richtigkeit, Vollständigkeit und Verfügbarkeit der bereit gestellten Informationen können wir allerdings nicht übernehmen. Ein Vertragsverhältnis mit den Nutzern des Internetangebots kommt nicht zustande. Wir haften nicht für Schäden, die durch die Nutzung dieses Internetangebots entstehen. Dieser Haftungsausschluss gilt nicht, soweit die Vorschriften des §839 des Bürgerlichen Gesetzbuches (Haftung bei Amtspflichtverletzung) einschlägig sind. Für etwaige Schäden, die beim Aufrufen oder Herunterladen von Daten durch Schadsoftware oder der Installation oder Nutzung von Software verursacht werden, wird nicht gehaftet. Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesenSeiten nach den allgemeinen Gesetzen verantwortlich. Nach § 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen. Der Betreiber behält es sich ausdrücklich vor, einzelne Webseiten, Web-Dienste oder das gesamte Angebot ohne gesonderte Ankündigung zu verändern, zu ergänzen, zu löschen oder die Veröffentlichung zeitweise oder endgültig einzustellen.",
@@ -240,5 +240,6 @@
   "impressumText": "Sie finden das Impressum unter: ",
   "and": " und",
   "weThank": "Wir danken den folgenden Personen für ihre Mithilfe beim Erstellen dieser Webseite:",
-  "Danksagung": "Danksagung"
+  "Danksagung": "Danksagung",
+  "thankProfessorTeich": "Die Materialien dieser Seite basieren auf der Vorlesung GTI von Professor Dr.-Ing. Jürgen Teich der Friedrich-Alexander-Universität (FAU). Wir danken Ihm für seine Expertise und Schirmherrschaft."
 }
