@@ -25,7 +25,7 @@ library.add(faBars);
 
 const router = createRouter({
   base: process.env.NODE_ENV === 'production'
-    ? '/gtionline/'
+    ? '/'
     : '/',
   history: createWebHashHistory(process.env.BASE_URL),
   routes,

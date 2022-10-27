@@ -2119,12 +2119,13 @@ function variableToLaTeX(literal) {
 function operationToLaTeX(operation) {
   if (operation.operator === BooleanOperation.NOT) {
     var operand = expressionToLaTeX(operation.operand);
-    return "\\bar{".concat(operand, "}");
+    return "\\overline{".concat(operand, "}");
   } else {
     var op = '';
 
     switch (operation.operator) {
       case BooleanOperation.AND:
+        op = '\\cdot';
         break;
 
       case BooleanOperation.OR:

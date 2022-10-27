@@ -215,7 +215,7 @@
   "PowerToTen": "Un sistema numérico arbitrario puede convertirse al sistema decimal resumiendo todos los dígitos potenciados.",
   "calcStep": "Paso\\ de\\ cálculo",
   "divisionAlgorithm": "Algoritmo de división",
-  "newBasis": "Base_{{nueva}}",
+  "newBasis": "Base_{'{nueva}'}",
   "noValuesAfterComma": "No hay valores después de la coma. Por lo tanto, se puede omitir el algoritmo de multiplicación.",
   "polyadicExercise1": "Convierta el valor de",
   "representation": "Representación en formato original",

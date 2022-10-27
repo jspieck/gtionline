@@ -465,25 +465,6 @@ export default {
     randomExercisesGoalsMetrics() {
       // TODO: translation
       return [
-        // {
-        //   title: this.$t('bf_goal_egal'),
-        //   difficulties: [
-        //     {
-        //       numVars: 2,
-        //     },
-        //     {
-        //       numVars: 3,
-        //       numMintermsMin: 3,
-        //       numMaxtermsMin: 3,
-        //     },
-        //     {
-        //       numVarsMin: 4,
-        //       numVarsMax: 5,
-        //       numMintermsMin: 5,
-        //       numMaxtermsMin: 5,
-        //     },
-        //   ],
-        // },
         {
           title: this.$t('bf_goal_determine_DNF'),
           difficulties: [
@@ -1024,7 +1005,7 @@ export default {
       let numVars = requirements.numVars;
       if (numVars === undefined) {
         const numVarsMin = requirements.numVarsMin || 1;
-        const numVarsMax = requirements.numVarsMax || 7;
+        const numVarsMax = requirements.numVarsMax || 6;
         // console.log(numVarsMin, numVarsMax, (Math.random() * (numVarsMax - numVarsMin + 1)));
         numVars = Math.floor((Math.random() * (numVarsMax - numVarsMin + 1))) + numVarsMin;
       }

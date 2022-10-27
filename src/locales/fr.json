@@ -138,7 +138,7 @@
   "factor": "Facteur",
   "quotient": "Quotient",
   "remainder": "reste",
-  "newBasis": "Base_{{nouvelle}}",
+  "newBasis": "Base_{'{nouvelle}'}",
   "calcStep": "étape\\ de\\ calcul",
   "summands": "sommets",
   "polyadicExercise1": "Convertissez la valeur:",

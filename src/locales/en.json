@@ -153,7 +153,7 @@
   "factor": "Factor",
   "quotient": "Quotient",
   "remainder": "Remainder",
-  "newBasis": "Base_{{new}}",
+  "newBasis": "Base_{'{new}'}",
   "calcStep": "calculation\\ step",
   "summands": "Summands",
   "polyadicExercise1": "Convert the value in the",

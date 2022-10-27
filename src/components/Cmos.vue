@@ -73,12 +73,33 @@ export default {
       const latex = latexGenerator.buildLatex(cmosVisual, toLaTeX).trim();
       this.latex = hljs.highlight(latex, { language: 'tex' }).value.split('\n');
       this.cmosOutput = this.toMathJax(codeGenerator.buildSVG(cmosVisual, toLaTeX, scale));
-      this.cmosOutput = this.cmosOutput.replaceAll('text', 'foreignobject');
-      this.cmosOutput = this.cmosOutput.replaceAll('<foreignobject', '<foreignobject width=400 height=80 transform="translate(-25, -25)"');
       console.log(this.cmosOutput);
+      this.cmosOutput = this.cmosOutput.replaceAll('text-anchor', 'data-anchor');
+      this.cmosOutput = this.cmosOutput.replaceAll('text', 'foreignobject');
+      this.cmosOutput = this.cmosOutput.replaceAll('<foreignobject', '<foreignobject width=400 height=80 transform="translate(0, -25)"');
+      // console.log(this.cmosOutput);
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();
+          this.$nextTick(() => {
+            const foreignObjects = document.getElementsByTagName('foreignObject');
+            for (const foreignObject of foreignObjects) {
+              if (foreignObject.textContent === 'VCC' || foreignObject.textContent === 'GND') {
+                foreignObject.setAttribute('font-size', '40');
+              }
+              if (foreignObject.children.length > 0) {
+                const actualWidth = foreignObject.children[0].offsetWidth;
+                const actualHeight = foreignObject.children[0].offsetHeight;
+                foreignObject.setAttribute('width', `${actualWidth + 10}`);
+                foreignObject.setAttribute('height', 100); // `${actualHeight + 1}`);
+                if (foreignObject.getAttribute('data-anchor') === 'end') {
+                  foreignObject.setAttribute('transform', `translate(-${actualWidth},-${actualHeight / 2 - 10})`);
+                } else {
+                  foreignObject.setAttribute('transform', `translate(0,-${actualHeight / 2 - 10})`);
+                }
+              }
+            }
+          });
         }
       });
     },
@@ -89,15 +110,27 @@ export default {
 <style lang="scss">
   foreignObject {
     text-align: left;
+    dominant-baseline: central;
+  }
+
+  text {
+    alignment-baseline: before-edge;
+    dominant-baseline: text-before-edge;
+  }
+
+  foreignObject body {
+    all: unset;
+    display: block;
   }
 
   .cmosContainer {
     width: 100% !important;
     box-sizing: border-box;
+    overflow: hidden;
   }
 
   #cmosOutput {
-    width: 100%;
+    /*width: 100%;*/
     overflow-x: auto;
   }
 
