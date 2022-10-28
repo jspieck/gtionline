@@ -2125,7 +2125,7 @@ function operationToLaTeX(operation) {
 
     switch (operation.operator) {
       case BooleanOperation.AND:
-        op = '\\cdot';
+        op = '\\cdot ';
         break;
 
       case BooleanOperation.OR:
@@ -4812,7 +4812,7 @@ var CalculateSize = /*#__PURE__*/function () {
         // Basecase, takes either the leftPad specified in the Info-Object,
         // or the leftPad required to print the label.
         maxLeftPad = this.info.transistorPadLeft;
-
+        // console.log("Yo its me: " + maxLeftPad);
         if (this.info.tunnelExpressions && visualElement.content.src instanceof CMOSExpression) {
           maxLeftPad = Math.max(maxLeftPad, visualElement.content.src.name.length * this.info.charWidth);
         } else if (this.info.tunnelVariables && visualElement.content.src instanceof CMOSVariable) {
@@ -5033,6 +5033,7 @@ var CalculateSize = /*#__PURE__*/function () {
       var width = 0;
       var padLeft;
 
+      
       if (adjustLeftPad) {
         // Simply take the maxLeftPad.
         padLeft = maxLeftPad;
@@ -5048,8 +5049,9 @@ var CalculateSize = /*#__PURE__*/function () {
           padLeft = Math.max(padLeft, visualElement.content.src.name.length * this.info.charWidth);
         }
       }
-
+      console.log("TWidth: "+ padLeft*30 + " " + this.info.transistorWidth*30 + " " + this.info.transistorPadRight*30);
       width = padLeft + this.info.transistorWidth + this.info.transistorPadRight;
+      // width = this.info.transistorPadLeft + this.info.transistorWidth + this.info.transistorPadRight;
       height = this.info.transistorPadTop + this.info.transistorHeight + this.info.transistorPadBot;
       visualElement.setLeftPad(padLeft);
       visualElement.setSize(width, height);
@@ -7778,12 +7780,15 @@ var SVGGenerator = /*#__PURE__*/function () {
   _createClass(SVGGenerator, [{
     key: "getTransistorSVG",
     value: function getTransistorSVG(hull, transistor, scale) {
+      
       var transistorBaseBegin = {
         x: transistor.x + transistor.width - hull.info.transistorPadRight,
         y: transistor.y
       };
+      console.log(transistor.leftPad * scale + " " + transistor.x * scale + " " + transistorBaseBegin.x * scale + " " + hull.info.transistorPadLeft * scale + " " + transistor.width * scale + " " + hull.info.transistorPadRight * scale);
       var transistorBase = ["<path fill=\"none\" stroke=\"black\" d=\"M ".concat(transistorBaseBegin.x * scale, " ").concat(transistorBaseBegin.y * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.3) * scale), "H ".concat((transistorBaseBegin.x - hull.info.transistorWidth * 0.5) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.2) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.8) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.7) * scale), "H ".concat(transistorBaseBegin.x * scale), "V ".concat((transistorBaseBegin.y + transistor.height) * scale), '"/>'].join(' ');
-      var transistorToper = ["<path fill=\"none\" stroke=\"black\" d=\"M ".concat((transistor.x + hull.info.transistorPadLeft) * scale, " ").concat((transistorBaseBegin.y + transistor.height / 2) * scale), "H ".concat((transistorBaseBegin.x - hull.info.transistorWidth * 0.6) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.3) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.7) * scale), '"/>'].join(' ');
+      var extra = (transistor.leftPad - hull.info.transistorPadLeft);
+      var transistorToper = ["<path fill=\"none\" stroke=\"black\" d=\"M ".concat((transistor.x + extra + hull.info.transistorPadLeft) * scale, " ").concat((transistorBaseBegin.y + transistor.height / 2) * scale), "H ".concat((transistorBaseBegin.x - hull.info.transistorWidth * 0.6) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.3) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.7) * scale), '"/>'].join(' ');
       var finalString;
 
       if (transistor.content.type === CMOSTransistorType$1.PMOS) {

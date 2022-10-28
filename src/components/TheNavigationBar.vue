@@ -39,7 +39,7 @@ export default {
   computed: {
     menu() {
       return [
-        {
+        /* {
           id: 0,
           label: this.$t('polyadic'),
           link: '/polyadic',
@@ -48,7 +48,7 @@ export default {
           id: 1,
           label: this.$t('floatingPoint'),
           link: '/fparithmetic',
-        },
+        }, */
         {
           id: 2,
           label: this.$t('functionMin'),
@@ -59,11 +59,11 @@ export default {
           label: 'CMOS',
           link: 'cmos',
         },
-        {
+        /* {
           id: 4,
           label: this.$t('contact'),
           link: 'contact',
-        },
+        }, */
       ];
     },
   },

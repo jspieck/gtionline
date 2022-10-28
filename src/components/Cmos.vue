@@ -7,8 +7,19 @@
       <div class="bodyContainer">
         <p>{{$t('enter_cmos')}}</p>
         <p>{{$t('cmos_infoblob_input_description')}}</p>
-        <input id="cmosInput" v-model="cmosFormula"/>
-        <button @click="generateCmos()">{{$t('generate')}}</button>
+        <div class="exercise-selection-container">
+          <div class="exercise-selection-container-tooltip">{{$t('generateEx')}}:</div>
+          <input id="cmosInput" v-model="cmosFormula"/>
+          <button @click="generateCmos(cmosFormula)">{{$t('generate')}}</button>
+        </div>
+        <div class="exercise-selection-container">
+          <div class="exercise-selection-container-tooltip">{{$t('exerciseArchive')}}:</div>
+          <div>
+            <FSelect :options="archivedExerciseTitles" :sel="0"
+              @input="selectArchivedExercise"/>
+            <button @click="loadArchivedExercise">{{$t('load')}}</button>
+          </div>
+        </div>
       </div>
     </div>
     <div id="cmosOutput" v-html="cmosOutput"></div>
@@ -26,22 +37,37 @@ import {
 } from '@/scripts/gti-tools';
 import hljs from 'highlight.js/lib/common';
 import InfoBlob from './InfoBlob.vue';
+import FormatSelect from './FormatSelect.vue';
 
 export default {
   name: 'KVDiagram',
   components: {
     InfoBlob,
+    FSelect: FormatSelect,
   },
   data() {
     return {
       latex: '',
       cmosFormula: '',
       cmosOutput: '',
+      archivedExerciseSelectedIndex: 0,
+      archivedExerciseTitles: ['Beispiel 1', 'Beispiel 2', 'Wintersemester: Blatt 9 A1b)', 'Sommersemester: Blatt 6A3'],
+      examples: ['(~a+c)*~(~b+c*~a)', '(~x+~r*~(~n+a))*(n+r)', '~x0*x1*(x2+x3)', '~(~a*b+a*~b)'],
     };
   },
   created() {},
   computed: {},
   methods: {
+    selectArchivedExercise(num, exerciseIndex) {
+      this.archivedExerciseSelectedIndex = exerciseIndex;
+    },
+    loadArchivedExercise() {
+      const index = this.archivedExerciseSelectedIndex;
+      if (index < 0) {
+        return;
+      }
+      this.generateCmos(this.examples[index]);
+    },
     toMathJax(inputStr) {
       // Replaces latex indicator $...$ by \\(...\\)
       const solutionChars = [];
@@ -60,9 +86,9 @@ export default {
       }
       return solutionChars.join('');
     },
-    generateCmos() {
+    generateCmos(cmosFormula) {
       const builder = new CMOSBuilder();
-      const expression = parseBooleanFunction(this.cmosFormula);
+      const expression = parseBooleanFunction(cmosFormula);
       const cmos = builder.buildCMOS(expression);
       const visBuilder = new CMOSVisualBuilder();
       const cmosVisual = visBuilder.buildHull(cmos, { channelWidth: 0.4 });
@@ -107,7 +133,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
   foreignObject {
     text-align: left;
     dominant-baseline: central;
@@ -116,6 +142,36 @@ export default {
   text {
     alignment-baseline: before-edge;
     dominant-baseline: text-before-edge;
+  }
+
+  button {
+    margin-left: 10px;
+  }
+
+  .exercise-selection-container {
+    display: inline-block;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba($lightBlue, 0.5);
+    border-radius: 1.7em;
+    padding: .8em;
+    margin-left: .8em;
+    margin-right: .8em;
+    background: #ffffff47;
+  }
+
+  .exercise-selection-container {
+    .exercise-selection-container-tooltip {
+      margin-bottom: .8em;
+
+      .infoblob-wrapper {
+        float: left;
+      }
+    }
+
+    .exercise-selection-container-subsection {
+      margin-bottom: .5em;
+    }
   }
 
   foreignObject body {
