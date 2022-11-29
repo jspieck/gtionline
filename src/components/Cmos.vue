@@ -51,12 +51,20 @@ export default {
       cmosFormula: '',
       cmosOutput: '',
       archivedExerciseSelectedIndex: 0,
-      archivedExerciseTitles: ['Beispiel 1', 'Beispiel 2', 'Wintersemester: Blatt 9 A1b)', 'Sommersemester: Blatt 6A3'],
       examples: ['(~a+c)*~(~b+c*~a)', '(~x+~r*~(~n+a))*(n+r)', '~x0*x1*(x2+x3)', '~(~a*b+a*~b)'],
     };
   },
   created() {},
-  computed: {},
+  computed: {
+    archivedExerciseTitles() {
+      return [
+        `${this.$t('example')} 1`,
+        `${this.$t('example')} 2`,
+        `${this.$t('wintersemester')}: ${this.$t('sheet')} 9 A1b)`,
+        `${this.$t('sommersemester')}: ${this.$t('sheet')} 6 A3`,
+      ];
+    },
+  },
   methods: {
     selectArchivedExercise(num, exerciseIndex) {
       this.archivedExerciseSelectedIndex = exerciseIndex;
@@ -92,6 +100,7 @@ export default {
       const cmos = builder.buildCMOS(expression);
       const visBuilder = new CMOSVisualBuilder();
       const cmosVisual = visBuilder.buildHull(cmos, { channelWidth: 0.4 });
+      console.log(cmosVisual);
       const codeGenerator = new SVGGenerator();
       const latexGenerator = new LatexGenerator();
       const scale = 100;
@@ -108,23 +117,54 @@ export default {
         if (window.MathJax) {
           window.MathJax.typeset();
           this.$nextTick(() => {
+            // Replace foreign objects with mathjax
             const foreignObjects = document.getElementsByTagName('foreignObject');
             for (const foreignObject of foreignObjects) {
               if (foreignObject.textContent === 'VCC' || foreignObject.textContent === 'GND') {
                 foreignObject.setAttribute('font-size', '40');
+                if (foreignObject.textContent === 'VCC') {
+                  foreignObject.setAttribute('transform', 'translate(-50, -35)');
+                } else {
+                  foreignObject.setAttribute('transform', 'translate(-50 10)');
+                }
               }
               if (foreignObject.children.length > 0) {
                 const actualWidth = foreignObject.children[0].offsetWidth;
-                const actualHeight = foreignObject.children[0].offsetHeight;
+                console.log(foreignObject.children[0].children[0]);
+                const actualHeight = foreignObject.children[0].children[0].getClientRects()[0].height;
+                const staticHeight = 100;
+                foreignObject.style.lineHeight = 0;
+                foreignObject.setAttribute('data-actualHeight', `${actualHeight}`);
                 foreignObject.setAttribute('width', `${actualWidth + 10}`);
-                foreignObject.setAttribute('height', 100); // `${actualHeight + 1}`);
+                foreignObject.setAttribute('height', staticHeight); // `${actualHeight + 1}`);
                 if (foreignObject.getAttribute('data-anchor') === 'end') {
-                  foreignObject.setAttribute('transform', `translate(-${actualWidth},-${actualHeight / 2 - 10})`);
+                  foreignObject.setAttribute('transform', `translate(-${actualWidth},-${actualHeight})`);
                 } else {
-                  foreignObject.setAttribute('transform', `translate(0,-${actualHeight / 2 - 10})`);
+                  foreignObject.setAttribute('transform', `translate(0,-${actualHeight})`);
                 }
               }
             }
+            this.$nextTick(() => {
+              let maxX = 0; let maxY = 0;
+              for (const foreignObject of foreignObjects) {
+                // const boundingRect = foreignObject.getBoundingClientRect();
+                const xOuter = Number(foreignObject.getAttribute('x')) + Number(foreignObject.getAttribute('width'));
+                const yOuter = Number(foreignObject.getAttribute('y')) + Number(foreignObject.getAttribute('height'));
+                maxY = Math.max(yOuter, maxY);
+                maxX = Math.max(xOuter, maxX);
+              }
+              // Scale to size
+              const cmosOutputDom = document.getElementById('cmosOutput').children[0];
+              // console.log(cmosOutputDom);
+              const viewbox = cmosOutputDom.getAttribute('viewBox');
+              const dimensions = viewbox.split(' ').map(s => Number(s));
+              const padding = 50;
+              cmosOutputDom.setAttribute('viewBox', `${-padding} ${-padding} ${maxX + padding} ${maxY + padding}`);
+              cmosOutputDom.setAttribute('width', Number(cmosOutputDom.getAttribute('width')) / 2);
+              cmosOutputDom.setAttribute('height', Number(cmosOutputDom.getAttribute('height')) / 2);
+              console.log(viewbox);
+              console.log(dimensions);
+            });
           });
         }
       });
@@ -136,7 +176,7 @@ export default {
 <style scoped lang="scss">
   foreignObject {
     text-align: left;
-    dominant-baseline: central;
+    line-height: 0;
   }
 
   text {

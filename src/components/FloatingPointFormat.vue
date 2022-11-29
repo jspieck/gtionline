@@ -1,6 +1,4 @@
 <template>
-  <!--v-on:mouseenter="sliderMouseUp" v-on:mouseleave="sliderMouseUp"
-  v-on:mouseup="sliderMouseUp"-->
   <div class="fp-arithmetic pageContainer">
     <h3 class="title">{{$t('freeCalculation')}}</h3>
     <div class="bodyContainer">
