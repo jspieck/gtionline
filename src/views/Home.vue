@@ -24,7 +24,7 @@
     </div>
     <div class="imageContainer">
       <div class="startImg">
-        <img src="../assets/gtionline.png"/>
+        <img src="@/assets/gtionline.png"/>
         <p class="imgDescription">{{$t('sequentialCircuit')}}</p>
       </div>
     </div>

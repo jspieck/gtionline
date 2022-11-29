@@ -2,25 +2,25 @@
   <div class="langSelect" :tabindex="tabindex" @blur="open = false">
     <div class="selected" :class="{open: open}" @click="open = !open">
       <img class="langImg" :src="selected.img"/>
-      <span class="longLanugageName">{{ selected.nameLong }}</span>
+      <span class="longLanguageName">{{ selected.nameLong }}</span>
       <font-awesome-icon class="angleDown" icon="angle-down"/>
     </div>
     <div class="items" :class="{selectHide: !open}">
       <div class="item" v-for="lang of languages" :key="lang.name"
         @click="optionSelect(lang)">
         <img class="langImg" :src="lang.img"/>
-        <span class="longLanugageName">{{ lang.nameLong }}</span>
+        <span class="longLanguageName">{{ lang.nameLong }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import germanFlag from '../assets/germanFlag.png';
 import americanFlag from '../assets/americanFlag.png';
 import frenchFlag from '../assets/frenchFlag.png';
 import spanishFlag from '../assets/spanishFlag.png';
-// import latinFlag from '../assets/latinFlag.png';
+// import latinFlag from '..@/assets/latinFlag.png';
+const germanFlag = require('../assets/germanFlag.png');
 
 export default {
   name: 'LanguageSelect',

@@ -3,7 +3,7 @@
     <!--<div class="hamburger" @click="responsive = !responsive"><font-awesome-icon class="bars" icon="bars"/></div> -->
     <input class="menu-btn" type="checkbox" id="menu-btn" />
     <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
-    <router-link class="logoContainer" to="/" ><img id="logo" src="../assets/logo.png"></router-link>
+    <router-link class="logoContainer" to="/" ><img id="logo" src="@/assets/logo.png"></router-link>
     <!-- <ul class="menu" :class="responsive ? 'responsive' : ''">
       <li v-for="submenu in menu" v-bind:key="submenu.id">
         <router-link active-class="selectedNav" :to="`${submenu.link}`">{{submenu.label}}</router-link>
@@ -233,7 +233,7 @@ export default {
     font-size: 24px;
   }
 
-  ::v-deep .longLanugageName {
+  :deep(.longLanguageName) {
     display: none;
   }
 

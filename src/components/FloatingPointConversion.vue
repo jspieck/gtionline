@@ -153,7 +153,22 @@ export default {
   },
   computed: {
     solDescr() {
-      return this.solutionSteps;
+      if (this.fp1 === '') {
+        return [];
+      }
+      const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
+      converter.decToBin(this.fp1.toString());
+      converter.binToIEEE(converter.result);
+      const solutionObject = getIEEEFromString(this.exponentBits, converter.result);
+      this.setVariables(solutionObject);
+      this.$nextTick(() => {
+        if (window.MathJax) {
+          window.MathJax.typeset();
+        }
+      });
+      const descr = new description.DescriptionSolution(this, this.exponentBits, this.numBits, '');
+      descr.makeDescriptionConversion(this.solutionObject);
+      return descr.result;
     },
     exerciseText() {
       if (this.fp1 === '') {
@@ -171,13 +186,16 @@ export default {
         this.containerWidth = Math.min(500, window.innerWidth - 250);
       });
       if (this.default) {
-        this.recalculate();
+        // this.recalculate();
         this.drawExercise();
         this.generated = true;
       }
     });
   },
   methods: {
+    setVariables(solutionObject) {
+      this.solutionObject = solutionObject;
+    },
     saveVals() {
       if (this.useCookies) {
         window.sessionStorage.setItem('Conv_fp1', this.fp1);
@@ -185,7 +203,7 @@ export default {
         window.sessionStorage.setItem('Conv_numBits', this.numBits);
       }
     },
-    recalculate() {
+    /* recalculate() {
       const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
       converter.decToBin(this.fp1.toString());
       converter.binToIEEE(converter.result);
@@ -198,7 +216,7 @@ export default {
       const descr = new description.DescriptionSolution(this, this.exponentBits, this.numBits, '');
       descr.makeDescriptionConversion(this.solutionObject);
       this.solutionSteps = descr.result;
-    },
+    }, */
     generateExercise() {
       let number = (Math.floor(Math.random() * 100) + Math.random()).toFixed(4);
       if (Math.random() < 0.5) {
@@ -206,7 +224,7 @@ export default {
       }
       this.fp1 = number;
       this.generated = true;
-      this.recalculate();
+      // this.recalculate();
       this.saveVals();
     },
     checkSolution() {
@@ -248,14 +266,14 @@ export default {
           this.xCoord += blockSize;
           if (this.exponentBits + 1 < this.numBits - 1) {
             this.exponentBits += 1;
-            this.recalculate();
+            // this.recalculate();
           }
         }
         if (this.xCoord - e.pageX > blockSize) {
           this.xCoord -= blockSize;
           if (this.exponentBits > 2) {
             this.exponentBits -= 1;
-            this.recalculate();
+            // this.recalculate();
           }
         }
       }
@@ -263,14 +281,14 @@ export default {
     expandFraction() {
       this.exponentBits = Math.max(this.exponentBits - 1, 2);
       if (this.generated) {
-        this.recalculate();
+        // this.recalculate();
         this.saveVals();
       }
     },
     expandExponent() {
       this.exponentBits = Math.min(this.exponentBits + 1, this.numBits - 2);
       if (this.generated) {
-        this.recalculate();
+        // this.recalculate();
         this.saveVals();
       }
     },

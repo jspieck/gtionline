@@ -8,8 +8,8 @@
       <p>{{$t('disclaimerFooter')}}</p>
       <p>Copyright: Lehrstuhl für Hardware/Software Co-Design, Informatik 12, FAU.</p>
       <div id="logoContainer">
-        <img id="codesignLogo" src="./assets/codesign_top.png"/>
-        <img id="fauLogo" src="./assets/FAU_logo.png"/>
+        <img id="codesignLogo" src="@/assets/codesign_top.png"/>
+        <img id="fauLogo" src="@/assets/FAU_logo.png"/>
       </div>
     </div>
   </div>

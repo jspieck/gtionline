@@ -38,14 +38,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 // the central dependency all other measurements are calculated from: (originally 1.4em)
 $toggleswitch-travel: 1.3em;
 
-$toggleswitch-width: ($toggleswitch-travel/26)*60;
-$toggleswitch-height: ($toggleswitch-travel/26)*34;
-$toggleswitch-knob-bottomleft-pos: ($toggleswitch-travel/26)*4;
-$toggleswitch-top-displacement: ($toggleswitch-travel/26)*4;
+$toggleswitch-width: calc($toggleswitch-travel / 26) * 60;
+$toggleswitch-height: calc($toggleswitch-travel / 26) * 34;
+$toggleswitch-knob-bottomleft-pos: calc($toggleswitch-travel / 26) * 4;
+$toggleswitch-top-displacement: calc($toggleswitch-travel / 26) * 4;
 
 // initial values:
 // $toggleswitch-travel: 26px;

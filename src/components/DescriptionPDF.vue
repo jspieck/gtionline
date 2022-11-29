@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import faulogo from '../assets/FAU_logo.png';
-import codesignlogo from '../assets/codesign.png';
+import faulogo from '@/assets/FAU_logo.png';
+import codesignlogo from '@/assets/codesign.png';
 
 export default {
   name: 'DescriptionPDF',

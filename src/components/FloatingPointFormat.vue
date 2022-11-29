@@ -144,12 +144,6 @@
         </div> -->
       </div>
       <div id="solution">
-        <!-- <Accordion :solutionDescription="solDescr">
-          <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
-            {{panel.text}}
-            <span v-if="index === solDescr.length - 1">{{solution}}</span>
-          </p>
-        </Accordion> -->
         <Accordion :solutionDescription="solDescr">
           <AccordionItem v-for="panel in solDescr" v-bind:key="panel.name">
             <template v-slot:accordion-item-title>
@@ -264,7 +258,39 @@ export default {
   },
   computed: {
     solDescr() {
-      return this.solutionSteps;
+      const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
+      if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
+        ieeeSolution.computeSolution(this.nums[0], this.nums[1], this.selectedFormat[2]);
+      }
+      const watcher = JSON.parse(JSON.stringify(ieeeSolution.watcher));
+      const negativeMinuendSubtrahend = ieeeSolution.negativeMinuendSubtrahend;
+      const negativeSubtrahend = ieeeSolution.negativeSubtrahend;
+      const negativeSummand = ieeeSolution.negativeSummand;
+      const denominatorZero = ieeeSolution.denominatorZero;
+      let solutionIEEE = [];
+      let solutionObject = [];
+      let result = [];
+      if (!this.denominatorZero) {
+        solutionIEEE = ieeeSolution.result;
+        const descr = new description.DescriptionSolution(
+          this,
+          this.exponentBits,
+          this.numBits,
+          ieeeSolution.watcher,
+        );
+        if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
+          descr.makeDescriptionArithmetic(
+            this.nums[0],
+            this.nums[1],
+            solutionIEEE,
+            this.selectedFormat[2],
+          );
+        }
+        result = descr.result;
+        solutionObject = ieeeSolution.resultObject;
+      }
+      this.setVariables(watcher, negativeMinuendSubtrahend, negativeSubtrahend, negativeSummand, denominatorZero, solutionIEEE, solutionObject);
+      return result;
     },
     operationOptions() {
       return {
@@ -311,6 +337,15 @@ export default {
     },
   },
   methods: {
+    setVariables(watcher, negativeMinuendSubtrahend, negativeSubtrahend, negativeSummand, denominatorZero, solutionIEEE, solutionObject) {
+      this.watcher = watcher;
+      this.negativeMinuendSubtrahend = negativeMinuendSubtrahend;
+      this.negativeSubtrahend = negativeSubtrahend;
+      this.negativeSummand = negativeSummand;
+      this.denominatorZero = denominatorZero;
+      this.solution = solutionIEEE;
+      this.solutionObject = solutionObject;
+    },
     saveVals() {
       if (this.useCookies) {
         window.sessionStorage.setItem('FPF_operator', this.selectedFormat[2]);
@@ -327,7 +362,7 @@ export default {
       this.containerWidth = Math.min(500, window.innerWidth - 250);
       this.convertFormat(0);
       this.convertFormat(1);
-      this.computeSolution();
+      // this.computeSolution();
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset(); // https://github.com/mathjax/MathJax/issues/2557
@@ -405,7 +440,7 @@ export default {
         return;
       }
       this.convertFormat(num);
-      this.computeSolution();
+      // this.computeSolution();
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();
@@ -468,36 +503,6 @@ export default {
       }
       this.nums[num] = converted;
     },
-    computeSolution() {
-      const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
-      if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
-        ieeeSolution.computeSolution(this.nums[0], this.nums[1], this.selectedFormat[2]);
-      }
-      this.watcher = JSON.parse(JSON.stringify(ieeeSolution.watcher));
-      this.negativeMinuendSubtrahend = ieeeSolution.negativeMinuendSubtrahend;
-      this.negativeSubtrahend = ieeeSolution.negativeSubtrahend;
-      this.negativeSummand = ieeeSolution.negativeSummand;
-      this.denominatorZero = ieeeSolution.denominatorZero;
-      if (!this.denominatorZero) {
-        this.solution = ieeeSolution.result;
-        const descr = new description.DescriptionSolution(
-          this,
-          this.exponentBits,
-          this.numBits,
-          ieeeSolution.watcher,
-        );
-        if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
-          descr.makeDescriptionArithmetic(
-            this.nums[0],
-            this.nums[1],
-            this.solution,
-            this.selectedFormat[2],
-          );
-        }
-        this.solutionSteps = descr.result;
-        this.solutionObject = ieeeSolution.resultObject;
-      }
-    },
     checkSolution() {
       const checkSolution = new checker.CheckSolution(this.exponentBits);
       checkSolution.checkSolution(this.solutionObject, this.propVB, this.propE, this.propM);
@@ -543,7 +548,7 @@ export default {
             if (this.nums[1] !== this.falseFormatOutput) {
               this.convertFormat(1);
             }
-            this.computeSolution();
+            // this.computeSolution();
           }
           this.$nextTick(() => {
             if (window.MathJax) {
@@ -561,7 +566,7 @@ export default {
             if (this.nums[1] !== this.falseFormatOutput) {
               this.convertFormat(1);
             }
-            this.computeSolution();
+            // this.computeSolution();
           }
           this.$nextTick(() => {
             if (window.MathJax) {

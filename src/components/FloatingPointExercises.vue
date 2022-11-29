@@ -44,12 +44,6 @@
         </div> -->
       </div>
       <div id="solution">
-        <!-- <Accordion :solutionDescription="solDescr">
-          <p v-for="(panel, index) in solDescr" :slot="'slot'+index" v-bind:key="panel.name">
-            {{panel.text}}
-            <span v-if="index === solDescr.length - 1">{{solution}}</span>
-          </p>
-        </Accordion> -->
         <Accordion :solutionDescription="solDescr">
           <AccordionItem v-for="panel in solDescr" v-bind:key="panel.name">
             <template v-slot:accordion-item-title>
@@ -76,7 +70,6 @@
 </template>
 
 <script>
-import { reactive } from 'vue';
 import AttentionBanner from './AttentionBanner.vue';
 import * as randomIEEE from '../scripts/randomIEEE';
 import FormatSelect from './FormatSelect.vue';
@@ -128,12 +121,6 @@ export default {
     return {
       useCookies,
       selectedFormat: [operator],
-      archivedExerciseTitles: [
-        this.$t('complementExample'),
-        this.$t('shiftZero'),
-        this.$t('doubleNegative'),
-        this.$t('denormalized'),
-      ],
       mouseDown: false,
       exponentBits: expBits,
       numBits: length,
@@ -147,7 +134,7 @@ export default {
       solutionObject: '',
       containerWidth: 500,
       watcher: '',
-      solutionSteps: reactive([]),
+      solutionSteps: [],
       fp1: input1,
       fp2: input2,
       default: hasdefault,
@@ -155,6 +142,14 @@ export default {
     };
   },
   computed: {
+    archivedExerciseTitles() {
+      return [
+        this.$t('complementExample'),
+        this.$t('shiftZero'),
+        this.$t('doubleNegative'),
+        this.$t('denormalized'),
+      ];
+    },
     operationOptions() {
       return {
         add: `${this.$t('addition')} (+)`,
@@ -164,7 +159,19 @@ export default {
       };
     },
     solDescr() {
-      return this.solutionSteps;
+      const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
+      console.log(this.selectedFormat[0]);
+      ieeeSolution.computeSolution(this.fp1, this.fp2, this.selectedFormat[0]);
+      const watcher = ieeeSolution.watcher;
+      const descr = new description.DescriptionSolution(
+        this,
+        this.exponentBits,
+        this.numBits,
+        watcher,
+      );
+      descr.makeDescriptionArithmetic(this.fp1, this.fp2, this.solution, this.selectedFormat[0]);
+      this.setVariables(watcher, ieeeSolution.result, ieeeSolution.resultObject);
+      return descr.result;
     },
     exerciseText() {
       if (this.fp1 === '') {
@@ -190,7 +197,7 @@ export default {
     this.$nextTick(() => {
       if (this.default) {
         this.drawExercise();
-        this.computeSolution();
+        // this.computeSolution();
       }
     });
   },
@@ -202,6 +209,11 @@ export default {
     });
   },
   methods: {
+    setVariables(watcher, solutionIn, solutionObject) {
+      this.watcher = watcher;
+      this.solution = solutionIn;
+      this.solutionObject = solutionObject;
+    },
     selectArchivedExercise(num, exerciseIndex) {
       this.archivedExerciseSelectedIndex = exerciseIndex;
     },
@@ -256,7 +268,7 @@ export default {
         window.sessionStorage.setItem('FPF_expBits', this.exponentBits);
         window.sessionStorage.setItem('FPF_numBits', this.numBits);
       }
-      this.computeSolution();
+      // this.computeSolution();
       const descr = new pdf.PdfDescription(
         this,
         this.exponentBits,
@@ -281,7 +293,7 @@ export default {
     },
     prepareExercise() {
       this.drawExercise();
-      this.computeSolution();
+      // this.computeSolution();
       this.saveVals();
       this.$nextTick(() => {
         if (window.MathJax) {
@@ -304,9 +316,9 @@ export default {
     },
     selectOp(num, val) {
       this.selectedFormat[num] = val;
-      this.computeSolution();
+      // this.computeSolution();
     },
-    computeSolution() {
+    /* computeSolution() {
       const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
       console.log(this.selectedFormat[0]);
       ieeeSolution.computeSolution(this.fp1, this.fp2, this.selectedFormat[0]);
@@ -322,7 +334,7 @@ export default {
       );
       descr.makeDescriptionArithmetic(this.fp1, this.fp2, this.solution, this.selectedFormat[0]);
       this.solutionSteps = reactive(descr.result);
-    },
+    }, */
   },
 };
 </script>

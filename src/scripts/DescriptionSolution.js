@@ -125,11 +125,11 @@ export class DescriptionSolution {
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
     const watcher = this.watcher;
-    this.result.push(reactive({
-      name: reactive(this.imp.$t('values')),
+    this.result.push({
+      name: this.imp.$t('values'),
       text: `${this.imp.$t('firstSummand')}: ${this.imp.$t('sign')}: ${(y1.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString1} ${this.imp.$t('mantissa')}: ${mantissaString1}<br>`
           + `${this.imp.$t('secondSummand')}: ${this.imp.$t('sign')}: ${(y2.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString2} ${this.imp.$t('mantissa')}: ${mantissaString2}`,
-    }));
+    });
     if (y1.isZero || y2.isZero) {
       this.result.push(reactive({
         name: `${this.imp.$t('step')} 1`,
