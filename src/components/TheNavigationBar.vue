@@ -3,7 +3,7 @@
     <!--<div class="hamburger" @click="responsive = !responsive"><font-awesome-icon class="bars" icon="bars"/></div> -->
     <input class="menu-btn" type="checkbox" id="menu-btn" />
     <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
-    <router-link class="logoContainer" to="/" ><img id="logo" src="../assets/logo.svg"></router-link>
+    <router-link class="logoContainer" to="/" ><img id="logo" src="../assets/logo.png"></router-link>
     <!-- <ul class="menu" :class="responsive ? 'responsive' : ''">
       <li v-for="submenu in menu" v-bind:key="submenu.id">
         <router-link active-class="selectedNav" :to="`${submenu.link}`">{{submenu.label}}</router-link>
@@ -42,13 +42,13 @@ export default {
         /* {
           id: 0,
           label: this.$t('polyadic'),
-          link: '/polyadic',
-        },
+          link: 'polyadic',
+        }, */
         {
           id: 1,
           label: this.$t('floatingPoint'),
-          link: '/fparithmetic',
-        }, */
+          link: 'fparithmetic',
+        },
         {
           id: 2,
           label: this.$t('functionMin'),
@@ -83,7 +83,7 @@ export default {
 }
 
 #logo {
-  height: 40px;
+  height: 20px;
   width: 100px;
 }
 
@@ -217,7 +217,7 @@ export default {
   #logo {
     position: absolute;
     left: 10px;
-    top: 13px;
+    top: 20px;
   }
 }
 

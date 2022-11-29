@@ -4,10 +4,17 @@
     <div class="bodyContainer">
       <p class="introduction">{{$t('fpExerciseIntro')}}</p>
       <h4>{{$t('generateEx')}}</h4>
-      <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0
-                :options="operationOptions"/>
-      <div class="divMargin"/>
-      <button v-on:click="generateExercise">{{$t('generate')}}</button>
+      <div>
+        <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0
+                  :options="operationOptions"/>
+        <div class="divMargin"/>
+        <button v-on:click="generateExercise">{{$t('generate')}}</button>
+        <div class="divMargin"/>
+        <FSelect :options="archivedExerciseTitles" :sel="0"
+          @input="selectArchivedExercise"/>
+        <div class="divMargin"/>
+        <button @click="loadArchivedExercise">{{$t('load')}}</button>
+      </div>
       <div id="exerciseField" v-html="exerciseText"></div>
       <h4>{{$t('ownSolution')}}</h4>
       <AttentionBanner :text="$t('attRound')"/>
@@ -69,6 +76,7 @@
 </template>
 
 <script>
+import { reactive } from 'vue';
 import AttentionBanner from './AttentionBanner.vue';
 import * as randomIEEE from '../scripts/randomIEEE';
 import FormatSelect from './FormatSelect.vue';
@@ -120,6 +128,12 @@ export default {
     return {
       useCookies,
       selectedFormat: [operator],
+      archivedExerciseTitles: [
+        this.$t('complementExample'),
+        this.$t('shiftZero'),
+        this.$t('doubleNegative'),
+        this.$t('denormalized'),
+      ],
       mouseDown: false,
       exponentBits: expBits,
       numBits: length,
@@ -133,10 +147,11 @@ export default {
       solutionObject: '',
       containerWidth: 500,
       watcher: '',
-      solutionSteps: [],
+      solutionSteps: reactive([]),
       fp1: input1,
       fp2: input2,
       default: hasdefault,
+      archivedExerciseSelectedIndex: 0,
     };
   },
   computed: {
@@ -162,6 +177,7 @@ export default {
         sub: [this.$t('subtraction'), '-'],
         div: [this.$t('division'), '/'],
       };
+      console.log(operation);
       // `Es seien die Gleitkommazahlen \\( fp_1 \\) und \\( fp_2 \\) im 16 Bit Gleitkommaformat gegeben. Berechnen Sie die ${opNames[operation][0]} \\( fp_1 ${opNames[operation][1]} fp_2 \\) ohne die Binärdarstellung zu verlassen und geben Sie diese wieder als Gleitkommazahl an:
       const introText = this.$t('fpExerciseText', { op1: opNames[operation][0], op2: opNames[operation][1] });
       return `${introText} 
@@ -186,6 +202,41 @@ export default {
     });
   },
   methods: {
+    selectArchivedExercise(num, exerciseIndex) {
+      this.archivedExerciseSelectedIndex = exerciseIndex;
+    },
+    loadArchivedExercise() {
+      const index = this.archivedExerciseSelectedIndex;
+      if (index < 0) {
+        return;
+      }
+      const archive = [
+        {
+          fp1: '0 01110 1100100000',
+          fp2: '1 01001 1001010111',
+          op: 'add',
+        },
+        {
+          fp1: '0 10010 0101111100',
+          fp2: '1 00010 0000100011',
+          op: 'add',
+        },
+        {
+          fp1: '1 01101 0111001010',
+          fp2: '1 01100 0100000010',
+          op: 'add',
+        },
+        {
+          fp1: '1 00110 0010101010',
+          fp2: '1 11011 0011111100',
+          op: 'div',
+        },
+      ];
+      this.fp1 = archive[index].fp1;
+      this.fp2 = archive[index].fp2;
+      this.selectedFormat[0] = archive[index].op;
+      this.prepareExercise();
+    },
     saveVals() {
       if (this.useCookies) {
         window.sessionStorage.setItem('Exer_fp1', this.fp1);
@@ -228,12 +279,7 @@ export default {
         }
       });
     },
-    generateExercise() {
-      const random = new randomIEEE.RandomIEEE(this.exponentBits, this.numBits);
-      random.generateRandomIEEE();
-      this.fp1 = random.result;
-      random.generateRandomIEEE();
-      this.fp2 = random.result;
+    prepareExercise() {
       this.drawExercise();
       this.computeSolution();
       this.saveVals();
@@ -242,6 +288,14 @@ export default {
           window.MathJax.typeset();
         }
       });
+    },
+    generateExercise() {
+      const random = new randomIEEE.RandomIEEE(this.exponentBits, this.numBits);
+      random.generateRandomIEEE();
+      this.fp1 = random.result;
+      random.generateRandomIEEE();
+      this.fp2 = random.result;
+      this.prepareExercise();
     },
     selectVal(num, val) {
       this.selectedFormat[num] = val;
@@ -267,7 +321,7 @@ export default {
         watcher,
       );
       descr.makeDescriptionArithmetic(this.fp1, this.fp2, this.solution, this.selectedFormat[0]);
-      this.solutionSteps = descr.result;
+      this.solutionSteps = reactive(descr.result);
     },
   },
 };

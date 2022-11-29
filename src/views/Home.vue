@@ -7,7 +7,7 @@
       </div>
       <div class="linkHome">
         <router-link
-          to="/polyadic"
+          to="/fparithmetic"
           custom
           v-slot="{ href, navigate, isActive, isExactActive }"
         >
@@ -24,7 +24,7 @@
     </div>
     <div class="imageContainer">
       <div class="startImg">
-        <img src="../assets/gtionline.svg"/>
+        <img src="../assets/gtionline.png"/>
         <p class="imgDescription">{{$t('sequentialCircuit')}}</p>
       </div>
     </div>

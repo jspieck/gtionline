@@ -16,11 +16,11 @@
 </template>
 
 <script>
-import germanFlag from '../assets/germanFlag.svg';
-import americanFlag from '../assets/americanFlag.svg';
-import frenchFlag from '../assets/frenchFlag.svg';
-import spanishFlag from '../assets/spanishFlag.svg';
-// import latinFlag from '../assets/latinFlag.svg';
+import germanFlag from '../assets/germanFlag.png';
+import americanFlag from '../assets/americanFlag.png';
+import frenchFlag from '../assets/frenchFlag.png';
+import spanishFlag from '../assets/spanishFlag.png';
+// import latinFlag from '../assets/latinFlag.png';
 
 export default {
   name: 'LanguageSelect',
@@ -33,7 +33,7 @@ export default {
       languages: [
         {
           name: 'de',
-          nameLong: 'German',
+          nameLong: 'Deutsch',
           img: germanFlag,
         },
         {
@@ -43,12 +43,12 @@ export default {
         },
         {
           name: 'fr',
-          nameLong: 'French',
+          nameLong: 'Français',
           img: frenchFlag,
         },
         {
           name: 'es',
-          nameLong: 'Spanish',
+          nameLong: 'Español',
           img: spanishFlag,
         },
         /* {

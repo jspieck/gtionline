@@ -1,4 +1,5 @@
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
+import { reactive } from 'vue';
 import * as tool from './gti-tools';
 import * as convertFormat from './formatConversions';
 
@@ -13,7 +14,7 @@ export class DescriptionSolution {
     classCallCheck(this, DescriptionSolution);
     this.imp = imp;
     this.table = '';
-    this.result = [];
+    this.result = reactive([]); // [];
     this.exponentBits = exponentBits;
     this.numBits = numBits;
     this.watcher = watcher;
@@ -85,6 +86,28 @@ export class DescriptionSolution {
     ].join('');
   }
 
+  createExponentShiftDescription(
+    exponentBits1, exponentDecimal1, left, exponentBits2, exponentDecimal2,
+    deltaExponent, preShift, mantissa2,
+  ) {
+    const maxExponentDecimal = Math.max(exponentDecimal1, exponentDecimal2);
+    const minExponentDecimal = Math.min(exponentDecimal1, exponentDecimal2);
+    return [
+      `${this.imp.$t('smallerExponent')} `,
+      `\\( ( [ ${exponentBits1} ] :=  ${exponentDecimal1} ${left}
+            [ ${exponentBits2} ] :=  ${exponentDecimal2}) \\) `,
+      '</br>',
+      `${this.imp.$t('resDiffExponent')}: `,
+      `\\( ${maxExponentDecimal} - ${minExponentDecimal} = ${deltaExponent} \\)`,
+      '</br>',
+      ` ${this.imp.$t('shiftMantissa')}: \\( `,
+      preShift,
+      `\\overset{\\text{Shift: ${deltaExponent} }}{\\rightarrow}`,
+      mantissa2,
+      '\\)',
+    ].join('');
+  }
+
   additionDescription(solution, _y1, _y2) {
     let y1;
     let y2;
@@ -102,18 +125,18 @@ export class DescriptionSolution {
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
     const watcher = this.watcher;
-    this.result.push({
-      name: `${this.imp.$t('values')}`,
+    this.result.push(reactive({
+      name: reactive(this.imp.$t('values')),
       text: `${this.imp.$t('firstSummand')}: ${this.imp.$t('sign')}: ${(y1.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString1} ${this.imp.$t('mantissa')}: ${mantissaString1}<br>`
           + `${this.imp.$t('secondSummand')}: ${this.imp.$t('sign')}: ${(y2.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString2} ${this.imp.$t('mantissa')}: ${mantissaString2}`,
-    });
+    }));
     if (y1.isZero || y2.isZero) {
-      this.result.push({
+      this.result.push(reactive({
         name: `${this.imp.$t('step')} 1`,
         text: [
           `${this.imp.$t('addWithZero')}`,
         ].join(''),
-      });
+      }));
       const converter = new convertFormat.FormatConversions(
         this.exponentBits,
         this.numBits,
@@ -128,28 +151,28 @@ export class DescriptionSolution {
     } else if (watcher.steps.ResultEdgecase.data.edgecase !== 'none') { // case: edgecase
       switch (watcher.steps.ResultEdgecase.data.edgecase) {
         case 'nan':
-          this.result.push({
+          this.result.push(reactive({
             name: `${this.imp.$t('step')} 2`,
             text: [
               `${this.imp.$t('solutionIsNan')}`,
             ].join(''),
-          });
+          }));
           break;
         case 'inf':
-          this.result.push({
+          this.result.push(reactive({
             name: `${this.imp.$t('step')} 2`,
             text: [
               `${this.imp.$t('solutionIsInf')}`,
             ].join(''),
-          });
+          }));
           break;
         case 'zero':
-          this.result.push({
+          this.result.push(reactive({
             name: `${this.imp.$t('step')} 2`,
             text: [
               `${this.imp.$t('solutionIsZero')}`,
             ].join(''),
-          });
+          }));
           break;
         default:
       }
@@ -165,45 +188,37 @@ export class DescriptionSolution {
       const decSol = converter.result;
       this.createIEEESolutionBox(decSol, watcher.steps.Result.data.result);
     } else {
-      if (watcher.steps.CalculateDeltaE.data.deltaE === 0) {
-        this.result.push({
+      const deltaExponent = this.watcher.steps.CalculateDeltaE.data.deltaE;
+      if (deltaExponent === 0) {
+        this.result.push(reactive({
           name: `${this.imp.$t('step')} 1`,
           text: `${this.imp.$t('adjustExponents')} \\( (${expString1} = ${expString2} \\Rightarrow i.O.) \\)`,
-        });
+        }));
       } else {
         const left = watcher.steps.CalculateDeltaE.data.switched ? '<' : '>';
-        this.result.push({
+        const exponentBits1 = watcher.steps.CalculateDeltaE.data.expN1Bits.join('');
+        const exponentBits2 = watcher.steps.CalculateDeltaE.data.expN2Bits.join('');
+        const exponentDecimal1 = watcher.steps.CalculateDeltaE.data.expN1;
+        const exponentDecimal2 = watcher.steps.CalculateDeltaE.data.expN2;
+        const preShift = watcher.steps.CalculateDeltaE.data.preShift.join('');
+        const mantissa2 = watcher.steps.AddMantissa.data.mantissa2.join('');
+
+        this.result.push(reactive({
           name: `${this.imp.$t('step')} 1`,
           text: `${this.imp.$t('adjustExponents')} \\( (${expString1} \\neq ${expString2}) \\)`,
           subpanels: [
             {
               name: `${this.imp.$t('diffExponent')}`,
-              text: [
-                `${this.imp.$t('smallerExponent')} `,
-                `\\( ( [ ${watcher.steps.CalculateDeltaE.data.expN1Bits.join('')} ] :=  ${watcher.steps.CalculateDeltaE.data.expN1} ${left}
-                      [ ${watcher.steps.CalculateDeltaE.data.expN2Bits.join('')} ] :=  ${watcher.steps.CalculateDeltaE.data.expN2}) \\) `,
-                `${this.imp.$t('resDiffExponent')}: `,
-                this.watcher.steps.CalculateDeltaE.data.deltaE,
-              ].join(''),
-              subsubpanels: [
-                {
-                  name: `${this.imp.$t('adjustSmallerMantissa')}`,
-                  text: [
-                    ` ${this.imp.$t('shiftMantissa')}: \\( `,
-                    watcher.steps.CalculateDeltaE.data.preShift.join(''),
-                    `\\overset{\\text{Shift: ${watcher.steps.CalculateDeltaE.data.deltaE} }}{\\rightarrow}`,
-                    watcher.steps.AddMantissa.data.mantissa2.join(''),
-                    '\\)',
-                  ].join(''),
-                },
-              ],
+              text: this.createExponentShiftDescription(
+                exponentBits1, exponentDecimal1, left, exponentBits2, exponentDecimal2, deltaExponent, deltaExponent, preShift, mantissa2,
+              ),
             },
           ],
-        });
+        }));
       }
       if (!watcher.steps.AddMantissa.data.equalMantissa) {
         this.getAdditionTable();
-        this.result.push({
+        this.result.push(reactive({
           name: `${this.imp.$t('step')} 2`,
           text: [
             `${this.imp.$t('addMantissa')}`,
@@ -224,9 +239,9 @@ export class DescriptionSolution {
               ].join(''),
             },
           ],
-        });
+        }));
       } else {
-        this.result.push({
+        this.result.push(reactive({
           name: `${this.imp.$t('step')} 2`,
           text: `${this.imp.$t('addMantissa')}`,
           subpanels: [
@@ -235,7 +250,7 @@ export class DescriptionSolution {
               text: `${this.imp.$t('equalMantissa')}`,
             },
           ],
-        });
+        }));
       }
       const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
       converter.ieeeToDec([
@@ -380,18 +395,18 @@ export class DescriptionSolution {
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
     const watcher = this.watcher;
-    this.result.push({
+    this.result.push(reactive({
       name: `${this.imp.$t('values')}`,
       text: `${this.imp.$t('firstFactor')}: ${this.imp.$t('sign')}: ${(y1.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString1} ${this.imp.$t('mantissa')}: ${mantissaString1}<br>`
           + `${this.imp.$t('secondFactor')}: ${this.imp.$t('sign')}: ${(y2.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString2} ${this.imp.$t('mantissa')}: ${mantissaString2}`,
-    });
+    }));
     if (y1.isZero || y2.isZero) {
-      this.result.push({
+      this.result.push(reactive({
         name: `${this.imp.$t('step')} 1`,
         text: [
           `${this.imp.$t('mulWithZero')}`,
         ].join(''),
-      });
+      }));
     } else {
       const converter = new convertFormat.FormatConversions(
         this.exponentBits,
@@ -409,7 +424,7 @@ export class DescriptionSolution {
         exponentIntermediateResult.unshift(curE % 2);
         curE = Math.floor(curE / 2);
       }
-      this.result.push({
+      this.result.push(reactive({
         name: `${this.imp.$t('step')} 1`,
         text: [
           this.imp.$t('addExponents'),
@@ -421,7 +436,7 @@ export class DescriptionSolution {
             ExpBits: exponentIntermediateResult.join(''),
           }),
         ].join(' '),
-      });
+      }));
       this.getMultiplicationTable();
       const mantissaDescription = [
         `${this.imp.$t('newMantissaIs')}`,
@@ -442,7 +457,7 @@ export class DescriptionSolution {
 
       const mantissaDescriptionStr = mantissaDescription.join('');
 
-      this.result.push({
+      this.result.push(reactive({
         name: `${this.imp.$t('step')} 2`,
         text: [
           `${this.imp.$t('mulMantissa')}`,
@@ -453,7 +468,7 @@ export class DescriptionSolution {
             text: mantissaDescriptionStr,
           },
         ],
-      });
+      }));
     }
 
     const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
@@ -471,8 +486,8 @@ export class DescriptionSolution {
   getSubtractionTable() {
     // set up tabular for visual the addition
     const addWatcher = this.watcher.steps.Addition.data.addition;
-    const originalMantissa1 = addWatcher.steps.AddMantissa.data.mantissa1;
-    const originalMantissa2 = addWatcher.steps.AddMantissa.data.mantissa2;
+    // const originalMantissa1 = addWatcher.steps.AddMantissa.data.mantissa1;
+    // const originalMantissa2 = addWatcher.steps.AddMantissa.data.mantissa2;
     const mantissa1 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op1Arr;
     const mantissa2 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op2Arr;
     const carryBits = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.carryArr;
@@ -485,7 +500,8 @@ export class DescriptionSolution {
     const rowCarry = [];
     const row5 = [];
     const tabdef = [];
-    console.log(addWatcher.steps.AddMantissa);
+    console.log(addWatcher.steps.AddMantissa.data.addition.steps.Addition.data);
+    console.log(addWatcher.steps);
     if (addWatcher.steps.AddMantissa.data.sign1 === 1
       && addWatcher.steps.AddMantissa.data.sign2 === 0) {
       row1.push('-&');
@@ -503,14 +519,16 @@ export class DescriptionSolution {
     rowCarry.push('\\scriptsize{+}&');
     row5.push('=&');
     tabdef.push('{');
-    for (let i = originalMantissa1.length; i <= cols; i += 1) {
-      originalMantissa1.unshift(0);
-    }
-    for (let i = originalMantissa2.length; i <= cols; i += 1) {
-      originalMantissa2.unshift(0);
-    }
+    // console.log('Triggering');
+    // result.unshift(addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.result.signBit);
+    // for (let i = originalMantissa1.length; i <= cols; i += 1) {
+    //   originalMantissa1.unshift(0);
+    // }
+    // for (let i = originalMantissa2.length; i <= cols; i += 1) {
+    //   originalMantissa2.unshift(0);
+    // }
     for (let i = mantissa1.length; i <= cols; i += 1) {
-      if (addWatcher.steps.AddMantissa.data.sign1 === 0) {
+      if (addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op1.signBit === 0) {
         mantissa1.unshift(0);
       } else {
         // Mantissa is in the complement: fill up with 1s
@@ -518,7 +536,7 @@ export class DescriptionSolution {
       }
     }
     for (let i = mantissa2.length; i <= cols; i += 1) {
-      if (addWatcher.steps.AddMantissa.data.sign2 === 0) {
+      if (addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op2.signBit === 0) {
         mantissa2.unshift(0);
       } else {
         // Mantissa is in the complement: fill up with 1s
@@ -528,19 +546,30 @@ export class DescriptionSolution {
     for (let i = carryBits.length; i <= cols; i += 1) {
       carryBits.unshift(0);
     }
-    for (let i = 0; i < cols; i += 1) {
+    for (let i = result.length; i <= cols; i += 1) {
+      result.unshift(addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.result.signBit);
+    }
+    for (let i = 0; i < cols + 1; i += 1) {
       tabdef.push('c');
-      row1.push(` ${originalMantissa1[i]}`);
+      /* row1.push(` ${originalMantissa1[i]}`);
       row1.push('&');
       row2.push(` ${originalMantissa2[i]}`);
-      row2.push('&');
-      row3.push(` ${mantissa1[i]}`);
+      row2.push('&'); */
+      if (i === 2) {
+        row3.push(',');
+        row4.push(',');
+        rowCarry.push('');
+        row5.push(',');
+      } else {
+        const index = i > 2 ? i - 1 : i;
+        row3.push(` ${mantissa1[index]}`);
+        row4.push(` ${mantissa2[index]}`);
+        rowCarry.push(` \\scriptsize{${carryBits[index]}}`);
+        row5.push(` ${result[index]}`);
+      }
       row3.push('&');
-      row4.push(` ${mantissa2[i]}`);
       row4.push('&');
-      rowCarry.push(` \\scriptsize{${carryBits[i]}}`);
       rowCarry.push('&');
-      row5.push(` ${result[i]}`);
       row5.push('&');
     }
     tabdef.push('}');
@@ -558,9 +587,9 @@ export class DescriptionSolution {
 
     this.table = [
       `\\begin{array} ${tabdef.join('')}`,
-      `${row1.join('')}`,
-      `${row2.join('')}`,
-      '\\hline_{Complement:} \\\\[-8mm]',
+      // `${row1.join('')}`,
+      // `${row2.join('')}`,
+      // '\\hline_{Complement:} \\\\[-8mm]',
       `${row3.join('')}`,
       `${row4.join('')}`,
       `${rowCarry.join('')}`,
@@ -571,14 +600,14 @@ export class DescriptionSolution {
   }
 
   createIEEESolutionBox(decSol, result) {
-    this.result.push({
+    this.result.push(reactive({
       name: this.imp.$t('solution'),
       text: [
         `${this.imp.$t('solution')}: ${result.sign} ${result.exponentBits.join('')} ${result.mantissaBits.join('').substring(1)}`,
         '\\( \\implies \\)',
         ` ${this.imp.$t('decimal')}: ${decSol}`,
       ].join('') + this.createIEEENumberBreakdown(result),
-    });
+    }));
   }
 
   createIEEENumberBreakdown(result) {
@@ -607,19 +636,19 @@ export class DescriptionSolution {
     const expString2 = y2.exponentBits.join('');
     const watcher = this.watcher;
     let actStep = 1;
-    this.result.push({
+    this.result.push(reactive({
       name: `${this.imp.$t('values')}`,
       text: `${this.imp.$t('minuend')}: ${this.imp.$t('sign')}: ${(y1.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString1} ${this.imp.$t('mantissa')}: ${mantissaString1}<br>`
           + `${this.imp.$t('subtrahend')}: ${this.imp.$t('sign')}: ${(y2.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString2} ${this.imp.$t('mantissa')}: ${mantissaString2}`,
-    });
+    }));
     const addWatcher = watcher.steps.Addition.data.addition;
     if (y1.isZero || y2.isZero) { // case: subtraction with zero
-      this.result.push({
+      this.result.push(reactive({
         name: `${this.imp.$t('step')} ${actStep}`,
         text: [
           `${this.imp.$t('subWithZero')}`,
         ].join(''),
-      });
+      }));
       const converter = new convertFormat.FormatConversions(
         this.exponentBits,
         this.numBits,
@@ -634,28 +663,28 @@ export class DescriptionSolution {
     } else if (addWatcher.steps.ResultEdgecase.data.edgecase !== 'none') { // case: edgecase
       switch (addWatcher.steps.ResultEdgecase.data.edgecase) {
         case 'nan':
-          this.result.push({
+          this.result.push(reactive({
             name: `${this.imp.$t('step')} ${actStep}`,
             text: [
               `${this.imp.$t('solutionIsNan')}`,
             ].join(''),
-          });
+          }));
           break;
         case 'inf':
-          this.result.push({
+          this.result.push(reactive({
             name: `${this.imp.$t('step')} ${actStep}`,
             text: [
               `${this.imp.$t('solutionIsInf')}`,
             ].join(''),
-          });
+          }));
           break;
         case 'zero':
-          this.result.push({
+          this.result.push(reactive({
             name: `${this.imp.$t('step')} ${actStep}`,
             text: [
               `${this.imp.$t('solutionIsZero')}`,
             ].join(''),
-          });
+          }));
           break;
         default:
       }
@@ -672,34 +701,32 @@ export class DescriptionSolution {
       this.createIEEESolutionBox(decSol, watcher.steps.Result.data.result);
     } else {
       if (addWatcher.steps.CalculateDeltaE.data.deltaE === 0) {
-        this.result.push({
+        this.result.push(reactive({
           name: `${this.imp.$t('step')} ${actStep}`,
           text: `${this.imp.$t('adjustExponents')} \\( (${expString1} = ${expString2} \\Rightarrow i.O.) \\)`,
-        });
+        }));
       } else {
         const left = addWatcher.steps.CalculateDeltaE.data.switched ? '<' : '>';
-        this.result.push({
+        const exponentBits1 = addWatcher.steps.CalculateDeltaE.data.expN1Bits.join('');
+        const exponentBits2 = addWatcher.steps.CalculateDeltaE.data.expN2Bits.join('');
+        const exponentDecimal1 = addWatcher.steps.CalculateDeltaE.data.expN1;
+        const exponentDecimal2 = addWatcher.steps.CalculateDeltaE.data.expN2;
+        const deltaExponent = addWatcher.steps.CalculateDeltaE.data.deltaE;
+        const preShift = addWatcher.steps.CalculateDeltaE.data.preShift.join('');
+        const mantissa2 = addWatcher.steps.AddMantissa.data.mantissa2.join('');
+
+        this.result.push(reactive({
           name: `${this.imp.$t('step')} ${actStep}`,
           text: `${this.imp.$t('adjustExponents')} \\( (${expString1} \\neq ${expString2}) \\)`,
           subpanels: [
             {
               name: `${this.imp.$t('diffExponent')}`,
-              text: [
-                `${this.imp.$t('smallerExponent')} `,
-                `\\( ( [ ${addWatcher.steps.CalculateDeltaE.data.expN1Bits.join('')} ] :=  ${addWatcher.steps.CalculateDeltaE.data.expN1} ${left}
-                        [ ${addWatcher.steps.CalculateDeltaE.data.expN2Bits.join('')} ] :=  ${addWatcher.steps.CalculateDeltaE.data.expN2}) \\) `,
-                `${this.imp.$t('resDiffExponent')}: `,
-                addWatcher.steps.CalculateDeltaE.data.deltaE,
-                '</br>',
-                ` ${this.imp.$t('shiftMantissa')}: \\( `,
-                addWatcher.steps.CalculateDeltaE.data.preShift.join(''),
-                `\\overset{\\text{Shift: ${addWatcher.steps.CalculateDeltaE.data.deltaE} }}{\\rightarrow}`,
-                addWatcher.steps.AddMantissa.data.mantissa2.join(''),
-                '\\)',
-              ].join(''),
+              text: this.createExponentShiftDescription(
+                exponentBits1, exponentDecimal1, left, exponentBits2, exponentDecimal2, deltaExponent, preShift, mantissa2,
+              ),
             },
           ],
-        });
+        }));
       }
       if (!addWatcher.steps.AddMantissa.data.equalMantissa) { // case: not equal mantissa
         if (addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data.negate) {
@@ -708,44 +735,49 @@ export class DescriptionSolution {
           const flippedBits = addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data.flippedArray.join('');
           const oneAdded = addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data.oneAdded.join('');
           const normalizedArray = addWatcher.steps.AddMantissa.data.complement1.steps.Complement.data.normalizedArray.join('');
-          this.result.push({
+          const flippedBitsShort = flippedBits.substring(0, mantissa1Str.length);
+          const oneAddedShort = oneAdded.substring(0, mantissa1Str.length);
+          this.result.push(reactive({
             name: `${this.imp.$t('step')} ${actStep}`,
             text: `${this.imp.$t('subtTwosComplement')}`,
             subpanels:
             [
               {
                 name: `${this.imp.$t('mantissaTwosComplement')}: \\(${mantissa1Str}\\)`,
-                text: `${this.imp.$t('switchBits')}: \\(${mantissa1Str} \\rightarrow ${flippedBits}\\)\<br\>`
-                  + `${this.imp.$t('add1')}: \\(${flippedBits} \\rightarrow ${oneAdded}\\)\<br\>`
-                  + `${this.imp.$t('normalize')}: \\(${oneAdded} \\rightarrow ${normalizedArray}\\)`,
+                text: `${this.imp.$t('switchBits')}: \\(${mantissa1Str} \\rightarrow ${flippedBitsShort}\\)\<br\>`
+                  + `${this.imp.$t('add1')}: \\(${flippedBitsShort} \\rightarrow ${oneAddedShort}\\)\<br\>`
+                  + `${this.imp.$t('normalize')}: \\(${oneAddedShort} \\rightarrow ${normalizedArray}\\)`,
               },
             ],
-          });
+          }));
         }
-        if (addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data.negate) {
+        const signBitNeeded = addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data.negate;
+        if (signBitNeeded) {
           actStep += 1;
           const mantissa2Str = addWatcher.steps.AddMantissa.data.mantissa2.join('');
           const flippedBits = addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data.flippedArray.join('');
           const oneAdded = addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data.oneAdded.join('');
           const normalizedArray = addWatcher.steps.AddMantissa.data.complement2.steps.Complement.data.normalizedArray.join('');
-          this.result.push({
+          const flippedBitsShort = flippedBits.substring(0, mantissa2Str.length);
+          const oneAddedShort = oneAdded.substring(0, mantissa2Str.length);
+          this.result.push(reactive({
             name: `${this.imp.$t('step')} ${actStep}`,
             text: `${this.imp.$t('subtTwosComplement')}`,
             subpanels:
               [
                 {
                   name: `${this.imp.$t('mantissaTwosComplement')}: \\(${mantissa2Str}\\)`,
-                  text: `${this.imp.$t('switchBits')}: \\(${mantissa2Str} \\rightarrow ${flippedBits}\\)\<br\>`
-                    + `${this.imp.$t('add1')}: \\(${flippedBits} \\rightarrow ${oneAdded}\\)\<br\>`
-                    + `${this.imp.$t('normalize')}: \\(${oneAdded} \\rightarrow ${normalizedArray}\\)`,
+                  text: `${this.imp.$t('switchBits')}: \\(${mantissa2Str} \\rightarrow ${flippedBitsShort}\\)\<br\>`
+                    + `${this.imp.$t('add1')}: \\(${flippedBitsShort} \\rightarrow ${oneAddedShort}\\)\<br\>`
+                    + `${this.imp.$t('normalize')}: \\(${oneAddedShort} \\rightarrow ${normalizedArray}\\)`,
                 },
               ],
-          });
+          }));
         }
         this.getSubtractionTable();
         actStep += 1;
         let mantissaDescription = [
-          `${this.imp.$t('newMantissaIs')}`,
+          signBitNeeded ? `${this.imp.$t('newMantissaSignBit')}` : `${this.imp.$t('newMantissaIs')}`,
           '\<br\> \<br\>',
           `\\( ${this.table} \\)`,
           '\<br\> \<br\>',
@@ -764,7 +796,7 @@ export class DescriptionSolution {
         mantissaDescription.push(`${this.imp.$t('mantissa1float')} ${addWatcher.steps.AddMantissa.data.normalizedMantissa.join('')}`);
         mantissaDescription = mantissaDescription.join('');
 
-        this.result.push({
+        this.result.push(reactive({
           name: `${this.imp.$t('step')} ${actStep}`,
           text: `${this.imp.$t('addMantissa')}`,
           subpanels: [
@@ -773,7 +805,7 @@ export class DescriptionSolution {
               text: mantissaDescription,
             },
           ],
-        });
+        }));
       } else { // case: equal mantissa
         actStep += 1;
         const mantissaDescription = [
@@ -781,10 +813,10 @@ export class DescriptionSolution {
           `${this.imp.$t('consider1comma')} ${this.imp.$t('mantissa1float')} ${addWatcher.steps.AddMantissa.data.normalizedMantissa.join('')}`,
         ].join('');
 
-        this.result.push({
+        this.result.push(reactive({
           name: `${this.imp.$t('step')} ${actStep}`,
           text: mantissaDescription,
-        });
+        }));
       }
       const converter = new convertFormat.FormatConversions(
         this.exponentBits,
@@ -933,20 +965,20 @@ export class DescriptionSolution {
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
     const watcher = this.watcher;
-    this.result.push({
+    this.result.push(reactive({
       name: `${this.imp.$t('values')}`,
       text: `${this.imp.$t('numerator')}: ${this.imp.$t('sign')}: ${(y1.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString1} ${this.imp.$t('mantissa')}: ${mantissaString1}<br>`
           + `${this.imp.$t('denominator')}: ${this.imp.$t('sign')}: ${(y2.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString2} ${this.imp.$t('mantissa')}: ${mantissaString2}`,
-    });
+    }));
     if (y1.isZero) {
-      this.result.push({
+      this.result.push(reactive({
         name: `${this.imp.$t('step')} 1`,
         text: [
           `${this.imp.$t('divWithZero')}`,
         ].join(''),
-      });
+      }));
     } else {
-      this.result.push({
+      this.result.push(reactive({
         name: `${this.imp.$t('step')} 1`,
         text: [
           `${this.imp.$t('subtExponents')} ${this.imp.$t('newExponentDivision', {
@@ -956,7 +988,7 @@ export class DescriptionSolution {
             Result: watcher.steps.Exponent.data.EUnshifted,
           })}`,
         ].join(''),
-      });
+      }));
 
       console.log(watcher);
       if (!watcher.steps.Result.data.result.isNaN) {
@@ -968,17 +1000,21 @@ export class DescriptionSolution {
             `\\( ${this.table} \\)`,
             '\<br\> \<br\>',
           ];
-          if (watcher.steps.Exponent.data.Shift !== 0) {
-            const descriptionText = this.imp.$t('mantissaNormalize', {
-              shift: watcher.steps.Exponent.data.Shift,
-              exponent: watcher.steps.Result.data.result.exponentBits.join(''),
-            });
-            mantissaDescriptionParts.push(`${descriptionText} \<br\>`);
+          if (watcher.steps.ResultEdgecase.data.edgecase === 'denormalized') {
+            mantissaDescriptionParts.push(`${this.imp.$t('mantissaDenormalize')} \<br\>`);
+          } else {
+            if (watcher.steps.Exponent.data.Shift !== 0) {
+              const descriptionText = this.imp.$t('mantissaNormalize', {
+                shift: watcher.steps.Exponent.data.Shift,
+                exponent: watcher.steps.Result.data.result.exponentBits.join(''),
+              });
+              mantissaDescriptionParts.push(`${descriptionText} \<br\>`);
+            }
+            mantissaDescriptionParts.push(`${this.imp.$t('mantissa1float')} ${solution.mantissaBits.join('').substring(1)}`);
           }
-          mantissaDescriptionParts.push(`${this.imp.$t('mantissa1float')} ${solution.mantissaBits.join('').substring(1)}`);
           const mantissaDescription = mantissaDescriptionParts.join('');
 
-          this.result.push({
+          this.result.push(reactive({
             name: `${this.imp.$t('step')} 2`,
             text: `${this.imp.$t('divMantissa')}`,
             subpanels: [
@@ -987,9 +1023,9 @@ export class DescriptionSolution {
                 text: mantissaDescription,
               },
             ],
-          });
+          }));
         } else { // case equal mantissa
-          this.result.push({
+          this.result.push(reactive({
             name: `${this.imp.$t('step')} 2`,
             text: `${this.imp.$t('divMantissa')}`,
             subpanels: [
@@ -998,10 +1034,10 @@ export class DescriptionSolution {
                 text: `${this.imp.$t('equalMantissaDiv', { Mantissa: solution.mantissaBits.join('').substring(1) })}`,
               },
             ],
-          });
+          }));
         }
       } else {
-        this.result.push({
+        this.result.push(reactive({
           name: `${this.imp.$t('step')} 2`,
           text: `${this.imp.$t('divMantissa')}`,
           subpanels: [
@@ -1010,7 +1046,7 @@ export class DescriptionSolution {
               text: `${this.imp.$t('solutionIsNan')} ${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('').substring(1)}`,
             },
           ],
-        });
+        }));
       }
     }
     const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
@@ -1072,13 +1108,13 @@ export class DescriptionSolution {
         default:
       }
     } else {
-      this.result = null;
+      this.result = reactive([]);
     }
   }
 
   // eslint-disable-next-line no-unused-vars
   makeDescriptionConversion(solution) {
-    this.result.push({
+    this.result.push(reactive({
       name: this.imp.$t('solution'),
       text: [
         `${this.imp.$t('correctSolution')}: `,
@@ -1086,6 +1122,6 @@ export class DescriptionSolution {
         solution.exponentBits.join(''), ' ',
         solution.mantissaBits.join('').substring(1), ' ',
       ].join('') + this.createIEEENumberBreakdown(solution),
-    });
+    }));
   }
 }

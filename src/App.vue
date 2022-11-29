@@ -4,6 +4,14 @@
     <div id="content">
       <router-view />
     </div>
+    <div id="footer">
+      <p>{{$t('disclaimerFooter')}}</p>
+      <p>Copyright: Lehrstuhl für Hardware/Software Co-Design, Informatik 12, FAU.</p>
+      <div id="logoContainer">
+        <img id="codesignLogo" src="./assets/codesign_top.png"/>
+        <img id="fauLogo" src="./assets/FAU_logo.png"/>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -20,6 +28,33 @@ export default {
 
 <style lang="scss">
 @import '~pretty-checkbox/src/pretty-checkbox.scss';
+
+#fauLogo, #codesignLogo {
+  top: 18px;
+  height: 30px;
+  display: block;
+  position: absolute;
+  right: 30px;
+}
+
+#codesignLogo {
+  right: 130px;
+}
+
+#footer {
+  text-align: center;
+  padding: 5px;
+  background-color: $fresherBlue;
+  color: white;
+  position: fixed;
+  width: 100%;
+  bottom:0;
+
+  p {
+    padding: 2px;
+    margin: 0;
+  }
+}
 
 html {
   height: 100%;
@@ -80,6 +115,7 @@ h4 {
 }
 
 #content {
+  padding-bottom: 68px;
   padding-top: 64px;
 
   & > div {

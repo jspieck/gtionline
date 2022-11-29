@@ -1,4 +1,8 @@
 {
+  "complementExample": "Complement",
+  "shiftZero": "Zero after shift",
+  "doubleNegative": "Negative",
+  "denormalized": "Denormalization",
   "fpExerciseIntro": "Practice arithmetic between floating point numbers in IEEE-754 format using generated exercises",
   "fpFormatSelectionSimple": "To select a custom format, specify the distribution of bits between exponents and mantissa.",
   "fpFormatSelection": "To select a custom format, first select the number of bits of the floating point number, and then specify the distribution of bits between exponents and mantissa.",
@@ -156,6 +160,8 @@
   "newBasis": "Base_{'{new}'}",
   "calcStep": "calculation\\ step",
   "summands": "Summands",
+  "newMantissaSignBit": "Because of the complement, we calculate with a sign bit:",
+  "disclaimerFooter": "No warranty is given for the correctness of the materials provided on this website.",
   "polyadicExercise1": "Convert the value in the",
   "polyadicExercise2": "from the initial format",
   "polyadicExercise3": "to the target format",

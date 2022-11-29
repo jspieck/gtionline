@@ -1,4 +1,8 @@
 {
+  "complementExample": "Complemento",
+  "shiftZero": "Cero después del desplazamiento",
+  "doubleNegative": "Negativo",
+  "denormalized": "Denormalización",
   "fpExerciseIntro": "Practique aritmética entre números de punto flotante en formato IEEE-754 utilizando ejercicios generados",
   "fpFormatSelectionSimple": "Para seleccionar un formato personalizado, especifica la distribución de bits entre los exponentes y la mantisa",
   "fpFormatSelection": "Para seleccionar su propio formato, selecciona primero el número de bits del número en coma flotante y luego especifique la distribución de bits entre los exponentes y la mantisa",
@@ -165,6 +169,8 @@
   "mathDistribution": "Distribución",
   "sheet": "Hoja",
   "startTraining": "Vamos",
+  "newMantissaSignBit": "Debido al complemento, calculamos con un bit de signo:",
+  "disclaimerFooter": "No se garantiza la exactitud del material proporcionado en este sitio web.",
   "sequentialCircuit": "Ejemplo de un circuito secuencial compuesto por dos D-flipflops y multiplexores.",
   "polyadicMultiplicationDescription": "Los decimales resultan de los dígitos del resto leyéndolos de arriba a abajo.",
   "polyadicDivisionDescription": "Los dígitos que preceden al punto decimal se derivan de los dígitos del resto leyéndolos de abajo a arriba.",

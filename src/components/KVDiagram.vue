@@ -56,6 +56,7 @@ export default {
   },
   data() {
     return {
+      indexBaseSystem: 8,
       numVariables: 4,
       paddingBase: 27,
       blockWidth: 40,
@@ -154,7 +155,8 @@ export default {
         }
         arr.push({
           binary: index,
-          index: parseInt(index.split('').reverse().join(''), 2),
+          // index: parseInt(index.split('').reverse().join(''), 2),
+          index: parseInt(index.split('').reverse().join(''), 2).toString(this.indexBaseSystem),
         });
       }
       return arr;
@@ -330,6 +332,8 @@ export default {
 }
 #kvContainer {
   margin-top: 20px;
+
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 
   cursor: pointer;
   // overflow: auto;

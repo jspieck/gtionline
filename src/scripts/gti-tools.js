@@ -4812,7 +4812,7 @@ var CalculateSize = /*#__PURE__*/function () {
         // Basecase, takes either the leftPad specified in the Info-Object,
         // or the leftPad required to print the label.
         maxLeftPad = this.info.transistorPadLeft;
-        // console.log("Yo its me: " + maxLeftPad);
+
         if (this.info.tunnelExpressions && visualElement.content.src instanceof CMOSExpression) {
           maxLeftPad = Math.max(maxLeftPad, visualElement.content.src.name.length * this.info.charWidth);
         } else if (this.info.tunnelVariables && visualElement.content.src instanceof CMOSVariable) {
@@ -5033,7 +5033,6 @@ var CalculateSize = /*#__PURE__*/function () {
       var width = 0;
       var padLeft;
 
-      
       if (adjustLeftPad) {
         // Simply take the maxLeftPad.
         padLeft = maxLeftPad;
@@ -5049,9 +5048,8 @@ var CalculateSize = /*#__PURE__*/function () {
           padLeft = Math.max(padLeft, visualElement.content.src.name.length * this.info.charWidth);
         }
       }
-      console.log("TWidth: "+ padLeft*30 + " " + this.info.transistorWidth*30 + " " + this.info.transistorPadRight*30);
+
       width = padLeft + this.info.transistorWidth + this.info.transistorPadRight;
-      // width = this.info.transistorPadLeft + this.info.transistorWidth + this.info.transistorPadRight;
       height = this.info.transistorPadTop + this.info.transistorHeight + this.info.transistorPadBot;
       visualElement.setLeftPad(padLeft);
       visualElement.setSize(width, height);
@@ -7780,15 +7778,13 @@ var SVGGenerator = /*#__PURE__*/function () {
   _createClass(SVGGenerator, [{
     key: "getTransistorSVG",
     value: function getTransistorSVG(hull, transistor, scale) {
-      
       var transistorBaseBegin = {
         x: transistor.x + transistor.width - hull.info.transistorPadRight,
         y: transistor.y
       };
-      console.log(transistor.leftPad * scale + " " + transistor.x * scale + " " + transistorBaseBegin.x * scale + " " + hull.info.transistorPadLeft * scale + " " + transistor.width * scale + " " + hull.info.transistorPadRight * scale);
       var transistorBase = ["<path fill=\"none\" stroke=\"black\" d=\"M ".concat(transistorBaseBegin.x * scale, " ").concat(transistorBaseBegin.y * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.3) * scale), "H ".concat((transistorBaseBegin.x - hull.info.transistorWidth * 0.5) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.2) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.8) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.7) * scale), "H ".concat(transistorBaseBegin.x * scale), "V ".concat((transistorBaseBegin.y + transistor.height) * scale), '"/>'].join(' ');
-      var extra = (transistor.leftPad - hull.info.transistorPadLeft);
-      var transistorToper = ["<path fill=\"none\" stroke=\"black\" d=\"M ".concat((transistor.x + extra + hull.info.transistorPadLeft) * scale, " ").concat((transistorBaseBegin.y + transistor.height / 2) * scale), "H ".concat((transistorBaseBegin.x - hull.info.transistorWidth * 0.6) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.3) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.7) * scale), '"/>'].join(' ');
+      var extra = transistor.leftPad - hull.info.transistorPadLeft;
+      var transistorToper = ["<path fill=\"none\" stroke=\"black\" d=\"M ".concat((transistorBaseBegin.x + extra + hull.info.transistorPadLeft) * scale, " ").concat((transistorBaseBegin.y + transistor.height / 2) * scale), "H ".concat((transistorBaseBegin.x - hull.info.transistorWidth * 0.6) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.3) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.7) * scale), '"/>'].join(' ');
       var finalString;
 
       if (transistor.content.type === CMOSTransistorType$1.PMOS) {
@@ -10226,8 +10222,12 @@ var AdditionIEEE = /*#__PURE__*/function () {
       var op2; // if deltaE > 0 then the sign of the first summand leads the result sign
 
       if (deltaE > 0) {
-        op1 = new NumberBaseNComplement(2, binNum, mantissa1, binNum, false);
-        op2 = new NumberBaseNComplement(2, binNum, mantissa2, binNum, sign1 !== sign2);
+        op1 = new NumberBaseNComplement(2, binNum, mantissa1, binNum, false); // ! Special case: mantissa2 is completely zero => VB = 0
+
+        var hasSign = sign1 !== sign2 && !mantissa2.every(function (item) {
+          return item === 0;
+        });
+        op2 = new NumberBaseNComplement(2, binNum, mantissa2, binNum, hasSign);
       } else {
         op1 = new NumberBaseNComplement(2, binNum, mantissa1, binNum, sign1 === 1);
         op2 = new NumberBaseNComplement(2, binNum, mantissa2, binNum, sign2 === 1);
@@ -10501,27 +10501,47 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
       } // normalizes the mantissa
 
 
-      var normalizedMatissa = [];
+      var normalizedMantissa = [];
       var toRound = unnormalizedMantissa[manBitNum] === 1;
 
       for (var _i2 = 0; _i2 < manBitNum; _i2++) {
         var access = _i2 + Math.max(-shift, 0) + 1;
         var num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
-        normalizedMatissa.push(num);
+        normalizedMantissa.push(num);
       }
 
       if (toRound) {
-        normalizedMatissa = roundArray(normalizedMatissa, manBitNum, toRound, n1.base);
+        normalizedMantissa = roundArray(normalizedMantissa, manBitNum, toRound, n1.base);
       }
 
       this.watcher = this.watcher.step('CalculateExp').saveVariable('E1', n1.E).saveVariable('E2', n2.E).saveVariable('bias', n1.bias).saveVariable('notShifted', n1.E + n2.E - n1.bias);
-      this.watcher = this.watcher.step('MulMantissa').saveVariable('normalizedMantissa', normalizedMatissa);
-      var finalE = n1.E + n2.E - n1.bias + shift; // caluclates the exponent bits
+      this.watcher = this.watcher.step('MulMantissa').saveVariable('normalizedMantissa', normalizedMantissa);
+      var finalE = n1.E + n2.E - n1.bias + shift; // Check if denormalization has to take place
+
+      if (finalE < 0) {
+        var denormArray = [sign]; // Exponent of ZERO indicates the denormalized representation
+
+        denormArray.push.apply(denormArray, _toConsumableArray(Array(expBitNum).fill(0))); // Now shift the mantissa by the extra amount
+
+        for (var _i3 = 0; _i3 < Math.abs(finalE); _i3 += 1) {
+          normalizedMantissa.unshift(0);
+        }
+
+        normalizedMantissa.splice(manBitNum, normalizedMantissa.length - manBitNum);
+        denormArray.push.apply(denormArray, _toConsumableArray(normalizedMantissa));
+
+        var _result5 = new NumberIEEE(expBitNum, manBitNum, denormArray);
+
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'denormalized');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result5);
+        return _result5;
+      } // caluclates the exponent bits
+
 
       var curE = finalE;
       var exponentBits = [];
 
-      for (var _i3 = 0; _i3 < expBitNum; _i3++) {
+      for (var _i4 = 0; _i4 < expBitNum; _i4++) {
         exponentBits.unshift(curE % 2);
         curE = Math.floor(curE / 2);
       } // Check if newly calculated ieee is equal to inf
@@ -10534,18 +10554,18 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
 
         _infArray2.push.apply(_infArray2, _toConsumableArray(Array(manBitNum).fill(0)));
 
-        var _result5 = new NumberIEEE(expBitNum, manBitNum, _infArray2);
+        var _result6 = new NumberIEEE(expBitNum, manBitNum, _infArray2);
 
         this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf');
-        this.watcher = this.watcher.step('Result').saveVariable('result', _result5);
-        return _result5;
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result6);
+        return _result6;
       } // normal case result
 
 
       this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'none');
       var resultArr = [sign];
       resultArr.push.apply(resultArr, exponentBits);
-      resultArr.push.apply(resultArr, _toConsumableArray(normalizedMatissa));
+      resultArr.push.apply(resultArr, _toConsumableArray(normalizedMantissa));
       var result = new NumberIEEE(expBitNum, manBitNum, resultArr);
       this.watcher = this.watcher.step('Result').saveVariable('result', result);
       return result;
@@ -10705,7 +10725,29 @@ var DivisionIEEE = /*#__PURE__*/function () {
       }
 
       this.watcher = this.watcher.step('Exponent').saveVariable('E1', n1.E).saveVariable('E2', n2.E).saveVariable('Bias', n1.bias).saveVariable('Shift', shift).saveVariable('EUnshifted', n1.E - n2.E + n1.bias).saveVariable('FinalE', finalE);
-      this.watcher = this.watcher.step('Mantissa').saveVariable('unnormalizedMantissa', _toConsumableArray(unnormalizedMantissa)).saveVariable('normalizedMantissa', _toConsumableArray(normalizedMantissa)); // Check if newly calculated ieee is equal to inf
+      this.watcher = this.watcher.step('Mantissa').saveVariable('unnormalizedMantissa', _toConsumableArray(unnormalizedMantissa)).saveVariable('normalizedMantissa', _toConsumableArray(normalizedMantissa)); // Check if denormalization has to take place
+
+      if (finalE < 0) {
+        var denormArray = [sign]; // Exponent of ZERO indicates the denormalized representation
+
+        denormArray.push.apply(denormArray, _toConsumableArray(Array(expBitNum).fill(0))); // Unshift the leading 1 into the mantissa
+
+        normalizedMantissa.unshift(1); // Now shift the mantissa by the extra amount
+
+        for (var _i3 = 0; _i3 < Math.abs(finalE); _i3 += 1) {
+          normalizedMantissa.unshift(0);
+        }
+
+        normalizedMantissa.splice(manBitNum, normalizedMantissa.length - manBitNum);
+        denormArray.push.apply(denormArray, _toConsumableArray(normalizedMantissa));
+
+        var _result6 = new NumberIEEE(expBitNum, manBitNum, denormArray);
+
+        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'denormalized');
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result6);
+        return _result6;
+      } // Check if newly calculated ieee is equal to inf
+
 
       if (finalE >= Math.pow(2, expBitNum) - 1) {
         var _infArray2 = [sign];
@@ -10714,11 +10756,11 @@ var DivisionIEEE = /*#__PURE__*/function () {
 
         _infArray2.push.apply(_infArray2, _toConsumableArray(Array(manBitNum).fill(0)));
 
-        var _result6 = new NumberIEEE(expBitNum, manBitNum, _infArray2);
+        var _result7 = new NumberIEEE(expBitNum, manBitNum, _infArray2);
 
         this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf');
-        this.watcher = this.watcher.step('Result').saveVariable('result', _result6);
-        return _result6;
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result7);
+        return _result7;
       } // normal case result
 
 
