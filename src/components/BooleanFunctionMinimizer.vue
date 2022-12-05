@@ -44,6 +44,8 @@
         </div>
 
         <button class="boolean-function-button-optimize" @click="optimize()">{{$t('doCalculation')}}</button>
+
+        <button class="boolean-function-button-optimize" @click="downloadSym()">{{$t('downloadSvg')}}</button>
       </div>
 
       <div class="horizontalbar"></div>
@@ -772,6 +774,19 @@ export default {
     },
   },
   methods: {
+    downloadSym() {
+      const svg = document.getElementById('kvContainer');
+      svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      svg.removeChild(document.getElementById('unclickable'));
+      const fontEmbedding = '<defs><style type="text/css">@font-face {font-family: "Cambria";}</style></defs>';
+      svg.innerHTML = fontEmbedding + svg.innerHTML;
+      const blob = new Blob([svg.outerHTML.toString()]);
+      const element = document.createElement('a');
+      element.download = 'sym.svg';
+      element.href = window.URL.createObjectURL(blob);
+      element.click();
+      element.remove();
+    },
     selectArchivedExercise(num, exerciseIndex) {
       this.archivedExerciseSelectedIndex = exerciseIndex;
     },

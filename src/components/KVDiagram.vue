@@ -31,13 +31,13 @@
         <text :x="blockWidth / 2" :y="blockWidth / 2" dominant-baseline="middle"
         class="unclickable" text-anchor="middle">{{legitStates[d.number]}}</text>
         <text :x="blockWidth - 3" :y="blockWidth - 7" dominant-baseline="middle"
-        class="unclickable indexNumber" text-anchor="end">{{indices[i].index}}</text>
+        class="unclickable indexNumber" font-size="13" text-anchor="end">{{indices[i].index}}</text>
       </g>
       <g v-for="bar in literalBars" v-bind:key="bar.id">
         <rect :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height"/>
         <g :transform="`translate(${bar.textX}, ${bar.textY})`" v-html="getSVG(bar.index)"></g>
       </g>
-      <rect class="unclickable" fill="transparent" stroke="black" :x="paddingHorizontal"
+      <rect id="unclickable" class="unclickable" fill="transparent" stroke="black" :x="paddingHorizontal"
       :y="paddingVertical" :width="blockWidth * cellsHorizontal"
       :height="blockWidth * cellsVertical"/>
     </svg>
