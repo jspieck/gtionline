@@ -27,8 +27,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import '~pretty-checkbox/src/pretty-checkbox.scss';
-
 #fauLogo, #codesignLogo {
   top: 18px;
   height: 30px;

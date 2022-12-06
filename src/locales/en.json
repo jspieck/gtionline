@@ -249,5 +249,7 @@
   "Danksagung": "Acknowledgement",
   "thankProfessorTeich": "The materials on this page are based on the lecture GTI by Professor Dr.-Ing. Jürgen Teich of the Friedrich-Alexander-University (FAU). We thank him for his expertise and patronage.",
   "wintersemester": "Winter term",
-  "sommersemester": "Summer term"
+  "sommersemester": "Summer term",
+  "downloadSvg": "Export as SVG",
+  "downloadPng": "Export as PNG"
 }

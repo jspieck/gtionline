@@ -45,7 +45,9 @@
 
         <button class="boolean-function-button-optimize" @click="optimize()">{{$t('doCalculation')}}</button>
 
-        <button class="boolean-function-button-optimize" @click="downloadSym()">{{$t('downloadSvg')}}</button>
+        <button class="boolean-function-button-optimize" @click="downloadSymSVG()">{{$t('downloadSvg')}}</button>
+
+        <button class="boolean-function-button-optimize" @click="downloadSymPNG()">{{$t('downloadPng')}}</button>
       </div>
 
       <div class="horizontalbar"></div>
@@ -774,18 +776,42 @@ export default {
     },
   },
   methods: {
-    downloadSym() {
+    prepareSVG() {
       const svg = document.getElementById('kvContainer');
       svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
       svg.removeChild(document.getElementById('unclickable'));
       const fontEmbedding = '<defs><style type="text/css">@font-face {font-family: "Cambria";}</style></defs>';
       svg.innerHTML = fontEmbedding + svg.innerHTML;
+      return svg;
+    },
+    downloadSymSVG() {
+      const svg = this.prepareSVG();
       const blob = new Blob([svg.outerHTML.toString()]);
       const element = document.createElement('a');
       element.download = 'sym.svg';
       element.href = window.URL.createObjectURL(blob);
       element.click();
       element.remove();
+    },
+    downloadSymPNG() {
+      const svg = this.prepareSVG();
+      const can = document.createElement('canvas');
+      const ctx = can.getContext('2d');
+      const loader = new Image();
+      can.width = 1000;
+      loader.width = can.width;
+      can.height = 1000;
+      loader.height = can.height;
+      loader.onload = () => {
+        ctx.drawImage(loader, 0, 0, loader.width, loader.height);
+        const exportImg = can.toDataURL();
+        const aDownloadLink = document.createElement('a');
+        aDownloadLink.download = 'sym.png';
+        aDownloadLink.href = exportImg;
+        aDownloadLink.click();
+      };
+      const svgAsXML = (new XMLSerializer()).serializeToString(svg);
+      loader.src = `data:image/svg+xml,${encodeURIComponent(svgAsXML)}`;
     },
     selectArchivedExercise(num, exerciseIndex) {
       this.archivedExerciseSelectedIndex = exerciseIndex;
@@ -1150,7 +1176,7 @@ export default {
     }
 
     .boolean-function-button-optimize {
-      margin: 1.5em 0 0 0;
+      margin: 1.5em 0.5em 0 0;
     }
   }
 

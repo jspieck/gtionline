@@ -1,6 +1,5 @@
 import { createApp } from 'vue';
 import { createRouter, createWebHashHistory } from 'vue-router';
-import PrettyCheckbox from 'pretty-checkbox-vue';
 import Tabs from 'vue3-tabs';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -50,7 +49,6 @@ const options = {
 app.component('font-awesome-icon', FontAwesomeIcon);
 // Vue.use(VueHtmlToPaper, options);
 app.use(options);
-app.use(PrettyCheckbox);
 app.use(i18n);
 app.use(Tabs);
 app.use(hljsVuePlugin);

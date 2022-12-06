@@ -248,5 +248,7 @@
   "Danksagung": "Agradecimiento",
   "thankProfessorTeich": "Los materiales de esta página se basan en la lección de la GTI impartida por el profesor Dr.-Ing. Jürgen Teich de la Friedrich-Alexander-Universität (FAU). Le agradecemos su experiencia y patrocinio.",
   "wintersemester": "Semestre de invierno",
-  "sommersemester": "Semestre de verano"
+  "sommersemester": "Semestre de verano",
+  "downloadSvg": "Exportar como SVG",
+  "downloadPng": "Exportar como PNG"
 }
