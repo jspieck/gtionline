@@ -23,7 +23,12 @@
       </p-radio> -->
     </div>
 
-    <svg id="kvContainer" :width="svgWidth" :height="svgHeight">
+    <svg id="kvContainer" :width="svgWidth" :height="svgHeight" xmlns="http://www.w3.org/2000/svg">
+      <!-- <defs>
+        <style type="text/css">
+          @font-face {font-family: "Cambria";}
+        </style>
+      </defs> -->
       <g v-for="(d, i) in diagram" v-bind:key="`cell_${i}`"
       :transform="`translate(${getX(i)}, ${getY(i)})`">
         <rect fill="white" stroke="#898989" :width="blockWidth" :height="blockWidth"
@@ -37,9 +42,9 @@
         <rect :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height"/>
         <g :transform="`translate(${bar.textX}, ${bar.textY})`" v-html="getSVG(bar.index)"></g>
       </g>
-      <rect id="unclickable" class="unclickable" fill="transparent" stroke="black" :x="paddingHorizontal"
+      <!-- <rect id="unclickable" class="unclickable" fill="transparent" stroke="black" :x="paddingHorizontal"
       :y="paddingVertical" :width="blockWidth * cellsHorizontal"
-      :height="blockWidth * cellsVertical"/>
+      :height="blockWidth * cellsVertical"/> -->
     </svg>
   </div>
 </template>

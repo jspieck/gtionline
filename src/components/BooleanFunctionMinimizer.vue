@@ -776,16 +776,8 @@ export default {
     },
   },
   methods: {
-    prepareSVG() {
-      const svg = document.getElementById('kvContainer');
-      svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-      svg.removeChild(document.getElementById('unclickable'));
-      const fontEmbedding = '<defs><style type="text/css">@font-face {font-family: "Cambria";}</style></defs>';
-      svg.innerHTML = fontEmbedding + svg.innerHTML;
-      return svg;
-    },
     downloadSymSVG() {
-      const svg = this.prepareSVG();
+      const svg = document.getElementById('kvContainer');
       const blob = new Blob([svg.outerHTML.toString()]);
       const element = document.createElement('a');
       element.download = 'sym.svg';
@@ -794,14 +786,16 @@ export default {
       element.remove();
     },
     downloadSymPNG() {
-      const svg = this.prepareSVG();
+      const svg = document.getElementById('kvContainer');
       const can = document.createElement('canvas');
       const ctx = can.getContext('2d');
       const loader = new Image();
-      can.width = 1000;
+      can.width = parseInt(svg.getAttribute('width'), 10) * 2;
       loader.width = can.width;
-      can.height = 1000;
+      can.height = parseInt(svg.getAttribute('height'), 10) * 2;
       loader.height = can.height;
+      console.log(can.width);
+      console.log(can.height);
       loader.onload = () => {
         ctx.drawImage(loader, 0, 0, loader.width, loader.height);
         const exportImg = can.toDataURL();
