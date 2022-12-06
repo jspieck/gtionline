@@ -790,9 +790,10 @@ export default {
       const can = document.createElement('canvas');
       const ctx = can.getContext('2d');
       const loader = new Image();
-      can.width = parseInt(svg.getAttribute('width'), 10) * 2;
+      const scalingFactor = 3;
+      can.width = parseInt(svg.getAttribute('width'), 10) * scalingFactor;
       loader.width = can.width;
-      can.height = parseInt(svg.getAttribute('height'), 10) * 2;
+      can.height = parseInt(svg.getAttribute('height'), 10) * scalingFactor;
       loader.height = can.height;
       console.log(can.width);
       console.log(can.height);
