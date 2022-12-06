@@ -42,9 +42,9 @@
         <rect :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height"/>
         <g :transform="`translate(${bar.textX}, ${bar.textY})`" v-html="getSVG(bar.index)"></g>
       </g>
-      <!-- <rect id="unclickable" class="unclickable" fill="transparent" stroke="black" :x="paddingHorizontal"
-      :y="paddingVertical" :width="blockWidth * cellsHorizontal"
-      :height="blockWidth * cellsVertical"/> -->
+      <rect id="unclickable" class="unclickable" fill="none" stroke="black" :x="paddingHorizontal"
+        :y="paddingVertical" :width="blockWidth * cellsHorizontal"
+        :height="blockWidth * cellsVertical"/>
     </svg>
   </div>
 </template>
