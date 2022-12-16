@@ -1,17 +1,20 @@
 <template>
-  <div>
+  <div id="websiteContainer">
     <TheNavigationBar></TheNavigationBar>
     <div id="content">
       <router-view />
     </div>
-    <div id="footer">
+    <footer id="footer">
       <p>{{$t('disclaimerFooter')}}</p>
-      <p>Copyright: Lehrstuhl für Hardware/Software Co-Design, Informatik 12, FAU.</p>
-      <div id="logoContainer">
-        <img id="codesignLogo" src="@/assets/codesign_top.png"/>
-        <img id="fauLogo" src="@/assets/FAU_logo.png"/>
+      <p>
+        Copyright: Lehrstuhl für Hardware-Software-Co-Design, Informatik 12, FAU. Alle Rechte vorbehalten.
+        <!-- <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>-->
+      </p>
+      <div id="logoContainerFooter">
+        <img id="codesignLogo" src="@/assets/codesign_white.png"/>
+        <img id="fauLogo" src="@/assets/FAU_logo_white.png"/>
       </div>
-    </div>
+    </footer>
   </div>
 </template>
 
@@ -36,7 +39,33 @@ export default {
 }
 
 #codesignLogo {
-  right: 130px;
+  right: 205px;
+}
+
+#websiteContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+.logoContainerFooter {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+#content {
+  flex-grow: 1;
+  overflow: auto;
+  min-height: 2em;
+  /* padding-bottom: 68px;
+  padding-top: 64px; */
+
+  & > div {
+    padding: 10px;
+  }
 }
 
 #footer {
@@ -44,9 +73,12 @@ export default {
   padding: 5px;
   background-color: $fresherBlue;
   color: white;
-  position: fixed;
+  /* position: fixed; */
   width: 100%;
   bottom:0;
+  flex-shrink: 0;
+  position: relative;
+  box-sizing: border-box;
 
   p {
     padding: 2px;
@@ -75,15 +107,16 @@ body {
   }
 }
 
+
 #app {
   font-family: 'Source Sans Pro', 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   // color: #2c3e50;
-  min-height: 100%;
   background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   // background: linear-gradient(90deg, rgba(3,9,18,1) 0%, rgba(4,18,52,1) 20%, rgba(4,18,52,1) 80%, rgba(3,9,18,1) 100%);
+  height: 100%;
 }
 
 #nav {
@@ -112,12 +145,18 @@ h4 {
   /* margin-top: 40px; */
 }
 
-#content {
-  padding-bottom: 68px;
-  padding-top: 64px;
-
-  & > div {
-    padding: 10px;
+@media screen and (max-width: 700px) {
+  #content {
+    padding-bottom: 136px;
+  }
+  #codesignLogo, #fauLogo {
+    display: none;
   }
 }
+@media screen and (max-width: 1229px) {
+  #codesignLogo, #fauLogo {
+    display: none;
+  }
+}
+
 </style>

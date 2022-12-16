@@ -45,7 +45,7 @@
 
         <button class="boolean-function-button-optimize" @click="optimize()">{{$t('doCalculation')}}</button>
 
-        <button class="boolean-function-button-optimize" @click="downloadSymSVG()">{{$t('downloadSvg')}}</button>
+        <!--<button class="boolean-function-button-optimize" @click="downloadSymSVG()">{{$t('downloadSvg')}}</button>-->
 
         <button class="boolean-function-button-optimize" @click="downloadSymPNG()">{{$t('downloadPng')}}</button>
       </div>

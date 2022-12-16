@@ -94,7 +94,8 @@ export default {
 }
 
 .navbar {
-  position: fixed;
+  /* position: fixed; */
+  flex-shrink: 0;
   width: 100%;
   top: 0;
   display: block;
@@ -190,6 +191,7 @@ export default {
     overflow: hidden;
     max-height: 0;
     margin: 4px;
+    margin-top: 7px;
     padding-left: 0;
     transition: max-height .2s ease-out;
   }
@@ -206,6 +208,7 @@ export default {
       max-height: none;
       overflow: visible;
       margin: 16px 0;
+      margin-top: 7px;
     }
     .menu-icon {
       display: none;
@@ -239,7 +242,7 @@ export default {
 
   .logoContainer {
     display: block;
-    margin-top: 7px;
+    margin-top: 20px;
     margin-right: 50px;
   }
 
@@ -282,6 +285,7 @@ export default {
       max-height: none;
       overflow: visible;
       margin: 0;
+      margin-top: 7px;
       li, .routerLink {
         display: none;
       }

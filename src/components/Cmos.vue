@@ -238,6 +238,7 @@ export default {
     width: 1000px;
     margin: auto;
     line-height: 30px;
+    overflow-x: scroll;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     /* border-left: 3px solid $freshBlue; */
   }

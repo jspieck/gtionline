@@ -31,7 +31,7 @@
       </defs> -->
       <g v-for="(d, i) in diagram" v-bind:key="`cell_${i}`"
       :transform="`translate(${getX(i)}, ${getY(i)})`">
-        <rect fill="white" stroke="#898989" :width="blockWidth" :height="blockWidth"
+        <rect fill="transparent" stroke="#898989" :width="blockWidth" :height="blockWidth"
         @click="changeNumber(i)"/>
         <text :x="blockWidth / 2" :y="blockWidth / 2" dominant-baseline="middle"
         class="unclickable" text-anchor="middle">{{legitStates[d.number]}}</text>
@@ -341,6 +341,7 @@ export default {
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 
   cursor: pointer;
+  pointer-events: bounding-box;
   // overflow: auto;
   // display: block !important;
 
