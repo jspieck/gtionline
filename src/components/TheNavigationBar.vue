@@ -208,7 +208,6 @@ export default {
       max-height: none;
       overflow: visible;
       margin: 16px 0;
-      margin-top: 7px;
     }
     .menu-icon {
       display: none;

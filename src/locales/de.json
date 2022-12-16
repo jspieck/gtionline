@@ -11,7 +11,7 @@
   "sequentialCircuit": "Beispiel eines Schaltwerks bestehend aus zwei D-Flipflops und mehreren Multiplexern.",
   "polyadicDivisionDescription": "Die Vorkommastellen ergeben sich aus den Ziffern des Rests, indem man diese von unten nach oben ausliest.",
   "polyadicMultiplicationDescription": "Die Nachkommastellen ergeben sich aus den Ziffern des Rests, indem man diese von oben nach unten ausliest.",
-  "homePageText": "Ziel dieser Webseite ist das Vertiefen der Kenntnisse aus der Vorlesung und zugehörigen Übung zu ausgewählten Themenschwerpunkten. Wählen Sie im Menü das Thema aus, zu dem sie Übungsaufgaben lösen möchten.",
+  "homePageText": "Auf dieser Webseite können Sie Ihre Kenntnisse zu ausgewählten Themenschwerpunkten aus der Vorlesung Grundlagen der Technischen Informatik (GTI) und der zugehörigen Übung vertiefen.",
   "startTraining": "Los geht's",
   "polyFreeIntro": "Üben Sie die polyadische Arithmetik mit eigenen Zahlenwerten in Ihrem Wunschsystem.",
   "polyConvGenIntro": "Üben Sie die Konversion zwischen polyadischen Systemen anhand generierter Übungsaufgaben.",

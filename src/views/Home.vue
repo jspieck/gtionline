@@ -40,7 +40,7 @@ export default {
 <style lang="scss" scoped>
   #content .home {
     padding: 0;
-    margin-top: -64px;
+    /* margin-top: -64px; */
   }
 
   img {
