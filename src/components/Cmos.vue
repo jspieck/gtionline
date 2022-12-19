@@ -20,6 +20,7 @@
             <button @click="loadArchivedExercise">{{$t('load')}}</button>
           </div>
         </div>
+        <div id="displayedFormula">{{$t('formula')}}: <span>{{renderedFormula}}</span></div>
       </div>
     </div>
     <div id="cmosOutput" v-html="cmosOutput"></div>
@@ -50,6 +51,7 @@ export default {
       latex: '',
       cmosFormula: '',
       cmosOutput: '',
+      renderedFormula: '',
       archivedExerciseSelectedIndex: 0,
       examples: ['(~a+c)*~(~b+c*~a)', '(~x+~r*~(~n+a))*(n+r)', '~x0*x1*(x2+x3)', '~(~a*b+a*~b)'],
     };
@@ -100,7 +102,8 @@ export default {
       const cmos = builder.buildCMOS(expression);
       const visBuilder = new CMOSVisualBuilder();
       const cmosVisual = visBuilder.buildHull(cmos, { channelWidth: 0.4 });
-      console.log(cmosVisual);
+      console.log(expression);
+      this.renderedFormula = `\\(${toLaTeX(expression.expression)}\\)`;
       const codeGenerator = new SVGGenerator();
       const latexGenerator = new LatexGenerator();
       const scale = 100;
@@ -177,6 +180,10 @@ export default {
   foreignObject {
     text-align: left;
     line-height: 0;
+  }
+
+  #displayedFormula {
+    margin-top: 5px;
   }
 
   text {

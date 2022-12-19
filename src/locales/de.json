@@ -252,5 +252,6 @@
   "wintersemester": "Wintersemester",
   "sommersemester": "Sommersemester",
   "downloadSvg": "Exportiere SVG",
-  "downloadPng": "Exportiere PNG"
+  "downloadPng": "Exportiere PNG",
+  "formula": "Formel"
 }

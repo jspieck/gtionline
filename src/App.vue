@@ -5,11 +5,11 @@
       <router-view />
     </div>
     <footer id="footer">
-      <p>{{$t('disclaimerFooter')}}</p>
-      <p>
+      <span>{{$t('disclaimerFooter')}}</span>
+      <span>
         Copyright: Lehrstuhl für Hardware-Software-Co-Design, Informatik 12, FAU. Alle Rechte vorbehalten.
         <!-- <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>-->
-      </p>
+      </span>
       <div id="logoContainerFooter">
         <img id="codesignLogo" src="@/assets/codesign_white.png"/>
         <img id="fauLogo" src="@/assets/FAU_logo_white.png"/>
@@ -79,8 +79,11 @@ export default {
   flex-shrink: 0;
   position: relative;
   box-sizing: border-box;
+  white-space: nowrap;
 
-  p {
+  span {
+    display: block;
+    overflow-x: scroll;
     padding: 2px;
     margin: 0;
   }
