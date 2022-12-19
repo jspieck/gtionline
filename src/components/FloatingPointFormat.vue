@@ -55,13 +55,19 @@
                   <input id="fpfInput0" v-model="inputNums[0]" :placeholder="this.$t('inputNumber') "
                     @input="checkAndConvertFormat(0)"/>
                 </td>
-                <td><FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
-                  :options="formatOptions"/></td>
+                <td>
+                  <FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
+                  :options="formatOptions"/>
+                </td>
               </tr>
               <tr>
-                <td><input id="fpfInput1" v-model="nums[0]" disabled></td>
-                <td><FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal" :isDisabled="true"
-                  :options="formatOptions"/></td>
+                <td>
+                  <input id="fpfInput1" v-model="nums[0]" disabled>
+                </td>
+                <td>
+                  <FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal" :isDisabled="true"
+                  :options="formatOptions"/>
+                </td>
               </tr>
             </table>
           </div>
@@ -421,7 +427,7 @@ export default {
             return false;
           }
         }
-        if (convert[i] === ',') {
+        if (convert[i] === ',' || convert[i] === '.') {
           if (commaOccured) {
             return false;
           }

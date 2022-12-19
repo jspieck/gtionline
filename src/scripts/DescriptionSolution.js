@@ -986,19 +986,21 @@ export class DescriptionSolution {
       }));
       return;
     } else {
-      this.result.push(reactive({
-        name: `${this.imp.$t('step')} 1`,
-        text: [
-          `${this.imp.$t('subtExponents')} ${this.imp.$t('newExponentDivision', {
-            E1: watcher.steps.Exponent.data.E1,
-            E2: watcher.steps.Exponent.data.E2,
-            Bias: watcher.steps.Exponent.data.Bias,
-            Result: watcher.steps.Exponent.data.EUnshifted,
-          })}`,
-        ].join(''),
-      }));
-
       console.log(watcher);
+      if (watcher.steps.Exponent != null) { // This can happen when result is NaN
+        this.result.push(reactive({
+          name: `${this.imp.$t('step')} ${this.result.length}`,
+          text: [
+            `${this.imp.$t('subtExponents')} ${this.imp.$t('newExponentDivision', {
+              E1: watcher.steps.Exponent.data.E1,
+              E2: watcher.steps.Exponent.data.E2,
+              Bias: watcher.steps.Exponent.data.Bias,
+              Result: watcher.steps.Exponent.data.EUnshifted,
+            })}`,
+          ].join(''),
+        }));
+      }
+
       if (!watcher.steps.Result.data.result.isNaN) {
         if (!watcher.steps.Division.data.equalMantissa) { // case not equal mantissa
           this.getDivisionTable();
@@ -1045,8 +1047,9 @@ export class DescriptionSolution {
           }));
         }
       } else {
+        // Result is NaN
         this.result.push(reactive({
-          name: `${this.imp.$t('step')} 2`,
+          name: `${this.imp.$t('step')} ${this.result.length}`,
           text: `${this.imp.$t('divMantissa')}`,
           subpanels: [
             {

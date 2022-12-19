@@ -50,6 +50,7 @@ export default {
     return {
       latex: '',
       cmosFormula: '',
+      lastCmosFormula: '',
       cmosOutput: '',
       renderedFormula: '',
       archivedExerciseSelectedIndex: 0,
@@ -163,10 +164,13 @@ export default {
               const dimensions = viewbox.split(' ').map(s => Number(s));
               const padding = 50;
               cmosOutputDom.setAttribute('viewBox', `${-padding} ${-padding} ${maxX + padding} ${maxY + padding}`);
-              cmosOutputDom.setAttribute('width', Number(cmosOutputDom.getAttribute('width')) / 2);
-              cmosOutputDom.setAttribute('height', Number(cmosOutputDom.getAttribute('height')) / 2);
+              if (this.lastCmosFormula !== cmosFormula) {
+                cmosOutputDom.setAttribute('width', Number(cmosOutputDom.getAttribute('width')) / 2);
+                cmosOutputDom.setAttribute('height', Number(cmosOutputDom.getAttribute('height')) / 2);
+              }
               console.log(viewbox);
               console.log(dimensions);
+              this.lastCmosFormula = cmosFormula;
             });
           });
         }

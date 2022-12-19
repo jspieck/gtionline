@@ -2,7 +2,7 @@
   <div class="navbar">
     <!--<div class="hamburger" @click="responsive = !responsive"><font-awesome-icon class="bars" icon="bars"/></div> -->
     <input class="menu-btn" type="checkbox" id="menu-btn" />
-    <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
+    <label id="checkBoxLabel"  class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
     <router-link class="logoContainer" to="/" ><img id="logo" src="@/assets/logo.png"></router-link>
     <!-- <ul class="menu" :class="responsive ? 'responsive' : ''">
       <li v-for="submenu in menu" v-bind:key="submenu.id">
@@ -15,7 +15,9 @@
       </li>
     </ul> -->
     <div class="menu" :class="responsive ? 'responsive' : ''">
-      <router-link class="routerLink" v-for="submenu in menu" v-bind:key="submenu.id" active-class="selectedNav" :to="`${submenu.link}`"><span>{{submenu.label}}</span></router-link>
+      <router-link @click="checkMenuClose" class="routerLink" v-for="submenu in menu" v-bind:key="submenu.id" active-class="selectedNav" :to="`${submenu.link}`">
+        <span>{{submenu.label}}</span>
+      </router-link>
     </div>
     <div id="languageDropdown">
       <LSelect @input="chooseLang"/>
@@ -68,6 +70,11 @@ export default {
     },
   },
   methods: {
+    checkMenuClose() {
+      console.log('Check');
+      const checkBox = document.getElementById('menu-btn');
+      checkBox.checked = false;
+    },
     chooseLang(lang) {
       this.$i18n.locale = lang.name;
     },

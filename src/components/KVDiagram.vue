@@ -4,7 +4,7 @@
     <div>
       <label>{{$t('numVarInput')}}:</label>
       <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0 class="leftMargin10"
-              :options="operationOptions"/>
+              :options="numVarOptions"/>
       <button @click="setNumVar()" class="leftMargin10">{{$t('confirm')}}</button>
     </div>
 
@@ -70,8 +70,8 @@ export default {
       barHeight: 3,
       barDistance: 10,
       selectedFormat: [4],
-      operationOptions: {
-        1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6,
+      numVarOptions: {
+        2: 2, 3: 3, 4: 4, 5: 5, 6: 6,
       },
       radios: [
         { value: 'abc', name: 'a, b, \\dots' },
