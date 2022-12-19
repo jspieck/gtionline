@@ -251,5 +251,6 @@
   "sommersemester": "Semestre d'été",
   "downloadSvg": "Exporter en SVG",
   "downloadPng": "Exporter en PNG",
-  "formula": "Formule"
+  "formula": "Formule",
+  "divByZero": "La division par 0 donne NaN."
 }

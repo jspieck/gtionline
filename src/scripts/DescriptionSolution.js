@@ -977,6 +977,14 @@ export class DescriptionSolution {
           `${this.imp.$t('divWithZero')}`,
         ].join(''),
       }));
+    } else if (y2.isZero) {
+      this.result.push(reactive({
+        name: `${this.imp.$t('step')} 1`,
+        text: [
+          `${this.imp.$t('divByZero')}`,
+        ].join(''),
+      }));
+      return;
     } else {
       this.result.push(reactive({
         name: `${this.imp.$t('step')} 1`,

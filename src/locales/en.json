@@ -252,5 +252,6 @@
   "sommersemester": "Summer term",
   "downloadSvg": "Export as SVG",
   "downloadPng": "Export as PNG",
-  "formula": "Formula"
+  "formula": "Formula",
+  "divByZero": "Division by 0 is NaN."
 }
