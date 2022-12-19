@@ -7,12 +7,15 @@
     <footer id="footer">
       <span>{{$t('disclaimerFooter')}}</span>
       <span>
-        Copyright: Lehrstuhl für Hardware-Software-Co-Design, Informatik 12, FAU. Alle Rechte vorbehalten.
+        Copyright: Lehrstuhl für Hardware-Software-Co-Design, Informatik 12, FAU.
+        Alle Rechte vorbehalten.
+        <a href="https://www.cs12.tf.fau.de/impressum/">Impressum</a>.
+        Kontakt: <a href="mailto:cs12-gti@fau.de?subject=GTI-Online Feedback&body=Nachricht">cs12-gti@fau.de</a>
         <!-- <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>-->
       </span>
       <div id="logoContainerFooter">
-        <img id="codesignLogo" src="@/assets/codesign_white.png"/>
-        <img id="fauLogo" src="@/assets/FAU_logo_white.png"/>
+        <a href="https://www.cs12.tf.fau.de"><img id="codesignLogo" src="@/assets/codesign_white.png"/></a>
+        <a href="https://www.fau.de/"><img id="fauLogo" src="@/assets/FAU_logo_white.png"/></a>
       </div>
     </footer>
   </div>
@@ -81,9 +84,13 @@ export default {
   box-sizing: border-box;
   white-space: nowrap;
 
+  a {
+    color: white;
+  }
+
   span {
     display: block;
-    overflow-x: scroll;
+    overflow-x: auto;
     padding: 2px;
     margin: 0;
   }
