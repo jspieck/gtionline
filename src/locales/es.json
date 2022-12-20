@@ -252,5 +252,6 @@
   "downloadSvg": "Exportar como SVG",
   "downloadPng": "Exportar como PNG",
   "formula": "Fórmula",
-  "divByZero": "La división por 0 da NaN"
+  "divByZero": "La división por 0 da NaN",
+  "falseFormat": "Formato incorrecto!"
 }

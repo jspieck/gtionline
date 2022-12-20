@@ -53,24 +53,13 @@ select{
   background-image: none;
 }
 
-.selectBox{
+.selectBox {
   position: relative;
   border-radius: 6px;
   background-color: #fff;
   border: none;
   display: inline-block;
 
-  /* &:after {
-    content: "\f3d0";
-    font-family: IonIcons;
-    font-size: 1.2em;
-    position:absolute;
-    right: 10px;
-    top: 7px;
-    transition: .3s all;
-    transform: rotate(0deg);
-    pointer-events: none;
-  } */
   .angleDown {
     font-size: 1.2em;
     position:absolute;
@@ -80,6 +69,7 @@ select{
     transform: rotate(0deg);
     pointer-events: none;
   }
+
   &[disabled=disabled]:after{
     content: "";
   }

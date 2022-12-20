@@ -20,7 +20,7 @@
     <tab-panel val="exercises">
       <fpe/>
     </tab-panel>
-    <tab-panel val="freeCalculation">
+    <tab-panel val="arithmetic">
       <fpf/>
     </tab-panel>
   </tab-panels>
@@ -36,7 +36,7 @@ import FloatingPointFormat from './FloatingPointFormat.vue';
 import FloatingPointExercises from './FloatingPointExercises.vue';
 import FloatingPointConversion from './FloatingPointConversion.vue';
 
-const tabs = ['conversion', 'exercises', 'freeCalculation'];
+const tabs = ['conversion', 'exercises', 'arithmetic'];
 
 export default defineComponent({
   name: 'TinyTabs',
@@ -51,7 +51,7 @@ export default defineComponent({
   },
   data() {
     return {
-      selectedTab: 'freeCalculation',
+      selectedTab: 'arithmetic',
     };
   },
   setup() {

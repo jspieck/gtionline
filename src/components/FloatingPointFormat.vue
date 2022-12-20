@@ -1,6 +1,6 @@
 <template>
   <div class="fp-arithmetic pageContainer">
-    <h3 class="title">{{$t('freeCalculation')}}</h3>
+    <h3 class="title">{{`${$t('floatingPoint')} ${$t('arithmetic')}`}}</h3>
     <div class="bodyContainer">
       <p class="introduction">{{$t('fpArithIntro')}}</p>
       <h4>{{$t('fpformat')}}</h4>
@@ -62,7 +62,7 @@
               </tr>
               <tr>
                 <td>
-                  <input id="fpfInput1" v-model="nums[0]" disabled>
+                  <input id="fpfInput1" v-model="numLeft" disabled>
                 </td>
                 <td>
                   <FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal" :isDisabled="true"
@@ -88,7 +88,7 @@
                   :options="formatOptions"/></td>
               </tr>
               <tr>
-                <td><input id="fpfInput3" v-model="nums[1]" disabled></td>
+                <td><input id="fpfInput3" v-model="numRight" disabled></td>
                 <td><FSelect :num="4" :sel="selectedFormat[4]" @input="selectVal" :isDisabled="true"
                   :options="formatOptions"/></td>
               </tr>
@@ -243,7 +243,6 @@ export default {
       nums: { 0: '', 1: '' },
       exponentBits: expBits,
       numBits: length,
-      falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
       solutionSteps: [],
       negativeSummand: false,
@@ -261,6 +260,16 @@ export default {
     };
   },
   computed: {
+    falseFormatOutput() {
+      return this.$t('falseFormat');
+    },
+    numLeft() {
+      return this.checkAndConvertFormat(0);
+    },
+    numRight() {
+      console.log('Called');
+      return this.checkAndConvertFormat(1);
+    },
     solDescr() {
       const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
       if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
@@ -274,7 +283,7 @@ export default {
       let solutionIEEE = [];
       let solutionObject = [];
       let result = [];
-      if (!this.denominatorZero) {
+      if (!denominatorZero) {
         solutionIEEE = ieeeSolution.result;
         const descr = new description.DescriptionSolution(
           this,
@@ -441,15 +450,16 @@ export default {
       const toConvert = this.inputNums[num];
       if (!this.checkFormat(firstFormat, toConvert)) {
         this.nums[num] = this.falseFormatOutput;
-        return;
+        return this.falseFormatOutput;
       }
-      this.convertFormat(num);
+      const converted = this.convertFormat(num);
       // this.computeSolution();
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();
         }
       });
+      return converted;
     },
     downloadPdf() {
       this.recalculate();
@@ -474,7 +484,7 @@ export default {
       const toConvert = this.inputNums[num];
       const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
       if (toConvert.length === 0) {
-        return;
+        return '';
       }
       let converted = toConvert;
       if (firstFormat === 'binary') {
@@ -506,6 +516,7 @@ export default {
         }
       }
       this.nums[num] = converted;
+      return converted;
     },
     checkSolution() {
       const checkSolution = new checker.CheckSolution(this.exponentBits);

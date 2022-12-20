@@ -130,7 +130,6 @@ export default {
       solution: '',
       solutionObject: '',
       inputNums: [input1, input2],
-      falseFormatOutput: 'Falsches Format!',
       solutionSteps: [],
       default: hasdefault,
       watcher: '',
@@ -141,6 +140,9 @@ export default {
     };
   },
   computed: {
+    falseFormatOutput() {
+      return this.$t('falseFormat');
+    },
     power() {
       return formatToPower(this.selectedFormat);
     },

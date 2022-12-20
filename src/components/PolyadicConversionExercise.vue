@@ -72,7 +72,6 @@ export default {
       generated: false,
       solutionObject: '',
       solutionSteps: [],
-      falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
       watcher: '',
       prop: '',
@@ -82,6 +81,9 @@ export default {
     };
   },
   computed: {
+    falseFormatOutput() {
+      return this.$t('falseFormat');
+    },
     solDescr() {
       return this.solutionSteps;
     },

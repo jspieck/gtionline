@@ -115,7 +115,6 @@ export default {
       solution: '',
       solutionObject: '',
       inputNum: input,
-      falseFormatOutput: 'Falsches Format!',
       solutionSteps: [],
       default: hasdefault,
       watcher: '',
@@ -126,6 +125,9 @@ export default {
     };
   },
   computed: {
+    falseFormatOutput() {
+      return this.$t('falseFormat');
+    },
     solDescr() {
       return this.solutionSteps;
     },

@@ -138,7 +138,6 @@ export default {
       solutionSteps: [],
       exponentBits: expBits,
       numBits: length,
-      falseFormatOutput: 'Falsches Format!',
       containerWidth: 500,
       watcher: '',
       propVB: '',
@@ -203,20 +202,6 @@ export default {
         window.sessionStorage.setItem('Conv_numBits', this.numBits);
       }
     },
-    /* recalculate() {
-      const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
-      converter.decToBin(this.fp1.toString());
-      converter.binToIEEE(converter.result);
-      this.solutionObject = getIEEEFromString(this.exponentBits, converter.result);
-      this.$nextTick(() => {
-        if (window.MathJax) {
-          window.MathJax.typeset();
-        }
-      });
-      const descr = new description.DescriptionSolution(this, this.exponentBits, this.numBits, '');
-      descr.makeDescriptionConversion(this.solutionObject);
-      this.solutionSteps = descr.result;
-    }, */
     generateExercise() {
       let number = (Math.floor(Math.random() * 100) + Math.random()).toFixed(4);
       if (Math.random() < 0.5) {

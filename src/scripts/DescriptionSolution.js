@@ -1101,7 +1101,7 @@ export class DescriptionSolution {
   }
 
   makeDescriptionArithmetic(num1, num2, solutionString, operator) {
-    if (num1 !== '' && num2 !== '' && num1 !== 'Falsches Format' && num2 !== 'Falsches Format') {
+    if (num1 !== '' && num2 !== '' && num1 !== this.imp.$t('falseFormat') && num2 !== this.imp.$t('falseFormat')) {
       const solution = tool.getIEEEFromString(this.exponentBits, solutionString);
       const y1 = tool.getIEEEFromString(this.exponentBits, num1);
       const y2 = tool.getIEEEFromString(this.exponentBits, num2);
@@ -1155,14 +1155,25 @@ export class DescriptionSolution {
 
   // eslint-disable-next-line no-unused-vars
   makeDescriptionConversion(solution) {
-    this.result.push(reactive({
+    /* this.result.push(reactive({
       name: this.imp.$t('solution'),
       text: [
-        `${this.imp.$t('correctSolution')}: `,
+        `${this.imp.$t('solution')}: `,
         solution.sign, ' ',
         solution.exponentBits.join(''), ' ',
         solution.mantissaBits.join('').substring(1), ' ',
       ].join('') + this.createIEEENumberBreakdown(solution),
-    }));
+    })); */
+    const converter = new convertFormat.FormatConversions(
+      solution.exponentBits.length,
+      solution.mantissaBits.length,
+    );
+    converter.ieeeToDec([
+      solution.sign, ' ',
+      solution.exponentBits.join(''),
+      solution.mantissaBits.join('').substring(1),
+    ].join(''), false);
+    const decSol = converter.result;
+    this.createIEEESolutionBox(decSol, solution);
   }
 }

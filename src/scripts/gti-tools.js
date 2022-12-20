@@ -10502,16 +10502,20 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
 
 
       var normalizedMantissa = [];
-      var toRound = unnormalizedMantissa[manBitNum] === 1;
-
+      var toRound = unnormalizedMantissa.length <= manBitNum ? false : unnormalizedMantissa[manBitNum + 1] === 1;
+      console.log(unnormalizedMantissa);
       for (var _i2 = 0; _i2 < manBitNum; _i2++) {
         var access = _i2 + Math.max(-shift, 0) + 1;
         var num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
         normalizedMantissa.push(num);
+        console.log(access, num);
       }
+      console.log(normalizedMantissa);
+      
 
       if (toRound) {
         normalizedMantissa = roundArray(normalizedMantissa, manBitNum, toRound, n1.base);
+        console.log(normalizedMantissa, manBitNum, toRound, n1.base);
       }
 
       this.watcher = this.watcher.step('CalculateExp').saveVariable('E1', n1.E).saveVariable('E2', n2.E).saveVariable('bias', n1.bias).saveVariable('notShifted', n1.E + n2.E - n1.bias);
