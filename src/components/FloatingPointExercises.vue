@@ -307,6 +307,7 @@ export default {
       this.fp1 = random.result;
       random.generateRandomIEEE();
       this.fp2 = random.result;
+      console.log(this.fp1, this.fp2);
       this.prepareExercise();
     },
     selectVal(num, val) {

@@ -407,6 +407,35 @@ export class DescriptionSolution {
           `${this.imp.$t('mulWithZero')}`,
         ].join(''),
       }));
+    } else if (watcher.steps.ResultEdgecase.data.edgecase !== 'none') { // case: edgecase
+      switch (watcher.steps.ResultEdgecase.data.edgecase) {
+        case 'nan':
+          this.result.push(reactive({
+            name: `${this.imp.$t('step')} 1`,
+            text: [
+              `${this.imp.$t('solutionIsNan')}`,
+            ].join(''),
+          }));
+          return;
+        case 'inf':
+          this.result.push(reactive({
+            name: `${this.imp.$t('step')} 1`,
+            text: [
+              `${this.imp.$t('solutionIsInf')}`,
+            ].join(''),
+          }));
+          return;
+        case 'zero':
+          this.result.push(reactive({
+            name: `${this.imp.$t('step')} 1`,
+            text: [
+              `${this.imp.$t('solutionIsZero')}`,
+            ].join(''),
+          }));
+          break;
+        default:
+      }
+      return;
     } else {
       const converter = new convertFormat.FormatConversions(
         this.exponentBits,
@@ -669,7 +698,7 @@ export class DescriptionSolution {
               `${this.imp.$t('solutionIsNan')}`,
             ].join(''),
           }));
-          break;
+          return;
         case 'inf':
           this.result.push(reactive({
             name: `${this.imp.$t('step')} ${actStep}`,
@@ -677,7 +706,7 @@ export class DescriptionSolution {
               `${this.imp.$t('solutionIsInf')}`,
             ].join(''),
           }));
-          break;
+          return;
         case 'zero':
           this.result.push(reactive({
             name: `${this.imp.$t('step')} ${actStep}`,
@@ -698,6 +727,7 @@ export class DescriptionSolution {
         addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
       ].join(''), addWatcher.steps.ResultEdgecase.data.edgecase);
       const decSol = converter.result;
+      console.log(watcher);
       this.createIEEESolutionBox(decSol, watcher.steps.Result.data.result);
     } else {
       if (addWatcher.steps.CalculateDeltaE.data.deltaE === 0) {
