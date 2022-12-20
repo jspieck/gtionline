@@ -70,8 +70,8 @@ $infoblob-border-radius: 5px;
 
     // top: 69%;
     // left: 69%;
-    top: 0;
-    left: 100%;
+    top: 30px;
+    left: -150px;
     // margin-left: -50%;
     // margin-right: -50%;
     // transform: translateX(-50%);
@@ -91,7 +91,7 @@ $infoblob-border-radius: 5px;
     .infoblob-text-container {
         // show InfoBlob full screen on small devices
         position: fixed;
-        top: 15%;
+        top: 25%;
         left: 20%;
         width: 59%;
         z-index: 3;
