@@ -677,6 +677,8 @@ export class DescriptionSolution {
           + `${this.imp.$t('subtrahend')}: ${this.imp.$t('sign')}: ${(y2.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString2} ${this.imp.$t('mantissa')}: ${mantissaString2}`,
     }));
     const addWatcher = watcher.steps.Addition.data.addition;
+    console.log(y1);
+    console.log(y2);
     if (y1.isZero || y2.isZero) { // case: subtraction with zero
       this.result.push(reactive({
         name: `${this.imp.$t('step')} ${actStep}`,
@@ -694,7 +696,7 @@ export class DescriptionSolution {
         addWatcher.steps.Result.data.result.mantissaBits.join('').substring(1),
       ].join(''), addWatcher.steps.ResultEdgecase.data.edgecase);
       const decSol = converter.result;
-      this.createIEEESolutionBox(decSol, watcher.steps.Result.data.result);
+      this.createIEEESolutionBox(decSol, addWatcher.steps.Result.data.result);
     } else if (addWatcher.steps.ResultEdgecase.data.edgecase !== 'none') { // case: edgecase
       switch (addWatcher.steps.ResultEdgecase.data.edgecase) {
         case 'nan':

@@ -9414,23 +9414,27 @@ var AdditionBaseNComplement = /*#__PURE__*/function () {
     key: "_add",
     value: function _add(n1, n2) {
       this.watcher = new Algorithm();
-      var isEqual = n1.arr.length === n2.arr.length && n1.arr.every(function (value, index) {
-        return value === n2.arr[index];
-      });
-
-      if (isEqual && n1.signBit !== n2.signBit) {
-        // edgecase x - x == zero
-        var _final = [];
-
-        for (var i = 0; i < n1.arr.length; i++) {
-          _final.shift(0);
+      /* const isEqual = n1.arr.length === n2.arr.length &&
+        n1.arr.every((value, index) => value === n2.arr[index]);
+      if (isEqual && n1.signBit !== n2.signBit) { // edgecase x - x == zero
+        const final = [];
+        for (let i = 0; i < n1.arr.length; i++) {
+          final.shift(0);
         }
-
-        var _result = new NumberBaseNComplement(n1.base, n1.digitNum, _final, 0, false);
-
-        this.watcher.step('Addition').saveVariable('op1', n1).saveVariable('op2', n2).saveVariable('op1Arr', _toConsumableArray(n1.arr)).saveVariable('op2Arr', _toConsumableArray(n2.arr)).saveVariable('carryArr', []).saveVariable('resultArr', [].concat(_final)).saveVariable('result', _result).saveVariable('overflow', this.producedOverflow).saveVariable('equal', isEqual);
-        return _result;
-      }
+        const result = new NumberBaseNComplement(n1.base, n1.digitNum, final, 0, false);
+        this.watcher
+          .step('Addition')
+          .saveVariable('op1', n1)
+          .saveVariable('op2', n2)
+          .saveVariable('op1Arr', [...n1.arr])
+          .saveVariable('op2Arr', [...n2.arr])
+          .saveVariable('carryArr', [])
+          .saveVariable('resultArr', [...final])
+          .saveVariable('result', result)
+          .saveVariable('overflow', this.producedOverflow)
+          .saveVariable('equal', isEqual);
+        return result;
+      } */
 
       var base = n1.base;
 
@@ -9439,14 +9443,14 @@ var AdditionBaseNComplement = /*#__PURE__*/function () {
       var n2Arr = _toConsumableArray(n2.arr);
 
       var carryBits = [];
-      var _final2 = []; // binary addition
+      var _final = []; // binary addition
 
       carryBits.unshift(0);
 
-      for (var _i = n1Arr.length - 1; _i >= 0; _i--) {
-        var m = n1Arr[_i] + n2Arr[_i] + carryBits[0];
+      for (var i = n1Arr.length - 1; i >= 0; i--) {
+        var m = n1Arr[i] + n2Arr[i] + carryBits[0];
 
-        _final2.unshift(m % base);
+        _final.unshift(m % base);
 
         carryBits.unshift(Math.floor(m / base));
       } // We have an overflow if the XOR of the first two carry out bits are 1
@@ -9454,12 +9458,12 @@ var AdditionBaseNComplement = /*#__PURE__*/function () {
 
       this.producedOverflow = carryBits[0] !== carryBits[1]; // TODO this negative value is IEEE specific, since an overflow does not change the sign
 
-      var isNegative = n1.signBit === 1 && n2.signBit === 1 || !(n1.signBit === 0 && n2.signBit === 0) && _final2[0] === 1 && !this.producedOverflow;
+      var isNegative = n1.signBit === 1 && n2.signBit === 1 || !(n1.signBit === 0 && n2.signBit === 0) && _final[0] === 1 && !this.producedOverflow;
 
       if (isNegative) {
         // cut throuth overflow for negative values
-        while (_final2.length > n1.digitNum) {
-          _final2.shift();
+        while (_final.length > n1.digitNum) {
+          _final.shift();
         }
       }
 
@@ -9468,12 +9472,13 @@ var AdditionBaseNComplement = /*#__PURE__*/function () {
       if (n1.signBit === n2.signBit && carryBits.length > digitNum) {
         digitNum++;
 
-        _final2.unshift(carryBits[0]);
+        _final.unshift(carryBits[0]);
       }
 
       this.negativeResult = isNegative;
-      var result = new NumberBaseNComplement(base, digitNum, _final2, 0, false);
-      this.watcher.step('Addition').saveVariable('op1', n1).saveVariable('op2', n2).saveVariable('op1Arr', _toConsumableArray(n1Arr)).saveVariable('op2Arr', _toConsumableArray(n2Arr)).saveVariable('carryArr', [].concat(carryBits)).saveVariable('resultArr', [].concat(_final2)).saveVariable('result', result).saveVariable('overflow', this.producedOverflow).saveVariable('equal', isEqual);
+      var result = new NumberBaseNComplement(base, digitNum, _final, 0, false);
+      this.watcher.step('Addition').saveVariable('op1', n1).saveVariable('op2', n2).saveVariable('op1Arr', _toConsumableArray(n1Arr)).saveVariable('op2Arr', _toConsumableArray(n2Arr)).saveVariable('carryArr', [].concat(carryBits)).saveVariable('resultArr', [].concat(_final)).saveVariable('result', result).saveVariable('overflow', this.producedOverflow); // .saveVariable('equal', isEqual);
+
       return result;
     }
   }, {
@@ -10043,6 +10048,8 @@ var AdditionIEEE = /*#__PURE__*/function () {
       this.watcher = this.watcher.step('Edgecases');
       var expBitNum = n1.expBitNum;
       var manBitNum = n1.manBitNum;
+      console.log(n1);
+      console.log(n2);
       var bitNum = n1.bitNum; // Edgecases:
 
       if (n1.isZero) {
@@ -10236,6 +10243,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
 
       this.watcher = this.watcher.step('AddMantissa').saveVariable('complement1', JSON.parse(JSON.stringify(op1.watcher)));
       this.watcher = this.watcher.step('AddMantissa').saveVariable('complement2', JSON.parse(JSON.stringify(op2.watcher)));
+      console.log(op1, op2);
       var addition = new AdditionBaseNComplement(op1, op2);
       this.watcher = this.watcher.step('AddMantissa').saveVariable('addition', JSON.parse(JSON.stringify(addition.watcher)));
       var additionResult = addition.getResult();

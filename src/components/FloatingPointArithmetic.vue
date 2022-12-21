@@ -442,6 +442,10 @@ export default {
           commaOccured = true;
         }
       }
+      // Block all inputs without numbers
+      if (!/\d/.test(convert)) {
+        return false;
+      }
       return true;
     },
     checkAndConvertFormat(num) {
