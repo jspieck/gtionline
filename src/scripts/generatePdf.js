@@ -726,7 +726,7 @@ export class PdfDescription {
     this.string = latex;
   }
 
-  generatePdf(inputNum1, inputNum2, solutionString, actOperator, actFormat1 = 'decimal', actFormat2 = 'decimal', returnSite = 'FloatingPointArithmetic') {
+  generatePdf(inputNum1, inputNum2, solutionString, actOperator, actFormat1 = 'decimal', actFormat2 = 'decimal', returnSite = 'FloatingPointTabs') {
     let num1 = inputNum1;
     let num2 = inputNum2;
     if (actFormat1 === 'decimal') {

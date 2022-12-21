@@ -664,6 +664,9 @@ export class DescriptionSolution {
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
     const watcher = this.watcher;
+    console.log(y1);
+    console.log(y2);
+    console.log(watcher);
     let actStep = 1;
     this.result.push(reactive({
       name: `${this.imp.$t('values')}`,
@@ -714,7 +717,7 @@ export class DescriptionSolution {
               `${this.imp.$t('solutionIsZero')}`,
             ].join(''),
           }));
-          break;
+          return;
         default:
       }
       const converter = new convertFormat.FormatConversions(

@@ -1,4 +1,4 @@
-import FloatingPointArithmetic from '@/components/FloatingPointArithmetic.vue';
+import FloatingPointTabs from '@/components/FloatingPointTabs.vue';
 import PolyadicNumbers from '@/components/PolyadicNumbers.vue';
 import BooleanFunctionMinimizer from '@/components/BooleanFunctionMinimizer.vue';
 import KVDiagram from '@/components/KVDiagram.vue';
@@ -23,8 +23,8 @@ const routes = [
   },
   {
     path: '/fparithmetic',
-    name: 'FloatingPointArithmetic',
-    component: FloatingPointArithmetic,
+    name: 'FloatingPointTabs',
+    component: FloatingPointTabs,
   },
   {
     path: '/polyadic',

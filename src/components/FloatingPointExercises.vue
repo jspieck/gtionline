@@ -82,7 +82,7 @@ import * as description from '../scripts/DescriptionSolution';
 import * as pdf from '../scripts/generatePdf';
 
 export default {
-  name: 'FloatingPointArithmetic',
+  name: 'FloatingPointExercises',
   components: {
     FSelect: FormatSelect,
     // Accordion: SolutionAccordion,
