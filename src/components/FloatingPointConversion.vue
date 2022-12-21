@@ -159,6 +159,7 @@ export default {
       converter.decToBin(this.fp1.toString());
       converter.binToIEEE(converter.result);
       const solutionObject = getIEEEFromString(this.exponentBits, converter.result);
+      console.log(solutionObject);
       this.setVariables(solutionObject);
       this.$nextTick(() => {
         if (window.MathJax) {

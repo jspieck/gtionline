@@ -75,9 +75,11 @@ export class FormatConversions {
     // console.log(mantisse);
     let exponent = (expBasis + bias - shiftFactor).toString(2);
     // fill with leading zeroes
-    if (exponent.length > this.exponentBits) {
-      // TODO Number is too big and cannot be displayed
-      exponent = exponent.substring(exponent.length - this.exponentBits);
+    if (exponent.length > this.exponentBits || exponent === '1'.repeat(this.exponentBits)) {
+      // ! We get infinity
+      exponent = '1'.repeat(this.exponentBits);
+      mantisse = '0'.repeat(numBitsMantisse);
+      // exponent = exponent.substring(exponent.length - this.exponentBits);
     }
     exponent = '0'.repeat(this.exponentBits - exponent.length) + exponent;
 
@@ -121,7 +123,7 @@ export class FormatConversions {
           this.result = 'NaN';
           return;
         case 'inf':
-          if (num[0] === 0) {
+          if (Number(num[0]) === 0) {
             this.result = 'Inf';
           } else {
             this.result = '-Inf';

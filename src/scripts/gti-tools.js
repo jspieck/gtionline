@@ -10002,7 +10002,7 @@ function getIEEEFromString(expBitNum, str) {
 
     arr.push(charToNum$1(string[_i2]));
   }
-
+  console.log(expBitNum, arr.length - expBitNum - 1, arr);
   var number = new NumberIEEE(expBitNum, arr.length - expBitNum - 1, arr);
 
   if (hadText && inf) {

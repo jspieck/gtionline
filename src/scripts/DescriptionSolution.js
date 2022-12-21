@@ -1155,24 +1155,26 @@ export class DescriptionSolution {
 
   // eslint-disable-next-line no-unused-vars
   makeDescriptionConversion(solution) {
-    /* this.result.push(reactive({
-      name: this.imp.$t('solution'),
-      text: [
-        `${this.imp.$t('solution')}: `,
-        solution.sign, ' ',
-        solution.exponentBits.join(''), ' ',
-        solution.mantissaBits.join('').substring(1), ' ',
-      ].join('') + this.createIEEENumberBreakdown(solution),
-    })); */
     const converter = new convertFormat.FormatConversions(
       solution.exponentBits.length,
       solution.mantissaBits.length,
     );
+    let edgecase = '';
+    if (solution.isZero) {
+      edgecase = 'zero';
+    }
+    if (solution.isNaN) {
+      edgecase = 'nan';
+    }
+    if (solution.isInfinity) {
+      edgecase = 'inf';
+    }
     converter.ieeeToDec([
       solution.sign, ' ',
       solution.exponentBits.join(''),
       solution.mantissaBits.join('').substring(1),
-    ].join(''), false);
+    ].join(''), edgecase);
+
     const decSol = converter.result;
     this.createIEEESolutionBox(decSol, solution);
   }

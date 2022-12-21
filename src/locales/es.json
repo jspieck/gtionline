@@ -178,7 +178,7 @@
   "conversionExercise": "Ejercicios de conversión",
   "exerciseArchive": "Archivo de ejercicios",
   "homePageText": "El objetivo de GTI-Online es profundizar en los conocimientos de los temas seleccionados aprendidos en la clase y en el ejercicio correspondiente. Seleccione en el menú un tema y empiece a practicar.",
-  "fpExerciseText": "Sean los números de punto flotante \\( fp_1 \\) y \\( fp_2 \\) dados en formato de punto flotante de 16 bits. Calcule el %{op1} \\( fp_1 %{op2} fp_2 \\) sin salir de la representación binaria y déselo de nuevo como un número de punto flotante:",
+  "fpExerciseText": "Sean los números de punto flotante \\( fp_1 \\) y \\( fp_2 \\) dados en formato de punto flotante de 16 bits. Calcule la %{op1} \\( fp_1 %{op2} fp_2 \\) sin salir de la representación binaria y déselo de nuevo como un número de punto flotante:",
   "bf_sortingUC": "Clasificación ",
   "polyFreeIntro": "Practique la aritmética poliádica con sus propios valores numéricos en el sistema que desee.",
   "randomExercise": "Ejercicio aleatorio",
