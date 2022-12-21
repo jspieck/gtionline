@@ -1163,7 +1163,7 @@ export class DescriptionSolution {
   makeDescriptionConversion(solution) {
     const converter = new convertFormat.FormatConversions(
       solution.exponentBits.length,
-      solution.mantissaBits.length,
+      solution.bitNum,
     );
     let edgecase = '';
     if (solution.isZero) {

@@ -165,6 +165,7 @@ export class FormatConversions {
     if (ieeeWithoutSpace.length !== this.numBits) {
       this.result = 0;
     }
+    console.log(ieeeWithoutSpace, this.exponentBits, this.numBits);
     const sign = ieeeWithoutSpace[0] === '0' ? 1 : -1;
     const exponentbits = ieeeWithoutSpace.substring(1, 1 + this.exponentBits);
     const mantisse = ieeeWithoutSpace.substring(1 + this.exponentBits, this.numBits);
@@ -180,6 +181,8 @@ export class FormatConversions {
     for (let i = 0; i < mantisse.length; i += 1) {
       decimal += mantisse[i] * (2 ** (-i - 1));
     }
+    console.log(mantisse);
+    console.log(sign, decimal, exponent, sign * decimal * (2 ** exponent));
     this.result = sign * decimal * (2 ** exponent);
   }
 
