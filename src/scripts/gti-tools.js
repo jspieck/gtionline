@@ -7784,7 +7784,7 @@ var SVGGenerator = /*#__PURE__*/function () {
       };
       var transistorBase = ["<path fill=\"none\" stroke=\"black\" d=\"M ".concat(transistorBaseBegin.x * scale, " ").concat(transistorBaseBegin.y * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.3) * scale), "H ".concat((transistorBaseBegin.x - hull.info.transistorWidth * 0.5) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.2) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.8) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.7) * scale), "H ".concat(transistorBaseBegin.x * scale), "V ".concat((transistorBaseBegin.y + transistor.height) * scale), '"/>'].join(' ');
       var extra = transistor.leftPad - hull.info.transistorPadLeft;
-      var transistorToper = ["<path fill=\"none\" stroke=\"black\" d=\"M ".concat((transistor.x + extra + hull.info.transistorPadLeft) * scale, " ").concat((transistorBaseBegin.y + transistor.height / 2) * scale), "H ".concat((transistorBaseBegin.x - hull.info.transistorWidth * 0.6) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.3) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.7) * scale), '"/>'].join(' ');
+      var transistorToper = ["<path fill=\"none\" stroke=\"black\" d=\"M ".concat((transistorBaseBegin.x + extra + hull.info.transistorPadLeft) * scale, " ").concat((transistorBaseBegin.y + transistor.height / 2) * scale), "H ".concat((transistorBaseBegin.x - hull.info.transistorWidth * 0.6) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.3) * scale), "V ".concat((transistorBaseBegin.y + hull.info.transistorPadTop + hull.info.transistorHeight * 0.7) * scale), '"/>'].join(' ');
       var finalString;
 
       if (transistor.content.type === CMOSTransistorType$1.PMOS) {
@@ -9823,7 +9823,7 @@ var NumberIEEE = /*#__PURE__*/function () {
     this.isNaN = isNaN;
     this.isInfinity = isInf;
     this.isZero = isZero;
-    this.isSmall = this.E === 0 && this.M !== 0;
+    this.isDenormalized = this.E === 0 && this.M !== 0;
     this.exponent = this._constructExponent();
     this.mantissa = this._constructMantissa();
     this.exponentBits = this._constructExponentBits();
@@ -9917,12 +9917,12 @@ var NumberIEEE = /*#__PURE__*/function () {
   }, {
     key: "_constructExponent",
     value: function _constructExponent() {
-      return this.E - this.bias;
+      return Math.max(-this.bias + 1, this.E - this.bias);
     }
   }, {
     key: "_constructMantissa",
     value: function _constructMantissa() {
-      if (this.isSmall || this.isZero) {
+      if (this.isDenormalized || this.isZero) {
         return this.M;
       }
 
@@ -9940,7 +9940,7 @@ var NumberIEEE = /*#__PURE__*/function () {
   }, {
     key: "_constructMantissaBits",
     value: function _constructMantissaBits() {
-      var firstBit = this.isSmall || this.isZero ? 0 : 1;
+      var firstBit = this.isDenormalized || this.isZero ? 0 : 1;
 
       var result = _toConsumableArray(this.arr);
 
@@ -9993,7 +9993,8 @@ function getIEEEFromString(expBitNum, str) {
       console.log('getIEEEFromString(expBitNum, str): Given string is not compatible with base 2.');
       process.exit(1);
     }
-  }
+  } // Conversion from string to array
+
 
   var arr = [];
 
@@ -10002,7 +10003,7 @@ function getIEEEFromString(expBitNum, str) {
 
     arr.push(charToNum$1(string[_i2]));
   }
-  console.log(expBitNum, arr.length - expBitNum - 1, arr);
+
   var number = new NumberIEEE(expBitNum, arr.length - expBitNum - 1, arr);
 
   if (hadText && inf) {
@@ -10124,7 +10125,7 @@ var AdditionIEEE = /*#__PURE__*/function () {
         }
       }
 
-      var additionData = this._addMantissa(mantissa1, mantissa2, sign1, sign2, mantissa2.length, deltaE);
+      var additionData = this._addMantissa(mantissa1, mantissa2, sign1, sign2, mantissa2.length, deltaE, n1.isDenormalized || n2.isDenormalized);
 
       var sign = additionData.sign ? 1 : 0;
       var normalizedMantissa = additionData.normalizedMantissa;
@@ -10175,9 +10176,9 @@ var AdditionIEEE = /*#__PURE__*/function () {
     }
   }, {
     key: "_addMantissa",
-    value: function _addMantissa(mantissa1, mantissa2, sign1, sign2, binNum, deltaE) {
+    value: function _addMantissa(mantissa1, mantissa2, sign1, sign2, binNum, deltaE, originallyDenormalized) {
       this.watcher = this.watcher.step('AddMantissa').saveVariable('mantissa1', mantissa1).saveVariable('mantissa2', mantissa2).saveVariable('sign1', sign1).saveVariable('sign2', sign2).saveVariable('binNum', binNum);
-      var isEqual = mantissa1.length === mantissa2.length && mantissa1.every(function (value, index) {
+      var isEqual = !originallyDenormalized && mantissa1.length === mantissa2.length && mantissa1.every(function (value, index) {
         return value === mantissa2[index];
       });
       this.watcher = this.watcher.step('AddMantissa').saveVariable('equalMantissa', isEqual); // x + x = 2x
@@ -10501,21 +10502,18 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
       } // normalizes the mantissa
 
 
-      var normalizedMantissa = [];
+      var normalizedMantissa = []; // const toRound = unnormalizedMantissa[manBitNum] === 1;
+
       var toRound = unnormalizedMantissa.length <= manBitNum ? false : unnormalizedMantissa[manBitNum + 1] === 1;
-      console.log(unnormalizedMantissa);
+
       for (var _i2 = 0; _i2 < manBitNum; _i2++) {
         var access = _i2 + Math.max(-shift, 0) + 1;
         var num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
         normalizedMantissa.push(num);
-        console.log(access, num);
       }
-      console.log(normalizedMantissa);
-      
 
       if (toRound) {
         normalizedMantissa = roundArray(normalizedMantissa, manBitNum, toRound, n1.base);
-        console.log(normalizedMantissa, manBitNum, toRound, n1.base);
       }
 
       this.watcher = this.watcher.step('CalculateExp').saveVariable('E1', n1.E).saveVariable('E2', n2.E).saveVariable('bias', n1.bias).saveVariable('notShifted', n1.E + n2.E - n1.bias);

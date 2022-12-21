@@ -114,6 +114,7 @@ export class FormatConversions {
   }
 
   ieeeToDec(num, edgecase = '') {
+    let isDenormalized = false;
     if ((edgecase !== '') && (edgecase !== 'none')) {
       switch (edgecase) {
         case 'zero':
@@ -129,6 +130,9 @@ export class FormatConversions {
             this.result = '-Inf';
           }
           return;
+        case 'denormalized':
+          isDenormalized = true;
+          break;
         default:
       }
     }
@@ -172,7 +176,7 @@ export class FormatConversions {
       calcExp += 1;
     }
     exponent -= bias;
-    let decimal = 1.0;
+    let decimal = isDenormalized ? 0.0 : 1.0;
     for (let i = 0; i < mantisse.length; i += 1) {
       decimal += mantisse[i] * (2 ** (-i - 1));
     }

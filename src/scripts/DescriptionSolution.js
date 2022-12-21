@@ -118,10 +118,12 @@ export class DescriptionSolution {
       y1 = JSON.parse(JSON.stringify(_y2));
       y2 = JSON.parse(JSON.stringify(_y1));
     }
+    console.log(y1);
+    console.log(y2);
     let mantissaString1 = y1.mantissaBits.join('');
-    mantissaString1 = `1,${mantissaString1.substring(1)}`;
+    mantissaString1 = `${mantissaString1[0]},${mantissaString1.substring(1)}`;
     let mantissaString2 = y2.mantissaBits.join('');
-    mantissaString2 = `1,${mantissaString2.substring(1)}`;
+    mantissaString2 = `${mantissaString2[0]},${mantissaString2.substring(1)}`;
     const expString1 = y1.exponentBits.join('');
     const expString2 = y2.exponentBits.join('');
     const watcher = this.watcher;
@@ -252,6 +254,7 @@ export class DescriptionSolution {
           ],
         }));
       }
+      console.log(this.watcher);
       const converter = new convertFormat.FormatConversions(this.exponentBits, this.numBits);
       converter.ieeeToDec([
         this.watcher.steps.Result.data.result.sign, ' ',
@@ -1171,6 +1174,9 @@ export class DescriptionSolution {
     }
     if (solution.isInfinity) {
       edgecase = 'inf';
+    }
+    if (solution.isDenormalized) {
+      edgecase = 'denormalized';
     }
     converter.ieeeToDec([
       solution.sign, ' ',

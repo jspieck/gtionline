@@ -267,7 +267,6 @@ export default {
       return this.checkAndConvertFormat(0);
     },
     numRight() {
-      console.log('Called');
       return this.checkAndConvertFormat(1);
     },
     solDescr() {

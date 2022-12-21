@@ -27,6 +27,7 @@ export class IEEESolution {
     if (num1 !== '' && num2 !== '') {
       const y1 = tool.getIEEEFromString(this.exponentBits, num1);
       const y2 = tool.getIEEEFromString(this.exponentBits, num2);
+      console.log(y1);
       let result = null;
       this.negativeSummand = false;
       this.negativeSubtrahend = false;
