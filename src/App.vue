@@ -7,10 +7,9 @@
     <footer id="footer">
       <span>{{$t('disclaimerFooter')}}</span>
       <span>
-        Copyright: Lehrstuhl für Hardware-Software-Co-Design, Informatik 12, FAU.
-        Alle Rechte vorbehalten.
-        <a href="https://www.cs12.tf.fau.de/impressum/">Impressum</a>.
-        Kontakt: <a href="mailto:cs12-gti@fau.de?subject=GTI-Online Feedback&body=Nachricht">cs12-gti@fau.de</a>
+        © {{$t('copyright')}}
+        <a href="https://www.studon.fau.de/studon/ilias.php?ref_id=4386562&cmd=view&cmdClass=ilobjcontentpagegui&cmdNode=12b:q0&baseClass=ilrepositorygui">{{$t('impressum')}}</a>.
+        {{$t('contact')}}: <a href="mailto:cs12-gti@fau.de?subject=GTI-Online Feedback&body=Nachricht">cs12-gti@fau.de</a>
         <!-- <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>-->
       </span>
       <div id="logoContainerFooter">

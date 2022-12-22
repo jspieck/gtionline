@@ -39,6 +39,8 @@ export class DescriptionSolution {
     rowCarry.push('&');
     row3.push('&');
     tabdef.push('{');
+    console.log(mantissa1);
+    console.log(mantissa2);
     for (let i = mantissa1.length; i <= cols; i += 1) {
       mantissa1.unshift(0);
     }
@@ -48,7 +50,7 @@ export class DescriptionSolution {
     for (let i = carryBits.length; i <= cols; i += 1) {
       carryBits.unshift(0);
     }
-    for (let i = 0; i < cols + 1; i += 1) {
+    for (let i = 0; i <= cols + 1; i += 1) {
       tabdef.push('c');
       if (i === 2) {
         row1.push(',');
@@ -220,28 +222,53 @@ export class DescriptionSolution {
       }
       if (!watcher.steps.AddMantissa.data.equalMantissa) {
         this.getAdditionTable();
-        this.result.push(reactive({
-          name: `${this.imp.$t('step')} 2`,
-          text: [
-            `${this.imp.$t('addMantissa')}`,
-          ].join(''),
-          subpanels: [
-            {
-              name: `${this.imp.$t('newMantissa')}`,
-              text: [
-                `${this.imp.$t('consider1comma')} `,
-                `${this.imp.$t('newMantissaIs')}`,
-                '\<br\> \<br\>',
-                '\\(',
-                this.table,
-                '\\)',
-                '\<br\> \<br\>',
-                watcher.steps.AddMantissa.data.shift !== 0 ? `${this.imp.$t('mantissaNormalize', { shift: watcher.steps.Normalize.data.shift, exponent: watcher.steps.Normalize.data.finalExpBits.join('') })} \<br\>` : '',
-                `${this.imp.$t('mantissa1float')} ${watcher.steps.AddMantissa.data.normalizedMantissa.join('')}`,
-              ].join(''),
-            },
-          ],
-        }));
+        if (watcher.steps.Result.data.result.isDenormalized) {
+          this.result.push(reactive({
+            name: `${this.imp.$t('step')} 2`,
+            text: [
+              `${this.imp.$t('addMantissa')}`,
+            ].join(''),
+            subpanels: [
+              {
+                name: `${this.imp.$t('newMantissa')}`,
+                text: [
+                  `${this.imp.$t('consider1comma')} `,
+                  `${this.imp.$t('newMantissaIs')}`,
+                  '\<br\> \<br\>',
+                  '\\(',
+                  this.table,
+                  '\\)',
+                  '\<br\> \<br\>',
+                  watcher.steps.AddMantissa.data.shift !== 0 ? `${this.imp.$t('mantissaNormalizeDenorm', { shift: watcher.steps.Normalize.data.shift, exponent: watcher.steps.Normalize.data.finalExpBits.join('') })} \<br\>` : '',
+                  `${this.imp.$t('mantissa1float')} ${watcher.steps.Normalize.data.normalizedMantissa.join('')}`,
+                ].join(''),
+              },
+            ],
+          }));
+        } else {
+          this.result.push(reactive({
+            name: `${this.imp.$t('step')} 2`,
+            text: [
+              `${this.imp.$t('addMantissa')}`,
+            ].join(''),
+            subpanels: [
+              {
+                name: `${this.imp.$t('newMantissa')}`,
+                text: [
+                  `${this.imp.$t('consider1comma')} `,
+                  `${this.imp.$t('newMantissaIs')}`,
+                  '\<br\> \<br\>',
+                  '\\(',
+                  this.table,
+                  '\\)',
+                  '\<br\> \<br\>',
+                  watcher.steps.AddMantissa.data.shift !== 0 ? `${this.imp.$t('mantissaNormalize', { shift: watcher.steps.Normalize.data.shift, exponent: watcher.steps.Normalize.data.finalExpBits.join('') })} \<br\>` : '',
+                  `${this.imp.$t('mantissa1float')} ${watcher.steps.Normalize.data.normalizedMantissa.join('')}`,
+                ].join(''),
+              },
+            ],
+          }));
+        }
       } else {
         this.result.push(reactive({
           name: `${this.imp.$t('step')} 2`,
@@ -511,6 +538,7 @@ export class DescriptionSolution {
     ].join(''), watcher.steps.ResultEdgecase.data.edgecase);
     const decSol = converter.result;
     this.createIEEESolutionBox(decSol, watcher.steps.Result.data.result);
+    console.log(watcher);
   }
 
   // =========================================================================================
@@ -1037,6 +1065,36 @@ export class DescriptionSolution {
             })}`,
           ].join(''),
         }));
+      }
+
+      if (watcher.steps.ResultEdgecase.data.edgecase !== 'none') { // case: edgecase
+        switch (watcher.steps.ResultEdgecase.data.edgecase) {
+          case 'nan':
+            this.result.push(reactive({
+              name: `${this.imp.$t('step')} ${this.result.length}`,
+              text: [
+                `${this.imp.$t('solutionIsNan')}`,
+              ].join(''),
+            }));
+            return;
+          case 'inf':
+            this.result.push(reactive({
+              name: `${this.imp.$t('step')} ${this.result.length}`,
+              text: [
+                `${this.imp.$t('solutionIsInf')}`,
+              ].join(''),
+            }));
+            return;
+          case 'zero':
+            this.result.push(reactive({
+              name: `${this.imp.$t('step')} ${this.result.length}`,
+              text: [
+                `${this.imp.$t('solutionIsZero')}`,
+              ].join(''),
+            }));
+            return;
+          default:
+        }
       }
 
       if (!watcher.steps.Result.data.result.isNaN) {

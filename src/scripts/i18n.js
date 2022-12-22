@@ -3,6 +3,7 @@ import trDe from '@/locales/de.json';
 import trEn from '@/locales/en.json';
 import trFr from '@/locales/fr.json';
 import trEs from '@/locales/es.json';
+import trCh from '@/locales/ch.json';
 // import trLt from '@/locales/lt.json';
 
 export const i18n = createI18n({
@@ -13,6 +14,7 @@ export const i18n = createI18n({
     en: trEn,
     fr: trFr,
     es: trEs,
+    ch: trCh,
     // lt: trLt,
   },
 });

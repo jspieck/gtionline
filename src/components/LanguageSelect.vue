@@ -19,6 +19,7 @@
 import americanFlag from '../assets/americanFlag.png';
 import frenchFlag from '../assets/frenchFlag.png';
 import spanishFlag from '../assets/spanishFlag.png';
+import chineseFlag from '../assets/chineseFlag.png';
 // import latinFlag from '..@/assets/latinFlag.png';
 const germanFlag = require('../assets/germanFlag.png');
 
@@ -50,6 +51,11 @@ export default {
           name: 'es',
           nameLong: 'Español',
           img: spanishFlag,
+        },
+        {
+          name: 'ch',
+          nameLong: '中国',
+          img: chineseFlag,
         },
         /* {
           name: 'lt',

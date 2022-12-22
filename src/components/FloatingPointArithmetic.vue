@@ -435,6 +435,9 @@ export default {
             return false;
           }
         }
+        if (['-', '+'].includes(convert[i]) && i > 0) {
+          return false;
+        }
         if (convert[i] === ',' || convert[i] === '.') {
           if (commaOccured) {
             return false;

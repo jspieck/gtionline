@@ -10147,9 +10147,24 @@ var AdditionIEEE = /*#__PURE__*/function () {
       } // Calculate bits of the final Exponent
 
 
-      var finalE = exponent1 + n1.bias + shift;
+      var finalE = exponent1 + n1.bias + shift; // If we have a denormalized number, move the mantissa right again
+      // console.log(finalE, normalizedMantissa);
 
-      var exponentBits = this._getExponentBits(expBitNum, finalE);
+      if (finalE <= 0) {
+        // Shift the leading 1 into the mantissa
+        normalizedMantissa.unshift(1);
+        normalizedMantissa.pop(); // shift the 1 to express the finalE
+
+        for (var _i = 0; _i < Math.abs(finalE); ++_i) {
+          normalizedMantissa.unshift(0);
+          normalizedMantissa.pop();
+        }
+
+        finalE = 0;
+      }
+
+      var exponentBits = this._getExponentBits(expBitNum, finalE); // console.log(finalE, normalizedMantissa);
+
 
       this.watcher = this.watcher.step('Normalize').saveVariable('normalizedMantissa', _toConsumableArray(normalizedMantissa)).saveVariable('shift', shift).saveVariable('n1ExpBits', _toConsumableArray(n1.exponentBits)).saveVariable('finalExpBits', _toConsumableArray(exponentBits)); // Check if newly calculated ieee is equal to inf
 
@@ -10172,7 +10187,9 @@ var AdditionIEEE = /*#__PURE__*/function () {
       var resultArray = [sign];
       resultArray.push.apply(resultArray, _toConsumableArray(exponentBits));
       resultArray.push.apply(resultArray, _toConsumableArray(normalizedMantissa));
+      console.log(expBitNum, manBitNum, resultArray);
       var result = new NumberIEEE(expBitNum, manBitNum, resultArray);
+      console.log(result);
       this.watcher = this.watcher.step('Result').saveVariable('result', result);
       return result;
     }
@@ -10526,26 +10543,39 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
 
       this.watcher = this.watcher.step('CalculateExp').saveVariable('E1', n1.E).saveVariable('E2', n2.E).saveVariable('bias', n1.bias).saveVariable('notShifted', n1.E + n2.E - n1.bias);
       this.watcher = this.watcher.step('MulMantissa').saveVariable('normalizedMantissa', normalizedMantissa);
-      var finalE = n1.E + n2.E - n1.bias + shift; // Check if denormalization has to take place
+      var finalE = n1.E + n2.E - n1.bias + shift;
 
-      if (finalE < 0) {
-        var denormArray = [sign]; // Exponent of ZERO indicates the denormalized representation
+      if (finalE <= 0) {
+        // Shift the leading 1 into the mantissa
+        normalizedMantissa.unshift(1);
+        normalizedMantissa.pop(); // shift the 1 to express the finalE
 
-        denormArray.push.apply(denormArray, _toConsumableArray(Array(expBitNum).fill(0))); // Now shift the mantissa by the extra amount
-
-        for (var _i3 = 0; _i3 < Math.abs(finalE); _i3 += 1) {
+        for (var _i3 = 0; _i3 < Math.abs(finalE); ++_i3) {
           normalizedMantissa.unshift(0);
+          normalizedMantissa.pop();
         }
 
-        normalizedMantissa.splice(manBitNum, normalizedMantissa.length - manBitNum);
-        denormArray.push.apply(denormArray, _toConsumableArray(normalizedMantissa));
+        finalE = 0;
+      } // Check if denormalization has to take place
 
-        var _result5 = new NumberIEEE(expBitNum, manBitNum, denormArray);
-
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'denormalized');
-        this.watcher = this.watcher.step('Result').saveVariable('result', _result5);
-        return _result5;
-      } // caluclates the exponent bits
+      /* if (finalE < 0) {
+        const denormArray = [sign];
+        // Exponent of ZERO indicates the denormalized representation
+        denormArray.push(...Array(expBitNum).fill(0));
+        // Now shift the mantissa by the extra amount
+        for (let i = 0; i < Math.abs(finalE); i += 1)  {
+          normalizedMantissa.unshift(0);
+        }
+        normalizedMantissa.splice(manBitNum, (normalizedMantissa.length - manBitNum));
+        denormArray.push(...normalizedMantissa);
+        const result = new NumberIEEE(expBitNum, manBitNum, denormArray);
+         this.watcher = this.watcher.step('ResultEdgecase')
+          .saveVariable('edgecase', 'denormalized');
+        this.watcher = this.watcher.step('Result')
+          .saveVariable('result', result);
+        return result;
+      } */
+      // caluclates the exponent bits
 
 
       var curE = finalE;
@@ -10564,11 +10594,11 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
 
         _infArray2.push.apply(_infArray2, _toConsumableArray(Array(manBitNum).fill(0)));
 
-        var _result6 = new NumberIEEE(expBitNum, manBitNum, _infArray2);
+        var _result5 = new NumberIEEE(expBitNum, manBitNum, _infArray2);
 
         this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf');
-        this.watcher = this.watcher.step('Result').saveVariable('result', _result6);
-        return _result6;
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result5);
+        return _result5;
       } // normal case result
 
 
@@ -10715,49 +10745,64 @@ var DivisionIEEE = /*#__PURE__*/function () {
           this.watcher = this.watcher.step('Result').saveVariable('result', _result5);
           return _result5;
         }
-      } else {
-        // equal mantissas
-        normalizedMantissa = [0];
-      }
 
-      for (var _i = 1; _i <= manBitNum; _i += 1) {
-        var num = _i < unnormalizedMantissa.length ? unnormalizedMantissa[_i] : 0;
-        normalizedMantissa.push(num);
+        for (var _i = 1; _i <= manBitNum; _i += 1) {
+          var num = _i < unnormalizedMantissa.length ? unnormalizedMantissa[_i] : 0;
+          normalizedMantissa.push(num);
+        }
+      } else {
+        // equal mantissas => mantissa = 1.0
+        for (var _i2 = 0; _i2 < manBitNum; _i2 += 1) {
+          normalizedMantissa.push(0);
+        }
       }
 
       var finalE = n1.E - n2.E + n1.bias + shift;
+
+      if (finalE <= 0) {
+        // Shift the leading 1 into the mantissa
+        normalizedMantissa.unshift(1);
+        normalizedMantissa.pop(); // shift the 1 to express the finalE
+
+        for (var _i3 = 0; _i3 < Math.abs(finalE); ++_i3) {
+          normalizedMantissa.unshift(0);
+          normalizedMantissa.pop();
+        }
+
+        finalE = 0;
+      }
+
       var curE = finalE;
       var exponentBits = [];
 
-      for (var _i2 = 0; _i2 < expBitNum; _i2 += 1) {
+      for (var _i4 = 0; _i4 < expBitNum; _i4 += 1) {
         exponentBits.unshift(curE % 2);
         curE = Math.floor(curE / 2);
       }
 
       this.watcher = this.watcher.step('Exponent').saveVariable('E1', n1.E).saveVariable('E2', n2.E).saveVariable('Bias', n1.bias).saveVariable('Shift', shift).saveVariable('EUnshifted', n1.E - n2.E + n1.bias).saveVariable('FinalE', finalE);
-      this.watcher = this.watcher.step('Mantissa').saveVariable('unnormalizedMantissa', _toConsumableArray(unnormalizedMantissa)).saveVariable('normalizedMantissa', _toConsumableArray(normalizedMantissa)); // Check if denormalization has to take place
-
+      this.watcher = this.watcher.step('Mantissa').saveVariable('unnormalizedMantissa', _toConsumableArray(unnormalizedMantissa)).saveVariable('normalizedMantissa', [].concat(normalizedMantissa));
+      /* Check if denormalization has to take place
       if (finalE < 0) {
-        var denormArray = [sign]; // Exponent of ZERO indicates the denormalized representation
-
-        denormArray.push.apply(denormArray, _toConsumableArray(Array(expBitNum).fill(0))); // Unshift the leading 1 into the mantissa
-
-        normalizedMantissa.unshift(1); // Now shift the mantissa by the extra amount
-
-        for (var _i3 = 0; _i3 < Math.abs(finalE); _i3 += 1) {
+        const denormArray = [sign];
+        // Exponent of ZERO indicates the denormalized representation
+        denormArray.push(...Array(expBitNum).fill(0));
+        // Unshift the leading 1 into the mantissa
+        normalizedMantissa.unshift(1);
+        // Now shift the mantissa by the extra amount
+        for (let i = 0; i < Math.abs(finalE); i += 1)  {
           normalizedMantissa.unshift(0);
         }
-
-        normalizedMantissa.splice(manBitNum, normalizedMantissa.length - manBitNum);
-        denormArray.push.apply(denormArray, _toConsumableArray(normalizedMantissa));
-
-        var _result6 = new NumberIEEE(expBitNum, manBitNum, denormArray);
-
-        this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'denormalized');
-        this.watcher = this.watcher.step('Result').saveVariable('result', _result6);
-        return _result6;
-      } // Check if newly calculated ieee is equal to inf
-
+        normalizedMantissa.splice(manBitNum, (normalizedMantissa.length - manBitNum));
+        denormArray.push(...normalizedMantissa);
+        const result = new NumberIEEE(expBitNum, manBitNum, denormArray);
+         this.watcher = this.watcher.step('ResultEdgecase')
+          .saveVariable('edgecase', 'denormalized');
+        this.watcher = this.watcher.step('Result')
+          .saveVariable('result', result);
+        return result;
+      } */
+      // Check if newly calculated ieee is equal to inf
 
       if (finalE >= Math.pow(2, expBitNum) - 1) {
         var _infArray2 = [sign];
@@ -10766,18 +10811,18 @@ var DivisionIEEE = /*#__PURE__*/function () {
 
         _infArray2.push.apply(_infArray2, _toConsumableArray(Array(manBitNum).fill(0)));
 
-        var _result7 = new NumberIEEE(expBitNum, manBitNum, _infArray2);
+        var _result6 = new NumberIEEE(expBitNum, manBitNum, _infArray2);
 
         this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf');
-        this.watcher = this.watcher.step('Result').saveVariable('result', _result7);
-        return _result7;
+        this.watcher = this.watcher.step('Result').saveVariable('result', _result6);
+        return _result6;
       } // normal case result
 
 
       this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'none');
       var resultArray = [sign];
       resultArray.push.apply(resultArray, exponentBits);
-      resultArray.push.apply(resultArray, _toConsumableArray(normalizedMantissa));
+      resultArray.push.apply(resultArray, normalizedMantissa);
       var result = new NumberIEEE(expBitNum, manBitNum, resultArray);
       this.watcher = this.watcher.step('Result').saveVariable('edgecase', 'none').saveVariable('result', result);
       return result;
