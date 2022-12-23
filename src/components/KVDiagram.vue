@@ -17,6 +17,16 @@
           <div class="radioSvg" v-html="toSvg(radio.name)"/>
         </label>
       </div>
+      <table id="customNaming" v-if="varNamingScheme === 'custom'">
+        <tr>
+          <th v-for="index in customIndices" :key="index">{{index}}</th>
+        </tr>
+        <tr>
+          <td v-for="index in customIndices" :key="index">
+            <input v-model="customNamingScheme[index]"/>
+          </td>
+        </tr>
+      </table>
       <!-- <p-radio v-for="radio in radios" name="varRadio" class="p-default p-round p-smooth p-pulse"
       :key="radio.value" color="primary" v-model="varNamingScheme" :value="radio.value">
         <p class="mj" ref="radios" v-html="toSvg(radio.name)"/>
@@ -29,22 +39,24 @@
           @font-face {font-family: "Cambria";}
         </style>
       </defs> -->
-      <g v-for="(d, i) in diagram" v-bind:key="`cell_${i}`"
-      :transform="`translate(${getX(i)}, ${getY(i)})`">
-        <rect fill="transparent" stroke="#898989" :width="blockWidth" :height="blockWidth"
-        @click="changeNumber(i)"/>
-        <text :x="blockWidth / 2" :y="blockWidth / 2" dominant-baseline="middle"
-        class="unclickable" text-anchor="middle">{{legitStates[d.number]}}</text>
-        <text :x="blockWidth - 3" :y="blockWidth - 7" dominant-baseline="middle"
-        class="unclickable indexNumber" font-size="13" text-anchor="end">{{indices[i].index}}</text>
+      <g :transform="`translate(${extraWidths[1]}, ${0})`">
+        <g v-for="(d, i) in diagram" v-bind:key="`cell_${i}`"
+        :transform="`translate(${getX(i)}, ${getY(i)})`">
+          <rect fill="transparent" stroke="#898989" :width="blockWidth" :height="blockWidth"
+          @click="changeNumber(i)"/>
+          <text :x="blockWidth / 2" :y="blockWidth / 2" dominant-baseline="middle"
+          class="unclickable" text-anchor="middle">{{legitStates[d.number]}}</text>
+          <text :x="blockWidth - 3" :y="blockWidth - 7" dominant-baseline="middle"
+          class="unclickable indexNumber" font-size="13" text-anchor="end">{{indices[i].index}}</text>
+        </g>
+        <g v-for="bar in literalBars" v-bind:key="bar.id">
+          <rect :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height"/>
+          <g :transform="`translate(${bar.textX}, ${bar.textY})`" ref="bars" v-html="getSVG(bar.index)"></g>
+        </g>
+        <rect id="unclickable" class="unclickable" fill="none" stroke="black" :x="paddingHorizontal"
+          :y="paddingVertical" :width="blockWidth * cellsHorizontal"
+          :height="blockWidth * cellsVertical"/>
       </g>
-      <g v-for="bar in literalBars" v-bind:key="bar.id">
-        <rect :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height"/>
-        <g :transform="`translate(${bar.textX}, ${bar.textY})`" v-html="getSVG(bar.index)"></g>
-      </g>
-      <rect id="unclickable" class="unclickable" fill="none" stroke="black" :x="paddingHorizontal"
-        :y="paddingVertical" :width="blockWidth * cellsHorizontal"
-        :height="blockWidth * cellsVertical"/>
     </svg>
   </div>
 </template>
@@ -71,20 +83,22 @@ export default {
       barDistance: 10,
       selectedFormat: [4],
       numVarOptions: {
-        2: 2, 3: 3, 4: 4, 5: 5, 6: 6,
+        2: 2, 3: 3, 4: 4, 5: 5,
       },
       radios: [
         { value: 'abc', name: 'a, b, \\dots' },
         { value: 'xyz', name: 'x, y, \\dots' },
         { value: 'x', name: 'x_0, x_1, \\dots' },
         { value: 'x1', name: 'x_1, x_2, \\dots' },
+        { value: 'custom', name: 'custom' },
       ],
       varNamingScheme: 'abc',
-      varNames: {
-        abc: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
-        xyz: ['x', 'y', 'z', 'u', 'v', 'w', 'q'],
-        x: ['x_0', 'x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6'],
-        x1: ['x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6', 'x_7'],
+      extraWidths: {
+        0: 0, 1: 0, 2: 0, 3: 0, 4: 0,
+      },
+      customIndices: [0, 1, 2, 3, 4],
+      customNamingScheme: {
+        0: '', 1: '', 2: '', 3: '', 4: '',
       },
     };
   },
@@ -97,6 +111,15 @@ export default {
     }
   },
   computed: {
+    varNames() {
+      return {
+        custom: this.customNamingScheme,
+        abc: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+        xyz: ['x', 'y', 'z', 'u', 'v', 'w', 'q'],
+        x: ['x_0', 'x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6'],
+        x1: ['x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6', 'x_7'],
+      };
+    },
     cellsHorizontal() {
       return (2 ** Math.floor((this.numVariables + 1) / 2));
     },
@@ -110,7 +133,7 @@ export default {
       return 7 + this.paddingBase * (Math.floor(Math.abs(this.numVariables - 1) / 4) + 1);
     },
     svgWidth() {
-      return this.paddingHorizontal * 2 + this.cellsHorizontal * this.blockWidth;
+      return this.paddingHorizontal * 2 + this.cellsHorizontal * this.blockWidth + this.extraWidths[1] + this.extraWidths[3];
     },
     svgHeight() {
       return this.paddingVertical * 2 + this.cellsVertical * this.blockWidth;
@@ -211,8 +234,10 @@ export default {
             textY = y + height / 2 - 5;
             // varNamingScheme using 'x_0'... and 'x_1'... need more horizontal space
             // if placed to the left of the KVDiagram
-            if ((this.varNamingScheme === 'x' || this.varNamingScheme === 'x1') && (c.varIndex + 1) % 4 !== 0) {
-              textX -= 7;
+            // const labelWidth = this.varNames[this.varNamingScheme][c.varIndex].length;
+            if ((c.varIndex + 1) % 4 !== 0) {
+              textX -= this.extraWidths[c.varIndex];
+              //   textX -= 7;
             }
           }
           bars.push({
@@ -290,8 +315,15 @@ export default {
     },
     getSVG(id) {
       const formula = this.varNames[this.varNamingScheme][id];
+      if (formula == null) {
+        return '';
+      }
       const formulaSVG = window.MathJax.tex2svg(formula);
       const svgmath = formulaSVG.getElementsByTagName('svg')[0];
+      // Stupid hack
+      const widthInEx = parseFloat(svgmath.getAttribute('width').slice(0, -2));
+      const extraWidth = Math.round((widthInEx - 1) * 8);
+      this.extraWidths[id] = extraWidth;
       return svgmath.outerHTML;
     },
     toSvg(formula) {
@@ -304,6 +336,12 @@ export default {
 </script>
 
 <style lang="scss">
+#customNaming {
+  margin: 0 auto;
+  input {
+    width: 40px;
+  }
+}
 .kvDiagram {
   max-width: -webkit-fill-available;
   overflow: auto;

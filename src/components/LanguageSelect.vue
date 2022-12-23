@@ -20,6 +20,9 @@ import americanFlag from '../assets/americanFlag.png';
 import frenchFlag from '../assets/frenchFlag.png';
 import spanishFlag from '../assets/spanishFlag.png';
 import chineseFlag from '../assets/chineseFlag.png';
+import japaneseFlag from '../assets/japaneseFlag.png';
+import ukraineFlag from '../assets/ukraineFlag.png';
+import portugueseFlag from '../assets/portugueseFlag.png';
 // import latinFlag from '..@/assets/latinFlag.png';
 const germanFlag = require('../assets/germanFlag.png');
 
@@ -53,10 +56,26 @@ export default {
           img: spanishFlag,
         },
         {
+          name: 'pt',
+          nameLong: 'Português',
+          img: portugueseFlag,
+        },
+        {
+          name: 'uk',
+          nameLong: 'Українська',
+          img: ukraineFlag,
+        },
+        {
+          name: 'ja',
+          nameLong: '日本語',
+          img: japaneseFlag,
+        },
+        {
           name: 'ch',
           nameLong: '中国',
           img: chineseFlag,
         },
+
         /* {
           name: 'lt',
           nameLong: 'Latin',
