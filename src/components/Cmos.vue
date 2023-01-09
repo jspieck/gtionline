@@ -54,7 +54,7 @@ export default {
       cmosOutput: '',
       renderedFormula: '',
       archivedExerciseSelectedIndex: 0,
-      examples: ['(~a+c)*~(~b+c*~a)', '(~x+~r*~(~n+a))*(n+r)', '~x0*x1*(x2+x3)', '~(~a*b+a*~b)'],
+      examples: ['(~a+c)*~(~b+c*~a)', '(~x+~r*~(~n+a))*(n+r)', 'x0*~x1*(~x2+~x3)', '~(~a*b+a*~b)'],
     };
   },
   created() {},
