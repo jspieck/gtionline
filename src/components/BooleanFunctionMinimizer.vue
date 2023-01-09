@@ -406,6 +406,8 @@ export default {
       randomExerciseDifficultySelectedIndex: 0,
       randomExerciseGoalSelectedIndex: 0,
 
+      indexBaseSystem: 8,
+
       useMinNotMaxTermDisplayStyle: true,
 
       dnf: '',
@@ -767,7 +769,9 @@ export default {
       for (let b = 0; b < baseTerms.length; b += 1) {
         const baseTerm = baseTerms[b];
         const index = parseInt(baseTerm.getTerms().map(bfliteral => (bfliteral.isNegated() ? '0' : '1')).reverse().join(''), 2);
-        indices[b] = index;
+        // Convert index to base format of symmetry diagram
+        const indexBase = index.toString(this.indexBaseSystem);
+        indices[b] = indexBase;
       }
       return indices;
     },
