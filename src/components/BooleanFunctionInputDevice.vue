@@ -31,7 +31,10 @@
                 @requesting-kvdiagram-data-after-reactivation="notifyChildKVDiagramOfBF()"
                 class="kvdiagram" ref="childKVDiagram" />
         <TruthTable v-else
-                :numVariables="this.numVariables" :varNames="this.currentVarNames"/>
+                :numVariables="this.numVariables" :varNames="this.currentVarNames"
+                @truthtable-modified="onTruthTableModified($event, kvdiagram)"
+                @requesting-bf-after-reactivation="notifyChildTruthTableOfBF()"
+                ref="childTruthTable" />
       </KeepAlive>
       <!-- <button v-else @click="tmpFunc()">Set smth in KVDiagram</button> -->
     </div>
@@ -122,6 +125,10 @@ export default {
       // update this' bf on event from child stating that kv diagram has been modified there
       this.setBooleanFunctionFromKVDiagram(kvdiagram);
     },
+    onTruthTableModified(kvdiagram) {
+      console.log('received: ', kvdiagram);
+      this.setBooleanFunctionFromKVDiagram(kvdiagram);
+    },
     /** @param {Proxy(KVDiagram)} kvdiagram */
     setBooleanFunctionFromKVDiagram(kvdiagram) {
       this.booleanFunctionAsKVDiagram = kvdiagram;
@@ -141,6 +148,9 @@ export default {
     },
     notifyChildKVDiagramOfBF() {
       this.$refs.childKVDiagram.setKVDiagram(this.getBFAsKVDiagram());
+    },
+    notifyChildTruthTableOfBF() {
+      this.$refs.childTruthTable.setKVDiagram(this.getBFAsKVDiagram());
     },
     //
     // ### GETTER METHODS ###

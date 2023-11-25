@@ -1,12 +1,6 @@
 <template>
   <div class="kvDiagram">
-    <!-- <h3>{{$t('kvDiagram')}}</h3> -->
     <svg id="kvContainer" :width="svgWidth" :height="svgHeight" xmlns="http://www.w3.org/2000/svg">
-      <!-- <defs>
-        <style type="text/css">
-          @font-face {font-family: "Cambria";}
-        </style>
-      </defs> -->
       <g v-for="(d, i) in diagram" v-bind:key="`cell_${i}`"
       :transform="`translate(${getX(i)}, ${getY(i)})`">
         <rect fill="transparent" stroke="#898989" :width="blockWidth" :height="blockWidth"
@@ -48,7 +42,7 @@ export default {
         return;
       }
       this.reconstruct();
-      console.log('KVDiagrams internal watch function registered a change in numVariables! Set to ', newAmount);
+      // console.log('KVDiagrams internal watch function registered a change in numVariables! Set to ', newAmount);
     },
   },
   data() {
@@ -205,9 +199,6 @@ export default {
     // other means (e.g. other BF Input Method like BFTable)
     this.$emit('requesting-kvdiagram-data-after-reactivation');
   },
-  deactivated() {
-    // console.log('deactivated kv');
-  },
   methods: {
     /**
      * Returns JS / KVDiagram representation of this filled diagram.
@@ -222,19 +213,10 @@ export default {
           diagram2D[row][col] = this.legitStates[this.diagram[(row * this.cellsHorizontal) + col].number];
         }
       }
-      // const kvdiagram = new KVDiagram(
-      //   [
-      //     ['1', '0', '1', '0'],
-      //     ['1', '1', '1', '0'],
-      //   ], 3,
-      // );
       const kvdiagram = new KVDiagram(diagram2D, this.numVariables);
       return kvdiagram;
     },
     setKVDiagram(kvdiagram) {
-      // console.log('setting kvdiagram in KVDiagr to: ', kvdiagram);
-      // console.log('numVariables: ', this.numVariables);
-
       // init diagram with zeros
       const diagram = reactive([]);
       for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
@@ -246,13 +228,11 @@ export default {
       for (let y = 0; y < values.length; y += 1) {
         for (let x = 0; x < values[y].length; x += 1) {
           const flatPos = y * this.cellsHorizontal + x;
-          // this.$set(this.diagram[flatPos], 'number', this.legitStates.indexOf(values[y][x]));
-          console.log(x, y, flatPos, values[y][x], this.legitStates, this.legitStates.indexOf(values[y][x])); // TODO remove console.log
           diagram[flatPos].number = this.legitStates.indexOf(values[y][x].toString());
         }
       }
       this.diagram = diagram;
-      console.log('In KVDiagr::setKVDiagram(..): setting KVDiagram\n-js: ', kvdiagram, ',\n-flat: ', this.diagram, ').');
+      // console.log('In KVDiagr::setKVDiagram(..): setting KVDiagram\n-js: ', kvdiagram, ',\n-flat: ', this.diagram, ').');
     },
     getX(i) {
       return this.paddingHorizontal + (i % this.cellsHorizontal) * this.blockWidth;
@@ -261,7 +241,6 @@ export default {
       return this.paddingVertical + Math.floor(i / this.cellsHorizontal) * this.blockWidth;
     },
     changeNumber(i) {
-      // this.$set(this.diagram[i], 'number', (this.diagram[i].number + 1) % this.legitStates.length);
       this.diagram[i].number = (this.diagram[i].number + 1) % this.legitStates.length;
       this.$emit('kvdiagram-modified', this.getKVDiagram());
     },
@@ -277,7 +256,6 @@ export default {
       return svgmath.outerHTML;
     },
     reconstruct() {
-      // console.log('reconstruct() CALLED');
       this.diagram = reactive([]);
       for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
         this.diagram.push({ number: '0' });

@@ -10569,7 +10569,7 @@ var MultiplicationIEEE = /*#__PURE__*/function () {
         normalizedMantissa.splice(manBitNum, (normalizedMantissa.length - manBitNum));
         denormArray.push(...normalizedMantissa);
         const result = new NumberIEEE(expBitNum, manBitNum, denormArray);
-         this.watcher = this.watcher.step('ResultEdgecase')
+          this.watcher = this.watcher.step('ResultEdgecase')
           .saveVariable('edgecase', 'denormalized');
         this.watcher = this.watcher.step('Result')
           .saveVariable('result', result);
@@ -10796,7 +10796,7 @@ var DivisionIEEE = /*#__PURE__*/function () {
         normalizedMantissa.splice(manBitNum, (normalizedMantissa.length - manBitNum));
         denormArray.push(...normalizedMantissa);
         const result = new NumberIEEE(expBitNum, manBitNum, denormArray);
-         this.watcher = this.watcher.step('ResultEdgecase')
+          this.watcher = this.watcher.step('ResultEdgecase')
           .saveVariable('edgecase', 'denormalized');
         this.watcher = this.watcher.step('Result')
           .saveVariable('result', result);
@@ -12988,12 +12988,30 @@ var KVDiagram = /*#__PURE__*/function () {
   /**
      * @param {number[][]} values values[y][x] (also [row, row, ...])\
      * 0 / 1 / 2=DontCare
+     * pass null for a KVDiagram with only Zeros
      */
   function KVDiagram(values, amountLiterals) {
     _classCallCheck(this, KVDiagram);
 
-    this._values = values;
     this._amountLiterals = amountLiterals;
+
+    if (values != null) {
+      this._values = values;
+    } else {
+      var diagramWidth = Math.pow(2, Math.floor((amountLiterals + 1) / 2));
+      var diagramHeight = Math.pow(2, Math.floor(amountLiterals / 2));
+      values = [];
+
+      for (var y = 0; y < diagramHeight; y++) {
+        values[y] = [];
+
+        for (var x = 0; x < diagramWidth; x++) {
+          values[y][x] = 0;
+        }
+      }
+
+      this._values = values;
+    }
 
     this._generateLiteralToKVMapping();
   }
@@ -13630,6 +13648,49 @@ var BooleanFunctionUtil = /*#__PURE__*/function () {
       }
 
       return str;
+    }
+    /**
+     * @param {[number]} valuesFlat: Array of output values of the bf, in an order that would be used
+     * in a truth table 000=1,001=0,010=0,011=1,100=0,...   =>   [1,0,0,1,0,...]. Index 1 in the array
+     * corresponds to index 1 in the KVDiagram. WARNING: => in truth table: 000, 001, 010, 011, 100, ... means
+     * that the literal order becomes cba, not abc!!!!
+     * @param {number} amountVariables 
+     * @returns {KVDiagram}
+     */
+
+  }, {
+    key: "generateKVDiagramFromTruthTable",
+    value: function generateKVDiagramFromTruthTable(valuesFlat, amountVariables) {
+      var kvdiagram = new KVDiagram(null, amountVariables);
+      var kvdiagramWidth = kvdiagram.getValues()[0].length;
+      var kvdiagramHeight = kvdiagram.getValues().length; // init empty 2d values array
+
+      var valuesNew = [];
+
+      for (var y = 0; y < kvdiagramHeight; y++) {
+        valuesNew[y] = [];
+
+        for (var x = 0; x < kvdiagramWidth; x++) {
+          valuesNew[y][x] = 0;
+        }
+      }
+
+      for (var _y = 0; _y < kvdiagramHeight; _y++) {
+        for (var _x = 0; _x < kvdiagramWidth; _x++) {
+          var index_str = kvdiagram.computeKVIndex(_y, _x).toString(2).padStart(amountVariables, '0');
+          var truthIndex = 0;
+
+          for (var l = 0; l < amountVariables; l++) {
+            if (index_str[amountVariables - l - 1] == '0') continue; // this literal is positive ('1') so go the half / quarter / ... in the valuesFlat array where it is positive!
+
+            truthIndex += Math.pow(2, l);
+          }
+
+          valuesNew[_y][_x] = valuesFlat[truthIndex];
+        }
+      }
+
+      return new KVDiagram(valuesNew, amountVariables);
     }
   }]);
 

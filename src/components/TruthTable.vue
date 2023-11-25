@@ -2,8 +2,7 @@
   <div class="truthTable">
     <!-- <button @click="$emit('truthtable-modified', getKVDiagram())">Throw modified event</button> -->
     <svg class="truthtableContainer" :width="svgWidth()" :height="svgHeight()" xmlns="http://www.w3.org/2000/svg">
-      <!-- <g v-html="toSvg('Alle Enten Tanzen')" /> -->
-      <!-- <span class="svg-text" v-html="toSvg(knf)"/> -->
+
       <!-- Header -->
       <g>
         <!-- Input Variable Names -->
@@ -11,10 +10,7 @@
             :transform="`translate(${getInputCellSVGX(i-1)}, ${0})`">
           <!-- This is very eklig but I did not a way to get    -->
           <g :transform="`translate(${cell_width * 0.2}, ${cell_height * (isSmallCharacter(varNames[i-1]) ? 0.2 : 0.4)})`" dominant-baseline="bottom"
-            class="unclickable entry header_entry" text-anchor="bottom" v-html="toSvg(varNames[i-1])" />
-
-          <!-- <g v-html="toSvg(varNames[i-1])" /> -->
-          <!-- v-html="toSvg(varNames[i-1])" -->
+            class="unclickable entry header_entry" text-anchor="bottom" v-html="toSvg(varNames[numVariables-i])" />
         </g>
         <!-- 'f' above the Result Column -->
         <g :transform="`translate(${getResultCellSVGX()}, ${0})`">
@@ -30,7 +26,6 @@
         class="unclickable entry" text-anchor="middle">{{r-1}}</text> -->
         <g :transform="`translate(${cell_width * 0.2}, ${cell_height * 0.15})`" dominant-baseline="middle"
             class="unclickable entry index_entry" text-anchor="middle" v-html="toSvg(num2indexHexString(r-1))" />
-
       </g>
 
       <!-- Vertical divider Left (of inputs) -->
@@ -41,7 +36,7 @@
         <g v-for="(state, c) in rowArray" v-bind:key="`cell_${c}`"
           :transform="`translate(${getInputCellSVGX(c)}, ${getInputCellSVGY(r)})`">
           <text :x="cell_width / 2" :y="cell_height / 2" dominant-baseline="middle"
-          class="unclickable entry" text-anchor="middle">{{stateToString(state)}}</text>
+          class="unclickable entry" text-anchor="middle">{{state}}</text>
         </g>
       </g>
 
@@ -52,9 +47,9 @@
       <g v-for="(output, r) in table_outputs" v-bind:key="`outputcell_${r}`"
         :transform="`translate(${getResultCellSVGX()}, ${getResultCellSVGY(r)})`">
         <text :x="cell_width / 2" :y="cell_height / 2" dominant-baseline="middle"
-        class="unclickable entry result_entry_number" text-anchor="middle">{{stateToString(output)}}</text>
+        class="unclickable entry result_entry_number" text-anchor="middle">{{output}}</text>
         <rect fill="transparent" :width="cell_width" :height="cell_height" class="result_entry_iteractable"
-        @click="onClickResult(r)" @mousedown="onMouseDown(r)"/>
+        @click="onClickResult(r)" />
       </g>
 
     </svg>
@@ -63,7 +58,7 @@
 
 <script>
 import { reactive } from 'vue';
-
+import { BooleanFunctionUtil } from '@/scripts/gti-tools';
 
 export default {
   emits: [
@@ -80,7 +75,6 @@ export default {
         return;
       }
       this.reconstruct();
-      console.log('KVDiagrams internal watch function registered a change in numVariables! Set to ', newAmount);
     },
   },
   data() {
@@ -91,18 +85,6 @@ export default {
       cell_height: 30,
       cell_width: 25,
       header_height: 30,
-      // vertical_bar_left: {
-      //   x: 60,
-      //   x_margin: 3,
-      //   y_top_padding: 5,
-      //   y_bottom_padding: 5,
-      // },
-      // vertical_bar_right: {
-      //   x: 60,
-      //   x_margin: 3,
-      //   y_top_padding: 5,
-      //   y_bottom_padding: 5,
-      // },
     };
   },
   created() {
@@ -118,54 +100,60 @@ export default {
     inputCellsVertical() {
       return 2 ** this.numVariables;
     },
-
-    // svgWidth() {
-    //   if (!this.numVariables) {
-    //     console.error('numVariables was not passed to TruthTable\n');
-    //   }
-    //   return this.cell_width * (1 + 1 + this.numVariables + 1 + 1);
-    // },
-    // svgHeight() {
-    //   console.log('v: ', this.inputCellsVertical);
-    //   return this.header_height + this.inputCellsVertical * this.cell_height;
-    // },
+  },
+  activated() {
+    // tell parent that this wants to have new KVDiagram after it has been activated,
+    // since maybe the bf has changed in the meantime through some
+    // other means (e.g. other BF Input Method like BFTable)
+    this.$emit('requesting-bf-after-reactivation');
   },
   methods: {
     clearTable() {
       this.table_inputs = reactive([]);
       this.table_outputs = reactive([]);
       for (let r = 0; r < this.inputCellsVertical; r += 1) {
-        this.table_outputs[r] = 0;
+        this.table_outputs[r] = '0';
         this.table_inputs[r] = [];
         const rowStringRepres = r.toString(2).padStart(this.numVariables, '0');
         for (let c = 0; c < this.inputCellsHorizontal; c += 1) {
-          this.table_inputs[r].push(rowStringRepres[c] === '0' ? 0 : 1);
+          this.table_inputs[r].push(rowStringRepres[c]);
         }
       }
-      console.log(this.table_inputs);
     },
     reconstruct() {
       this.clearTable();
     },
     onClickResult(r) {
       console.log('registered click at: ', r);
+      // toggle result/output
       this.table_outputs[r] = this.toggleState(this.table_outputs[r]);
-    },
-    onMouseDown(r) {
-      console.log('on mouse down: ', r);
+
+      // tell parent that value changed and give it the new kvdiagram
+      this.$emit('truthtable-modified', this.getKVDiagram());
     },
     toggleState(state) {
-      if (state === 0) return 1;
-      if (state === 1) return -1;
+      if (state === '0') return '1';
+      if (state === '1') return '-';
       return 0;
     },
     getKVDiagram() {
+      const util = new BooleanFunctionUtil();
+      return util.generateKVDiagramFromTruthTable(this.table_outputs, this.numVariables);
+    },
+    setKVDiagram(kvdiagram) {
+      this.table_outputs = reactive([]);
+      const kvvalues = kvdiagram.getValues();
 
+      for (let y = 0; y < kvvalues.length; y += 1) {
+        for (let x = 0; x < kvvalues[0].length; x += 1) {
+          const flatIndex = kvdiagram.computeKVIndex(y, x);
+          this.table_outputs[flatIndex] = kvvalues[y][x];
+        }
+      }
     },
     toSvg(formula) {
       const formulaSVG = window.MathJax.tex2svg(formula);
       const svgmath = formulaSVG.getElementsByTagName('svg')[0];
-      console.log('input: ', formula, '\n output: ', svgmath.outerHTML);
       return svgmath.outerHTML;
     },
     // >>>>>>> SVG computations
@@ -174,10 +162,8 @@ export default {
         console.error('numVariables was not passed to TruthTable\n');
       }
       return this.getResultCellSVGX() + this.cell_width * 1.1;
-      // return this.cell_width * (1 + 1 + this.numVariables + 1 + 1);
     },
     svgHeight() {
-      console.log('v: ', this.inputCellsVertical);
       return this.header_height + this.inputCellsVertical * this.cell_height;
     },
     getIndexCellSVGX() {
@@ -216,11 +202,6 @@ export default {
     },
     isSmallCharacter(char) {
       return !(char !== 'b' && char !== 'd');
-    },
-    stateToString(state) {
-      if (state === 0) return '0';
-      if (state === 1) return '1';
-      return '-';
     },
     num2indexHexString(i) {
       let num = i.toString(16).toUpperCase();
