@@ -19,7 +19,7 @@
     </div>
 
     <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM)">Use KVDiagram</button>
-    <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_FUNCTION_TABLE)">Use Function Table</button>
+    <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_FUNCTION_TABLE)">Use Truth Table</button>
 
     <div>
       <!--KeepAlive makes the components persist, even if not shown. Removing
@@ -30,7 +30,8 @@
                 @kvdiagram-modified="onKVDiagramModified($event, kvdiagram)"
                 @requesting-kvdiagram-data-after-reactivation="notifyChildKVDiagramOfBF()"
                 class="kvdiagram" ref="childKVDiagram" />
-        <TruthTable v-else />
+        <TruthTable v-else
+                :numVariables="this.numVariables" :varNames="this.currentVarNames"/>
       </KeepAlive>
       <!-- <button v-else @click="tmpFunc()">Set smth in KVDiagram</button> -->
     </div>
@@ -55,7 +56,7 @@ export default {
     this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM = 'method_kvdiagram';
     this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_FUNCTION_TABLE = 'method_function_table';
     this.varNames = {
-      abc: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+      abc: ['a', 'b', 'c', 'd', 'e', 'g', 'h'],
       xyz: ['x', 'y', 'z', 'u', 'v', 'w', 'q'],
       x: ['x_0', 'x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6'],
       x1: ['x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6', 'x_7'],
