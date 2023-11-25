@@ -1,28 +1,6 @@
 <template>
   <div class="kvDiagram">
     <!-- <h3>{{$t('kvDiagram')}}</h3> -->
-    <div>
-      <label>{{$t('numVarInput')}}:</label>
-      <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0 class="leftMargin10"
-              :options="numVarOptions"/>
-      <button @click="setNumVar()" class="leftMargin10">{{$t('confirm')}}</button>
-    </div>
-
-    <div class="mtop">
-      <label>{{$t('varNaming')}}:</label>
-      <div class="divMargin"/>
-      <div class="radioCounter">
-        <label v-for="radio in radios" :key="radio.value" class="p-default p-round p-smooth p-pulse">
-          <input name="varRadio" class="mj" ref="radios" type="radio" v-model="varNamingScheme" :value="radio.value" />
-          <div class="radioSvg" v-html="toSvg(radio.name)"/>
-        </label>
-      </div>
-      <!-- <p-radio v-for="radio in radios" name="varRadio" class="p-default p-round p-smooth p-pulse"
-      :key="radio.value" color="primary" v-model="varNamingScheme" :value="radio.value">
-        <p class="mj" ref="radios" v-html="toSvg(radio.name)"/>
-      </p-radio> -->
-    </div>
-
     <svg id="kvContainer" :width="svgWidth" :height="svgHeight" xmlns="http://www.w3.org/2000/svg">
       <!-- <defs>
         <style type="text/css">
@@ -52,40 +30,37 @@
 <script>
 import { reactive } from 'vue';
 import { KVDiagram } from '@/scripts/gti-tools';
-import FormatSelect from './FormatSelect.vue';
 
 export default {
   name: 'KVDiagram',
-  components: {
-    FSelect: FormatSelect,
+  components: {},
+  emits: [
+    'kvdiagram-modified',
+    'requesting-kvdiagram-data-after-reactivation',
+  ],
+  props: {
+    numVariables: Number,
+    varNames: Array, // [String]
+  },
+  watch: {
+    numVariables(newAmount, oldAmount) {
+      if (newAmount === oldAmount || newAmount < 1) {
+        return;
+      }
+      this.reconstruct();
+      console.log('KVDiagrams internal watch function registered a change in numVariables! Set to ', newAmount);
+    },
   },
   data() {
     return {
       indexBaseSystem: 8,
-      numVariables: 4,
+
       paddingBase: 27,
       blockWidth: 40,
       diagram: reactive([]),
       legitStates: ['0', '1', '-'],
       barHeight: 3,
       barDistance: 10,
-      selectedFormat: [4],
-      numVarOptions: {
-        2: 2, 3: 3, 4: 4, 5: 5, 6: 6,
-      },
-      radios: [
-        { value: 'abc', name: 'a, b, \\dots' },
-        { value: 'xyz', name: 'x, y, \\dots' },
-        { value: 'x', name: 'x_0, x_1, \\dots' },
-        { value: 'x1', name: 'x_1, x_2, \\dots' },
-      ],
-      varNamingScheme: 'abc',
-      varNames: {
-        abc: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
-        xyz: ['x', 'y', 'z', 'u', 'v', 'w', 'q'],
-        x: ['x_0', 'x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6'],
-        x1: ['x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6', 'x_7'],
-      },
     };
   },
   created() {
@@ -211,7 +186,7 @@ export default {
             textY = y + height / 2 - 5;
             // varNamingScheme using 'x_0'... and 'x_1'... need more horizontal space
             // if placed to the left of the KVDiagram
-            if ((this.varNamingScheme === 'x' || this.varNamingScheme === 'x1') && (c.varIndex + 1) % 4 !== 0) {
+            if ((this.varNames[0] === 'x_0' || this.varNames[0] === 'x_1') && (c.varIndex + 1) % 4 !== 0) {
               textX -= 7;
             }
           }
@@ -223,18 +198,28 @@ export default {
       return bars;
     },
   },
+  activated() {
+    console.log('activated kv');
+    // tell parent that this wants to have new KVDiagram after it has been activated,
+    // since maybe the bf has changed in the meantime through some
+    // other means (e.g. other BF Input Method like BFTable)
+    this.$emit('requesting-kvdiagram-data-after-reactivation');
+  },
+  deactivated() {
+    // console.log('deactivated kv');
+  },
   methods: {
     /**
      * Returns JS / KVDiagram representation of this filled diagram.
      * see gti-tools
      */
     getKVDiagram() {
-      // compute js representation of KVDiagram
-      const diagramFlat = [];
+      // compute js representation of KVDiagram from flat diagram
+      const diagram2D = [];
       for (let row = 0; row < this.cellsVertical; row += 1) {
-        diagramFlat[row] = [];
+        diagram2D[row] = [];
         for (let col = 0; col < this.cellsHorizontal; col += 1) {
-          diagramFlat[row][col] = this.legitStates[this.diagram[(row * this.cellsHorizontal) + col].number];
+          diagram2D[row][col] = this.legitStates[this.diagram[(row * this.cellsHorizontal) + col].number];
         }
       }
       // const kvdiagram = new KVDiagram(
@@ -243,14 +228,18 @@ export default {
       //     ['1', '1', '1', '0'],
       //   ], 3,
       // );
-      const kvdiagram = new KVDiagram(diagramFlat, this.numVariables);
+      const kvdiagram = new KVDiagram(diagram2D, this.numVariables);
       return kvdiagram;
     },
     setKVDiagram(kvdiagram) {
-      // console.log('setting is not yet implemented in KVDiagram component');
-      // change num vars
-      this.selectOp(0, kvdiagram.getAmountLiterals()); // update components data
-      this.setNumVar(); // -> press the accept button
+      // console.log('setting kvdiagram in KVDiagr to: ', kvdiagram);
+      // console.log('numVariables: ', this.numVariables);
+
+      // init diagram with zeros
+      const diagram = reactive([]);
+      for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
+        diagram.push({ number: '0' });
+      }
 
       // copy values over
       const values = kvdiagram.getValues();
@@ -258,15 +247,12 @@ export default {
         for (let x = 0; x < values[y].length; x += 1) {
           const flatPos = y * this.cellsHorizontal + x;
           // this.$set(this.diagram[flatPos], 'number', this.legitStates.indexOf(values[y][x]));
-          this.diagram[flatPos].number = this.legitStates.indexOf(values[y][x]);
+          console.log(x, y, flatPos, values[y][x], this.legitStates, this.legitStates.indexOf(values[y][x])); // TODO remove console.log
+          diagram[flatPos].number = this.legitStates.indexOf(values[y][x].toString());
         }
       }
-    },
-    getSelectedVarNames() {
-      return this.varNames[this.varNamingScheme];
-    },
-    selectOp(num, val) {
-      this.selectedFormat[num] = val;
+      this.diagram = diagram;
+      console.log('In KVDiagr::setKVDiagram(..): setting KVDiagram\n-js: ', kvdiagram, ',\n-flat: ', this.diagram, ').');
     },
     getX(i) {
       return this.paddingHorizontal + (i % this.cellsHorizontal) * this.blockWidth;
@@ -277,19 +263,10 @@ export default {
     changeNumber(i) {
       // this.$set(this.diagram[i], 'number', (this.diagram[i].number + 1) % this.legitStates.length);
       this.diagram[i].number = (this.diagram[i].number + 1) % this.legitStates.length;
-    },
-    setNumVar() {
-      // const numVarsBefore = this.numVariables;
-      // const [numVar] = this.selectedFormat[0];
-      const numVar = this.selectedFormat[0];
-      this.numVariables = parseInt(numVar, 10);
-      this.diagram = reactive([]);
-      for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
-        this.diagram.push({ number: 0 });
-      }
+      this.$emit('kvdiagram-modified', this.getKVDiagram());
     },
     getSVG(id) {
-      const formula = this.varNames[this.varNamingScheme][id];
+      const formula = this.varNames[id];
       const formulaSVG = window.MathJax.tex2svg(formula);
       const svgmath = formulaSVG.getElementsByTagName('svg')[0];
       return svgmath.outerHTML;
@@ -298,6 +275,13 @@ export default {
       const formulaSVG = window.MathJax.tex2svg(formula);
       const svgmath = formulaSVG.getElementsByTagName('svg')[0];
       return svgmath.outerHTML;
+    },
+    reconstruct() {
+      // console.log('reconstruct() CALLED');
+      this.diagram = reactive([]);
+      for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
+        this.diagram.push({ number: '0' });
+      }
     },
   },
 };
@@ -311,22 +295,12 @@ export default {
 .unclickable {
   pointer-events: none;
 }
-.mtop {
-  margin-top: 20px;
-}
-.radioCounter {
-  display: flex;
-  flex-direction: row;
-}
 .indexNumber {
   font-size: 12px;
 }
 .divMargin {
   display: inline-block;
   width: 10px;
-}
-.p-default {
-  margin-right: 10px;
 }
 .radioSvg {
   display: inline-block;

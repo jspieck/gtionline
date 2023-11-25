@@ -15,7 +15,7 @@ export default {
   emits: ['input'],
   created() {
     this.selectedOption = this.sel;
-    console.log(`Select was created: ${this.selectedOption}`);
+    // console.log(`Select was created: ${this.selectedOption}`);
   },
   data() {
     return {
@@ -26,7 +26,7 @@ export default {
     sel: { // handler was never called, changing this to sel makes it responsive
       immediate: true,
       handler(newValue) {
-        console.log(`New value selected ${newValue}`);
+        // console.log(`New value selected ${newValue}`);
         this.selectedOption = newValue;
       },
     },

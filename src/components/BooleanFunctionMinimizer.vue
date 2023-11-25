@@ -40,8 +40,16 @@
         <p class="boolean-function-input-container-divider">{{$t('bf_infotext_or_interact_with_kv')}}:</p>
 
         <div>
+          <BooleanFunctionInputDevice class='bfInputDevice' ref="childBooleanFunctionInputDevice"/>
+        </div>
+        <!--
+        <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM)">Use KVDiagram</button>
+        <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_FUNCTION_TABLE)">Use Function Table</button>
+
+        <div>
           <KVDiagr class="kvdiagram" ref="childKVDiagram" />
         </div>
+        -->
 
         <button class="boolean-function-button-optimize" @click="optimize()">{{$t('doCalculation')}}</button>
 
@@ -381,7 +389,8 @@ import {
   BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING,
 } from '@/scripts/gti-tools';
 import { bfLoadArchivedExercise, bfGetArchivedExerciseTitles } from '@/scripts/bfArchivedExercises';
-import KVDiagram from './KVDiagram.vue';
+import BooleanFunctionInputDevice from './BooleanFunctionInputDevice.vue';
+// import KVDiagram from './KVDiagram.vue';
 import Accordion from './EmbeddedAccordion.vue';
 import AccordionItem from './EmbeddedAccordionItem.vue';
 import FormatSelect from './FormatSelect.vue';
@@ -391,12 +400,13 @@ import InfoBlob from './InfoBlob.vue';
 export default {
   name: 'BooleanFunctionMinimizer',
   components: {
-    KVDiagr: KVDiagram,
+    // KVDiagr: KVDiagram,
     Accordion,
     AccordionItem,
     FSelect: FormatSelect,
     ToggleSwitch,
     InfoBlob,
+    BooleanFunctionInputDevice,
   },
   data() {
     return {
@@ -439,6 +449,7 @@ export default {
     };
   },
   created() {
+    this.methodOfInputForBooleanFunction = this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM;
     if (window.MathJax) {
       window.MathJax.typeset();
     }
@@ -789,7 +800,7 @@ export default {
       element.click();
       element.remove();
     },
-    downloadSymPNG() {
+    downloadSymPNG() { // TODO repair. seems to be broken rn
       const svg = document.getElementById('kvContainer');
       const can = document.createElement('canvas');
       const ctx = can.getContext('2d');
@@ -822,10 +833,16 @@ export default {
       this.randomExerciseGoalSelectedIndex = goalIndex;
     },
     optimize() {
-      const kvdiagramVue = this.$refs.childKVDiagram;
-      const kvdiagram = kvdiagramVue.getKVDiagram();
+      // const kvdiagramVue = this.$refs.childKVDiagram;
+      // const kvdiagram = kvdiagramVue.getKVDiagram();
 
-      const varNames = kvdiagramVue.getSelectedVarNames();
+      const bfInputDevice = this.$refs.childBooleanFunctionInputDevice;
+      const kvdiagram = bfInputDevice.getBFAsKVDiagram();
+
+      // const varNames = kvdiagramVue.getSelectedVarNames();
+      const varNames = bfInputDevice.currentVarNames;
+      console.log('compute(): retrieved currentVarNames as attribute from bfInputDevice:');
+      console.log(varNames);
       this.literalNames = varNames;
 
       const numVars = kvdiagram.getAmountLiterals();
@@ -1148,7 +1165,7 @@ export default {
     //   // margin: 5px 0 5px 0;
     // }
 
-    .kvdiagram, .exercise-selection-container {
+    .bfInputDevice, .exercise-selection-container {
       display: inline-block;
       border-style: solid;
       border-width: 1px;
