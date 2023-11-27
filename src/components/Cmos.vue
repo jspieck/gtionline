@@ -26,6 +26,10 @@
     <div id="cmosOutput" v-html="cmosOutput"></div>
     <h3>Tikz Code</h3>
     <div class="codeContainer">
+      <div class="copyButton">
+        <button @click="copyToClipboard"><font-awesome-icon icon="copy"/></button>
+        <span class="tooltip" ref="tooltip">Copied</span>
+      </div>
       <!-- <highlightjs lang="tex" :code="latex"/> -->
       <pre><code><span v-for="(line, lineNumber) in latex" v-bind:key="lineNumber" v-html="line" class="codeLine"/></code></pre>
     </div>
@@ -49,6 +53,7 @@ export default {
   data() {
     return {
       latex: '',
+      latexText: '',
       cmosFormula: '',
       lastCmosFormula: '',
       cmosOutput: '',
@@ -69,6 +74,17 @@ export default {
     },
   },
   methods: {
+    copyToClipboard() {
+      navigator.clipboard.writeText(this.latexText).then(() => {
+        console.log('Copying to clipboard was successful!');
+        this.$refs.tooltip.classList.add('appear');
+        setTimeout(() => {
+          this.$refs.tooltip.classList.remove('appear');
+        }, 1000);
+      }, (err) => {
+        console.error('Failed to copy: ', err);
+      });
+    },
     selectArchivedExercise(num, exerciseIndex) {
       this.archivedExerciseSelectedIndex = exerciseIndex;
     },
@@ -110,6 +126,7 @@ export default {
       const scale = 100;
       window.MathJax.options.ignoreHtmlClass = 'tex2jax_ignore';
       const latex = latexGenerator.buildLatex(cmosVisual, toLaTeX).trim();
+      this.latexText = latex;
       this.latex = hljs.highlight(latex, { language: 'tex' }).value.split('\n');
       this.cmosOutput = this.toMathJax(codeGenerator.buildSVG(cmosVisual, toLaTeX, scale));
       console.log(this.cmosOutput);
@@ -186,6 +203,50 @@ export default {
     line-height: 0;
   }
 
+  .copyButton {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+
+  .copy {
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    opacity: .6;
+    transition: all .1s ease;
+    &:hover {
+      transform: translateY(-4px);
+      opacity: 1;
+    }
+  }
+
+  .tooltip {
+    position: absolute;
+    top: 30px;
+    left: -30px;
+    background: #373737;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    opacity: 0;
+
+    &.appear {
+      animation: appear 1s ease;
+    }
+  }
+
+  @keyframes appear {
+    0%{opacity:0}
+    20%{ transform: translateY(10px); opacity:1}
+    80%{transform: translateY(0px); opacity:1}
+    100%{opacity:0}}
+
   #displayedFormula {
     margin-top: 5px;
   }
@@ -245,6 +306,7 @@ export default {
     background: #fafafa;
     font-size: 20px;
     text-align: left;
+    position: relative;
     /* padding: 15px 0; */
     width: 1000px;
     margin: auto;
