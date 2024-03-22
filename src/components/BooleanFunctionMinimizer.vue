@@ -962,8 +962,10 @@ export default {
       }
 
       console.log(this.$t('sheet'), this.$t('bf_tableWithCyclicRest'), index);
-      const kvdiagramVue = this.$refs.childKVDiagram;
-      kvdiagramVue.setKVDiagram(
+      // const kvdiagramVue = this.$refs.childKVDiagram;
+      const bfInputDevice = this.$refs.childBooleanFunctionInputDevice;
+
+      bfInputDevice.overwriteBFFromKVDiagram(
         bfLoadArchivedExercise(this.$t('sheet'), this.$t('bf_tableWithCyclicRest'), index).data,
       );
 

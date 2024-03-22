@@ -100,7 +100,7 @@ export default {
       }
       // set to empty bf in new size
       this.booleanFunctionAsKVDiagram = new KVDiagram(null, newAmount);
-      // console.log('BFInputDevices internal watch function registered a change in numVariables! Set to bf ', this.booleanFunctionAsKVDiagram);
+      console.log('BFInputDevices internal watch function registered a change in numVariables! Set to bf ', this.booleanFunctionAsKVDiagram);
     },
   },
   computed: {
@@ -129,11 +129,32 @@ export default {
       console.log('received: ', kvdiagram);
       this.setBooleanFunctionFromKVDiagram(kvdiagram);
     },
-    /** @param {Proxy(KVDiagram)} kvdiagram */
+    /** @param {Proxy(KVDiagram)} kvdiagram
+     * 'PROTECTED' METHOD
+     * Only updates internal state. Used by the children (event listeners of events emitted by children)
+     * to notify this InputDevice of changes.
+     * Therefore only manipulates internal state and does not manipulate the children.
+    */
     setBooleanFunctionFromKVDiagram(kvdiagram) {
       this.booleanFunctionAsKVDiagram = kvdiagram;
-      // console.log('BooleanFunctionInputDevice.setBooleanFunctionFromKVDiagram(kvdiagram) called. Parameter kvdiagram:');
-      // console.log(this.booleanFunctionAsKVDiagram);
+      console.log('BooleanFunctionInputDevice.setBooleanFunctionFromKVDiagram(kvdiagram) called. Parameter kvdiagram:');
+      console.log(this.booleanFunctionAsKVDiagram);
+    },
+    /** @param {Proxy(KVDiagram)} kvdiagram
+     * Updates internal state and actively notifies children of update.
+     * Used from outside or the InputDevice element itself to overwrite the entire state (including children) as well.
+    */
+    async overwriteBFFromKVDiagram(kvdiagram) {
+      /* await is needed, to have the change of the Prop 'numVariables' be visible to the child before
+       calling methods on the child requiring the new value */
+      await (this.numVariables = kvdiagram.getAmountLiterals());
+
+      this.setBooleanFunctionFromKVDiagram(kvdiagram);
+      if (this.methodOfInputForBooleanFunction === this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_FUNCTION_TABLE) {
+        this.notifyChildTruthTableOfBF();
+      } else {
+        this.notifyChildKVDiagramOfBF();
+      }
     },
     getSVG(id) {
       const formula = this.varNames[this.varNamingScheme][id];

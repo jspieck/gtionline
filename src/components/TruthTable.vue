@@ -132,9 +132,9 @@ export default {
       this.$emit('truthtable-modified', this.getKVDiagram());
     },
     toggleState(state) {
-      if (state === '0') return '1';
+      if (state === 0 || state === '0') return '1';
       if (state === '1') return '-';
-      return 0;
+      return '0';
     },
     getKVDiagram() {
       const util = new BooleanFunctionUtil();

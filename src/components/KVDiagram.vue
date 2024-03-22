@@ -217,6 +217,10 @@ export default {
       return kvdiagram;
     },
     setKVDiagram(kvdiagram) {
+      // overwrite numvariables
+      // this.numVariables = kvdiagram.getAmountLiterals();
+      console.log('Overwriting this.numVariables in KVDiagram.vue > setKVDiagram()');
+
       // init diagram with zeros
       const diagram = reactive([]);
       for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
