@@ -1094,8 +1094,9 @@ export default {
         // console.log(doesKVDiagramFitRequirements);
       } while (!doesKVDiagramFitRequirements);
 
-      const kvdiagramVue = this.$refs.childKVDiagram;
-      kvdiagramVue.setKVDiagram(
+
+      const bfInputDevice = this.$refs.childBooleanFunctionInputDevice;
+      bfInputDevice.overwriteBFFromKVDiagram(
         kvdiagram,
       );
 
