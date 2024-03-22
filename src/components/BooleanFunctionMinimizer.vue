@@ -787,7 +787,7 @@ export default {
       return indices;
     },
     archivedExerciseTitles() {
-      return bfGetArchivedExerciseTitles(this.$t('sheet'), this.$t('bf_tableWithCyclicRest'));
+      return bfGetArchivedExerciseTitles(this.$i18n);
     },
   },
   methods: {
@@ -961,12 +961,9 @@ export default {
         return;
       }
 
-      console.log(this.$t('sheet'), this.$t('bf_tableWithCyclicRest'), index);
-      // const kvdiagramVue = this.$refs.childKVDiagram;
       const bfInputDevice = this.$refs.childBooleanFunctionInputDevice;
-
       bfInputDevice.overwriteBFFromKVDiagram(
-        bfLoadArchivedExercise(this.$t('sheet'), this.$t('bf_tableWithCyclicRest'), index).data,
+        bfLoadArchivedExercise(this.$i18n, index).data,
       );
 
       this.someOptimizationsFinished = false;
