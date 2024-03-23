@@ -9,7 +9,7 @@
         <g v-for="i in numVariables" v-bind:key="`inputvariablename_cell_${i}`"
             :transform="`translate(${getInputCellSVGX(i-1)}, ${0})`">
           <!-- This is very eklig but I did not a way to get    -->
-          <g :transform="`translate(${cell_width * 0.2}, ${cell_height * (isSmallCharacter(varNames[i-1]) ? 0.2 : 0.4)})`" dominant-baseline="bottom"
+          <g :transform="`translate(${cell_width * 0.2}, ${cell_height * (isSmallCharacter(varNames[numVariables-i]) ? 0.2 : 0.4)})`" dominant-baseline="bottom"
             class="unclickable entry header_entry" text-anchor="bottom" v-html="toSvg(varNames[numVariables-i])" />
         </g>
         <!-- 'f' above the Result Column -->
