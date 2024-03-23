@@ -12739,6 +12739,10 @@ var BooleanFunctionLiteral = /*#__PURE__*/function () {
   }, {
     key: "equals",
     value: function equals(other) {
+      if (!(other instanceof BooleanFunctionLiteral)) {
+        return false;
+      }
+
       return this.getId() == other.getId() && this.isNegated() == other.isNegated();
     }
   }, {
@@ -12753,6 +12757,7 @@ var BooleanFunctionLiteral = /*#__PURE__*/function () {
 
 var BooleanFunctionOperator_AND = '*';
 var BooleanFunctionOperator_OR = '+';
+var BooleanFunctionOperator_NOT = '~';
 /**
  * Class representing a boolean function (Schaltfunktion).
  * e.g. (terms[0]) -logicOperator- (terms[1]) -logicOperator- (terms[2]) -lo...
@@ -12788,15 +12793,29 @@ var BooleanFunction$1 = /*#__PURE__*/function () {
     key: "addTerm",
     value: function addTerm(term) {
       this._terms.push(term);
-    } // toString() {
-    //     //tODO implement new literal way of doin things
-    //     let str = "";
-    //     for(let t = 0; t < this._terms.length; t++) {
-    //         str += '(' + this._terms[t] + ')';
-    //         str += t < this._terms.length ? this._logicOperator : '';
-    //     }
-    // }
+    }
+    /**
+     * Overwrites the term at {index} with {term}
+     * @param {number} index 
+     * @param {BooleanFunction | BooleanFunctionLiteral} term 
+     */
 
+  }, {
+    key: "setTerm",
+    value: function setTerm(index, term) {
+      this._terms[index] = term;
+    }
+    /**
+     * Moves all elements of the array starting at index {index} one to the right and inserts {term} at index {index}
+     * @param {number} index 
+     * @param {BooleanFunction | BooleanFunctionLiteral} term 
+     */
+
+  }, {
+    key: "injectTermBeforeIndex",
+    value: function injectTermBeforeIndex(index, term) {
+      this._terms.splice(index, 0, term);
+    }
     /**
        * @returns {[BooleanFunction | BooleanFunctionLiteral]}
        */
@@ -12840,6 +12859,10 @@ var BooleanFunction$1 = /*#__PURE__*/function () {
 
       var checkOrder = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var checkOrderOfSubSubTerms = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+      if (!(other instanceof BooleanFunction)) {
+        return false;
+      }
 
       if (this.getLogicOperator() != other.getLogicOperator() || this.getTerms().length != other.getTerms().length) {
         return false;
@@ -13039,7 +13062,6 @@ var KVDiagram = /*#__PURE__*/function () {
   }, {
     key: "computeKVIndex",
     value: function computeKVIndex(y, x) {
-      // tODO overhaul this and the _generateLiteralToKVMapping function
       var index = 0;
 
       for (var i = 0; i < this._amountLiterals; i++) {
@@ -13691,6 +13713,165 @@ var BooleanFunctionUtil = /*#__PURE__*/function () {
       }
 
       return new KVDiagram(valuesNew, amountVariables);
+    }
+    /**
+     * This function converts the string representation into a proper BF representation as used
+     * by this Minimization section of the website. (calls the cmos string parser)
+     * The CMOS section uses a parser to convert a string representation of any function into a recursive object
+     * representation of a boolean function. Unfortunately, other classes were used and they are not directly compatible
+     * with the BooleanFunction-Minimization part of the website.
+     * @param {string} str String-representation 
+     * @param {boolean} expandAndFlatten Specifies if the resulting BooleanFunction should also be
+     * fully expanded and flattened, so that negations only occur on literals, not on brackets
+     */
+
+  }, {
+    key: "parseStringToBF",
+    value: function parseStringToBF(str) {
+      var expandAndFlatten = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var expression = parseBooleanFunction(str); // console.log("Expression:");
+      // console.log(expression);
+      // console.log(require('util').inspect(expression, {showHidden: false, depth: null, colors: true}));
+
+      var bf = this._parseCMOSBFToMinimizerRepresentation(expression.expression, Array.from(expression.variables));
+
+      if (expandAndFlatten) {
+        bf = this.flattenBF(this.expandBF(bf));
+      }
+
+      return bf;
+    }
+  }, {
+    key: "_parseCMOSBFToMinimizerRepresentation",
+    value: function _parseCMOSBFToMinimizerRepresentation(cmosBF, variables) {
+      // Negation
+      if (cmosBF instanceof UnaryExpression && cmosBF.operator == 'not') {
+        // Negated literal
+        if (cmosBF.operand instanceof BooleanVariable) {
+          return new BooleanFunctionLiteral(variables.findIndex(function (name) {
+            return name === cmosBF.operand.name;
+          }), true);
+        } // Negation (negated recursion case)
+
+
+        return new BooleanFunction$1(BooleanFunctionOperator_NOT, [this._parseCMOSBFToMinimizerRepresentation(cmosBF.operand, variables)]); // Literal (top level)
+      } else if (cmosBF instanceof BooleanVariable) {
+        return new BooleanFunctionLiteral(variables.findIndex(function (name) {
+          return name === cmosBF.name;
+        }), false); // NAry Expression (normal recursion case)
+      } else if (cmosBF instanceof NAryExpression) {
+        var terms = [];
+
+        var _iterator = _createForOfIteratorHelper(cmosBF.operands),
+            _step;
+
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var _term = _step.value;
+            terms.push(this._parseCMOSBFToMinimizerRepresentation(_term, variables));
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+
+        return new BooleanFunction$1(cmosBF.operator == 'or' ? BooleanFunctionOperator_OR : BooleanFunctionOperator_AND, terms); // Unknown type
+      } else {
+        throw new Error("ERROR in BooleanFunctionUtil>parse: term is of undefined type. term: ".concat(term));
+      }
+    }
+    /**
+     * Returns a fully expanded (GER: ausmultiplizierte) version of the given BooleanFunction.
+     * e.g. performs the operation: (a+ ~(~a+b)) => (a+(a*~b))
+     * Note that the result might not be flattened, e.g. (a*(a*~b)) and not the flattened (a*a*~b)
+     * @param {BooleanFunction | BooleanFunctionLiteral} bf 
+     * @param {boolean} negate (internal flag for negated recursion)
+     * @returns Fully expanded (ausmultiplizierte) BooleanFunction
+     */
+
+  }, {
+    key: "expandBF",
+    value: function expandBF(bf) {
+      var _this = this;
+
+      var negate = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+      if (bf instanceof BooleanFunction$1) {
+        // Unary negation
+        if (bf.getLogicOperator() == BooleanFunctionOperator_NOT) {
+          return this.expandBF(bf.getTerms()[0], !negate);
+        } // Boolean Function
+
+
+        if (!negate) {
+          return new BooleanFunction$1(bf.getLogicOperator(), bf.getTerms().map(function (e) {
+            return _this.expandBF(e, negate);
+          }));
+        } else {
+          // Negate BF and all subterms
+          return new BooleanFunction$1(bf.getLogicOperator() == BooleanFunctionOperator_AND ? BooleanFunctionOperator_OR : BooleanFunctionOperator_AND, bf.getTerms().map(function (e) {
+            return _this.expandBF(e, negate);
+          }));
+        }
+      } else if (bf instanceof BooleanFunctionLiteral) {
+        if (negate) {
+          return new BooleanFunctionLiteral(bf.getId(), !bf.isNegated());
+        } else {
+          return new BooleanFunctionLiteral(bf.getId(), bf.isNegated());
+        }
+      }
+    }
+    /**
+     * NOTE: EXPECTS BF TO BE FULLY EXPANDED via expandBF() beforehand! (negations must only be on literals)
+     * @throws Might throw an Error if the given BooleanFunction is not fully expanded (via expandBF()) and negations of groups
+     * (of whole subfunctions) are found. (the expandBF() function should also turn ~(a) into ~a, which is OK)
+     * @param {BooleanFunction | BooleanFunctionLiteral} bfOld 
+     * @returns Fully flattened BooleanFunction
+     */
+
+  }, {
+    key: "flattenBF",
+    value: function flattenBF(bfOld) {
+      if (bfOld instanceof BooleanFunctionLiteral) {
+        return bfOld;
+      } // > boolean function
+
+
+      if (bfOld.getLogicOperator() == BooleanFunctionOperator_NOT) {
+        // console.error('flattenBF(only works on fully expanded bfs (expand a bf via util.expandBF(bf))');
+        throw new Error('flattenBF(only works on fully expanded bfs (expand a bf via util.expandBF(bf))');
+      }
+
+      var bf = bfOld.clone();
+
+      for (var t = 0; t < bf.getTerms().length; t++) {
+        var _term2 = bf.getTerms()[t]; // console.log("t: ", t, "; term: ", term);
+
+        if (_term2 instanceof BooleanFunctionLiteral) {
+          continue;
+        }
+
+        if (bf.getLogicOperator() != _term2.getLogicOperator()) {
+          // Cannot be flattened, as logic operators are different
+          // bfNew.addTerm(this.flattenBF(term));
+          bf.setTerm(t, this.flattenBF(_term2));
+          continue;
+        } // flatten > Pull subterm upwards the tree into the current node
+
+
+        bf.setTerm(t, _term2.getTerms()[0]); // inject all remaining subnodes into the current node
+
+        for (var s = 1; s < _term2.getTerms().length; s++) {
+          var subterm = _term2.getTerms()[s];
+
+          bf.injectTermBeforeIndex(t + s, subterm);
+        }
+
+        t--; // do the current index again, as node was replaced
+      }
+
+      return bf;
     }
   }]);
 
