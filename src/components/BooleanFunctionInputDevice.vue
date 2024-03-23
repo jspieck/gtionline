@@ -17,6 +17,16 @@
         </label>
       </div>
     </div>
+    <table id="customNaming" v-if="varNamingScheme === 'custom'">
+      <tr>
+        <th v-for="index in customIndices" :key="index">{{index}}</th>
+      </tr>
+      <tr>
+        <td v-for="index in customIndices" :key="index">
+          <input v-model="customNamingScheme[index]"/>
+        </td>
+      </tr>
+    </table>
 
     <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM)">Use KVDiagram</button>
     <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_FUNCTION_TABLE)">Use Truth Table</button>
@@ -75,7 +85,7 @@ export default {
       numVariables: this.DEFAULT_NUM_VARIABLES,
       dropDownMenuSelectedNumVars: this.DEFAULT_NUM_VARIABLES,
       numVarOptions: {
-        2: 2, 3: 3, 4: 4, 5: 5, 6: 6,
+        2: 2, 3: 3, 4: 4, 5: 5,
       },
 
       varNamingScheme: 'xyz',
@@ -85,7 +95,13 @@ export default {
         { value: 'xyz', name: 'x, y, \\dots' },
         { value: 'x', name: 'x_0, x_1, \\dots' },
         { value: 'x1', name: 'x_1, x_2, \\dots' },
+        { value: 'custom', name: 'custom' },
       ],
+
+      customIndices: [0, 1, 2, 3, 4],
+      customNamingScheme: {
+        0: '', 1: '', 2: '', 3: '', 4: '',
+      },
     };
   },
   created() {
@@ -100,10 +116,19 @@ export default {
       }
       // set to empty bf in new size
       this.booleanFunctionAsKVDiagram = new KVDiagram(null, newAmount);
-      console.log('BFInputDevices internal watch function registered a change in numVariables! Set to bf ', this.booleanFunctionAsKVDiagram);
+      // console.log('BFInputDevices internal watch function registered a change in numVariables! Set to bf ', this.booleanFunctionAsKVDiagram);
     },
   },
   computed: {
+    varNames() {
+      return {
+        custom: this.customNamingScheme,
+        abc: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+        xyz: ['x', 'y', 'z', 'u', 'v', 'w', 'q'],
+        x: ['x_0', 'x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6'],
+        x1: ['x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6', 'x_7'],
+      };
+    },
     currentVarNames() {
       return this.varNames[this.varNamingScheme];
     },
@@ -137,8 +162,8 @@ export default {
     */
     setBooleanFunctionFromKVDiagram(kvdiagram) {
       this.booleanFunctionAsKVDiagram = kvdiagram;
-      console.log('BooleanFunctionInputDevice.setBooleanFunctionFromKVDiagram(kvdiagram) called. Parameter kvdiagram:');
-      console.log(this.booleanFunctionAsKVDiagram);
+      // console.log('BooleanFunctionInputDevice.setBooleanFunctionFromKVDiagram(kvdiagram) called. Parameter kvdiagram:');
+      // console.log(this.booleanFunctionAsKVDiagram);
     },
     /** @param {Proxy(KVDiagram)} kvdiagram
      * Updates internal state and actively notifies children of update.

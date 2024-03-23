@@ -1,22 +1,27 @@
 <template>
   <div class="kvDiagram">
     <svg id="kvContainer" :width="svgWidth" :height="svgHeight" xmlns="http://www.w3.org/2000/svg">
-      <g v-for="(d, i) in diagram" v-bind:key="`cell_${i}`"
-      :transform="`translate(${getX(i)}, ${getY(i)})`">
-        <rect fill="transparent" stroke="#898989" :width="blockWidth" :height="blockWidth"
-        @click="changeNumber(i)"/>
-        <text :x="blockWidth / 2" :y="blockWidth / 2" dominant-baseline="middle"
-        class="unclickable" text-anchor="middle">{{legitStates[d.number]}}</text>
-        <text :x="blockWidth - 3" :y="blockWidth - 7" dominant-baseline="middle"
-        class="unclickable indexNumber" font-size="13" text-anchor="end">{{indices[i].index}}</text>
+      <g :transform="`translate(${extraWidths[1]}, ${0})`">
+        <g v-for="(d, i) in diagram" v-bind:key="`cell_${i}`"
+        :transform="`translate(${getX(i)}, ${getY(i)})`">
+          <rect fill="transparent" stroke="#898989" :width="blockWidth" :height="blockWidth"
+          @click="changeNumber(i)"/>
+          <!-- <text :x="blockWidth / 2" :y="blockWidth / 2" dominant-baseline="middle"
+          class="unclickable" text-anchor="middle">{{legitStates[d.number]}}</text> -->
+          <text :x="blockWidth / 2" :y="blockWidth / 2" dominant-baseline="middle"
+          class="unclickable" text-anchor="middle">{{ legitStates[d['number']] }}</text> <!-- Check if this .number does what it should-->
+          <text :x="blockWidth - 3" :y="blockWidth - 7" dominant-baseline="middle"
+          class="unclickable indexNumber" font-size="13" text-anchor="end">{{indices[i].index}}</text>
+        </g>
+        <g v-for="bar in literalBars" v-bind:key="bar.id">
+          <rect :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height"/>
+          <g :transform="`translate(${bar.textX}, ${bar.textY})`" ref="bars" v-html="getSVG(bar.index)"></g>
+        </g>
+        <rect id="unclickable" class="unclickable" fill="none" stroke="black" :x="paddingHorizontal"
+          :y="paddingVertical" :width="blockWidth * cellsHorizontal"
+          :height="blockWidth * cellsVertical"
+        />
       </g>
-      <g v-for="bar in literalBars" v-bind:key="bar.id">
-        <rect :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height"/>
-        <g :transform="`translate(${bar.textX}, ${bar.textY})`" v-html="getSVG(bar.index)"></g>
-      </g>
-      <rect id="unclickable" class="unclickable" fill="none" stroke="black" :x="paddingHorizontal"
-        :y="paddingVertical" :width="blockWidth * cellsHorizontal"
-        :height="blockWidth * cellsVertical"/>
     </svg>
   </div>
 </template>
@@ -55,6 +60,10 @@ export default {
       legitStates: ['0', '1', '-'],
       barHeight: 3,
       barDistance: 10,
+
+      extraWidths: {
+        0: 0, 1: 0, 2: 0, 3: 0, 4: 0,
+      },
     };
   },
   created() {
@@ -79,7 +88,7 @@ export default {
       return 7 + this.paddingBase * (Math.floor(Math.abs(this.numVariables - 1) / 4) + 1);
     },
     svgWidth() {
-      return this.paddingHorizontal * 2 + this.cellsHorizontal * this.blockWidth;
+      return this.paddingHorizontal * 2 + this.cellsHorizontal * this.blockWidth + this.extraWidths[1] + this.extraWidths[3];
     },
     svgHeight() {
       return this.paddingVertical * 2 + this.cellsVertical * this.blockWidth;
@@ -180,8 +189,13 @@ export default {
             textY = y + height / 2 - 5;
             // varNamingScheme using 'x_0'... and 'x_1'... need more horizontal space
             // if placed to the left of the KVDiagram
-            if ((this.varNames[0] === 'x_0' || this.varNames[0] === 'x_1') && (c.varIndex + 1) % 4 !== 0) {
-              textX -= 7;
+
+            // if ((this.varNames[0] === 'x_0' || this.varNames[0] === 'x_1') && (c.varIndex + 1) % 4 !== 0) {
+            //   textX -= 7;
+            // const labelWidth = this.varNames[this.varNamingScheme][c.varIndex].length;
+            if ((c.varIndex + 1) % 4 !== 0) {
+              textX -= this.extraWidths[c.varIndex];
+              //   textX -= 7;
             }
           }
           bars.push({
@@ -193,7 +207,7 @@ export default {
     },
   },
   activated() {
-    console.log('activated kv');
+    // console.log('activated kv');
     // tell parent that this wants to have new KVDiagram after it has been activated,
     // since maybe the bf has changed in the meantime through some
     // other means (e.g. other BF Input Method like BFTable)
@@ -219,7 +233,7 @@ export default {
     setKVDiagram(kvdiagram) {
       // overwrite numvariables
       // this.numVariables = kvdiagram.getAmountLiterals();
-      console.log('Overwriting this.numVariables in KVDiagram.vue > setKVDiagram()');
+      // console.log('Overwriting this.numVariables in KVDiagram.vue > setKVDiagram()');
 
       // init diagram with zeros
       const diagram = reactive([]);
@@ -250,8 +264,15 @@ export default {
     },
     getSVG(id) {
       const formula = this.varNames[id];
+      if (formula == null) {
+        return '';
+      }
       const formulaSVG = window.MathJax.tex2svg(formula);
       const svgmath = formulaSVG.getElementsByTagName('svg')[0];
+      // Stupid hack
+      const widthInEx = parseFloat(svgmath.getAttribute('width').slice(0, -2));
+      const extraWidth = Math.round((widthInEx - 1) * 8);
+      this.extraWidths[id] = extraWidth;
       return svgmath.outerHTML;
     },
     toSvg(formula) {
@@ -270,6 +291,12 @@ export default {
 </script>
 
 <style lang="scss">
+#customNaming {
+  margin: 0 auto;
+  input {
+    width: 40px;
+  }
+}
 .kvDiagram {
   max-width: -webkit-fill-available;
   overflow: auto;
