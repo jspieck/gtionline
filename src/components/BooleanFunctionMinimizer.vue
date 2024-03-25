@@ -7,11 +7,18 @@
       <div class="boolean-function-input-container">
         <div>
           <div class="exercise-selection-container">
-            <div class="exercise-selection-container-tooltip">{{$t('exerciseArchive')}}:</div>
-            <div>
+            <!-- <div class="exercise-selection-container-tooltip">{{$t('exerciseArchive')}}:</div> -->
+            <div class="exercise-selection-container-tooltip">Archiv / Formel Interpreter:</div>
+            <div class="exercise-selection-container-subsection">
+              <span>Aus Archiv:</span>
               <FSelect :options="archivedExerciseTitles" :sel="0"
-                @input="selectArchivedExercise"/>
-              <button @click="loadArchivedExercise">{{$t('load')}}</button>
+                @input="selectArchivedExercise" class="leftMargin10"/>
+              <button @click="loadArchivedExercise" >{{$t('load')}}</button>
+            </div>
+            <div>
+              <span>Formel:</span>
+              <input v-model="stringInterpreterFormula" class="leftMargin10"/>
+              <button class="leftMargin10" @click="loadBFFromString(stringInterpreterFormula)">Generieren</button>
             </div>
           </div>
           <div class="exercise-selection-container">
@@ -412,6 +419,8 @@ export default {
     return {
       // archivedExercises: ['Blatt 5: 1d)', 'Blatt 7: 1b)', 'Blatt 8: 1a)'],
       archivedExerciseSelectedIndex: 0,
+
+      stringInterpreterFormula: '',
 
       randomExerciseDifficultySelectedIndex: 0,
       randomExerciseGoalSelectedIndex: 0,
@@ -841,8 +850,8 @@ export default {
 
       // const varNames = kvdiagramVue.getSelectedVarNames();
       const varNames = bfInputDevice.currentVarNames;
-      console.log('compute(): retrieved currentVarNames as attribute from bfInputDevice:');
-      console.log(varNames);
+      // console.log('compute(): retrieved currentVarNames as attribute from bfInputDevice:');
+      // console.log(varNames);
       this.literalNames = varNames;
 
       const numVars = kvdiagram.getAmountLiterals();
@@ -968,6 +977,15 @@ export default {
 
       this.someOptimizationsFinished = false;
       // this.optimize();
+    },
+    loadBFFromString(string) {
+      const util = new BooleanFunctionUtil();
+      const bf = util.parseStringToBF(string, true);
+      const kvdiagram = util.generateKVDiagramFromBooleanFunction(bf);
+
+      const bfInputDevice = this.$refs.childBooleanFunctionInputDevice;
+      bfInputDevice.overwriteBFFromKVDiagram(kvdiagram);
+      // console.log(kvdiagram);
     },
     generateRandomExercise() {
       // let primetermsMin;
@@ -1189,6 +1207,11 @@ export default {
       .exercise-selection-container-subsection {
         margin-bottom: .5em;
       }
+
+      // .selectBox, input {
+      //   margin-left: 0.5em;
+      //   margin-right: 0.5em;
+      // }
     }
 
     .boolean-function-button-optimize {
