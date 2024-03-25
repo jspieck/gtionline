@@ -13852,23 +13852,28 @@ var BooleanFunctionUtil = /*#__PURE__*/function () {
      * @param {string} str String-representation 
      * @param {boolean} expandAndFlatten Specifies if the resulting BooleanFunction should also be
      * fully expanded and flattened, so that negations only occur on literals, not on brackets
+     * @returns 
      */
 
   }, {
     key: "parseStringToBF",
     value: function parseStringToBF(str) {
       var expandAndFlatten = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      var expression = parseBooleanFunction(str); // console.log("Expression:");
+      var expression = parseBooleanFunction(str);
+      var variables = Array.from(expression.variables); // console.log("Expression:");
       // console.log(expression);
       // console.log(require('util').inspect(expression, {showHidden: false, depth: null, colors: true}));
 
-      var bf = this._parseCMOSBFToMinimizerRepresentation(expression.expression, Array.from(expression.variables));
+      var bf = this._parseCMOSBFToMinimizerRepresentation(expression.expression, variables);
 
       if (expandAndFlatten) {
         bf = this.flattenBF(this.expandBF(bf));
       }
 
-      return bf;
+      return {
+        bf: bf,
+        variables: variables
+      };
     }
   }, {
     key: "_parseCMOSBFToMinimizerRepresentation",
