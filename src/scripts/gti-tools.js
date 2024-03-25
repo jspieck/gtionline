@@ -12750,6 +12750,30 @@ var BooleanFunctionLiteral = /*#__PURE__*/function () {
     value: function amountLiterals() {
       return 1;
     }
+  }, {
+    key: "computeOutput",
+    value: function computeOutput(inputs) {
+      if (this._id >= inputs.length) {
+        return false;
+      }
+
+      if (!this._negated) {
+        return inputs[this._id];
+      } else {
+        return !Number(inputs[this._id]); // The Number() call allows for strings in inputs array
+      }
+    }
+  }, {
+    key: "getIDs",
+    value: function getIDs(ids) {
+      var _this = this;
+
+      if (ids.find(function (e) {
+        return e == _this._id;
+      }) == null) {
+        ids.push(this._id);
+      }
+    }
   }]);
 
   return BooleanFunctionLiteral;
@@ -12999,6 +13023,109 @@ var BooleanFunction$1 = /*#__PURE__*/function () {
 
       return sum;
     }
+  }, {
+    key: "computeOutput",
+    value: function computeOutput(inputs) {
+      if (this._logicOperator == BooleanFunctionOperator_NOT) {
+        return !this._terms[0].computeOutput(inputs);
+      }
+
+      if (this._logicOperator == BooleanFunctionOperator_AND) {
+        var _iterator = _createForOfIteratorHelper(this._terms),
+            _step;
+
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var term = _step.value;
+
+            if (term.computeOutput(inputs) == false) {
+              return false;
+            }
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+
+        return true;
+      }
+
+      if (this._logicOperator == BooleanFunctionOperator_OR) {
+        var _iterator2 = _createForOfIteratorHelper(this._terms),
+            _step2;
+
+        try {
+          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+            var _term = _step2.value;
+
+            if (_term.computeOutput(inputs) == true) {
+              return true;
+            }
+          }
+        } catch (err) {
+          _iterator2.e(err);
+        } finally {
+          _iterator2.f();
+        }
+
+        return false;
+      }
+
+      throw new Error("Unknown BooleanFunctionOperator: ".concat(this._logicOperator));
+    }
+  }, {
+    key: "getIDs",
+    value: function getIDs() {
+      var ids = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+      var _iterator3 = _createForOfIteratorHelper(this._terms),
+          _step3;
+
+      try {
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var term = _step3.value;
+          term.getIDs(ids);
+        }
+      } catch (err) {
+        _iterator3.e(err);
+      } finally {
+        _iterator3.f();
+      }
+
+      return ids;
+    }
+  }, {
+    key: "findHighestID",
+    value: function findHighestID() {
+      var max = -1;
+
+      var _iterator4 = _createForOfIteratorHelper(this._terms),
+          _step4;
+
+      try {
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          var term = _step4.value;
+          var tmp = void 0;
+
+          if (term instanceof BooleanFunctionLiteral) {
+            tmp = term.getId();
+          } else {
+            tmp = term.findHighestID();
+          }
+
+          if (tmp > max) {
+            max = tmp;
+          }
+        }
+      } catch (err) {
+        _iterator4.e(err);
+      } finally {
+        _iterator4.f();
+      }
+
+      return max;
+    }
   }]);
 
   return BooleanFunction;
@@ -13131,9 +13258,11 @@ var KVDiagram = /*#__PURE__*/function () {
   }, {
     key: "_generateLiteralToKVMapping",
     value: function _generateLiteralToKVMapping() {
-      this._literalToKVMapping = [];
-      var width = this._values[0].length;
-      var height = this._values.length;
+      this._literalToKVMapping = []; // const width = this._values[0].length;
+      // const height = this._values.length;
+
+      var width = Math.pow(2, Math.floor((this._amountLiterals + 1) / 2));
+      var height = Math.pow(2, Math.floor(this._amountLiterals / 2));
 
       for (var i = 0; i < this._amountLiterals; i++) {
         this._literalToKVMapping[i] = [];
@@ -13872,6 +14001,29 @@ var BooleanFunctionUtil = /*#__PURE__*/function () {
       }
 
       return bf;
+    }
+  }, {
+    key: "generateKVDiagramFromBooleanFunction",
+    value: function generateKVDiagramFromBooleanFunction(bf) {
+      // generate truth table and generate kvdiagram from that
+      var ids = bf.getIDs();
+      var amountLiterals = ids.length;
+      var truthTable = [];
+      var width = Math.pow(2, Math.floor((amountLiterals + 1) / 2));
+      var height = Math.pow(2, Math.floor(amountLiterals / 2));
+      var utilKVDiagram = new KVDiagram([], amountLiterals); // console.log(`ids: ${ids}, amountLiterals: ${amountLiterals}, width: ${width}, height: ${height}`);
+
+      for (var x = 0; x < width; x++) {
+        for (var y = 0; y < height; y++) {
+          var indexKV = utilKVDiagram.computeKVIndex(y, x); // convert numerical index into 1s and 0s.
+          // console.log(`${indexKV}, ${indexKV.toString(2).padStart(amountLiterals, '0').split().reverse().reverse()}`);
+
+          var inputs = indexKV.toString(2).padStart(amountLiterals, '0').split('').reverse();
+          truthTable[indexKV] = Number(bf.computeOutput(inputs)); // console.log(`${inputs} becomes ${truthTable[indexKV]}`);
+        }
+      }
+
+      return this.generateKVDiagramFromTruthTable(truthTable, amountLiterals);
     }
   }]);
 
