@@ -980,12 +980,20 @@ export default {
     },
     loadBFFromString(string) {
       const util = new BooleanFunctionUtil();
-      const bf = util.parseStringToBF(string, true);
+
+      const bfObj = util.parseStringToBF(string, true);
+      const bf = bfObj.bf;
+      const variables = bfObj.variables;
+
       const kvdiagram = util.generateKVDiagramFromBooleanFunction(bf);
 
       const bfInputDevice = this.$refs.childBooleanFunctionInputDevice;
       bfInputDevice.overwriteBFFromKVDiagram(kvdiagram);
-      // console.log(kvdiagram);
+
+      // Since vastly different variable names, or variable names in a different order than
+      // intended by the user are quite confusing, inject the extracted variable names into
+      // the 'custom' variable naming section and activate it.
+      bfInputDevice.injectCustomVariableNames(variables);
     },
     generateRandomExercise() {
       // let primetermsMin;

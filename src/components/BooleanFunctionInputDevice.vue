@@ -198,6 +198,15 @@ export default {
     notifyChildTruthTableOfBF() {
       this.$refs.childTruthTable.setKVDiagram(this.getBFAsKVDiagram());
     },
+    injectCustomVariableNames(variableNames) {
+      console.log(variableNames);
+      for (let i = 0; i < 5; i += 1) {
+        this.customNamingScheme[i] = i < variableNames.length ? variableNames[i] : '';
+      }
+
+      // activate custom naming scheme
+      this.varNamingScheme = 'custom';
+    },
     //
     // ### GETTER METHODS ###
     //
