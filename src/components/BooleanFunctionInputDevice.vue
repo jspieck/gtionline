@@ -4,11 +4,11 @@
       <label>{{$t('numVarInput')}}:</label>
       <FSelect :sel="this.dropDownMenuSelectedNumVars" @input="onChooseNumVars" :num=0 class="leftMargin10"
               :options="numVarOptions"/>
-      <button @click="setNumVar()" class="leftMargin10">{{$t('confirm')}}</button>
+      <!-- <button @click="setNumVar()" class="leftMargin10">{{$t('confirm')}}</button> -->
     </div>
 
     <div class="mtop">
-      <label>{{$t('varNaming')}}:</label>
+      <!-- <label>{{$t('varNaming')}}:</label> -->
       <div class="divMargin"/>
       <div class="radioCounter">
         <label v-for="radio in radios" :key="radio.value" class="p-default p-round p-smooth p-pulse">
@@ -17,20 +17,28 @@
         </label>
       </div>
     </div>
-    <table id="customNaming" v-if="varNamingScheme === 'custom'">
-      <tr>
-        <th v-for="index in customIndices" :key="index">{{index}}</th>
-      </tr>
-      <tr>
-        <td v-for="index in customIndices" :key="index">
-          <input v-model="customNamingScheme[index]"/>
-        </td>
-      </tr>
-    </table>
+    <div class="">
+      <table class="customNamingTable" v-if="varNamingScheme === 'custom'">
+        <tr>
+          <td v-html="toSvg('i')"/>
+          <th v-for="index in customIndices" :key="index">{{index}}</th>
+        </tr>
+        <tr>
+          <td v-html="toSvg('\\alpha')"/>
+          <td v-for="index in customIndices" :key="index">
+            <input v-model="customNamingScheme[index]" type="text" :placeholder="'a_' + index"/>
+          </td>
+        </tr>
+      </table>
+    </div>
 
-    <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM)">Use KVDiagram</button>
-    <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_FUNCTION_TABLE)">Use Truth Table</button>
-
+    <!-- <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM)">{{$t("kvDiagram")}}</button>
+    <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_FUNCTION_TABLE)">{{ $t("truthtable") }}</button> -->
+    <!-- <span>{{ $t("kvDiagram") }}</span> -->
+    <span style="padding-top:3px; padding-right:10px;">{{ $t("kvDiagram") }}</span>
+    <ToggleSwitch v-on:toggle="this.toggleMethodOfInputForBooleanFunction" checkedDefault=false />
+    <span style="padding-top:3px; padding-left:10px;">{{ $t("truthtable") }}</span>
+    <!-- </div> -->
     <div>
       <!--KeepAlive makes the components persist, even if not shown. Removing
       this results in for example losing the KVDiagram state after switching to bftable input mode-->
@@ -46,6 +54,7 @@
                 @requesting-bf-after-reactivation="notifyChildTruthTableOfBF()"
                 ref="childTruthTable" />
       </KeepAlive>
+      <button class="button-export-png" @click="exportPNG()">PNG</button>
       <!-- <button v-else @click="tmpFunc()">Set smth in KVDiagram</button> -->
     </div>
   </div>
@@ -57,6 +66,7 @@ import { KVDiagram } from '@/scripts/gti-tools';
 import KVDiagr from './KVDiagram.vue';
 import TruthTable from './TruthTable.vue';
 import FormatSelect from './FormatSelect.vue';
+import ToggleSwitch from './ToggleSwitch.vue';
 
 export default {
   name: 'BooleanFunctionInputDevice',
@@ -64,6 +74,7 @@ export default {
     KVDiagr,
     FSelect: FormatSelect,
     TruthTable,
+    ToggleSwitch,
   },
   data() {
     this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM = 'method_kvdiagram';
@@ -137,11 +148,20 @@ export default {
     setMethodOfInputForBooleanFunction(method) {
       this.methodOfInputForBooleanFunction = method;
 
-      console.log('set method to: ');
-      console.log(method);
+      // console.log('set method to: ');
+      // console.log(method);
+    },
+    toggleMethodOfInputForBooleanFunction(toggleChecked) {
+      if (toggleChecked) {
+        this.methodOfInputForBooleanFunction = this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_FUNCTION_TABLE;
+      } else {
+        this.methodOfInputForBooleanFunction = this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM;
+      }
     },
     onChooseNumVars(num, val) {
       this.dropDownMenuSelectedNumVars = parseInt(val, 10);
+
+      this.setNumVar();
     },
     setNumVar() {
       this.numVariables = this.dropDownMenuSelectedNumVars;
@@ -151,7 +171,7 @@ export default {
       this.setBooleanFunctionFromKVDiagram(kvdiagram);
     },
     onTruthTableModified(kvdiagram) {
-      console.log('received: ', kvdiagram);
+      // console.log('received: ', kvdiagram);
       this.setBooleanFunctionFromKVDiagram(kvdiagram);
     },
     /** @param {Proxy(KVDiagram)} kvdiagram
@@ -207,25 +227,78 @@ export default {
       // activate custom naming scheme
       this.varNamingScheme = 'custom';
     },
+    exportPNG() {
+      let svg;
+      if (this.methodOfInputForBooleanFunction === this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_FUNCTION_TABLE) {
+        svg = this.$refs.childTruthTable.getSVGDOM();
+      } else {
+        svg = this.$refs.childKVDiagram.getSVGDOM();
+      }
+      const can = document.createElement('canvas');
+      const ctx = can.getContext('2d');
+      const loader = new Image();
+      const scalingFactor = 3;
+      can.width = parseInt(svg.getAttribute('width'), 10) * scalingFactor;
+      loader.width = can.width;
+      can.height = parseInt(svg.getAttribute('height'), 10) * scalingFactor;
+      loader.height = can.height;
+      // console.log(can.width);
+      // console.log(can.height);
+      loader.onload = () => {
+        ctx.drawImage(loader, 0, 0, loader.width, loader.height);
+        const exportImg = can.toDataURL();
+        const aDownloadLink = document.createElement('a');
+        aDownloadLink.download = 'sym.png';
+        aDownloadLink.href = exportImg;
+        aDownloadLink.click();
+      };
+      const svgAsXML = (new XMLSerializer()).serializeToString(svg);
+      loader.src = `data:image/svg+xml,${encodeURIComponent(svgAsXML)}`;
+    },
     //
     // ### GETTER METHODS ###
     //
     getBFAsKVDiagram() {
       return this.booleanFunctionAsKVDiagram;
     },
-    tmpFunc() { // only for debugging. // TODO remove
-      console.log('tmpFunc() called');
-      // console.log(this.$refs);
-      // this.$refs.childKVDiagram.setKVDiagram(this.booleanFunctionAsKVDiagram);
-      this.onKVDiagramModified(new KVDiagram([[1, 0], [0, 0]], 2));
-    },
+    // tmpFunc() { // only for debugging. // TODO remove
+    //   console.log('tmpFunc() called');
+    //   // console.log(this.$refs);
+    //   // this.$refs.childKVDiagram.setKVDiagram(this.booleanFunctionAsKVDiagram);
+    //   this.onKVDiagramModified(new KVDiagram([[1, 0], [0, 0]], 2));
+    // },
   },
 };
 </script>
 
 <style lang="scss">
+
+@media screen and (max-width: 750px) {
+  .radioCounter {
+    flex-direction: column !important;
+    input {
+      margin-top: 0px !important;
+      height: 17px !important;
+      position: relative !important;
+      transform: translate(0, -.7em) !important;
+    }
+  }
+  .radioSvg {
+    margin-top: -1em !important;
+  }
+  .mtop {
+    .divMargin {
+      display: block;
+      height: 1em;
+    }
+  }
+}
+
 .mtop {
-  margin-top: 20px;
+  // margin-top: .5em;
+  .divMargin {
+    display: block;
+  }
 }
 .radioCounter {
   display: flex;
@@ -233,5 +306,24 @@ export default {
 }
 .p-default {
   margin-right: 10px;
+}
+.customNamingTable {
+  margin: 0 auto;
+  margin-bottom: 1em;
+  input {
+    width: 40px;
+  }
+}
+.button-export-png {
+  float: right;
+  margin-top: -4em;
+
+  padding-left: 3px !important;
+  padding-right: 3px !important;
+  font-size: .7em;
+  height: 1.8em;
+  line-height: 2em;
+  background-color: $lightBlue;
+  color: black;
 }
 </style>

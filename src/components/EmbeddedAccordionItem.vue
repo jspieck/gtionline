@@ -10,6 +10,7 @@
       <!-- NOTE: 'expanding sideways' is now more like a fullscreen mode -->
       <button v-if="this.expandableSideways" class="accordion-item-expand-sideways-toggle ion-md-expand"
           @click="toggleExpandSideways">
+          >
       </button>
       <slot name="accordion-item-body" ></slot>
     </div>
@@ -63,6 +64,12 @@ export default {
 
 <style scoped lang="scss">
 
+  @media screen and (max-width: 750px) {
+    .accordion-item-body {
+      padding: .8em !important;
+    }
+  }
+
   .accordion-item-header {
     background-color: $freshBlue;
 
@@ -95,7 +102,10 @@ export default {
   .accordion-item-body {
     border-top-style: none;
     border-bottom-style: none;
-    padding: 1em;
+    border-left-style: solid;
+    border-right-style: solid;
+    border: lightgray;
+    // padding: 1em;
     overflow-x: auto;
     background: #ffffff5e;
     text-align: left;
@@ -118,10 +128,12 @@ export default {
   }
 
   .accordion-item-body-expanded-sideways {
-    position: relative;
-    width: 96vw;
-    left: 50%;
-    margin-left: -49vw;
+    // position: relative;
+    // width: 96vw;
+    // left: 50%;
+    // margin-left: -49vw;
+
+    background: rgba(255, 255, 255, 0.877);
 
     border-style: solid;
     border-width: 1px;
@@ -132,17 +144,18 @@ export default {
     margin-left: 0;
 
     top: 5%;
-    left: 5%;
-    width: 90%;
+    left: 0%;
+    width: 100%;
     height: 90%;
     @media screen and (max-width: 1400px) {
       width: 95%;
       height: 90%;
       top: 10px;
       left: 0%;
+      padding-top: 4em !important
     }
     @media screen and (max-width: 700px) {
-      width: 90%;
+      // width: 90%;
     }
 
   }

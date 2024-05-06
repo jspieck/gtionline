@@ -1,11 +1,11 @@
 <template>
-  <div class="kvDiagram">
-    <svg id="kvContainer" :width="svgWidth" :height="svgHeight" xmlns="http://www.w3.org/2000/svg">
+  <div class="kvDiagram" @click="((a) => $emit('clicked-somewhere', a))">
+    <svg id="kvContainer" :width="svgWidth" :height="svgHeight" xmlns="http://www.w3.org/2000/svg" ref="svgdom">
       <g :transform="`translate(${extraWidths[1]}, ${0})`">
         <g v-for="(d, i) in diagram" v-bind:key="`cell_${i}`"
         :transform="`translate(${getX(i)}, ${getY(i)})`">
           <rect fill="transparent" stroke="#898989" :width="blockWidth" :height="blockWidth"
-          @click="changeNumber(i)"/>
+          @click="this.modifiable ? changeNumber(i) : {}"/>
           <!-- <text :x="blockWidth / 2" :y="blockWidth / 2" dominant-baseline="middle"
           class="unclickable" text-anchor="middle">{{legitStates[d.number]}}</text> -->
           <text :x="blockWidth / 2" :y="blockWidth / 2" dominant-baseline="middle"
@@ -36,10 +36,15 @@ export default {
   emits: [
     'kvdiagram-modified',
     'requesting-kvdiagram-data-after-reactivation',
+    'clicked-somewhere',
   ],
   props: {
     numVariables: Number,
     varNames: Array, // [String]
+    modifiable: {
+      type: Boolean,
+      default: true,
+    },
   },
   watch: {
     numVariables(newAmount, oldAmount) {
@@ -67,6 +72,8 @@ export default {
     };
   },
   created() {
+    // console.log('modifiable: ');
+    // console.log(this.modifiable);
     for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
       this.diagram.push({ number: 0 });
     }
@@ -207,10 +214,17 @@ export default {
     },
   },
   activated() {
+    // console.log('Request!');
     // console.log('activated kv');
     // tell parent that this wants to have new KVDiagram after it has been activated,
     // since maybe the bf has changed in the meantime through some
     // other means (e.g. other BF Input Method like BFTable)
+    this.$emit('requesting-kvdiagram-data-after-reactivation');
+  },
+  mounted() {
+    // console.log('Request!');
+    // console.log('mounted');
+    // this is for the "ResultKVDiagram", so that it requests data after its Accordion-Item is opened
     this.$emit('requesting-kvdiagram-data-after-reactivation');
   },
   methods: {
@@ -286,17 +300,15 @@ export default {
         this.diagram.push({ number: '0' });
       }
     },
+    getSVGDOM() {
+      /* used to get the SVG DOM, upon user requesting to export svg as PNG */
+      return this.$refs.svgdom;
+    },
   },
 };
 </script>
 
 <style lang="scss">
-#customNaming {
-  margin: 0 auto;
-  input {
-    width: 40px;
-  }
-}
 .kvDiagram {
   max-width: -webkit-fill-available;
   overflow: auto;

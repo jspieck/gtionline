@@ -8,17 +8,42 @@
         <div>
           <div class="exercise-selection-container">
             <!-- <div class="exercise-selection-container-tooltip">{{$t('exerciseArchive')}}:</div> -->
-            <div class="exercise-selection-container-tooltip">Archiv / Formel Interpreter:</div>
-            <div class="exercise-selection-container-subsection">
-              <span>Aus Archiv:</span>
+            <div class="exercise-selection-container-tooltip">
+              <span class="infoblob-wrapper" style="float:right">
+                <InfoBlob>
+                  <span v-html="$t('bf_infoblob_load_exercise')"></span>
+                </InfoBlob>
+              </span>
+              <span style="padding-left:10px; padding-right:10px; padding-top:3px;"
+              v-html="$t('bf_load_exercise_from_archive')"/>
+                <!-- Lade Aufgabe aus Archiv -->
+              <!-- </span> -->
+              <ToggleSwitch v-on:toggle="toggleLoadFromArchiveOrFormula" checkedDefault=false />
+              <span style="padding-left:10px; padding-right:10px; padding-top:3px;"
+              v-html="$t('formula')"/>
+                <!-- Formel
+              </span> -->
+            </div>
+            <div v-if="loadFromArchiveOrFormula" class="exercise-selection-container-subsection">
+              <span v-html="$t('archive')"/>
+              <!-- Archiv:</span> -->
               <FSelect :options="archivedExerciseTitles" :sel="0"
-                @input="selectArchivedExercise" class="leftMargin10"/>
+                @input="selectArchivedExercise" class="leftMargin10 fselect_broad"/>
               <button @click="loadArchivedExercise" >{{$t('load')}}</button>
             </div>
-            <div>
-              <span>Formel:</span>
-              <input v-model="stringInterpreterFormula" class="leftMargin10"/>
-              <button class="leftMargin10" @click="loadBFFromString(stringInterpreterFormula)">Generieren</button>
+            <div v-if="!loadFromArchiveOrFormula" class="exercise-selection-container-subsection">
+              <span style="padding-left:10px" v-html="$t('formula')"/>
+              <!-- Formel:</span> -->
+              <input v-model="stringInterpreterFormula" class="leftMargin10" size="17"/>
+              <button class="leftMargin10" @click="loadBFFromString(stringInterpreterFormula)">Laden</button>
+            </div>
+            <div v-if="!loadFromArchiveOrFormula && loadFromFormula_formulaError" class="exercise-selection-container-subsection">
+              <!-- <span class="errormessage">Fehler in Formel!</span> -->
+              <span class="errormessage" >
+                <span v-html="$t('bf_error_at_symbol') + ' '"/>
+                <span> {{loadFromFormula_formulaErrorDetails.found}} </span>
+              </span>
+              <!-- Error at symbol '{{loadFromFormula_formulaErrorDetails.found}}'</span> -->
             </div>
           </div>
           <div class="exercise-selection-container">
@@ -62,20 +87,15 @@
 
         <!--<button class="boolean-function-button-optimize" @click="downloadSymSVG()">{{$t('downloadSvg')}}</button>-->
 
-        <button class="boolean-function-button-optimize" @click="downloadSymPNG()">{{$t('downloadPng')}}</button>
+        <!-- <button class="boolean-function-button-optimize" @click="downloadSymPNG()">{{$t('downloadPng')}}</button> -->
       </div>
 
       <div class="horizontalbar"></div>
 
-      <span v-if="this.showMsgKVDiagramMustNotBeEmptyOrFull === true">
-        {{$t('bf_infotext_kv_must_not_be_empty')}}
-      </span>
-      <!-- <div v-else-if="this.someOptimizationsFinished === false"> -->
+      <span v-if="this.showMsgKVDiagramMustNotBeEmptyOrFull === true" v-html="$t('bf_infotext_kv_must_not_be_empty')"/>
       <span v-else-if="this.someOptimizationsFinished === false">
-        <!-- Klicke auf das KV-Diagram um die Einträge zu verändern und drücke dann auf Berechnen. -->
-        <!-- Klicke anschließend auf Berechnen -->
+        {{$t("bf_infotext_what_to_do")}}
       </span>
-
       <div v-else class="bf-main-accordion-container">
         <span style="padding-top:3px; padding-right:10px;">
           {{$t('minterms')}}
@@ -86,6 +106,76 @@
         </span>
 
         <Accordion>
+          <!-- <AccordionItem>
+            <template v-slot:accordion-item-title>
+              {{ $t('kvDiagram') }} / {{ $t('truthtable') }}
+            </template>
+            <template v-slot:accordion-item-body>
+              <Accordion class="emptyAccordionParentBody">
+                <AccordionItem>
+                  <template v-slot:accordion-item-title>
+                    {{$t('kvDiagram')}}
+                  </template>
+                  <template v-slot:accordion-item-body>
+                    <KVDiagr ref="resultKVDiagram" :modifiable="false"
+                    @requesting-kvdiagram-data-after-reactivation="updateResultKVDiagram()"
+                    :numVariables="this.resultNumVars" :varNames="this.$refs['childBooleanFunctionInputDevice'].currentVarNames"/>
+                  </template>
+                </AccordionItem>
+                <AccordionItem>
+                  <template v-slot:accordion-item-title>
+                    {{$t('truthtable')}}
+                  </template>
+                  <template v-slot:accordion-item-body>
+                    <TruthTable ref="resultTruthTable" :modifiable="false"
+                    @requesting-bf-after-reactivation="updateResultTruthtable()"
+                    :numVariables="this.resultNumVars" :varNames="this.$refs['childBooleanFunctionInputDevice'].currentVarNames"/>
+                  </template>
+                </AccordionItem>
+              </Accordion>
+            </template>
+          </AccordionItem> -->
+          <AccordionItem>
+            <template v-slot:accordion-item-title>
+              {{ $t('kvDiagram') }} / {{ $t('truthtable') }}
+            </template>
+            <template v-slot:accordion-item-body>
+              <KVDiagr ref="resultKVDiagram" :modifiable="false"
+                    @requesting-kvdiagram-data-after-reactivation="updateResultKVDiagram()"
+                    :numVariables="this.resultNumVars" :varNames="this.$refs['childBooleanFunctionInputDevice'].currentVarNames"
+                    class="accordion-body-element-halfer blurred" @clicked-somewhere="unblurDOM"/>
+              <TruthTable ref="resultTruthTable" :modifiable="false"
+                    @requesting-bf-after-reactivation="updateResultTruthtable()"
+                    :numVariables="this.resultNumVars" :varNames="this.$refs['childBooleanFunctionInputDevice'].currentVarNames"
+                    class="accordion-body-element-halfer blurred" @clicked-somewhere="unblurDOM"/>
+            </template>
+          </AccordionItem>
+
+              <!-- <Accordion class="emptyAccordionParentBody">
+                <AccordionItem>
+                  <template v-slot:accordion-item-title>
+                    {{$t('kvDiagram')}}
+                  </template>
+                  <template v-slot:accordion-item-body>
+                    <KVDiagr ref="resultKVDiagram" :modifiable="false"
+                    @requesting-kvdiagram-data-after-reactivation="updateResultKVDiagram()"
+                    :numVariables="this.resultNumVars" :varNames="this.$refs['childBooleanFunctionInputDevice'].currentVarNames"/>
+                  </template>
+                </AccordionItem>
+                <AccordionItem>
+                  <template v-slot:accordion-item-title>
+                    {{$t('truthtable')}}
+                  </template>
+                  <template v-slot:accordion-item-body>
+                    <TruthTable ref="resultTruthTable" :modifiable="false"
+                    @requesting-bf-after-reactivation="updateResultTruthtable()"
+                    :numVariables="this.resultNumVars" :varNames="this.$refs['childBooleanFunctionInputDevice'].currentVarNames"/>
+                  </template>
+                </AccordionItem>
+              </Accordion>
+            </template>
+          </AccordionItem> -->
+
           <AccordionItem>
             <template v-slot:accordion-item-title>
               {{$t('bf_normal_forms')}}
@@ -403,6 +493,8 @@ import AccordionItem from './EmbeddedAccordionItem.vue';
 import FormatSelect from './FormatSelect.vue';
 import ToggleSwitch from './ToggleSwitch.vue';
 import InfoBlob from './InfoBlob.vue';
+import KVDiagr from './KVDiagram.vue';
+import TruthTable from './TruthTable.vue';
 
 export default {
   name: 'BooleanFunctionMinimizer',
@@ -414,6 +506,8 @@ export default {
     ToggleSwitch,
     InfoBlob,
     BooleanFunctionInputDevice,
+    KVDiagr,
+    TruthTable,
   },
   data() {
     return {
@@ -429,6 +523,12 @@ export default {
 
       useMinNotMaxTermDisplayStyle: true,
 
+      loadFromArchiveOrFormula: false,
+      loadFromFormula_formulaError: false,
+      loadFromFormula_formulaErrorDetails: {},
+
+      resultKVDiagram: {},
+      resultNumVars: 4,
       dnf: '',
       knf: '',
       quineClassesCurrent: [], // responsive
@@ -809,29 +909,6 @@ export default {
       element.click();
       element.remove();
     },
-    downloadSymPNG() { // TODO repair. seems to be broken rn
-      const svg = document.getElementById('kvContainer');
-      const can = document.createElement('canvas');
-      const ctx = can.getContext('2d');
-      const loader = new Image();
-      const scalingFactor = 3;
-      can.width = parseInt(svg.getAttribute('width'), 10) * scalingFactor;
-      loader.width = can.width;
-      can.height = parseInt(svg.getAttribute('height'), 10) * scalingFactor;
-      loader.height = can.height;
-      console.log(can.width);
-      console.log(can.height);
-      loader.onload = () => {
-        ctx.drawImage(loader, 0, 0, loader.width, loader.height);
-        const exportImg = can.toDataURL();
-        const aDownloadLink = document.createElement('a');
-        aDownloadLink.download = 'sym.png';
-        aDownloadLink.href = exportImg;
-        aDownloadLink.click();
-      };
-      const svgAsXML = (new XMLSerializer()).serializeToString(svg);
-      loader.src = `data:image/svg+xml,${encodeURIComponent(svgAsXML)}`;
-    },
     selectArchivedExercise(num, exerciseIndex) {
       this.archivedExerciseSelectedIndex = exerciseIndex;
     },
@@ -869,6 +946,17 @@ export default {
       this.showMsgKVDiagramMustNotBeEmptyOrFull = false;
 
       // put optimizations on screen
+      this.resultKVDiagram = kvdiagram;
+      this.resultNumVars = numVars;
+      try {
+        this.$refs.resultKVDiagram.setKVDiagram(kvdiagram); // try to update kvdiagram, in case its accordion item is already opened
+        // will fail if not mounted right now (=> its ref will be undefined). But thats fine, since it will send a 'requesting-kvdiagram-data-after-reactivation' event after next opening of the accordion-tab
+      } catch (_) {} // eslint-disable-line no-empty
+      try {
+        this.$refs.resultTruthTable.setKVDiagram(kvdiagram); // try to update truthtable, in case its accordion item is already opened
+        // will fail if not mounted right now (=> its ref will be undefined). But thats fine, since it will send a 'requesting-bf-after-reactivation' event after next opening of the accordion-tab
+      } catch (_) {} // eslint-disable-line no-empty
+
       this.dnf = optimizations.dnf.toLatex(varNames);
       this.knf = optimizations.knf.toLatex(varNames);
 
@@ -895,8 +983,6 @@ export default {
           ),
         ).slice().reverse(),
       ).slice().reverse();
-
-      console.log(this.quineClassesMin[1][1][0]);
 
       // Prime terms
       this.primeTermsMin = optimizations.primes['min-terms'].map(pt => pt.toLatex(varNames));
@@ -944,6 +1030,17 @@ export default {
         this.petrickStatementCurrent = this.petrickStatementMin;
       }
     },
+    updateResultKVDiagram() {
+      // console.log('AAAA');
+      this.$refs.resultKVDiagram.setKVDiagram(this.resultKVDiagram);
+    },
+    updateResultTruthtable() {
+      // console.log('updating result turthtable');
+      this.$refs.resultTruthTable.setKVDiagram(this.resultKVDiagram);
+    },
+    toggleLoadFromArchiveOrFormula(isToggleSwitchChecked) {
+      this.loadFromArchiveOrFormula = !isToggleSwitchChecked;
+    },
     resetPrimeTable() {
       this.primetableCurrentStepIndex = 0;
       this.primetableStepsAmount = this.primeTableCurrent.steps.length;
@@ -981,7 +1078,17 @@ export default {
     loadBFFromString(string) {
       const util = new BooleanFunctionUtil();
 
-      const bfObj = util.parseStringToBF(string, true);
+      let bfObj = null;
+      try {
+        bfObj = util.parseStringToBF(string, true);
+        this.loadFromFormula_formulaError = false;
+      } catch (error) {
+        // Error in formula
+        this.loadFromFormula_formulaError = true;
+        this.loadFromFormula_formulaErrorDetails = error;
+        return;
+      }
+
       const bf = bfObj.bf;
       const variables = bfObj.variables;
 
@@ -1145,10 +1252,24 @@ export default {
       }
     },
     unblurDOM(event) {
-      // console.log(event.target);
+      if (!event || !event.target || !event.target.classList) {
+        return;
+      }
       if (event.target.classList.contains('blurred')) {
         event.target.classList.remove('blurred');
+        return;
       }
+      // console.log(event);
+      /* works its way up the element tree and removes the 'blurred' class from the first one it finds */
+      let baseElement = event.target.parentNode;
+      // eslint-disable-next-line no-cond-assign
+      do {
+        // console.log(baseElement);
+        if (baseElement.classList.contains('blurred')) {
+          baseElement.classList.remove('blurred');
+          return;
+        }
+      } while ((baseElement = baseElement.parentNode) != null && baseElement.classList);
     },
     nthLetter(n) {
       // 1 -> A
@@ -1170,19 +1291,35 @@ export default {
 <style scoped lang="scss">
   @media screen and (max-width: 1400px) {
     .mainarea {
-      width: 95% !important;
+      width: 100% !important;
     }
     .bf-main-accordion-container {
       width: 100% !important;
     }
   }
 
+  @media screen and (max-width: 750px) {
+    .accordion-body-element-halfer {
+      display:block !important;
+      margin: auto !important;
+      width:100% !important;
+      // vertical-align: top;
+      // width: 48%;
+      // text-align: center;
+    }
+  }
 
   .mainarea {
     margin: auto;
     // width: 1240px;
-    padding: 8px;
+    padding-top: 8px;
     padding-bottom: 1.5em;
+  }
+
+  .fselect_broad {
+    .fpfSelect {
+      min-width: 16em !important;
+    }
   }
 
   .boolean-function-input-container {
@@ -1214,6 +1351,13 @@ export default {
 
       .exercise-selection-container-subsection {
         margin-bottom: .5em;
+
+        .errormessage {
+          background-color: #ff96008f;
+          border-radius: 0.6em;
+          font-style:italic;
+          padding: .3em;
+        }
       }
 
       // .selectBox, input {
@@ -1231,6 +1375,14 @@ export default {
     width: 1000px;
     margin: auto;
   }
+
+  .accordion-body-element-halfer {
+    display:inline-block;
+    vertical-align: top;
+    width: 48%;
+    text-align: center;
+  }
+
   // .optimizationsContainer {
   //   font-size: 1.2em;
   // }
@@ -1356,8 +1508,8 @@ export default {
   }
 
   .blurred {
-    filter: blur(1em);
-    -webkit-filter: blur(1em);
+    filter: blur(.4em);
+    -webkit-filter: blur(.4em);
   }
 
   .quine-class-single-class-container {

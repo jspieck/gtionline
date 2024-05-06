@@ -1,7 +1,7 @@
 <template>
-  <div class="truthTable">
+  <div class="truthTable" @click="((a) => $emit('clicked-somewhere', a))">
     <!-- <button @click="$emit('truthtable-modified', getKVDiagram())">Throw modified event</button> -->
-    <svg class="truthtableContainer" :width="svgWidth()" :height="svgHeight()" xmlns="http://www.w3.org/2000/svg">
+    <svg class="truthtableContainer" :width="svgWidth()" :height="svgHeight()" xmlns="http://www.w3.org/2000/svg" ref="svgdom">
 
       <!-- Header -->
       <g>
@@ -9,7 +9,7 @@
         <g v-for="i in numVariables" v-bind:key="`inputvariablename_cell_${i}`"
             :transform="`translate(${getInputCellSVGX(i-1)}, ${0})`">
           <!-- This is very eklig but I did not a way to get    -->
-          <g :transform="`translate(${cell_width * 0.2}, ${cell_height * (isSmallCharacter(varNames[numVariables-i]) ? 0.2 : 0.4)})`" dominant-baseline="bottom"
+          <g :transform="`translate(${cell_width * 0.2}, ${cell_height * (isSmallCharacter(varNames[numVariables-i]) ? 0.4 : 0.2)})`" dominant-baseline="bottom"
             class="unclickable entry header_entry" text-anchor="bottom" v-html="toSvg(varNames[numVariables-i])" />
         </g>
         <!-- 'f' above the Result Column -->
@@ -18,6 +18,9 @@
             class="unclickable entry header_entry" text-anchor="middle" v-html="toSvg('f')" />
         </g>
       </g>
+
+      <!-- Horizontal divider below the header (of variables) -->
+      <rect :x="getHorizontalBarBelowHeaderSVGX()" :y="getHorizontalBarBelowHeaderSVGY()" :width="svgWidth()" :height="1"/>
 
       <!-- Row Index Cells left -->
       <g v-for="r in (inputCellsVertical + 1)" v-bind:key="`indexcell_${r}`"
@@ -49,7 +52,7 @@
         <text :x="cell_width / 2" :y="cell_height / 2" dominant-baseline="middle"
         class="unclickable entry result_entry_number" text-anchor="middle">{{output}}</text>
         <rect fill="transparent" :width="cell_width" :height="cell_height" class="result_entry_iteractable"
-        @click="onClickResult(r)" />
+        @click="this.modifiable ? onClickResult(r) : {}" />
       </g>
 
     </svg>
@@ -64,10 +67,15 @@ export default {
   emits: [
     'truthtable-modified',
     'requesting-bf-after-reactivation',
+    'clicked-somewhere',
   ],
   props: {
     numVariables: Number,
     varNames: Array, // [String]
+    modifiable: {
+      type: Boolean,
+      default: true,
+    },
   },
   watch: {
     numVariables(newAmount, oldAmount) {
@@ -84,7 +92,7 @@ export default {
 
       cell_height: 30,
       cell_width: 25,
-      header_height: 30,
+      header_height: 37,
     };
   },
   created() {
@@ -107,6 +115,9 @@ export default {
     // other means (e.g. other BF Input Method like BFTable)
     this.$emit('requesting-bf-after-reactivation');
   },
+  mounted() {
+    this.$emit('requesting-bf-after-reactivation');
+  },
   methods: {
     clearTable() {
       this.table_inputs = reactive([]);
@@ -124,7 +135,7 @@ export default {
       this.clearTable();
     },
     onClickResult(r) {
-      console.log('registered click at: ', r);
+      // console.log('registered click at: ', r);
       // toggle result/output
       this.table_outputs[r] = this.toggleState(this.table_outputs[r]);
 
@@ -176,6 +187,12 @@ export default {
       const charsPerIndex = 2 /*= '0x' */ + Math.floor((Math.log(this.inputCellsVertical - 1) - 1) / Math.log(16)) + 1/*= index itself */ + 1;
       return charsPerIndex * this.cell_width / 2;
     },
+    getHorizontalBarBelowHeaderSVGX() {
+      return 0;
+    },
+    getHorizontalBarBelowHeaderSVGY() {
+      return this.getInputCellSVGY(0) - 5;
+    },
     getVerticalBarLeftSVGX() {
       return this.getIndexColumnWidth() + this.cell_width / 4;
     },
@@ -201,7 +218,7 @@ export default {
       return this.getInputCellSVGY(r);
     },
     isSmallCharacter(char) {
-      return !(char !== 'b' && char !== 'd');
+      return !(char.includes('b') || char.includes('d') || char.includes('f') || char.includes('h') || char.includes('k') || char.includes('l') || char.includes('t'));
     },
     num2indexHexString(i) {
       let num = i.toString(16).toUpperCase();
@@ -210,6 +227,9 @@ export default {
         num = `0${num}`;
       }
       return `0x${num}`;
+    },
+    getSVGDOM() {
+      return this.$refs.svgdom;
     },
   },
 };
