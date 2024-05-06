@@ -13652,8 +13652,8 @@ var BooleanFunctionUtil = /*#__PURE__*/function () {
     value: function extractCheapestSolutionFromPetrickStatementObj(petrickStatementObj, booleanFunctionOpTopLevel) {
       var primeTerms = petrickStatementObj.primeTerms;
       var lastStep = petrickStatementObj.steps[petrickStatementObj.steps.length - 1];
-      var cheapestSolution = lastStep.bf.getTerms()[0].getTerms()[petrickStatementObj.cheapestSolution];
-      console.log(lastStep, lastStep.bf);
+      var cheapestSolution = lastStep.bf.getTerms()[0].getTerms()[petrickStatementObj.cheapestSolution]; // console.log(lastStep, lastStep.bf);
+
       var out = new BooleanFunction$1(booleanFunctionOpTopLevel, []);
 
       for (var l = 0; l < cheapestSolution.getTerms().length; l++) {
