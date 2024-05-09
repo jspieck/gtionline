@@ -1,18 +1,16 @@
-// import { useI18n } from 'vue-i18n';
 import { KVDiagram } from './gti-tools';
-// import { i18n } from './i18n';
+
+// Example use case to load exercise with handle 'ex2': http://localhost:8080/#/cmos?load=ex2
 
 // Note: The exercises are declared in a function,
 // to allow for automatic retranslation thru vue upon
 // switches display languages.
 function bfArchivedExecises(i18n) {
-  // console.log(bfTableWithCyclicRestStr);
-  // console.log(tMethod);
-  // const i18n = useI18n();
   const sheetStr = i18n.t('sheet');
   return [
     {
       title: `${sheetStr} 5: 1a) i)`,
+      handle: '5-1ai',
       data: new KVDiagram([
         ['0', '1'],
         ['1', '0'],
@@ -20,6 +18,7 @@ function bfArchivedExecises(i18n) {
     },
     {
       title: `${sheetStr} 5: 1a) ii)`,
+      handle: '5-1aii',
       data: new KVDiagram([
         ['0', '0', '1', '0'],
         ['0', '0', '1', '1'],
@@ -27,6 +26,7 @@ function bfArchivedExecises(i18n) {
     },
     {
       title: `${sheetStr} 5: 1a) iii)`,
+      handle: '5-1aiii',
       data: new KVDiagram([
         ['0', '0', '0', '0'],
         ['1', '1', '0', '0'],
@@ -34,6 +34,7 @@ function bfArchivedExecises(i18n) {
     },
     {
       title: `${sheetStr} 5: 1c)`,
+      handle: '5-1c',
       data: new KVDiagram([
         ['1', '0', '1', '0'],
         ['0', '1', '0', '1'],
@@ -43,6 +44,7 @@ function bfArchivedExecises(i18n) {
     },
     {
       title: `${sheetStr} 5: 1d)`,
+      handle: '5-1d',
       data: new KVDiagram([
         ['1', '0', '0', '1'],
         ['0', '1', '1', '0'],
@@ -52,6 +54,7 @@ function bfArchivedExecises(i18n) {
     },
     {
       title: `${sheetStr} 6: 2a) i)`,
+      handle: '6-2ai',
       data: new KVDiagram([
         ['0', '0', '1', '1'],
         ['1', '0', '1', '1'],
@@ -59,6 +62,7 @@ function bfArchivedExecises(i18n) {
     },
     {
       title: `${sheetStr} 6: 2a) ii)`,
+      handle: '6-2aii',
       data: new KVDiagram([
         ['0', '1', '0', '1'],
         ['0', '1', '1', '0'],
@@ -66,6 +70,7 @@ function bfArchivedExecises(i18n) {
     },
     {
       title: `${sheetStr} 7: 1b)`,
+      handle: '7-1b',
       data: new KVDiagram([
         ['-', '0', '1', '0', '0', '1', '0', '-'],
         ['0', '1', '1', '0', '0', '1', '1', '0'],
@@ -75,6 +80,7 @@ function bfArchivedExecises(i18n) {
     },
     {
       title: `${sheetStr} 8: 1a)`,
+      handle: '8-1a',
       data: new KVDiagram([
         ['0', '0', '1', '0'],
         ['1', '1', '1', '1'],
@@ -84,6 +90,7 @@ function bfArchivedExecises(i18n) {
     },
     {
       title: `${sheetStr} 8: 1b)`,
+      handle: '8-1b',
       data: new KVDiagram([
         ['0', '0', '1', '0'],
         ['1', '1', '1', '0'],
@@ -95,6 +102,7 @@ function bfArchivedExecises(i18n) {
       // title: bfTableWithCyclicRestStr,
       // title: '`$t(\'bf_tableWithCyclicRest\')`',
       title: i18n.t('bf_tableWithCyclicRest'),
+      handle: 'tableWithCyclicRest',
       data: new KVDiagram([
         ['1', '0', '0', '1'],
         ['1', '-', '-', '0'],
@@ -127,8 +135,23 @@ export function bfGetArchivedExerciseTitles(i18n) {
 /**
  * @param i18n $i18n-translation object
  * @param {number} index
- * @returns {{title: string, data: KVDiagram}}
+ * @returns {{title: string, handle: string, data: KVDiagram}}
  */
 export function bfLoadArchivedExercise(i18n, index) {
   return bfArchivedExecises(i18n)[index];
+}
+
+/**
+ * @param i18n $i18n-translation object
+ * @param {string} handle String used to identify the exercise in the load=X query
+ * @returns {number} Index in the exercise array. Can be used with xxLoadArchivedExercise to retrieve the exercise data
+ */
+export function bfGetExerciseIndexOfHandle(i18n, handle) {
+  const exercises = bfArchivedExecises(i18n);
+  for (let i = 0; i < exercises.length; i += 1) {
+    if (exercises[i].handle === handle) {
+      return i;
+    }
+  }
+  return -1;
 }

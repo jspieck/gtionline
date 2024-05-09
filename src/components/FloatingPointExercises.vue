@@ -5,15 +5,20 @@
       <p class="introduction">{{$t('fpExerciseIntro')}}</p>
       <h4>{{$t('generateEx')}}</h4>
       <div>
-        <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0
-                  :options="operationOptions"/>
-        <div class="divMargin"/>
-        <button v-on:click="generateExercise">{{$t('generate')}}</button>
-        <div class="divMargin"/>
-        <FSelect :options="archivedExerciseTitles" :sel="0"
-          @input="selectArchivedExercise"/>
-        <div class="divMargin"/>
-        <button @click="loadArchivedExercise">{{$t('load')}}</button>
+        <div class="floatingPointInput">
+          <h5>{{$t('randomExercise')}}:</h5>
+          <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0
+                    :options="operationOptions"/>
+          <div class="divMargin"/>
+          <button v-on:click="generateExercise">{{$t('generate')}}</button>
+        </div>
+        <div class="floatingPointInput">
+          <h5>{{ $t('fp_from_archive') }}:</h5>
+          <FSelect :options="archivedExerciseTitles" :sel="0"
+            @input="selectArchivedExercise" ref="archivedExercisesFPDropDownMenu"/>
+          <div class="divMargin"/>
+          <button @click="loadArchivedExercise">{{$t('load')}}</button>
+        </div>
       </div>
       <div id="exerciseField" v-html="exerciseText"></div>
       <h4>{{$t('ownSolution')}}</h4>
@@ -70,6 +75,7 @@
 </template>
 
 <script>
+import { fpLoadArchivedExercise, fpGetArchivedExerciseTitles, fpGetExerciseIndexOfHandle } from '@/scripts/fpArchivedExercises';
 import AttentionBanner from './AttentionBanner.vue';
 import * as randomIEEE from '../scripts/randomIEEE';
 import FormatSelect from './FormatSelect.vue';
@@ -141,14 +147,19 @@ export default {
       archivedExerciseSelectedIndex: 0,
     };
   },
+  mounted() {
+    this.loadExerciseFromURL();
+
+    this.$nextTick(() => {
+      if (this.default) {
+        this.drawExercise();
+        // this.computeSolution();
+      }
+    });
+  },
   computed: {
     archivedExerciseTitles() {
-      return [
-        this.$t('complementExample'),
-        this.$t('shiftZero'),
-        this.$t('doubleNegative'),
-        this.$t('denormalized'),
-      ];
+      return fpGetArchivedExerciseTitles(this.$i18n);
     },
     operationOptions() {
       return {
@@ -193,14 +204,6 @@ export default {
           \\( fp_2 = \\text{${this.fp2}} \\)`;
     },
   },
-  mounted() {
-    this.$nextTick(() => {
-      if (this.default) {
-        this.drawExercise();
-        // this.computeSolution();
-      }
-    });
-  },
   updated() {
     this.$nextTick(() => {
       if (window.MathJax) {
@@ -222,31 +225,10 @@ export default {
       if (index < 0) {
         return;
       }
-      const archive = [
-        {
-          fp1: '0 01110 1100100000',
-          fp2: '1 01001 1001010111',
-          op: 'add',
-        },
-        {
-          fp1: '0 10010 0101111100',
-          fp2: '1 00010 0000100011',
-          op: 'add',
-        },
-        {
-          fp1: '1 01101 0111001010',
-          fp2: '1 01100 0100000010',
-          op: 'add',
-        },
-        {
-          fp1: '1 00110 0010101010',
-          fp2: '1 11011 0011111100',
-          op: 'div',
-        },
-      ];
-      this.fp1 = archive[index].fp1;
-      this.fp2 = archive[index].fp2;
-      this.selectedFormat[0] = archive[index].op;
+      const exercise = fpLoadArchivedExercise(this.$i18n, index).data;
+      this.fp1 = exercise.fp1;
+      this.fp2 = exercise.fp2;
+      this.selectedFormat[0] = exercise.op;
       this.prepareExercise();
     },
     saveVals() {
@@ -319,6 +301,29 @@ export default {
       this.selectedFormat[num] = val;
       // this.computeSolution();
     },
+    loadExerciseFromURL() {
+      if (!this.$route.query) {
+        return;
+      }
+      // Load Exercise statet in URL parameters (...?load=)
+      const exerciseHandle = this.$route.query.load;
+      if (!exerciseHandle) {
+        return;
+      }
+      const exerciseIndex = fpGetExerciseIndexOfHandle(this.$i18n, exerciseHandle);
+      if (exerciseIndex === -1) {
+        console.error('Unknown BooleanFunctionMinimizer-exercise handle: ', exerciseHandle);
+        return;
+      }
+      // retrieve exercise data
+      this.selectArchivedExercise(0, exerciseIndex);
+      this.loadArchivedExercise();
+
+      // Select the loaded exercise in the drop-down menu
+      this.$nextTick(() => {
+        this.$refs.archivedExercisesFPDropDownMenu.setSelected(exerciseIndex);
+      });
+    },
     /* computeSolution() {
       const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
       console.log(this.selectedFormat[0]);
@@ -382,6 +387,13 @@ $arrow-size: 12px;
   border-radius: 10px;
   border: 1px solid #d8d8d8;
   position: relative;
+
+  h5 {
+    margin: 0;
+    margin-bottom: .2em;
+    font-size: 1em;
+    text-align: center;
+  }
 }
 
 .formatContainer {

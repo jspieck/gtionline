@@ -31,6 +31,11 @@ export default {
       },
     },
   },
+  methods: {
+    setSelected(index) {
+      this.selectedOption = index;
+    },
+  },
 };
 </script>
 

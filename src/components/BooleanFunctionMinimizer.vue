@@ -28,20 +28,22 @@
               <span v-html="$t('archive')"/>
               <!-- Archiv:</span> -->
               <FSelect :options="archivedExerciseTitles" :sel="0"
-                @input="selectArchivedExercise" class="leftMargin10 fselect_broad"/>
+                @input="selectArchivedExercise" class="leftMargin10 fselect_broad" ref="archivedExercisesDropDownMenu"/>
               <button @click="loadArchivedExercise" >{{$t('load')}}</button>
             </div>
             <div v-if="!loadFromArchiveOrFormula" class="exercise-selection-container-subsection">
               <span style="padding-left:10px" v-html="$t('formula')"/>
               <!-- Formel:</span> -->
               <input v-model="stringInterpreterFormula" class="leftMargin10" size="17"/>
-              <button class="leftMargin10" @click="loadBFFromString(stringInterpreterFormula)">Laden</button>
+              <button class="leftMargin10" @click="loadBFFromString(stringInterpreterFormula)">{{ $t('translate_big') }}</button>
             </div>
             <div v-if="!loadFromArchiveOrFormula && loadFromFormula_formulaError" class="exercise-selection-container-subsection">
               <!-- <span class="errormessage">Fehler in Formel!</span> -->
               <span class="errormessage" >
                 <span v-html="$t('bf_error_at_symbol') + ' '"/>
-                <span> {{loadFromFormula_formulaErrorDetails.found}} </span>
+                <span> '{{loadFromFormula_formulaErrorDetails.found}}' </span>
+                <span v-html="' ' + $t('at_position') + ' '"/>
+                <span> {{ loadFromFormula_formulaErrorDetails.location.start.column }}</span>
               </span>
               <!-- Error at symbol '{{loadFromFormula_formulaErrorDetails.found}}'</span> -->
             </div>
@@ -485,7 +487,7 @@ import {
   BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION,
   BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING,
 } from '@/scripts/gti-tools';
-import { bfLoadArchivedExercise, bfGetArchivedExerciseTitles } from '@/scripts/bfArchivedExercises';
+import { bfLoadArchivedExercise, bfGetArchivedExerciseTitles, bfGetExerciseIndexOfHandle } from '@/scripts/bfArchivedExercises';
 import BooleanFunctionInputDevice from './BooleanFunctionInputDevice.vue';
 // import KVDiagram from './KVDiagram.vue';
 import Accordion from './EmbeddedAccordion.vue';
@@ -579,6 +581,9 @@ export default {
     } else {
       console.error('Upon created() call of BooleanFunctionMinimizer comp. MathJax was not yet initialized.');
     }
+  },
+  mounted() {
+    this.loadExerciseFromURL();
   },
   computed: {
     randomExercisesDifficulties() {
@@ -900,15 +905,15 @@ export default {
     },
   },
   methods: {
-    downloadSymSVG() {
-      const svg = document.getElementById('kvContainer');
-      const blob = new Blob([svg.outerHTML.toString()]);
-      const element = document.createElement('a');
-      element.download = 'sym.svg';
-      element.href = window.URL.createObjectURL(blob);
-      element.click();
-      element.remove();
-    },
+    // downloadSymSVG() {
+    //   const svg = document.getElementById('kvContainer');
+    //   const blob = new Blob([svg.outerHTML.toString()]);
+    //   const element = document.createElement('a');
+    //   element.download = 'sym.svg';
+    //   element.href = window.URL.createObjectURL(blob);
+    //   element.click();
+    //   element.remove();
+    // },
     selectArchivedExercise(num, exerciseIndex) {
       this.archivedExerciseSelectedIndex = exerciseIndex;
     },
@@ -1283,6 +1288,29 @@ export default {
       const svgmath = formulaSVG.getElementsByTagName('svg')[0];
       return svgmath.outerHTML;
     },
+    loadExerciseFromURL() {
+      if (!this.$route.query) {
+        return;
+      }
+      // Load Exercise statet in URL parameters (...?load=)
+      const exerciseHandle = this.$route.query.load;
+      if (!exerciseHandle) {
+        return;
+      }
+      // Inject the loaded exercise into the BooleanFunctionInputDevice
+      const exerciseIndex = bfGetExerciseIndexOfHandle(this.$i18n, exerciseHandle);
+      if (exerciseIndex === -1) {
+        console.error('Unknown BooleanFunctionMinimizer-exercise handle: ', exerciseHandle);
+        return;
+      }
+      this.selectArchivedExercise(0, exerciseIndex);
+      this.loadArchivedExercise();
+
+      // Select the loaded exercise in the drop-down menu
+      this.$nextTick(() => {
+        this.$refs.archivedExercisesDropDownMenu.setSelected(exerciseIndex);
+      });
+    },
   },
 };
 </script>
@@ -1341,6 +1369,8 @@ export default {
     }
 
     .exercise-selection-container {
+      vertical-align: top;
+
       .exercise-selection-container-tooltip {
         margin-bottom: .8em;
 
