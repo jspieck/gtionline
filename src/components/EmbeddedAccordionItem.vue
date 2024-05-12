@@ -43,7 +43,7 @@ export default {
     },
     toggleExpandSideways(e) {
       this.expandedSideways = !this.expandedSideways;
-      console.log('target: ', e.target);
+      // console.log('target: ', e.target);
       this.$nextTick(() => {
         if (window.MathJax) {
           window.MathJax.typeset();
@@ -52,7 +52,7 @@ export default {
 
       if (e.target.classList.contains('accordion-item-expand-sideways-toggle')) {
         // e.target.classList.toggle('active');
-        console.log('toggle requested!');
+        // console.log('toggle requested!');
         this.$refs.accordion_item_body.classList.toggle(
           'accordion-item-body-expanded-sideways',
         );
@@ -133,7 +133,7 @@ export default {
     // left: 50%;
     // margin-left: -49vw;
 
-    background: rgba(255, 255, 255, 0.877);
+    background: rgba(255, 255, 255, 1);
 
     border-style: solid;
     border-width: 1px;

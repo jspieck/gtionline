@@ -12698,6 +12698,11 @@ var BooleanFunctionLiteral = /*#__PURE__*/function () {
     value: function isNegated() {
       return this._negated;
     }
+  }, {
+    key: "setNegated",
+    value: function setNegated(negated) {
+      this._negated = negated;
+    }
     /**
     * Recursively computes and returns string representation of this BooleanFunction
     * @param {[string]} literalNames Array of names put in place of literals
@@ -12774,6 +12779,11 @@ var BooleanFunctionLiteral = /*#__PURE__*/function () {
         ids.push(this._id);
       }
     }
+  }, {
+    key: "toString",
+    value: function toString() {
+      return '@' + this._id;
+    }
   }]);
 
   return BooleanFunctionLiteral;
@@ -12828,6 +12838,16 @@ var BooleanFunction$1 = /*#__PURE__*/function () {
     key: "setTerm",
     value: function setTerm(index, term) {
       this._terms[index] = term;
+    }
+  }, {
+    key: "setLogicOperator",
+    value: function setLogicOperator(op) {
+      this._logicOperator = op;
+    }
+  }, {
+    key: "setTerms",
+    value: function setTerms(terms) {
+      this._terms = terms;
     }
     /**
      * Moves all elements of the array starting at index {index} one to the right and inserts {term} at index {index}
@@ -12895,7 +12915,7 @@ var BooleanFunction$1 = /*#__PURE__*/function () {
 
       if (checkOrder) {
         for (var t = 0; t < this.getTerms().length; t++) {
-          if (!this.getTerms()[t].equals(other.getTerms()[t], checkOrderOfSubSubTerms)) {
+          if (!this.getTerms()[t].equals(other.getTerms()[t], checkOrderOfSubSubTerms, checkOrderOfSubSubTerms)) {
             return false;
           }
         }
@@ -12905,7 +12925,7 @@ var BooleanFunction$1 = /*#__PURE__*/function () {
 
 
           if (other.getTerms().filter(function (otherTerm) {
-            return otherTerm.equals(querry);
+            return otherTerm.equals(querry, checkOrderOfSubSubTerms, checkOrderOfSubSubTerms);
           }).length == 0) {
             return {
               v: false
@@ -12917,6 +12937,25 @@ var BooleanFunction$1 = /*#__PURE__*/function () {
           var _ret = _loop(_t);
 
           if (_typeof(_ret) === "object") return _ret.v;
+        }
+
+        var _loop2 = function _loop2(_t2) {
+          var querry = other.getTerms()[_t2]; // check if an equivalent term can be found in -other-
+
+
+          if (_this.getTerms().filter(function (thisTerm) {
+            return thisTerm.equals(querry, checkOrderOfSubSubTerms, checkOrderOfSubSubTerms);
+          }).length == 0) {
+            return {
+              v: false
+            };
+          }
+        };
+
+        for (var _t2 = 0; _t2 < other.getTerms().length; _t2++) {
+          var _ret2 = _loop2(_t2);
+
+          if (_typeof(_ret2) === "object") return _ret2.v;
         }
       }
 
@@ -12944,6 +12983,11 @@ var BooleanFunction$1 = /*#__PURE__*/function () {
       var bracketClosed = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : ')';
       var reverseOrder = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : true;
       var str = '';
+
+      if (this._logicOperator == BooleanFunctionOperator_NOT) {
+        return '\\overline{' + this._terms[0].computeString(literalNames, op_orStr, op_andStr, negationHeader, negationFooter, bracketOpen, bracketClosed, reverseOrder) + '}';
+      }
+
       var amountTerms = this.getTerms().length;
       var useBrackets = amountTerms > 1 && this.getLogicOperator() !== BooleanFunctionOperator_OR;
 
@@ -13125,6 +13169,29 @@ var BooleanFunction$1 = /*#__PURE__*/function () {
       }
 
       return max;
+    }
+  }, {
+    key: "toString",
+    value: function toString() {
+      if (this._logicOperator == BooleanFunctionOperator_NOT) {
+        if (this._terms[0] instanceof BooleanFunctionLiteral) {
+          return '~' + this._terms[0].toString();
+        } else {
+          return '~(' + this._terms[0].toString() + ')';
+        }
+      } else {
+        var str = '';
+
+        for (var s = 0; s < this._terms.length; s++) {
+          if (this._terms[s] instanceof BooleanFunctionLiteral) {
+            str += this._terms[s].toString() + (s < this._terms.length - 1 ? this._logicOperator == BooleanFunctionOperator_AND ? '*' : '+' : '');
+          } else {
+            str += '(' + this._terms[s].toString() + ')' + (s < this._terms.length - 1 ? this._logicOperator == BooleanFunctionOperator_AND ? '*' : '+' : '');
+          }
+        }
+
+        return str;
+      }
     }
   }]);
 
@@ -15347,4 +15414,433 @@ function optimizeBooleanFunction(kvdiagram) {
   };
 }
 
-export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, AdditionPolyadic, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_DISTRIBUTION, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_INITIAL, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION, BooleanFunction$1 as BooleanFunction, BooleanFunctionLiteral, BooleanFunctionOperator_AND, BooleanFunctionOperator_OR, BooleanFunctionUtil, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, ConversionPolyadicNumbers, DivisionBaseNSigned, DivisionIEEE, KVDiagram, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, NumberPolyadic, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, SubtractionPolyadic, TextCMOS, computePrimesFromKV, generateRandomKVDiagram, getBaseNComplementFromString, getIEEEFromString, getNumFromString, optimizeBooleanFunction, parseBooleanFunction, roundArray, toLaTeX };
+var BOOLEAN_FUNCTION_NANDIFY_STEP_DOUBLE_NEGATION = 'nand_double_negation';
+var BOOLEAN_FUNCTION_NANDIFY_STEP_NOR_TO_AND = 'nand_nor_to_and';
+var BOOLEAN_FUNCTION_NANDIFY_STEP_REDUNDANT_AND = 'nand_redundant_and';
+var BOOLEAN_FUNCTION_NORIFY_STEP_NAND_TO_OR = 'nor_nand_to_or';
+var BOOLEAN_FUNCTION_NORIFY_STEP_DOUBLE_NEGATION = 'nor_double_negation';
+var BOOLEAN_FUNCTION_NORIFY_STEP_REDUNDANT_OR = 'nor_redundant_or';
+/**
+	 * Recursively computes and returns process of nandifying the given boolean function
+	 * @param {BooleanFunction} booleanFunction Boolean Function to NANDify
+   * @returns {{'result': BooleanFunction, 'steps': {'0': [Step], '1': [Step], '2': [Step]}}}
+	 */
+
+function computeNANDification(booleanFunction) {
+  var steps = {};
+
+  _performNANDStep(booleanFunction, booleanFunction, steps, 0); // Get index of last meaningful entry
+
+
+  var lastIndex = -1;
+
+  while (steps[++lastIndex] && steps[lastIndex].length > 0) {
+  }
+
+  lastIndex--;
+  var result;
+
+  if (lastIndex < 0) {
+    result = booleanFunction;
+  } else {
+    result = steps[lastIndex][steps[lastIndex].length - 1].bf;
+  }
+
+  _removeNegationBeforeLiterals(result);
+
+  return {
+    result: result,
+    steps: steps
+  };
+}
+/**
+	 * Recursively computes and returns process of norifying the given boolean function
+	 * @param {BooleanFunction} booleanFunction Boolean Function to NORify
+   * @returns {{'result': BooleanFunction, 'steps': {'0': [Step], '1': [Step], '2': [Step]}}}
+	 */
+
+function computeNORification(booleanFunction) {
+  var steps = {};
+
+  _performNORStep(booleanFunction, booleanFunction, steps, 0); // Get index of last meaningful entry
+
+
+  var lastIndex = -1;
+
+  while (steps[++lastIndex] && steps[lastIndex].length > 0) {
+  }
+
+  lastIndex--;
+  var result;
+
+  if (lastIndex < 0) {
+    result = booleanFunction;
+  } else {
+    result = steps[lastIndex][steps[lastIndex].length - 1].bf;
+  }
+
+  _removeNegationBeforeLiterals(result);
+
+  return {
+    result: result,
+    steps: steps
+  };
+}
+
+function _performNANDStep(completeBF, bf, steps, stepI) {
+  if (!steps[stepI]) steps[stepI] = [];
+
+  if (bf instanceof BooleanFunction$1 && bf.getLogicOperator() == BooleanFunctionOperator_NOT) {
+    if (bf.getTerms()[0] instanceof BooleanFunction$1 && bf.getTerms()[0].getLogicOperator() == BooleanFunctionOperator_AND) {
+      // console.log('case: ~(_*_)');
+      // ~ (_*_) => OK
+      var _iterator = _createForOfIteratorHelper(bf.getTerms()[0].getTerms()),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var subterm = _step.value;
+
+          _performNANDStep(completeBF, subterm, steps, stepI + 1);
+        } // steps[stepI].push(new Step(BOOLEAN_FUNCTION_NANDIFY_STEP_DOUBLE_NEGATION, completeBF.clone()));
+
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+    } else if (bf.getTerms()[0] instanceof BooleanFunction$1 && bf.getTerms()[0].getLogicOperator() == BooleanFunctionOperator_OR) {
+      // console.log('case: ~(_+_)');
+      // ~ (_+_) => !* => ~~!* => ~(~!* ~!*)
+      bf.setLogicOperator(BooleanFunctionOperator_AND);
+      var newSubterms = [];
+
+      var _iterator2 = _createForOfIteratorHelper(bf.getTerms()[0].getTerms()),
+          _step2;
+
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var s = _step2.value;
+          newSubterms.push(new BooleanFunction$1(BooleanFunctionOperator_NOT, [s])); // negate all terms of original + function
+        }
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
+      }
+
+      bf.setTerms(newSubterms);
+      steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NANDIFY_STEP_NOR_TO_AND, completeBF.clone())); // console.log(completeBF.toString());
+      // !* => ~~!*
+
+      bf.setLogicOperator(BooleanFunctionOperator_NOT);
+      bf.setTerms([new BooleanFunction$1(BooleanFunctionOperator_NOT, [new BooleanFunction$1(BooleanFunctionOperator_AND, bf.getTerms())])]);
+      steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NANDIFY_STEP_DOUBLE_NEGATION, completeBF.clone())); // console.log(completeBF.toString());
+      // ~~!* => ~(~!* ~!*)
+
+      bf.setTerms([new BooleanFunction$1(BooleanFunctionOperator_AND, [bf.getTerms()[0], bf.getTerms()[0]])]);
+      steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NANDIFY_STEP_REDUNDANT_AND, completeBF.clone())); // console.log(completeBF.toString());
+
+      var _iterator3 = _createForOfIteratorHelper(bf.getTerms()[0].getTerms()),
+          _step3;
+
+      try {
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var _subterm = _step3.value;
+
+          _performNANDStep(completeBF, _subterm, steps, stepI + 1);
+        }
+      } catch (err) {
+        _iterator3.e(err);
+      } finally {
+        _iterator3.f();
+      }
+    } else if (bf.getTerms()[0] instanceof BooleanFunction$1 && bf.getTerms()[0].getLogicOperator() == BooleanFunctionOperator_NOT) {
+      // console.log('case: ~~x');
+      // ~~x => ~(~x ~x)
+      bf.setTerms([new BooleanFunction$1(BooleanFunctionOperator_AND, [bf.getTerms()[0], bf.getTerms()[0]])]);
+      steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NANDIFY_STEP_REDUNDANT_AND, completeBF.clone()));
+
+      var _iterator4 = _createForOfIteratorHelper(bf.getTerms()[0].getTerms()),
+          _step4;
+
+      try {
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          var _subterm2 = _step4.value;
+
+          // console.log('case: ~~x: calling for subterm' + subterm.toString());
+          _performNANDStep(completeBF, _subterm2, steps, stepI + 1);
+        } // console.log('output of case: ~~x: ' + completeBF.toString());
+
+      } catch (err) {
+        _iterator4.e(err);
+      } finally {
+        _iterator4.f();
+      }
+    } // } else if (bf.getTerms()[0] instanceof BooleanFunctionLiteral) {
+    //   // ~x0 => ~x0 (internally in Literal class)
+    //   console.log("REDUCING!!!!");
+    //   bf.getTerms()[0].setNegated(!bf.getTerms()[0].isNegated());
+    // }
+
+  } else if (bf instanceof BooleanFunction$1 && bf.getLogicOperator() == BooleanFunctionOperator_AND) {
+    // * => ~~* => ~(~* ~*)
+    bf.setLogicOperator(BooleanFunctionOperator_NOT);
+    bf.setTerms([new BooleanFunction$1(BooleanFunctionOperator_NOT, [new BooleanFunction$1(BooleanFunctionOperator_AND, bf.getTerms())])]);
+    steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NANDIFY_STEP_DOUBLE_NEGATION, completeBF.clone())); // console.log(completeBF.toString());
+    // ~~* => ~(~* ~*)
+
+    bf.setTerms([new BooleanFunction$1(BooleanFunctionOperator_AND, [bf.getTerms()[0], bf.getTerms()[0]])]);
+    steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NANDIFY_STEP_REDUNDANT_AND, completeBF.clone()));
+
+    var _iterator5 = _createForOfIteratorHelper(bf.getTerms()[0].getTerms()),
+        _step5;
+
+    try {
+      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+        var _subterm3 = _step5.value;
+
+        // console.log('case: ~~x: calling for subterm' + subterm.toString());
+        _performNANDStep(completeBF, _subterm3, steps, stepI + 1);
+      } // _performNANDStep(completeBF, bf, steps, stepI); // do not count up. Should target the ~~x case
+
+    } catch (err) {
+      _iterator5.e(err);
+    } finally {
+      _iterator5.f();
+    }
+  } else if (bf instanceof BooleanFunction$1 && bf.getLogicOperator() == BooleanFunctionOperator_OR) {
+    // + => ~~+ => ~*
+    bf.setLogicOperator(BooleanFunctionOperator_NOT);
+    bf.setTerms([new BooleanFunction$1(BooleanFunctionOperator_NOT, [new BooleanFunction$1(BooleanFunctionOperator_OR, bf.getTerms())])]);
+    steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NANDIFY_STEP_DOUBLE_NEGATION, completeBF.clone())); // console.log(completeBF.toString());
+    // ~~+ => ~*
+
+    bf.getTerms()[0].setLogicOperator(BooleanFunctionOperator_AND);
+    var _newSubterms = [];
+
+    var _iterator6 = _createForOfIteratorHelper(bf.getTerms()[0].getTerms()[0].getTerms()),
+        _step6;
+
+    try {
+      for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+        var _s = _step6.value;
+
+        _newSubterms.push(new BooleanFunction$1(BooleanFunctionOperator_NOT, [_s])); // negate all terms of original + function
+
+      }
+    } catch (err) {
+      _iterator6.e(err);
+    } finally {
+      _iterator6.f();
+    }
+
+    bf.getTerms()[0].setTerms(_newSubterms);
+    steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NANDIFY_STEP_NOR_TO_AND, completeBF.clone())); // console.log(completeBF.toString());
+
+    var _iterator7 = _createForOfIteratorHelper(bf.getTerms()[0].getTerms()),
+        _step7;
+
+    try {
+      for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+        var _subterm4 = _step7.value;
+
+        _performNANDStep(completeBF, _subterm4, steps, stepI + 1);
+      }
+    } catch (err) {
+      _iterator7.e(err);
+    } finally {
+      _iterator7.f();
+    }
+  }
+}
+
+function _performNORStep(completeBF, bf, steps, stepI) {
+  if (!steps[stepI]) steps[stepI] = [];
+
+  if (bf instanceof BooleanFunction$1 && bf.getLogicOperator() == BooleanFunctionOperator_NOT) {
+    if (bf.getTerms()[0] instanceof BooleanFunction$1 && bf.getTerms()[0].getLogicOperator() == BooleanFunctionOperator_OR) {
+      // console.log('case: ~(_*_)');
+      // ~ (_+_) => OK
+      var _iterator8 = _createForOfIteratorHelper(bf.getTerms()[0].getTerms()),
+          _step8;
+
+      try {
+        for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
+          var subterm = _step8.value;
+
+          _performNORStep(completeBF, subterm, steps, stepI + 1);
+        } // steps[stepI].push(new Step(BOOLEAN_FUNCTION_NANDIFY_STEP_DOUBLE_NEGATION, completeBF.clone()));
+
+      } catch (err) {
+        _iterator8.e(err);
+      } finally {
+        _iterator8.f();
+      }
+    } else if (bf.getTerms()[0] instanceof BooleanFunction$1 && bf.getTerms()[0].getLogicOperator() == BooleanFunctionOperator_AND) {
+      // console.log('case: ~(_*_)');
+      // ~ (_*_) => !+ => ~~!+ => ~(~!+ ~!+)
+      bf.setLogicOperator(BooleanFunctionOperator_OR);
+      var newSubterms = [];
+
+      var _iterator9 = _createForOfIteratorHelper(bf.getTerms()[0].getTerms()),
+          _step9;
+
+      try {
+        for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+          var s = _step9.value;
+          newSubterms.push(new BooleanFunction$1(BooleanFunctionOperator_NOT, [s])); // negate all terms of original + function
+        }
+      } catch (err) {
+        _iterator9.e(err);
+      } finally {
+        _iterator9.f();
+      }
+
+      bf.setTerms(newSubterms);
+      steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NORIFY_STEP_NAND_TO_OR, completeBF.clone())); // console.log(completeBF.toString());
+      // !+ => ~~!+
+
+      bf.setLogicOperator(BooleanFunctionOperator_NOT);
+      bf.setTerms([new BooleanFunction$1(BooleanFunctionOperator_NOT, [new BooleanFunction$1(BooleanFunctionOperator_OR, bf.getTerms())])]);
+      steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NORIFY_STEP_DOUBLE_NEGATION, completeBF.clone())); // console.log(completeBF.toString());
+      // ~~!+ => ~(~!+ ~!+)
+
+      bf.setTerms([new BooleanFunction$1(BooleanFunctionOperator_OR, [bf.getTerms()[0], bf.getTerms()[0]])]);
+      steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NORIFY_STEP_REDUNDANT_OR, completeBF.clone())); // console.log(completeBF.toString());
+
+      var _iterator10 = _createForOfIteratorHelper(bf.getTerms()[0].getTerms()),
+          _step10;
+
+      try {
+        for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
+          var _subterm5 = _step10.value;
+
+          _performNORStep(completeBF, _subterm5, steps, stepI + 1);
+        }
+      } catch (err) {
+        _iterator10.e(err);
+      } finally {
+        _iterator10.f();
+      }
+    } else if (bf.getTerms()[0] instanceof BooleanFunction$1 && bf.getTerms()[0].getLogicOperator() == BooleanFunctionOperator_NOT) {
+      // console.log('case: ~~x');
+      // ~~x => ~(~x ~x)
+      bf.setTerms([new BooleanFunction$1(BooleanFunctionOperator_OR, [bf.getTerms()[0], bf.getTerms()[0]])]);
+      steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NORIFY_STEP_REDUNDANT_OR, completeBF.clone()));
+
+      var _iterator11 = _createForOfIteratorHelper(bf.getTerms()[0].getTerms()),
+          _step11;
+
+      try {
+        for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
+          var _subterm6 = _step11.value;
+
+          // console.log('case: ~~x: calling for subterm' + subterm.toString());
+          _performNORStep(completeBF, _subterm6, steps, stepI + 1);
+        } // console.log('output of case: ~~x: ' + completeBF.toString());
+
+      } catch (err) {
+        _iterator11.e(err);
+      } finally {
+        _iterator11.f();
+      }
+    }
+  } else if (bf instanceof BooleanFunction$1 && bf.getLogicOperator() == BooleanFunctionOperator_OR) {
+    // + => ~~+ => ~(~+ ~+)
+    bf.setLogicOperator(BooleanFunctionOperator_NOT);
+    bf.setTerms([new BooleanFunction$1(BooleanFunctionOperator_NOT, [new BooleanFunction$1(BooleanFunctionOperator_OR, bf.getTerms())])]);
+    steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NORIFY_STEP_DOUBLE_NEGATION, completeBF.clone())); // console.log(completeBF.toString());
+    // ~~+ => ~(~+ ~+)
+
+    bf.setTerms([new BooleanFunction$1(BooleanFunctionOperator_OR, [bf.getTerms()[0], bf.getTerms()[0]])]);
+    steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NORIFY_STEP_REDUNDANT_OR, completeBF.clone()));
+
+    var _iterator12 = _createForOfIteratorHelper(bf.getTerms()[0].getTerms()),
+        _step12;
+
+    try {
+      for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
+        var _subterm7 = _step12.value;
+
+        // console.log('case: ~~x: calling for subterm' + subterm.toString());
+        _performNORStep(completeBF, _subterm7, steps, stepI + 1);
+      }
+    } catch (err) {
+      _iterator12.e(err);
+    } finally {
+      _iterator12.f();
+    }
+  } else if (bf instanceof BooleanFunction$1 && bf.getLogicOperator() == BooleanFunctionOperator_AND) {
+    // * => ~~* => ~+
+    bf.setLogicOperator(BooleanFunctionOperator_NOT);
+    bf.setTerms([new BooleanFunction$1(BooleanFunctionOperator_NOT, [new BooleanFunction$1(BooleanFunctionOperator_AND, bf.getTerms())])]);
+    steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NORIFY_STEP_DOUBLE_NEGATION, completeBF.clone())); // console.log(completeBF.toString());
+    // ~~* => ~+
+
+    bf.getTerms()[0].setLogicOperator(BooleanFunctionOperator_OR);
+    var _newSubterms2 = [];
+
+    var _iterator13 = _createForOfIteratorHelper(bf.getTerms()[0].getTerms()[0].getTerms()),
+        _step13;
+
+    try {
+      for (_iterator13.s(); !(_step13 = _iterator13.n()).done;) {
+        var _s2 = _step13.value;
+
+        _newSubterms2.push(new BooleanFunction$1(BooleanFunctionOperator_NOT, [_s2])); // negate all terms of original + function
+
+      }
+    } catch (err) {
+      _iterator13.e(err);
+    } finally {
+      _iterator13.f();
+    }
+
+    bf.getTerms()[0].setTerms(_newSubterms2);
+    steps[stepI].push(new Step$2(BOOLEAN_FUNCTION_NORIFY_STEP_NAND_TO_OR, completeBF.clone())); // console.log(completeBF.toString());
+
+    var _iterator14 = _createForOfIteratorHelper(bf.getTerms()[0].getTerms()),
+        _step14;
+
+    try {
+      for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
+        var _subterm8 = _step14.value;
+
+        _performNORStep(completeBF, _subterm8, steps, stepI + 1);
+      }
+    } catch (err) {
+      _iterator14.e(err);
+    } finally {
+      _iterator14.f();
+    }
+  }
+}
+
+function _removeNegationBeforeLiterals(bf) {
+  if (bf instanceof BooleanFunctionLiteral) {
+    return;
+  }
+
+  for (var t = 0; t < bf.getTerms().length; t++) {
+    var subterm = bf.getTerms()[t];
+
+    if (subterm instanceof BooleanFunction$1 && subterm.getLogicOperator() == BooleanFunctionOperator_NOT && subterm.getTerms()[0] instanceof BooleanFunctionLiteral) {
+      // pull literal up the tree (replace NOT function and toggle internal negation of literal)
+      bf.setTerm(t, new BooleanFunctionLiteral(subterm.getTerms()[0].getId(), !subterm.getTerms()[0].isNegated()));
+      continue;
+    } // Just a BooleanFunction => recursive call
+
+
+    _removeNegationBeforeLiterals(subterm);
+  }
+}
+
+var Step$2 = function Step(actionType, bfSnapshot) {
+  _classCallCheck(this, Step);
+
+  this.actionType = actionType;
+  this.bf = bfSnapshot;
+};
+
+export { AdditionBaseNComplement, AdditionBaseNComplementToLatex, AdditionBaseNSigned, AdditionBaseNSignedToLatex, AdditionBaseNSignedToObject, AdditionIEEE, AdditionIEEEToLatex, AdditionIEEEToObject, AdditionPolyadic, BOOLEAN_FUNCTION_NANDIFY_STEP_DOUBLE_NEGATION, BOOLEAN_FUNCTION_NANDIFY_STEP_NOR_TO_AND, BOOLEAN_FUNCTION_NANDIFY_STEP_REDUNDANT_AND, BOOLEAN_FUNCTION_NORIFY_STEP_DOUBLE_NEGATION, BOOLEAN_FUNCTION_NORIFY_STEP_NAND_TO_OR, BOOLEAN_FUNCTION_NORIFY_STEP_REDUNDANT_OR, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_DISTRIBUTION, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_INITIAL, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION, BooleanFunction$1 as BooleanFunction, BooleanFunctionLiteral, BooleanFunctionOperator_AND, BooleanFunctionOperator_OR, BooleanFunctionUtil, CMOS$1 as CMOS, CMOSBuilder, CMOS as CMOSOLD, CMOSVisualBuilder, ComparisonBaseNSigned, ConversionPolyadicNumbers, DivisionBaseNSigned, DivisionIEEE, KVDiagram, LatexGenerator, MultiplicationBaseNComplement, MultiplicationBaseNComplementToLatex, MultiplicationBaseNSigned, MultiplicationBaseNSignedToLatex, MultiplicationBaseNSingleDigit, MultiplicationIEEE, NumberBaseNSigned, NumberPolyadic, SVGGenerator, SubtractionBaseNComplement, SubtractionBaseNComplementToLatex, SubtractionBaseNSigned, SubtractionBaseNSignedToLatex, SubtractionIEEE, SubtractionPolyadic, TextCMOS, computeNANDification, computeNORification, computePrimesFromKV, generateRandomKVDiagram, getBaseNComplementFromString, getIEEEFromString, getNumFromString, optimizeBooleanFunction, parseBooleanFunction, roundArray, toLaTeX };

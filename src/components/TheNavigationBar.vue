@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     checkMenuClose() {
-      console.log('Check');
+      // console.log('Check');
       const checkBox = document.getElementById('menu-btn');
       checkBox.checked = false;
     },

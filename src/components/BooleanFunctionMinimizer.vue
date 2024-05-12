@@ -470,6 +470,50 @@
               </Accordion>
             </template>
           </AccordionItem>
+
+          <AccordionItem>
+            <template v-slot:accordion-item-title>
+              {{$t('bf_nandnorification')}}
+            </template>
+            <template v-slot:accordion-item-body>
+              <Accordion class="emptyAccordionParentBody">
+                <AccordionItem :expandableSideways="true">
+                  <template v-slot:accordion-item-title>
+                    {{$t('bf_nandification')}}
+                  </template>
+                  <template v-slot:accordion-item-body>
+                    <div class="bf-petrick-statement-container">
+                      <div v-html="toSvg(nandOriginalBF.toLatex(this.$refs['childBooleanFunctionInputDevice'].currentVarNames, false))"
+                        class="nandnor-line"/>
+                      <div v-for="(round, r) in optimizationNAND.steps" :key="r" class="">
+                        <div v-for="(step, s) in round" :key="r + '_' + s" class="nandnor-line">
+                          <span v-html="toSvg(step.bf.toLatex(this.$refs['childBooleanFunctionInputDevice'].currentVarNames, false))"></span>
+                          <span style="padding-left:1em;"> | {{getTextFromNANDificationStep(step.actionType)}}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </AccordionItem>
+                <AccordionItem :expandableSideways="true">
+                  <template v-slot:accordion-item-title>
+                    {{$t('bf_norification')}}
+                  </template>
+                  <template v-slot:accordion-item-body>
+                    <div class="bf-petrick-statement-container">
+                      <div v-html="toSvg(norOriginalBF.toLatex(this.$refs['childBooleanFunctionInputDevice'].currentVarNames, false))"
+                        class="nandnor-line"/>
+                      <div v-for="(round, r) in optimizationNOR.steps" :key="r" class="">
+                        <div v-for="(step, s) in round" :key="r + '_' + s" class="nandnor-line">
+                          <span v-html="toSvg(step.bf.toLatex(this.$refs['childBooleanFunctionInputDevice'].currentVarNames, false))"></span>
+                          <span style="padding-left:1em;"> | {{getTextFromNORificationStep(step.actionType)}}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </AccordionItem>
+              </Accordion>
+            </template>
+          </AccordionItem>
         </Accordion>
       </div>
     </div>
@@ -486,6 +530,10 @@ import {
   BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_INITIAL, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_DISTRIBUTION,
   BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION,
   BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING,
+  computeNANDification, BOOLEAN_FUNCTION_NANDIFY_STEP_DOUBLE_NEGATION,
+  BOOLEAN_FUNCTION_NANDIFY_STEP_NOR_TO_AND, BOOLEAN_FUNCTION_NANDIFY_STEP_REDUNDANT_AND,
+  computeNORification, BOOLEAN_FUNCTION_NORIFY_STEP_NAND_TO_OR,
+  BOOLEAN_FUNCTION_NORIFY_STEP_DOUBLE_NEGATION, BOOLEAN_FUNCTION_NORIFY_STEP_REDUNDANT_OR,
 } from '@/scripts/gti-tools';
 import { bfLoadArchivedExercise, bfGetArchivedExerciseTitles, bfGetExerciseIndexOfHandle } from '@/scripts/bfArchivedExercises';
 import BooleanFunctionInputDevice from './BooleanFunctionInputDevice.vue';
@@ -528,6 +576,7 @@ export default {
       loadFromArchiveOrFormula: false,
       loadFromFormula_formulaError: false,
       loadFromFormula_formulaErrorDetails: {},
+      bfFromFormulaUnflattened: null,
 
       resultKVDiagram: {},
       resultNumVars: 4,
@@ -547,6 +596,10 @@ export default {
       petrickStatementMax: {},
       dmf: '',
       kmf: '',
+      nandOriginalBF: {},
+      norOriginalBF: {},
+      optimizationNAND: {},
+      optimizationNOR: {},
 
       literalNames: [],
       someOptimizationsFinished: false,
@@ -696,7 +749,7 @@ export default {
      * the cover table reference this computed value thru vue
      */
     primeTableColorMatrixObj() {
-      console.log('color Matrix is being recomputed');
+      // console.log('color Matrix is being recomputed');
 
       const colorMatrix = [];
       let highlightedCellRow = -1;
@@ -942,6 +995,10 @@ export default {
       let optimizations;
       try {
         optimizations = optimizeBooleanFunction(kvdiagram);
+        this.nandOriginalBF = this.bfFromFormulaUnflattened ? this.bfFromFormulaUnflattened.clone() : optimizations.dmf.clone();
+        this.norOriginalBF = this.bfFromFormulaUnflattened ? this.bfFromFormulaUnflattened.clone() : optimizations.kmf.clone();
+        this.optimizationNAND = computeNANDification(this.nandOriginalBF.clone());
+        this.optimizationNOR = computeNORification(this.norOriginalBF.clone());
       } catch (e) {
         this.showMsgKVDiagramMustNotBeEmptyOrFull = true;
         this.someOptimizationsFinished = false;
@@ -949,6 +1006,7 @@ export default {
         return;
       }
       this.showMsgKVDiagramMustNotBeEmptyOrFull = false;
+      this.bfFromFormulaUnflattened = null;
 
       // put optimizations on screen
       this.resultKVDiagram = kvdiagram;
@@ -1084,8 +1142,10 @@ export default {
       const util = new BooleanFunctionUtil();
 
       let bfObj = null;
+      let bfObjUnflattened = null;
       try {
         bfObj = util.parseStringToBF(string, true);
+        bfObjUnflattened = util.parseStringToBF(string, false);
         this.loadFromFormula_formulaError = false;
       } catch (error) {
         // Error in formula
@@ -1096,6 +1156,7 @@ export default {
 
       const bf = bfObj.bf;
       const variables = bfObj.variables;
+      this.bfFromFormulaUnflattened = bfObjUnflattened.bf;
 
       const kvdiagram = util.generateKVDiagramFromBooleanFunction(bf);
 
@@ -1311,6 +1372,30 @@ export default {
         this.$refs.archivedExercisesDropDownMenu.setSelected(exerciseIndex);
       });
     },
+    getTextFromNANDificationStep(actionType) {
+      switch (actionType) {
+        case BOOLEAN_FUNCTION_NANDIFY_STEP_DOUBLE_NEGATION:
+          return this.$t('bf_nandify_double_negation_text');
+        case BOOLEAN_FUNCTION_NANDIFY_STEP_NOR_TO_AND:
+          return this.$t('bf_nandify_nor_to_and_text');
+        case BOOLEAN_FUNCTION_NANDIFY_STEP_REDUNDANT_AND:
+          return this.$t('bf_nandify_redundant_and_text');
+        default:
+          return `ERR_actionType: ${actionType}`;
+      }
+    },
+    getTextFromNORificationStep(actionType) {
+      switch (actionType) {
+        case BOOLEAN_FUNCTION_NORIFY_STEP_DOUBLE_NEGATION:
+          return this.$t('bf_norify_double_negation_text');
+        case BOOLEAN_FUNCTION_NORIFY_STEP_NAND_TO_OR:
+          return this.$t('bf_norify_nand_to_or_text');
+        case BOOLEAN_FUNCTION_NORIFY_STEP_REDUNDANT_OR:
+          return this.$t('bf_norify_redundant_or_text');
+        default:
+          return `ERR_actionType: ${actionType}`;
+      }
+    },
   },
 };
 </script>
@@ -1521,6 +1606,10 @@ export default {
             margin-bottom: .5em;
         }
       }
+    }
+
+    .nandnor-line {
+      margin-bottom: .5em;
     }
   }
 

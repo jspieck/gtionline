@@ -7,33 +7,61 @@
       <div class="bodyContainer">
         <p>{{$t('enter_cmos')}}</p>
         <p>{{$t('cmos_infoblob_input_description')}}</p>
-        <div class="exercise-selection-container">
-          <div class="exercise-selection-container-tooltip">{{$t('generateEx')}}:</div>
-          <input id="cmosInput" v-model="cmosFormula"/>
-          <button @click="generateCmos(cmosFormula)">{{$t('generate')}}</button>
-          <div v-if="cmosError != null" class="exercise-selection-container-subsection">
-            <span class="errormessage">
-              <span v-html="$t('cmos_error_at_symbol') + ' '"/>
-              <span> '{{cmosError.found}}' </span>
-              <span v-html="$t('at_position') + ' '"/>
-              <span> {{ cmosError.location.start.column }}</span>
-            </span>
+        <div>
+          <!-- Box: Load exercise from archive or formula -->
+          <div class="exercise-selection-container">
+            <div class="exercise-selection-container-tooltip">
+              <span class="infoblob-wrapper" style="float:right">
+                <InfoBlob>
+                  <span v-html="$t('bf_infoblob_load_exercise')"></span>
+                </InfoBlob>
+              </span>
+              <span style="padding-left:10px; padding-right:10px; padding-top:3px;"
+              v-html="$t('bf_load_exercise_from_archive')"/>
+              <ToggleSwitch v-on:toggle="toggleLoadFromArchiveOrFormula" checkedDefault=false />
+              <span style="padding-left:10px; padding-right:10px; padding-top:3px;"
+              v-html="$t('formula')"/>
+            </div>
+            <!-- Lade Aufgabe aus Archiv -->
+            <div v-if="loadFromArchiveOrFormula === true" class="exercise-selection-container-subsection">
+              <FSelect :options="archivedExerciseTitles" :sel="0"
+                @input="selectArchivedExercise" ref="archivedExercisesCMOSDropDownMenu"/>
+              <button @click="loadArchivedExercise">{{$t('load')}}</button>
+            </div>
+            <!-- Lade Aufgabe aus Formel -->
+            <div v-if="loadFromArchiveOrFormula === false" class="exercise-selection-container-subsection">
+              <input v-model="cmosFormula" size="25"/>
+              <button @click="generateCmos(cmosFormula)">{{$t('translate_big')}}</button>
+              <div v-if="cmosError != null" class="exercise-selection-container-subsection">
+                <span class="errormessage">
+                  <span v-html="$t('cmos_error_at_symbol') + ' '"/>
+                  <span> '{{cmosError.found}}' </span>
+                  <span v-html="$t('at_position') + ' '"/>
+                  <span> {{ cmosError.location.start.column }}</span>
+                </span>
+              </div>
+              <!-- Formel Errormessage -->
+              <div v-if="cmosErrorFormulaTooSimple != null" class="exercise-selection-container-subsection">
+                <span class="errormessage">
+                  <span> {{$t('cmos_enter_more_than_one_variable')}} </span>
+                </span>
+              </div>
+            </div>
           </div>
-          <div v-if="cmosErrorFormulaTooSimple != null" class="exercise-selection-container-subsection">
-            <span class="errormessage">
-              <span> {{$t('cmos_enter_more_than_one_variable')}} </span>
-            </span>
+          <!-- Box: Generate random exercise -->
+          <div class="exercise-selection-container">
+            <div class="exercise-selection-container-tooltip">
+              {{$t('randomExercise')}}:
+            </div>
+            <div>
+              <span>{{$t('difficultyUC')}}:</span>
+              <FSelect :options="randomExercisesDifficulties" :sel="0" class="leftMargin10"
+                @input="selectRandomExerciseDifficulty"/>
+              <button @click="generateRandomExercise">{{$t('load')}}</button>
+            </div>
           </div>
+          <h4 id="displayedFormula" v-if="renderedFormula" v-html="$t('formula') + ': ' + renderedFormula"/>
         </div>
-        <div class="exercise-selection-container">
-          <div class="exercise-selection-container-tooltip">{{$t('exerciseArchive')}}:</div>
-          <div>
-            <FSelect :options="archivedExerciseTitles" :sel="0"
-              @input="selectArchivedExercise" ref="archivedExercisesCMOSDropDownMenu"/>
-            <button @click="loadArchivedExercise">{{$t('load')}}</button>
-          </div>
-        </div>
-        <h4 id="displayedFormula" v-if="renderedFormula" v-html="$t('formula') + ': ' + renderedFormula"/>
       </div>
     </div>
     <div id="cmosOutput" v-html="cmosOutput" class="blurred" @mousedown="unblurDOM" ref="cmosOutput"></div>
@@ -57,12 +85,14 @@ import { cmosLoadArchivedExercise, cmosGetArchivedExerciseTitles, cmosGetExercis
 import hljs from 'highlight.js/lib/common';
 import InfoBlob from './InfoBlob.vue';
 import FormatSelect from './FormatSelect.vue';
+import ToggleSwitch from './ToggleSwitch.vue';
 
 export default {
   name: 'KVDiagram',
   components: {
     InfoBlob,
     FSelect: FormatSelect,
+    ToggleSwitch,
   },
   data() {
     return {
@@ -74,7 +104,11 @@ export default {
       cmosError: null,
       cmosErrorFormulaTooSimple: null,
       renderedFormula: '',
+
       archivedExerciseSelectedIndex: 0,
+      loadFromArchiveOrFormula: true,
+      randomExerciseDifficultySelectedIndex: 0,
+
       examples: ['(~a+c)*~(~b+c*~a)', '(~x+~r*~(~n+a))*(n+r)', 'x0*~x1*(~x2+~x3)', '~(~a*b+a*~b)'],
     };
   },
@@ -86,12 +120,13 @@ export default {
   computed: {
     archivedExerciseTitles() {
       return cmosGetArchivedExerciseTitles(this.$i18n);
-      // return [
-      //   `${this.$t('example')} 1`,
-      //   `${this.$t('example')} 2`,
-      //   `${this.$t('wintersemester')}: ${this.$t('sheet')} 9 A1b)`,
-      //   `${this.$t('sommersemester')}: ${this.$t('sheet')} 6 A3`,
-      // ];
+    },
+    randomExercisesDifficulties() {
+      return [
+        this.$t('easy'),
+        this.$t('difficultyMiddle'),
+        this.$t('difficultyHard'),
+      ];
     },
   },
   methods: {
@@ -136,7 +171,28 @@ export default {
       }
       return solutionChars.join('');
     },
+    generateOnlyLatex(cmosFormula) {
+      // Parse Expression
+      let expression;
+      try {
+        expression = parseBooleanFunction(cmosFormula);
+      } catch (_) {
+        return null;
+      }
+      // Build CMOS Latex
+      const cmos = new CMOSBuilder().buildCMOS(expression);
+      const visBuilder = new CMOSVisualBuilder();
+      let cmosVisual;
+      try {
+        cmosVisual = visBuilder.buildHull(cmos, { channelWidth: 0.4 });
+      } catch (_) {
+        return null;
+      }
+      window.MathJax.options.ignoreHtmlClass = 'tex2jax_ignore';
+      return new LatexGenerator().buildLatex(cmosVisual, toLaTeX).trim();
+    },
     generateCmos(cmosFormula) {
+      // console.log(this.approximateTransistorCountOfFormula(cmosFormula));
       const builder = new CMOSBuilder();
       let expression;
       try {
@@ -282,6 +338,54 @@ export default {
         this.$refs.archivedExercisesCMOSDropDownMenu.setSelected(exerciseIndex);
       });
     },
+    toggleLoadFromArchiveOrFormula(isToggleSwitchChecked) {
+      this.loadFromArchiveOrFormula = !isToggleSwitchChecked;
+    },
+    selectRandomExerciseDifficulty(num, difficultyIndex) {
+      this.randomExerciseDifficultySelectedIndex = difficultyIndex;
+    },
+    // approximateTransistorCountOfFormula(formula) {
+    //   const latex = this.generateOnlyLatex(formula);
+    //   return latex.match(/node\[nmos/g).length + latex.match(/node\[pmos/g).length;
+    // },
+    generateRandomFormula() {
+      const a = Math.random() < 0.5 ? 'a' : '~a';
+      const aOpposite = a === 'a' ? '~a' : 'a';
+      const b = Math.random() < 0.5 ? 'b' : '~b';
+      const c = Math.random() < 0.5 ? 'c' : '~c';
+      const d = Math.random() < 0.5 ? 'd' : '~d';
+      const op0 = Math.random() < 0.5 ? '+' : '*';
+      const op0Opposite = op0 === '+' ? '*' : '+';
+      const op1 = Math.random() < 0.5 ? '+' : '*';
+      let candidates = [];
+      switch (this.randomExerciseDifficultySelectedIndex) {
+        case '0':
+        default:
+          candidates = [`a${op0}${b}`];
+          break;
+        case '1':
+          candidates = [
+            a + op0 + b + op1 + c,
+            `(${a}${op0}${b})${op0Opposite}(${c}${op0}${d})`,
+            `${a}*${c}+${aOpposite}`,
+            `(${a}+${b})*${c}`,
+            `${a}+${b}*${c}`,
+            `${c}*(${a}+${b})`,
+            `${c}*${a}+${b}`,
+          ];
+          break;
+        case '2':
+          candidates = [
+            `${Math.random() < 0.5 ? '~' : ''}((${a}+${b})*${c}+~(${a}+${b}))`,
+            `${Math.random() < 0.5 ? '~' : ''}(${a}*${b}+${c}+~(${a}*${b}))`,
+          ];
+          break;
+      }
+      return candidates[Math.floor(Math.random() * candidates.length)];
+    },
+    generateRandomExercise() {
+      this.generateCmos(this.generateRandomFormula());
+    },
   },
 };
 </script>
@@ -359,6 +463,7 @@ export default {
     margin-left: .8em;
     margin-right: .8em;
     background: #ffffff47;
+    text-align: center;
   }
 
   .exercise-selection-container {
