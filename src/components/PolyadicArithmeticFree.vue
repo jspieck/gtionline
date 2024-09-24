@@ -6,32 +6,47 @@
     <div id="fpOperationTable" class="fpOperationTable">
       <div class="container">
         <table class="polyadicTable">
-          <tr>
-            <td>
-              <div class="solutionInput">
-              <p>{{$t('input')}} 1</p>
-              <input id="InputNumber1" v-model="inputNums[0]" :placeholder="this.$t('inputNumber') "
-                     @input="selectVal(0, $event.target.value)" :class="backFormat"/>
-              </div>
-            </td>
-            <td>
-              <div class="solutionInput">
-              <p>{{$t('input')}} 2</p>
-              <input id="InputNumber2" v-model="inputNums[1]" :placeholder="this.$t('inputNumber') "
-                     @input="selectVal(1, $event.target.value)" :class="backFormat"/>
-              </div>
-            </td>
-            <td>
-              <p>{{$t('firstFormat')}}</p>
-              <FSelect :num="0" :sel="selectedFormat" @input="selectFormat"
-                       :options="formatOptions"/>
-            </td>
-            <td>
-              <p>{{$t('operand')}}</p>
-              <FSelect :sel="operator" @input="selectOperator"
-                :options="operationOptions"/>
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>
+                <div class="solutionInput">
+                  <p>{{$t('input')}} 1</p>
+                  <input
+                    id="InputNumber1"
+                    v-model="inputNums[0]"
+                    :placeholder="this.$t('inputNumber') "
+                    @input="selectVal(0, $event.target.value)"
+                    :class="backFormat" />
+                </div>
+              </td>
+              <td>
+                <div class="solutionInput">
+                  <p>{{$t('input')}} 2</p>
+                  <input
+                    id="InputNumber2"
+                    v-model="inputNums[1]"
+                    :placeholder="this.$t('inputNumber') "
+                    @input="selectVal(1, $event.target.value)"
+                    :class="backFormat" />
+                </div>
+              </td>
+              <td>
+                <p>{{$t('firstFormat')}}</p>
+                <FSelect
+                  :num="0"
+                  :sel="selectedFormat"
+                  @input="selectFormat"
+                  :options="formatOptions" />
+              </td>
+              <td>
+                <p>{{$t('operand')}}</p>
+                <FSelect
+                  :sel="operator"
+                  @input="selectOperator"
+                  :options="operationOptions" />
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -40,12 +55,12 @@
         <p>{{$t('ownSolution')}}</p>
         <input id="propSol" :class="backSol" v-model="propSol">
       </div>
-      <div class="divMargin"/>
+      <div class="divMargin" />
       <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
     </div>
     <h4>{{$t('correctSolution')}}</h4>
     <div style="position: relative">
-      <AttentionBanner :text="$t('attSolve')"/>
+      <AttentionBanner :text="$t('attSolve')" />
       <!--<div class="pdfGen">
         <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
       </div>
@@ -60,14 +75,14 @@
             {{panel.name}}
           </template>
           <template v-slot:accordion-item-body>
-            <span v-html="panel.text"></span>
+            <span v-html="panel.text" />
             <Accordion v-if="panel.subpanels != null">
               <AccordionItem v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name">
                 <template v-slot:accordion-item-title>
                   {{subpanel.name}}
                 </template>
                 <template v-slot:accordion-item-body>
-                  <span v-html="subpanel.text"></span>
+                  <span v-html="subpanel.text" />
                 </template>
               </AccordionItem>
             </Accordion>
@@ -75,7 +90,7 @@
         </AccordionItem>
       </Accordion>
     </div>
-    <div id="jaxHelper"></div>
+    <div id="jaxHelper" />
   </div>
 </template>
 

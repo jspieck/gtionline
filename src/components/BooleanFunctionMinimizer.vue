@@ -1,9 +1,10 @@
 <template>
   <div>
     <div class="mainarea">
-      <h3>{{$t('functionMin')}}<InfoBlob>
-        <span v-html="$t('bf_infoblob_functionMin')"></span>
-      </InfoBlob></h3>
+      <h3>{{ $t('functionMin') }}<InfoBlob>
+        <span v-html="$t('bf_infoblob_functionMin')" />
+      </InfoBlob>
+      </h3>
       <div class="boolean-function-input-container">
         <div>
           <div class="exercise-selection-container">
@@ -11,38 +12,45 @@
             <div class="exercise-selection-container-tooltip">
               <span class="infoblob-wrapper" style="float:right">
                 <InfoBlob>
-                  <span v-html="$t('bf_infoblob_load_exercise')"></span>
+                  <span v-html="$t('bf_infoblob_load_exercise')" />
                 </InfoBlob>
               </span>
-              <span style="padding-left:10px; padding-right:10px; padding-top:3px;"
-              v-html="$t('bf_load_exercise_from_archive')"/>
-                <!-- Lade Aufgabe aus Archiv -->
+              <span
+                style="padding-left:10px; padding-right:10px; padding-top:3px;"
+                v-html="$t('bf_load_exercise_from_archive')" />
+              <!-- Lade Aufgabe aus Archiv -->
               <!-- </span> -->
               <ToggleSwitch v-on:toggle="toggleLoadFromArchiveOrFormula" checkedDefault=false />
-              <span style="padding-left:10px; padding-right:10px; padding-top:3px;"
-              v-html="$t('formula')"/>
-                <!-- Formel
+              <span style="padding-left:10px; padding-right:10px; padding-top:3px;" v-html="$t('formula')" />
+              <!-- Formel
               </span> -->
             </div>
             <div v-if="loadFromArchiveOrFormula" class="exercise-selection-container-subsection">
-              <span v-html="$t('archive')"/>
+              <span v-html="$t('archive')" />
               <!-- Archiv:</span> -->
-              <FSelect :options="archivedExerciseTitles" :sel="0"
-                @input="selectArchivedExercise" class="leftMargin10 fselect_broad" ref="archivedExercisesDropDownMenu"/>
-              <button @click="loadArchivedExercise" >{{$t('load')}}</button>
+              <FSelect
+                :options="archivedExerciseTitles"
+                :sel="0"
+                @input="selectArchivedExercise"
+                class="leftMargin10 fselect_broad"
+                ref="archivedExercisesDropDownMenu" />
+              <button @click="loadArchivedExercise">{{ $t('load') }}</button>
             </div>
             <div v-if="!loadFromArchiveOrFormula" class="exercise-selection-container-subsection">
-              <span style="padding-left:10px" v-html="$t('formula')"/>
+              <span style="padding-left:10px" v-html="$t('formula')" />
               <!-- Formel:</span> -->
-              <input v-model="stringInterpreterFormula" class="leftMargin10" size="17"/>
-              <button class="leftMargin10" @click="loadBFFromString(stringInterpreterFormula)">{{ $t('translate_big') }}</button>
+              <input v-model="stringInterpreterFormula" class="leftMargin10" size="17" />
+              <button class="leftMargin10" @click="loadBFFromString(stringInterpreterFormula)">{{ $t('translate_big')
+              }}</button>
             </div>
-            <div v-if="!loadFromArchiveOrFormula && loadFromFormula_formulaError" class="exercise-selection-container-subsection">
+            <div
+              v-if="!loadFromArchiveOrFormula && loadFromFormula_formulaError"
+              class="exercise-selection-container-subsection">
               <!-- <span class="errormessage">Fehler in Formel!</span> -->
-              <span class="errormessage" >
-                <span v-html="$t('bf_error_at_symbol') + ' '"/>
-                <span> '{{loadFromFormula_formulaErrorDetails.found}}' </span>
-                <span v-html="' ' + $t('at_position') + ' '"/>
+              <span class="errormessage">
+                <span v-html="`${$t('bf_error_at_symbol')} `" />
+                <span> '{{ loadFromFormula_formulaErrorDetails.found }}' </span>
+                <span v-html="` ${$t('at_position')} `" />
                 <span> {{ loadFromFormula_formulaErrorDetails.location.start.column }}</span>
               </span>
               <!-- Error at symbol '{{loadFromFormula_formulaErrorDetails.found}}'</span> -->
@@ -50,31 +58,37 @@
           </div>
           <div class="exercise-selection-container">
             <div class="exercise-selection-container-tooltip">
-              {{$t('randomExercise')}}:
+              {{ $t('randomExercise') }}:
               <span class="infoblob-wrapper">
                 <InfoBlob>
-                  <span v-html="$t('bf_infoblob_random_exercise_selection')"></span>
+                  <span v-html="$t('bf_infoblob_random_exercise_selection')" />
                 </InfoBlob>
               </span>
             </div>
             <div class="exercise-selection-container-subsection">
-              <span>{{$t('goal')}}:</span>
-              <FSelect :options="randomExercisesGoalsTitles" class="leftMargin10" :sel="0"
-                @input="selectRandomExerciseGoal"/>
+              <span>{{ $t('goal') }}:</span>
+              <FSelect
+                :options="randomExercisesGoalsTitles"
+                class="leftMargin10"
+                :sel="0"
+                @input="selectRandomExerciseGoal" />
             </div>
             <div>
-              <span>{{$t('difficultyUC')}}:</span>
-              <FSelect :options="randomExercisesDifficulties" :sel="0" class="leftMargin10"
-                @input="selectRandomExerciseDifficulty"/>
-              <button @click="generateRandomExercise">{{$t('load')}}</button>
+              <span>{{ $t('difficultyUC') }}:</span>
+              <FSelect
+                :options="randomExercisesDifficulties"
+                :sel="0"
+                class="leftMargin10"
+                @input="selectRandomExerciseDifficulty" />
+              <button @click="generateRandomExercise">{{ $t('load') }}</button>
             </div>
           </div>
         </div>
 
-        <p class="boolean-function-input-container-divider">{{$t('bf_infotext_or_interact_with_kv')}}:</p>
+        <p class="boolean-function-input-container-divider">{{ $t('bf_infotext_or_interact_with_kv') }}:</p>
 
         <div>
-          <BooleanFunctionInputDevice class='bfInputDevice' ref="childBooleanFunctionInputDevice"/>
+          <BooleanFunctionInputDevice class='bfInputDevice' ref="childBooleanFunctionInputDevice" />
         </div>
         <!--
         <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM)">Use KVDiagram</button>
@@ -85,26 +99,26 @@
         </div>
         -->
 
-        <button class="boolean-function-button-optimize" @click="optimize()">{{$t('doCalculation')}}</button>
+        <button class="boolean-function-button-optimize" @click="optimize()">{{ $t('doCalculation') }}</button>
 
         <!--<button class="boolean-function-button-optimize" @click="downloadSymSVG()">{{$t('downloadSvg')}}</button>-->
 
         <!-- <button class="boolean-function-button-optimize" @click="downloadSymPNG()">{{$t('downloadPng')}}</button> -->
       </div>
 
-      <div class="horizontalbar"></div>
+      <div class="horizontalbar" />
 
-      <span v-if="this.showMsgKVDiagramMustNotBeEmptyOrFull === true" v-html="$t('bf_infotext_kv_must_not_be_empty')"/>
+      <span v-if="this.showMsgKVDiagramMustNotBeEmptyOrFull === true" v-html="$t('bf_infotext_kv_must_not_be_empty')" />
       <span v-else-if="this.someOptimizationsFinished === false">
-        {{$t("bf_infotext_what_to_do")}}
+        {{ $t("bf_infotext_what_to_do") }}
       </span>
       <div v-else class="bf-main-accordion-container">
         <span style="padding-top:3px; padding-right:10px;">
-          {{$t('minterms')}}
+          {{ $t('minterms') }}
         </span>
         <ToggleSwitch v-on:toggle="toggleMinMaxTerms" checkedDefault=false />
         <span style="padding-top:3px; padding-left:10px;">
-          {{$t('maxterms')}}
+          {{ $t('maxterms') }}
         </span>
 
         <Accordion>
@@ -112,48 +126,56 @@
             <template v-slot:accordion-item-title>
               {{ $t('kvDiagram') }} / {{ $t('truthtable') }}
             </template>
-            <template v-slot:accordion-item-body>
+<template v-slot:accordion-item-body>
               <Accordion class="emptyAccordionParentBody">
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
                     {{$t('kvDiagram')}}
                   </template>
-                  <template v-slot:accordion-item-body>
+<template v-slot:accordion-item-body>
                     <KVDiagr ref="resultKVDiagram" :modifiable="false"
                     @requesting-kvdiagram-data-after-reactivation="updateResultKVDiagram()"
                     :numVariables="this.resultNumVars" :varNames="this.$refs['childBooleanFunctionInputDevice'].currentVarNames"/>
                   </template>
-                </AccordionItem>
-                <AccordionItem>
-                  <template v-slot:accordion-item-title>
+</AccordionItem>
+<AccordionItem>
+  <template v-slot:accordion-item-title>
                     {{$t('truthtable')}}
                   </template>
-                  <template v-slot:accordion-item-body>
+  <template v-slot:accordion-item-body>
                     <TruthTable ref="resultTruthTable" :modifiable="false"
                     @requesting-bf-after-reactivation="updateResultTruthtable()"
                     :numVariables="this.resultNumVars" :varNames="this.$refs['childBooleanFunctionInputDevice'].currentVarNames"/>
                   </template>
-                </AccordionItem>
-              </Accordion>
-            </template>
-          </AccordionItem> -->
+</AccordionItem>
+</Accordion>
+</template>
+</AccordionItem> -->
           <AccordionItem>
             <template v-slot:accordion-item-title>
               {{ $t('kvDiagram') }} / {{ $t('truthtable') }}
             </template>
             <template v-slot:accordion-item-body>
-              <KVDiagr ref="resultKVDiagram" :modifiable="false"
-                    @requesting-kvdiagram-data-after-reactivation="updateResultKVDiagram()"
-                    :numVariables="this.resultNumVars" :varNames="this.$refs['childBooleanFunctionInputDevice'].currentVarNames"
-                    class="accordion-body-element-halfer blurred" @clicked-somewhere="unblurDOM"/>
-              <TruthTable ref="resultTruthTable" :modifiable="false"
-                    @requesting-bf-after-reactivation="updateResultTruthtable()"
-                    :numVariables="this.resultNumVars" :varNames="this.$refs['childBooleanFunctionInputDevice'].currentVarNames"
-                    class="accordion-body-element-halfer blurred" @clicked-somewhere="unblurDOM"/>
+              <KVDiagr
+                ref="resultKVDiagram"
+                :modifiable="false"
+                @requesting-kvdiagram-data-after-reactivation="updateResultKVDiagram()"
+                :numVariables="this.resultNumVars"
+                :varNames="this.$refs.childBooleanFunctionInputDevice.currentVarNames"
+                class="accordion-body-element-halfer blurred"
+                @clicked-somewhere="unblurDOM" />
+              <TruthTable
+                ref="resultTruthTable"
+                :modifiable="false"
+                @requesting-bf-after-reactivation="updateResultTruthtable()"
+                :numVariables="this.resultNumVars"
+                :varNames="this.$refs.childBooleanFunctionInputDevice.currentVarNames"
+                class="accordion-body-element-halfer blurred"
+                @clicked-somewhere="unblurDOM" />
             </template>
           </AccordionItem>
 
-              <!-- <Accordion class="emptyAccordionParentBody">
+          <!-- <Accordion class="emptyAccordionParentBody">
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
                     {{$t('kvDiagram')}}
@@ -180,29 +202,29 @@
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              {{$t('bf_normal_forms')}}
+              {{ $t('bf_normal_forms') }}
             </template>
             <template v-slot:accordion-item-body>
               <Accordion class="emptyAccordionParentBody">
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
-                    {{$t('bf_disjunctiveNormalForm')}} (DNF)
+                    {{ $t('bf_disjunctiveNormalForm') }} (DNF)
                   </template>
                   <template v-slot:accordion-item-body>
-                    <span>{{$t('bf_disjunctiveNormalForm_explanation')}}</span>
+                    <span>{{ $t('bf_disjunctiveNormalForm_explanation') }}</span>
                     <div class="overflowXContainer">
-                      <span class="svg-text" v-html="toSvg(dnf)"></span>
+                      <span class="svg-text" v-html="toSvg(dnf)" />
                     </div>
                   </template>
                 </AccordionItem>
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
-                    {{$t('bf_conjunctiveNormalForm')}} (KNF)
+                    {{ $t('bf_conjunctiveNormalForm') }} (KNF)
                   </template>
                   <template v-slot:accordion-item-body>
-                    <span>{{$t('bf_conjunctiveNormalForm_explanation')}}</span>
+                    <span>{{ $t('bf_conjunctiveNormalForm_explanation') }}</span>
                     <div class="overflowXContainer">
-                      <span class="svg-text" v-html="toSvg(knf)"/>
+                      <span class="svg-text" v-html="toSvg(knf)" />
                     </div>
                   </template>
                 </AccordionItem>
@@ -212,16 +234,16 @@
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              {{$t('bf_quineMCCluskeyClasses')}}
+              {{ $t('bf_quineMCCluskeyClasses') }}
             </template>
             <template v-slot:accordion-item-body>
-              <span style="text-align: left">{{$t('bf_quineMCCluskeyClasses_explanation')}}</span>
+              <span style="text-align: left">{{ $t('bf_quineMCCluskeyClasses_explanation') }}</span>
               <div class="quine-classes-toggle-switch-container">
                 <div>
                   <ToggleSwitch v-on:toggle="changeQuineClassesDisplayStyle" checkedDefault=true />
-                  <span>{{$t('colorCoding')}}
+                  <span>{{ $t('colorCoding') }}
                     <InfoBlob>
-                        <span v-html="$t('bf_infoblob_quineMCCluskeyClasses_colorCoding')"></span>
+                      <span v-html="$t('bf_infoblob_quineMCCluskeyClasses_colorCoding')" />
                     </InfoBlob>
                   </span>
                 </div>
@@ -230,46 +252,59 @@
                   <ToggleSwitch v-on:toggle="changeQuineClassesBinaryDisplayStyle" checkedDefault=false />
                   <span>01-0
                     <InfoBlob>
-                        <span v-html="$t('bf_infoblob_quineMCCluskeyClasses_01')"></span>
+                      <span v-html="$t('bf_infoblob_quineMCCluskeyClasses_01')" />
                     </InfoBlob>
                   </span>
                 </div>
               </div>
-              <div class="smallTopBottomMargin">{{$t('bf_infotest_click_on_hidden_areas_to_make_visible')}}:</div>
+              <div class="smallTopBottomMargin">{{ $t('bf_infotest_click_on_hidden_areas_to_make_visible') }}:</div>
               <!-- Quine Cluskey classes have been reversed in script section for easy access here -->
               <!-- loop through Q_X -->
               <div v-for="(qlayer, qi) in quineClassesCurrent" :key="`quineClassLayerMin_${qi}`">
                 <!-- loop through Q_._X -->
-                <div v-if="qi < quineClassesCurrent.length - 1" class="blurred" @mousedown="unblurDOM"> <!-- @mouseenter="unblurDOM" -->
-                  <div v-for="(qlayerInner, qqi) in quineClassesCurrent[qi]" :key="`quineClassLayerInnerMin_${qqi}`"
-                      class="quine-class-single-class-container">
+                <div v-if="qi < quineClassesCurrent.length - 1" class="blurred" @mousedown="unblurDOM">
+                  <!-- @mouseenter="unblurDOM" -->
+                  <div
+                    v-for="(qlayerInner, qqi) in quineClassesCurrent[qi]"
+                    :key="`quineClassLayerInnerMin_${qqi}`"
+                    class="quine-class-single-class-container">
                     <!-- Q{{quineClassesCurrent.length-qi-1}}_{{quineClassesCurrent[qi].length-qqi-1}}: { -->
-                    <span class="svg-text" v-html="toSvg(`Q _{${quineClassesCurrent.length-qi-1},\\ ${quineClassesCurrent[qi].length-qqi-1}}:\\{`)"></span>
+                    <span
+                      class="svg-text"
+                      v-html="toSvg(`Q _{${quineClassesCurrent.length - qi - 1},\\ ${quineClassesCurrent[qi].length - qqi - 1}}:\\{`)" />
 
                     <span class="termcollection">
                       <!-- loop through all terms in Q_x_y -->
                       <span v-for="(qterm, ti) in quineClassesCurrent[qi][qqi]" :key="`quineClassTermMin_${ti}`">
                         <!-- non-reduced term -->
                         <template v-if="!quineClassesCurrent[qi][qqi][ti][1]">
-                          <span class="svg-text term" v-html="toSvg(quineClassesCurrent[qi][qqi][ti][
-                            quineClassesBinaryDisplayStyle ? 2 : 0
-                          ])"/>
+                          <span
+                            class="svg-text term"
+                            v-html="toSvg(quineClassesCurrent[qi][qqi][ti][
+                              quineClassesBinaryDisplayStyle ? 2 : 0
+                            ])" />
                         </template>
                         <!-- reduced term -->
                         <template v-else>
-                          <span v-if="!quineClassesColorfulDisplayStyle" class="svg-text term .quine-classes-reduced-term-crossed" v-html="toSvg('\\cancel{' + quineClassesCurrent[qi][qqi][ti][quineClassesBinaryDisplayStyle ? 2 : 0] + '}')"/>
+                          <span
+                            v-if="!quineClassesColorfulDisplayStyle"
+                            class="svg-text term .quine-classes-reduced-term-crossed"
+                            v-html="toSvg(`\\cancel{${quineClassesCurrent[qi][qqi][ti][quineClassesBinaryDisplayStyle ? 2 : 0]}}`)" />
                           <!-- <span v-if="!quineClassesColorfulDisplayStyle" class="svg-text term quine-classes-reduced-term-crossed" v-html="toSvg(quineClassesCurrent[qi][qqi][ti][0])"/> -->
-                          <span v-else class="svg-text term quine-classes-reduced-term-colored" v-html="toSvg(quineClassesCurrent[qi][qqi][ti][quineClassesBinaryDisplayStyle ? 2 : 0])"/>
+                          <span
+                            v-else
+                            class="svg-text term quine-classes-reduced-term-colored"
+                            v-html="toSvg(quineClassesCurrent[qi][qqi][ti][quineClassesBinaryDisplayStyle ? 2 : 0])" />
                         </template>
 
-                        <span v-if="ti < quineClassesCurrent[qi][qqi].length - 1" v-html="toSvg(',')"/>
+                        <span v-if="ti < quineClassesCurrent[qi][qqi].length - 1" v-html="toSvg(',')" />
                       </span>
                     </span>
 
-                    <span class="svg-text" v-html="toSvg('\\}')"></span>
+                    <span class="svg-text" v-html="toSvg('\\}')" />
                   </div>
                 </div>
-                <div class="horizontalbarfull" v-if="qi < quineClassesCurrent.length - 2"></div>
+                <div class="horizontalbarfull" v-if="qi < quineClassesCurrent.length - 2" />
               </div>
 
             </template>
@@ -295,37 +330,41 @@
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              {{$t('bf_primeTerms')}}
+              {{ $t('bf_primeTerms') }}
             </template>
             <template v-slot:accordion-item-body>
-              {{$t('bf_primeTerms_explanation')}}
+              {{ $t('bf_primeTerms_explanation') }}
               <Accordion>
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
-                    {{$t('bf_primeImplicants')}}
+                    {{ $t('bf_primeImplicants') }}
                   </template>
                   <template v-slot:accordion-item-body>
-                    {{$t('bf_bf_primeImplicants_explanation')}} <br>
+                    {{ $t('bf_bf_primeImplicants_explanation') }} <br>
                     <div class="overflowXContainer">
                       <span v-for="i in primeTermsMin.length" :key="`primeTermMinID_${i}`">
                         <!-- Term + potential comma -->
-                        <span class="svg-text term" v-html="toSvg(primeTermsMin[i-1] + `${i-1 < primeTermsMin.length - 1 ? ',' : ''}`)"/>
+                        <span
+                          class="svg-text term"
+                          v-html="toSvg(`${primeTermsMin[i - 1]}${i - 1 < primeTermsMin.length - 1 ? ',' : ''}`)" />
                       </span>
                     </div>
                   </template>
                 </AccordionItem>
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
-                    {{$t('bf_primeImplicates')}}
+                    {{ $t('bf_primeImplicates') }}
                   </template>
                   <template v-slot:accordion-item-body>
-                      {{$t('bf_primeImplicates_explanation')}} <br>
-                      <div class="overflowXContainer">
-                        <span v-for="i in primeTermsMax.length" :key="`primeTermMaxID_${i}`">
-                          <!-- Term + potential comma -->
-                          <span class="svg-text term" v-html="toSvg(primeTermsMax[i-1] + `${i-1 < primeTermsMax.length - 1 ? ',' : ''}`)"/>
-                        </span>
-                      </div>
+                    {{ $t('bf_primeImplicates_explanation') }} <br>
+                    <div class="overflowXContainer">
+                      <span v-for="i in primeTermsMax.length" :key="`primeTermMaxID_${i}`">
+                        <!-- Term + potential comma -->
+                        <span
+                          class="svg-text term"
+                          v-html="toSvg(`${primeTermsMax[i - 1]}${i - 1 < primeTermsMax.length - 1 ? ',' : ''}`)" />
+                      </span>
+                    </div>
                   </template>
                 </AccordionItem>
               </Accordion>
@@ -334,56 +373,62 @@
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              {{$t('bf_primeCoverTable')}}
+              {{ $t('bf_primeCoverTable') }}
             </template>
             <template v-slot:accordion-item-body>
               <div class="primeTableContainer">
                 <table class="bf-primetable">
-                  <!-- Top row -->
-                  <tr>
-                    <!-- Empty cells in top left -->
-                    <td></td>
-                    <td :class="primeTableColorMatrixObj.matrix[0][0]"> PI </td>
-                    <!-- Base terms -->
-                    <th v-for="(bt, col) in primeTableCurrent.baseTerms" :key="`primeTableCurrentTR_${col}`"
+                  <thead>
+                    <tr>
+                      <!-- Empty cells in top left -->
+                      <td />
+                      <td :class="primeTableColorMatrixObj.matrix[0][0]"> PI </td>
+                      <!-- Base terms -->
+                      <th
+                        v-for="(bt, col) in primeTableCurrent.baseTerms"
+                        :key="`primeTableCurrentTR_${col}`"
                         :class="[
-                          primeTableColorMatrixObj.matrix[col+1][0],
+                          primeTableColorMatrixObj.matrix[col + 1][0],
                           (primeTableColorMatrixObj.highlightedCellRow === 0
-                          && primeTableColorMatrixObj.highlightedCellColumn === col+1)
-                          ? 'primetable-highlighted-cell' : ''
-                        ]"
-                    >
-                    {{primeTableBaseTermIndices[col]}}
-                    </th>
+                            && primeTableColorMatrixObj.highlightedCellColumn === col + 1)
+                            ? 'primetable-highlighted-cell' : '',
+                        ]">
+                        {{ primeTableBaseTermIndices[col] }}
+                      </th>
 
-                    <!-- Cost column -->
-                    <th v-html="toSvg('c_{i}')" class="svg-text"/>
-                  </tr>
-
-                  <!-- body of table -->
-                  <tr v-for="(pt, row) in primeTableCurrent.primeTerms" :key="`primeTableCurrentRow_${row}`">
-                    <!-- prime term on the left -->
-                    <td>{{nthLetter(row + 1)}}</td>
-                    <th class="svg-text" v-html="toSvg(pt.toLatex(literalNames))"
+                      <!-- Cost column -->
+                      <th v-html="toSvg('c_{i}')" class="svg-text" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- body of table -->
+                    <tr v-for="(pt, row) in primeTableCurrent.primeTerms" :key="`primeTableCurrentRow_${row}`">
+                      <!-- prime term on the left -->
+                      <td>{{ nthLetter(row + 1) }}</td>
+                      <th
+                        class="svg-text"
+                        v-html="toSvg(pt.toLatex(literalNames))"
                         :class="[
-                          primeTableColorMatrixObj.matrix[0][row+1],
-                          (primeTableColorMatrixObj.highlightedCellRow === row + 1 && primeTableColorMatrixObj.highlightedCellColumn === 0) ? 'primetable-highlighted-cell' : ''
-                        ]"
-                    />
+                          primeTableColorMatrixObj.matrix[0][row + 1],
+                          (primeTableColorMatrixObj.highlightedCellRow === row + 1 && primeTableColorMatrixObj.highlightedCellColumn === 0) ? 'primetable-highlighted-cell' : '',
+                        ]" />
 
-                    <!-- Crosses -->
-                    <td v-for="col in primeTableCurrent.coverTable.length" :key="`primeTableCurrentCell_${row}_${col}`"
-                        :class="primeTableColorMatrixObj.matrix[col][row+1]"
-                    >
-                      <span v-if="primeTableCurrent.coverTable[col-1][row] === true"
+                      <!-- Crosses -->
+                      <td
+                        v-for="col in primeTableCurrent.coverTable.length"
+                        :key="`primeTableCurrentCell_${row}_${col}`"
+                        :class="primeTableColorMatrixObj.matrix[col][row + 1]">
+                        <span
+                          v-if="primeTableCurrent.coverTable[col - 1][row] === true"
                           :class="(primeTableColorMatrixObj.highlightedCellRow === row + 1 && primeTableColorMatrixObj.highlightedCellColumn === col) ? 'primetable-highlighted-cell' : ''">
-                        X
-                      </span>
-                    </td>
+                          X
+                        </span>
+                      </td>
 
-                    <!-- Cost -->
-                    <td>{{primeTableCurrent.primeTerms[row].getTerms().length}}</td>
-                  </tr>
+                      <!-- Cost -->
+                      <td>{{ primeTableCurrent.primeTerms[row].getTerms().length }}</td>
+                    </tr>
+                  </tbody>
                 </table>
               </div>
 
@@ -391,28 +436,30 @@
                 <button @click='primetableStepBackward' :disabled="primetableCurrentStepIndex === 0">
                   &larr;
                 </button>
-                <span class="control-text">{{$t('step')}}
-                  <span>{{primetableCurrentStepIndex}} / {{primetableStepsAmount}}</span>
+                <span class="control-text">{{ $t('step') }}
+                  <span>{{ primetableCurrentStepIndex }} / {{ primetableStepsAmount }}</span>
                 </span>
                 <button @click='primetableStepForward' :disabled="primetableCurrentStepIndex === primetableStepsAmount">
                   &rarr;
                 </button>
               </div>
               <div class="explanation-text">
-                <div class="hiddenLongText" v-html="this.$t('bf_covertable_step_description_initial', {
-                   ifMinTermsEinstelleElseNullstelle: this.$t('bf_einstelle'),
+                <div
+                  class="hiddenLongText"
+                  v-html="this.$t('bf_covertable_step_description_initial', {
+                    ifMinTermsEinstelleElseNullstelle: this.$t('bf_einstelle'),
                     ifMinTermsEinstellenElseNullstellen: this.$t('bf_einstelle'),
                     ifMinTermsNullstelleElseEinstelle: this.$t('bf_einstelle'),
                     ifMinTermsNullstellenElseEinstellen: this.$t('bf_einstelle'),
-                })"></div>
-                <div class="bf-primetable-step-explanation" v-html="primeTableCurrentExplanation"></div>
+                  })" />
+                <div class="bf-primetable-step-explanation" v-html="primeTableCurrentExplanation" />
               </div>
             </template>
           </AccordionItem>
 
           <AccordionItem :expandableSideways="true">
             <template v-slot:accordion-item-title>
-              {{$t('bf_petrickExpression')}}
+              {{ $t('bf_petrickExpression') }}
             </template>
             <template v-slot:accordion-item-body>
               <!-- <div><span v-html="toSvg(petrickStatementCurrent.expressionDirectStr + '=1')"/><span> | Absorption + Idempotenz</span></div>
@@ -422,13 +469,16 @@
               <div class="bf-petrick-statement-container">
                 <span v-if="petrickStatementCurrent.steps.length > 4" class="infoblob-wrapper">
                   <InfoBlob>
-                    <span v-html="$t('bf_infoblob_petrick_statement')" class="petrick-statement-infoblob-ol"></span>
+                    <span v-html="$t('bf_infoblob_petrick_statement')" class="petrick-statement-infoblob-ol" />
                   </InfoBlob>
                 </span>
-                <div v-for="(step, s) in petrickStatementCurrent.steps" :key="s" class="bf-petrick-statement-subcontainer">
-                  <span v-html="toSvg(step.bf.toLatex('ABCDEFGHIJKLMNOPQRSTUVPXYZ'.split(''), false) + ' = 1')"></span>
+                <div
+                  v-for="(step, s) in petrickStatementCurrent.steps"
+                  :key="s"
+                  class="bf-petrick-statement-subcontainer">
+                  <span v-html="toSvg(`${step.bf.toLatex('ABCDEFGHIJKLMNOPQRSTUVPXYZ'.split(''), false)} = 1`)" />
                   <span v-if="s < petrickStatementCurrent.steps.length - 1">
-                    | {{ getTextFromPetrickStatementActionType(petrickStatementCurrent.steps[s+1].actionType) }}
+                    | {{ getTextFromPetrickStatementActionType(petrickStatementCurrent.steps[s + 1].actionType) }}
                   </span>
 
                   <!-- Math explanations also rendered as svg: -->
@@ -441,29 +491,29 @@
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              {{$t('bf_minimalForms')}}
+              {{ $t('bf_minimalForms') }}
             </template>
             <template v-slot:accordion-item-body>
               <Accordion class="emptyAccordionParentBody">
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
-                    {{$t('bf_disjunctiveMinimalForm')}} (DMF)
+                    {{ $t('bf_disjunctiveMinimalForm') }} (DMF)
                   </template>
                   <template v-slot:accordion-item-body>
-                    {{$t('bf_disjunctiveMinimalForm_explanation')}} <br>
+                    {{ $t('bf_disjunctiveMinimalForm_explanation') }} <br>
                     <div class="overflowXContainer">
-                      <span class="svg-text" v-html="toSvg(dmf)"></span>
+                      <span class="svg-text" v-html="toSvg(dmf)" />
                     </div>
                   </template>
                 </AccordionItem>
                 <AccordionItem>
                   <template v-slot:accordion-item-title>
-                    {{$t('bf_conjunctiveMinimalForm')}} (KMF)
+                    {{ $t('bf_conjunctiveMinimalForm') }} (KMF)
                   </template>
                   <template v-slot:accordion-item-body>
-                    {{$t('bf_conjunctiveMinimalForm_explanation')}} <br>
+                    {{ $t('bf_conjunctiveMinimalForm_explanation') }} <br>
                     <div class="overflowXContainer">
-                      <span class="svg-text" v-html="toSvg(kmf)"></span>
+                      <span class="svg-text" v-html="toSvg(kmf)" />
                     </div>
                   </template>
                 </AccordionItem>
@@ -473,22 +523,24 @@
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
-              {{$t('bf_nandnorification')}}
+              {{ $t('bf_nandnorification') }}
             </template>
             <template v-slot:accordion-item-body>
               <Accordion class="emptyAccordionParentBody">
                 <AccordionItem :expandableSideways="true">
                   <template v-slot:accordion-item-title>
-                    {{$t('bf_nandification')}}
+                    {{ $t('bf_nandification') }}
                   </template>
                   <template v-slot:accordion-item-body>
                     <div class="bf-petrick-statement-container">
-                      <div v-html="toSvg(nandOriginalBF.toLatex(this.$refs['childBooleanFunctionInputDevice'].currentVarNames, false))"
-                        class="nandnor-line"/>
+                      <div
+                        v-html="toSvg(nandOriginalBF.toLatex(this.$refs.childBooleanFunctionInputDevice.currentVarNames, false))"
+                        class="nandnor-line" />
                       <div v-for="(round, r) in optimizationNAND.steps" :key="r" class="">
-                        <div v-for="(step, s) in round" :key="r + '_' + s" class="nandnor-line">
-                          <span v-html="toSvg(step.bf.toLatex(this.$refs['childBooleanFunctionInputDevice'].currentVarNames, false))"></span>
-                          <span style="padding-left:1em;"> | {{getTextFromNANDificationStep(step.actionType)}}</span>
+                        <div v-for="(step, s) in round" :key="`${r}_${s}`" class="nandnor-line">
+                          <span
+                            v-html="toSvg(step.bf.toLatex(this.$refs.childBooleanFunctionInputDevice.currentVarNames, false))" />
+                          <span style="padding-left:1em;"> | {{ getTextFromNANDificationStep(step.actionType) }}</span>
                         </div>
                       </div>
                     </div>
@@ -496,16 +548,18 @@
                 </AccordionItem>
                 <AccordionItem :expandableSideways="true">
                   <template v-slot:accordion-item-title>
-                    {{$t('bf_norification')}}
+                    {{ $t('bf_norification') }}
                   </template>
                   <template v-slot:accordion-item-body>
                     <div class="bf-petrick-statement-container">
-                      <div v-html="toSvg(norOriginalBF.toLatex(this.$refs['childBooleanFunctionInputDevice'].currentVarNames, false))"
-                        class="nandnor-line"/>
+                      <div
+                        v-html="toSvg(norOriginalBF.toLatex(this.$refs.childBooleanFunctionInputDevice.currentVarNames, false))"
+                        class="nandnor-line" />
                       <div v-for="(round, r) in optimizationNOR.steps" :key="r" class="">
-                        <div v-for="(step, s) in round" :key="r + '_' + s" class="nandnor-line">
-                          <span v-html="toSvg(step.bf.toLatex(this.$refs['childBooleanFunctionInputDevice'].currentVarNames, false))"></span>
-                          <span style="padding-left:1em;"> | {{getTextFromNORificationStep(step.actionType)}}</span>
+                        <div v-for="(step, s) in round" :key="`${r}_${s}`" class="nandnor-line">
+                          <span
+                            v-html="toSvg(step.bf.toLatex(this.$refs.childBooleanFunctionInputDevice.currentVarNames, false))" />
+                          <span style="padding-left:1em;"> | {{ getTextFromNORificationStep(step.actionType) }}</span>
                         </div>
                       </div>
                     </div>
@@ -519,7 +573,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 import {
@@ -630,7 +683,7 @@ export default {
       // But honestly this solution is pretty sleek and this lazy loading is cool.
       try {
         this.toSvg('(\\require{cancel})');
-      } catch (_) {} // eslint-disable-line no-empty
+      } catch (_) { } // eslint-disable-line no-empty
     } else {
       console.error('Upon created() call of BooleanFunctionMinimizer comp. MathJax was not yet initialized.');
     }
@@ -742,7 +795,7 @@ export default {
       ];
     },
     randomExercisesGoalsTitles() {
-      return this.randomExercisesGoalsMetrics.map(goal => goal.title);
+      return this.randomExercisesGoalsMetrics.map((goal) => goal.title);
     },
     /**
      * Computes current color matrix of the cover table. Cells of
@@ -871,10 +924,10 @@ export default {
             ifMinTermsNullstelleElseEinstelle: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstelle') : this.$t('bf_einstelle'),
             ifMinTermsNullstellenElseEinstellen: this.useMinNotMaxTermDisplayStyle ? this.$t('bf_nullstellen') : this.$t('bf_einstellen'),
           });
-          // return this.$t('bf_covertable_step_description_core_found').replace('$$$COLUMN_NAME$$$', this.primeTableBaseTermIndices[step.column]);
-          // //   columnName: this.primeTableBaseTermIndices[step.column],
-          // //   rowName: this.nthLetter(step.core + 1),
-          // // });
+        // return this.$t('bf_covertable_step_description_core_found').replace('$$$COLUMN_NAME$$$', this.primeTableBaseTermIndices[step.column]);
+        // //   columnName: this.primeTableBaseTermIndices[step.column],
+        // //   rowName: this.nthLetter(step.core + 1),
+        // // });
         case BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED:
           // return '<h4>Spalte bereits abgedeckt:</h4>'
           //   + `Die Spalte ${this.primeTableBaseTermIndices[step.column]} wird bereits vom Primterm ${this.nthLetter(step.coveredBy + 1)} überdeckt. `
@@ -946,7 +999,7 @@ export default {
       const indices = [];
       for (let b = 0; b < baseTerms.length; b += 1) {
         const baseTerm = baseTerms[b];
-        const index = parseInt(baseTerm.getTerms().map(bfliteral => (bfliteral.isNegated() ? '0' : '1')).reverse().join(''), 2);
+        const index = parseInt(baseTerm.getTerms().map((bfliteral) => (bfliteral.isNegated() ? '0' : '1')).reverse().join(''), 2);
         // Convert index to base format of symmetry diagram
         const indexBase = index.toString(this.indexBaseSystem);
         indices[b] = indexBase;
@@ -1014,20 +1067,20 @@ export default {
       try {
         this.$refs.resultKVDiagram.setKVDiagram(kvdiagram); // try to update kvdiagram, in case its accordion item is already opened
         // will fail if not mounted right now (=> its ref will be undefined). But thats fine, since it will send a 'requesting-kvdiagram-data-after-reactivation' event after next opening of the accordion-tab
-      } catch (_) {} // eslint-disable-line no-empty
+      } catch (_) { } // eslint-disable-line no-empty
       try {
         this.$refs.resultTruthTable.setKVDiagram(kvdiagram); // try to update truthtable, in case its accordion item is already opened
         // will fail if not mounted right now (=> its ref will be undefined). But thats fine, since it will send a 'requesting-bf-after-reactivation' event after next opening of the accordion-tab
-      } catch (_) {} // eslint-disable-line no-empty
+      } catch (_) { } // eslint-disable-line no-empty
 
       this.dnf = optimizations.dnf.toLatex(varNames);
       this.knf = optimizations.knf.toLatex(varNames);
 
       // QuineClasses (convert terms in cells of 2d (3d) matrix to latex strings)
       this.quineClassesMin = optimizations.quineClasses['min-terms'].map(
-        qLayer => qLayer.map(
-          qLayerInner => qLayerInner.map(
-            termTuple => [
+        (qLayer) => qLayer.map(
+          (qLayerInner) => qLayerInner.map(
+            (termTuple) => [
               termTuple[0].toLatex(varNames),
               termTuple[1],
               `\\text{${util.computeBinaryStringRepresentationOfBaseTerm(termTuple[0], numVars)}}`,
@@ -1036,9 +1089,9 @@ export default {
         ).slice().reverse(),
       ).slice().reverse();
       this.quineClassesMax = optimizations.quineClasses['max-terms'].map(
-        qLayer => qLayer.map(
-          qLayerInner => qLayerInner.map(
-            termTuple => [
+        (qLayer) => qLayer.map(
+          (qLayerInner) => qLayerInner.map(
+            (termTuple) => [
               termTuple[0].toLatex(varNames),
               termTuple[1],
               `\\text{${util.computeBinaryStringRepresentationOfBaseTerm(termTuple[0], numVars)}}`,
@@ -1048,8 +1101,8 @@ export default {
       ).slice().reverse();
 
       // Prime terms
-      this.primeTermsMin = optimizations.primes['min-terms'].map(pt => pt.toLatex(varNames));
-      this.primeTermsMax = optimizations.primes['max-terms'].map(pt => pt.toLatex(varNames));
+      this.primeTermsMin = optimizations.primes['min-terms'].map((pt) => pt.toLatex(varNames));
+      this.primeTermsMax = optimizations.primes['max-terms'].map((pt) => pt.toLatex(varNames));
 
       // Prime table
       this.primeTableMin = optimizations.primeTable['min-terms'];
@@ -1194,59 +1247,59 @@ export default {
       function kvdiagramFitsRequirements(kvdiagram, requirements, bfOptimization) {
         // Minterms amount
         if (requirements.numMinterms !== undefined
-            && bfOptimization.dnf.getTerms().length !== requirements.numMinterms) {
+          && bfOptimization.dnf.getTerms().length !== requirements.numMinterms) {
           return false;
         }
         // console.log('numMintermsMin: ', requirements.numMintermsMin);
         if (requirements.numMintermsMin !== undefined
-            && bfOptimization.dnf.getTerms().length < requirements.numMintermsMin) {
+          && bfOptimization.dnf.getTerms().length < requirements.numMintermsMin) {
           return false;
         }
         if (requirements.numMintermsMax !== undefined
-            && bfOptimization.dnf.getTerms().length > requirements.numMintermsMax) {
+          && bfOptimization.dnf.getTerms().length > requirements.numMintermsMax) {
           return false;
         }
 
         // Maxterms amount
         if (requirements.numMaxterms !== undefined
-            && bfOptimization.knf.getTerms().length !== requirements.numMaxterms) {
+          && bfOptimization.knf.getTerms().length !== requirements.numMaxterms) {
           return false;
         }
         if (requirements.numMaxtermsMin !== undefined
-            && bfOptimization.knf.getTerms().length < requirements.numMaxtermsMin) {
+          && bfOptimization.knf.getTerms().length < requirements.numMaxtermsMin) {
           return false;
         }
         if (requirements.numMaxtermsMax !== undefined
-            && bfOptimization.knf.getTerms().length > requirements.numMaxtermsMax) {
+          && bfOptimization.knf.getTerms().length > requirements.numMaxtermsMax) {
           return false;
         }
 
         // Primeimplicants amount
         if (requirements.numPrimeimplicants !== undefined
-            && bfOptimization.primes['min-terms'].length !== requirements.numPrimeimplicants) {
+          && bfOptimization.primes['min-terms'].length !== requirements.numPrimeimplicants) {
           return false;
         }
         // console.log('numMintermsMin: ', requirements.numMintermsMin);
         if (requirements.numPrimeimplicantsMin !== undefined
-            && bfOptimization.primes['min-terms'].length < requirements.numPrimeimplicantsMin) {
+          && bfOptimization.primes['min-terms'].length < requirements.numPrimeimplicantsMin) {
           return false;
         }
         if (requirements.numPrimeimplicantsMax !== undefined
-            && bfOptimization.primes['min-terms'].length > requirements.numPrimeimplicantsMax) {
+          && bfOptimization.primes['min-terms'].length > requirements.numPrimeimplicantsMax) {
           return false;
         }
 
         // Primeimplicates amount
         if (requirements.numPrimeimplicates !== undefined
-            && bfOptimization.primes['max-terms'].length !== requirements.numPrimeimplicates) {
+          && bfOptimization.primes['max-terms'].length !== requirements.numPrimeimplicates) {
           return false;
         }
         if (requirements.numPrimeimplicatesMin !== undefined
-            && bfOptimization.primes['max-terms'].length < requirements.numPrimeimplicatesMin) {
+          && bfOptimization.primes['max-terms'].length < requirements.numPrimeimplicatesMin) {
           return false;
         }
         if (requirements.numPrimeimplicatesMax !== undefined
-            && bfOptimization.primes['max-terms'].length > requirements.numPrimeimplicatesMax) {
+          && bfOptimization.primes['max-terms'].length > requirements.numPrimeimplicatesMax) {
           return false;
         }
 
@@ -1289,7 +1342,6 @@ export default {
         doesKVDiagramFitRequirements = kvdiagramFitsRequirements(kvdiagram, requirements, optimizations);
         // console.log(doesKVDiagramFitRequirements);
       } while (!doesKVDiagramFitRequirements);
-
 
       const bfInputDevice = this.$refs.childBooleanFunctionInputDevice;
       bfInputDevice.overwriteBFFromKVDiagram(
@@ -1335,7 +1387,8 @@ export default {
           baseElement.classList.remove('blurred');
           return;
         }
-      } while ((baseElement = baseElement.parentNode) != null && baseElement.classList);
+        baseElement = baseElement.parentNode;
+      } while (baseElement != null && baseElement.classList);
     },
     nthLetter(n) {
       // 1 -> A
@@ -1400,266 +1453,282 @@ export default {
 };
 </script>
 
-
 <style scoped lang="scss">
-  @media screen and (max-width: 1400px) {
-    .mainarea {
-      width: 100% !important;
-    }
-    .bf-main-accordion-container {
-      width: 100% !important;
-    }
-  }
-
-  @media screen and (max-width: 750px) {
-    .accordion-body-element-halfer {
-      display:block !important;
-      margin: auto !important;
-      width:100% !important;
-      // vertical-align: top;
-      // width: 48%;
-      // text-align: center;
-    }
-  }
-
+@media screen and (max-width: 1400px) {
   .mainarea {
-    margin: auto;
-    // width: 1240px;
-    padding-top: 8px;
-    padding-bottom: 1.5em;
-  }
-
-  .fselect_broad {
-    .fpfSelect {
-      min-width: 16em !important;
-    }
-  }
-
-  .boolean-function-input-container {
-    margin-top: 20px;
-    // .boolean-function-input-container-divider {
-    //   // margin: 5px 0 5px 0;
-    // }
-
-    .bfInputDevice, .exercise-selection-container {
-      display: inline-block;
-      border-style: solid;
-      border-width: 1px;
-      border-color: rgba($lightBlue, 0.5);
-      border-radius: 1.7em;
-      padding: .8em;
-      margin-left: .8em;
-      margin-right: .8em;
-      background: #ffffff47;
-    }
-
-    .exercise-selection-container {
-      vertical-align: top;
-
-      .exercise-selection-container-tooltip {
-        margin-bottom: .8em;
-
-        .infoblob-wrapper {
-          float: left;
-        }
-      }
-
-      .exercise-selection-container-subsection {
-        margin-bottom: .5em;
-
-        .errormessage {
-          background-color: #ff96008f;
-          border-radius: 0.6em;
-          font-style:italic;
-          padding: .3em;
-        }
-      }
-
-      // .selectBox, input {
-      //   margin-left: 0.5em;
-      //   margin-right: 0.5em;
-      // }
-    }
-
-    .boolean-function-button-optimize {
-      margin: 1.5em 0.5em 0 0;
-    }
+    width: 100% !important;
   }
 
   .bf-main-accordion-container {
-    width: 1000px;
-    margin: auto;
+    width: 100% !important;
   }
+}
 
+@media screen and (max-width: 750px) {
   .accordion-body-element-halfer {
-    display:inline-block;
-    vertical-align: top;
-    width: 48%;
-    text-align: center;
+    display: block !important;
+    margin: auto !important;
+    width: 100% !important;
+    // vertical-align: top;
+    // width: 48%;
+    // text-align: center;
   }
+}
 
-  // .optimizationsContainer {
-  //   font-size: 1.2em;
+.mainarea {
+  margin: auto;
+  // width: 1240px;
+  padding-top: 8px;
+  padding-bottom: 1.5em;
+}
+
+.fselect_broad {
+  .fpfSelect {
+    min-width: 16em !important;
+  }
+}
+
+.boolean-function-input-container {
+  margin-top: 20px;
+  // .boolean-function-input-container-divider {
+  //   // margin: 5px 0 5px 0;
   // }
-  .svg-text {
-    font-size: 1.3em;
-  }
-  .term {
-    margin-left: .5em;
-  }
-  .termcollection {
-    padding-right: .5em;
-  }
-  .quine-classes-toggle-switch-container {
-    text-align: left;
-    /* font-size: 0.8em; */
 
-    div {
-      padding-top: 3px;
-    }
-    span {
-      margin-left: 10px;
-    }
-  }
-  .quine-classes-reduced-term-colored {
-    color: rgba(gray, .8);
-  }
-  .bf-primetable {
-    margin-bottom: 1em;
-    margin-left: 0;
-    text-align: center;
-    border-spacing: 0;
-    border-left: none;
-    border-collapse: collapse;
-    background: #ffffffd4;
-    border-radius: 10px;
-
-    tr:first-child {
-      border-bottom: 1px solid black;
-    }
-
-    th, td {
-      // padding: 2px 3px 2px 3px;
-      width: 1.1em;
-      font-size: 1.2em;
-      padding: 10px;
-    }
-
-    .primetable-cell-core {
-      background-color: lightgreen;
-    }
-    .primetable-cell-covered {
-      background-color: darkgray;
-    }
-    .primetable-cell-crossed-out {
-      background-color: red;
-    }
-    .primetable-cell-default {
-      background-color: transparent;
-    }
-
-    .primetable-highlighted-cell {
-      color: red;
-      font-weight: bold;
-    }
-  }
-  .bf-primetable-controls {
-    margin-top: 4px;
-    button:disabled {
-      background-color: $lightBlue;
-    }
-    .control-text {
-      margin-left: 10px;
-      margin-right: 10px;
-    }
+  .bfInputDevice,
+  .exercise-selection-container {
+    display: inline-block;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba($lightBlue, 0.5);
+    border-radius: 1.7em;
+    padding: .8em;
+    margin-left: .8em;
+    margin-right: .8em;
+    background: #ffffff47;
   }
 
-  .explanation-text {
-    position: relative;
-  }
+  .exercise-selection-container {
+    vertical-align: top;
 
-  .hiddenLongText {
-    visibility: hidden;
-    padding-top: 1.33em;
-  }
+    .exercise-selection-container-tooltip {
+      margin-bottom: .8em;
 
-  .bf-primetable-step-explanation {
-    position: absolute;
-    text-align: justify;
-    top: 0;
-    left: 0;
-  }
-
-  .bf-petrick-statement-container {
-    // NOTE: holds all Petrick statement alg. lines
-    white-space: nowrap; // forces svg + mathematical expl. int the same line
-    font-size: 1.1em;
-
-    .infoblob-wrapper {
-      display: block;
-      text-align: left;
-
-      .petrick-statement-infoblob-ol {
-        text-align: left;
-        margin-block-end: 0;
-        li {
-            margin-bottom: .5em;
-        }
+      .infoblob-wrapper {
+        float: left;
       }
     }
 
-    .nandnor-line {
+    .exercise-selection-container-subsection {
       margin-bottom: .5em;
+
+      .errormessage {
+        background-color: #ff96008f;
+        border-radius: 0.6em;
+        font-style: italic;
+        padding: .3em;
+      }
     }
+
+    // .selectBox, input {
+    //   margin-left: 0.5em;
+    //   margin-right: 0.5em;
+    // }
   }
 
-  .primeTableContainer {
-    overflow-x: scroll;
+  .boolean-function-button-optimize {
+    margin: 1.5em 0.5em 0 0;
+  }
+}
+
+.bf-main-accordion-container {
+  width: 1000px;
+  margin: auto;
+}
+
+.accordion-body-element-halfer {
+  display: inline-block;
+  vertical-align: top;
+  width: 48%;
+  text-align: center;
+}
+
+// .optimizationsContainer {
+//   font-size: 1.2em;
+// }
+.svg-text {
+  font-size: 1.3em;
+}
+
+.term {
+  margin-left: .5em;
+}
+
+.termcollection {
+  padding-right: .5em;
+}
+
+.quine-classes-toggle-switch-container {
+  text-align: left;
+  /* font-size: 0.8em; */
+
+  div {
+    padding-top: 3px;
   }
 
-  .selectBox {
+  span {
+    margin-left: 10px;
+  }
+}
+
+.quine-classes-reduced-term-colored {
+  color: rgba(gray, .8);
+}
+
+.bf-primetable {
+  margin-bottom: 1em;
+  margin-left: 0;
+  text-align: center;
+  border-spacing: 0;
+  border-left: none;
+  border-collapse: collapse;
+  background: #ffffffd4;
+  border-radius: 10px;
+
+  tr:first-child {
+    border-bottom: 1px solid black;
+  }
+
+  th,
+  td {
+    // padding: 2px 3px 2px 3px;
+    width: 1.1em;
+    font-size: 1.2em;
+    padding: 10px;
+  }
+
+  .primetable-cell-core {
+    background-color: lightgreen;
+  }
+
+  .primetable-cell-covered {
+    background-color: darkgray;
+  }
+
+  .primetable-cell-crossed-out {
+    background-color: red;
+  }
+
+  .primetable-cell-default {
+    background-color: transparent;
+  }
+
+  .primetable-highlighted-cell {
+    color: red;
+    font-weight: bold;
+  }
+}
+
+.bf-primetable-controls {
+  margin-top: 4px;
+
+  button:disabled {
+    background-color: $lightBlue;
+  }
+
+  .control-text {
+    margin-left: 10px;
     margin-right: 10px;
   }
+}
 
-  .bf-petrick-statement-subcontainer {
-    // NOTE: holds a single petrick expression line + math expl.
-    margin: .4em;
-  }
+.explanation-text {
+  position: relative;
+}
 
-  .blurred {
-    filter: blur(.4em);
-    -webkit-filter: blur(.4em);
-  }
+.hiddenLongText {
+  visibility: hidden;
+  padding-top: 1.33em;
+}
 
-  .quine-class-single-class-container {
+.bf-primetable-step-explanation {
+  position: absolute;
+  text-align: justify;
+  top: 0;
+  left: 0;
+}
+
+.bf-petrick-statement-container {
+  // NOTE: holds all Petrick statement alg. lines
+  white-space: nowrap; // forces svg + mathematical expl. int the same line
+  font-size: 1.1em;
+
+  .infoblob-wrapper {
+    display: block;
     text-align: left;
-    pointer-events: none;
-  }
 
-  .horizontalbar {
-    width: 1000px;
-    margin: 1.5em auto 1.5em auto;
-    height: 1px;
-    background-color: rgba($lightBlue, 0.5);
-  }
-  @media(max-width: 1060px){
-    .horizontalbar {
-      width: 50%;
+    .petrick-statement-infoblob-ol {
+      text-align: left;
+      margin-block-end: 0;
+
+      li {
+        margin-bottom: .5em;
+      }
     }
   }
 
-  .horizontalbarfull {
-    margin: 1.5em auto 1.5em auto;
-    height: 1px;
-    background-color: rgba($lightBlue, 0.5);
+  .nandnor-line {
+    margin-bottom: .5em;
   }
+}
 
-  .small-info-text {
-    text-align: left;
-    font-size: 0.9em;
-    font-family: Arial, Helvetica, sans-serif;
-    padding: .3em;
-    padding-bottom: .5em;
-    color: rgba(gray, .9);
+.primeTableContainer {
+  overflow-x: scroll;
+}
+
+.selectBox {
+  margin-right: 10px;
+}
+
+.bf-petrick-statement-subcontainer {
+  // NOTE: holds a single petrick expression line + math expl.
+  margin: .4em;
+}
+
+.blurred {
+  filter: blur(.4em);
+  -webkit-filter: blur(.4em);
+}
+
+.quine-class-single-class-container {
+  text-align: left;
+  pointer-events: none;
+}
+
+.horizontalbar {
+  width: 1000px;
+  margin: 1.5em auto 1.5em auto;
+  height: 1px;
+  background-color: rgba($lightBlue, 0.5);
+}
+
+@media(max-width: 1060px) {
+  .horizontalbar {
+    width: 50%;
   }
+}
+
+.horizontalbarfull {
+  margin: 1.5em auto 1.5em auto;
+  height: 1px;
+  background-color: rgba($lightBlue, 0.5);
+}
+
+.small-info-text {
+  text-align: left;
+  font-size: 0.9em;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: .3em;
+  padding-bottom: .5em;
+  color: rgba(gray, .9);
+}
 </style>

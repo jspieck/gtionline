@@ -1,11 +1,19 @@
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production'
-    ? './'
-    : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
+  chainWebpack: (config) => {
+    config.module
+      .rule('fonts')
+      .use('url-loader')
+      .loader('url-loader')
+      .options({
+        limit: 10000,
+        name: 'fonts/[name].[hash:7].[ext]',
+      });
+  },
   css: {
     loaderOptions: {
       sass: {
-        prependData: `
+        additionalData: `
           @import "@/styles/_variables.scss";
           @import "@/styles/_main.scss";
         `,
@@ -14,9 +22,13 @@ module.exports = {
   },
   configureWebpack: {
     devServer: {
-      clientLogLevel: 'info',
-      watchOptions: {
-        poll: true,
+      client: {
+        logging: 'warn',
+      },
+      watchFiles: {
+        options: {
+          usePolling: true,
+        },
       },
     },
   },

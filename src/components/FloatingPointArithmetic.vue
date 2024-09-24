@@ -6,29 +6,43 @@
       <h4>{{$t('fpformat')}}</h4>
       <p class="introduction">{{$t('fpFormatSelection')}}</p>
       <div class="floatingPointFormatSelection">
-        <FSelect class="bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
-          :options="bitrangeOptions">
-        </FSelect>
-        <FSelect class="mobile_bits" :num="5" :sel="selectedFormat[5]" @input="selectBitRange"
-          :options="bitrangeOptions">
-        </FSelect>
+        <FSelect
+          class="bits"
+          :num="5"
+          :sel="selectedFormat[5]"
+          @input="selectBitRange"
+          :options="bitrangeOptions" />
+        <FSelect
+          class="mobile_bits"
+          :num="5"
+          :sel="selectedFormat[5]"
+          @input="selectBitRange"
+          :options="bitrangeOptions" />
         <div class="formatContainer" v-on:mousemove="sliderMouseMove">
           <div class="sign">VB</div>
-          <div class="exponent" :style="{ width:
-            (60 + this.exponentBits * (this.containerWidth / (this.numBits - 1)))+ 'px' }">
+          <div
+            class="exponent"
+            :style="{
+              width:
+                `${60 + this.exponentBits * (this.containerWidth / (this.numBits - 1))}px`,
+            }">
             <div v-on:click="expandFraction" class="expandExponent">
               <div class="arrowLeft">
-                <div class='arrowMask'></div>
+                <div class='arrowMask' />
               </div>
             </div>
             E({{exponentBits}})
-            <div v-on:mousedown="sliderMouseDown" class="slider"/>
+            <div v-on:mousedown="sliderMouseDown" class="slider" />
           </div>
-          <div class="fraction" :style="{ width: (60 + (this.numBits - this.exponentBits - 1) *
-            (this.containerWidth / (this.numBits - 1))) + 'px' }">
+          <div
+            class="fraction"
+            :style="{
+              width: `${60 + (this.numBits - this.exponentBits - 1)
+                * (this.containerWidth / (this.numBits - 1))}px`,
+            }">
             <div v-on:click="expandExponent" class="expandFraction">
               <div class="arrowRight">
-                <div class="arrowMask"></div>
+                <div class="arrowMask" />
               </div>
             </div>
             M({{(numBits - exponentBits - 1)}})
@@ -50,48 +64,75 @@
           <div class="container">
             <div>{{$t('firstFloatingPoint')}}</div>
             <table id="fpfTable1" class="floatingPointInput">
-              <tr>
-                <td>
-                  <input id="fpfInput0" v-model="inputNums[0]" :placeholder="this.$t('inputNumber') "
-                    @input="checkAndConvertFormat(0)"/>
-                </td>
-                <td>
-                  <FSelect :num="0" :sel="selectedFormat[0]" @input="selectVal"
-                  :options="formatOptions"/>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <input id="fpfInput1" v-model="numLeft" disabled>
-                </td>
-                <td>
-                  <FSelect :num="1" :sel="selectedFormat[1]" @input="selectVal" :isDisabled="true"
-                  :options="formatOptions"/>
-                </td>
-              </tr>
+              <tbody>
+                <tr>
+                  <td>
+                    <input
+                      id="fpfInput0"
+                      v-model="inputNums[0]"
+                      :placeholder="this.$t('inputNumber') "
+                      @input="checkAndConvertFormat(0)" />
+                  </td>
+                  <td>
+                    <FSelect
+                      :num="0"
+                      :sel="selectedFormat[0]"
+                      @input="selectVal"
+                      :options="formatOptions" />
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <input id="fpfInput1" v-model="numLeft" disabled>
+                  </td>
+                  <td>
+                    <FSelect
+                      :num="1"
+                      :sel="selectedFormat[1]"
+                      @input="selectVal"
+                      :isDisabled="true"
+                      :options="formatOptions" />
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </div>
           <div class="container">
             <div>{{$t('operand')}}</div>
             <div class="operand">
-              <FSelect :num="2" :sel="selectedFormat[2]" @input="selectOp"
-                :options="operationOptions"/>
+              <FSelect
+                :num="2"
+                :sel="selectedFormat[2]"
+                @input="selectOp"
+                :options="operationOptions" />
             </div>
           </div>
           <div class="container">
             <div>{{$t('secondFloatingPoint')}}</div>
             <table id="fpfTable2" class="floatingPointInput">
-              <tr>
-                <td><input id="fpfInput2" v-model="inputNums[1]" :placeholder="this.$t('inputNumber')"
-                  @input="checkAndConvertFormat(1)"></td>
-                <td><FSelect :num="3" :sel="selectedFormat[3]" @input="selectVal"
-                  :options="formatOptions"/></td>
-              </tr>
-              <tr>
-                <td><input id="fpfInput3" v-model="numRight" disabled></td>
-                <td><FSelect :num="4" :sel="selectedFormat[4]" @input="selectVal" :isDisabled="true"
-                  :options="formatOptions"/></td>
-              </tr>
+              <tbody>
+                <tr>
+                  <td><input
+                    id="fpfInput2"
+                    v-model="inputNums[1]"
+                    :placeholder="this.$t('inputNumber')"
+                    @input="checkAndConvertFormat(1)"></td>
+                  <td><FSelect
+                    :num="3"
+                    :sel="selectedFormat[3]"
+                    @input="selectVal"
+                    :options="formatOptions" /></td>
+                </tr>
+                <tr>
+                  <td><input id="fpfInput3" v-model="numRight" disabled></td>
+                  <td><FSelect
+                    :num="4"
+                    :sel="selectedFormat[4]"
+                    @input="selectVal"
+                    :isDisabled="true"
+                    :options="formatOptions" /></td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -100,45 +141,45 @@
         <div class="solutionInput">
           <p>{{$t('signBit')}}</p>
           <input id="propVB" :class="backVB" v-model="propVB">
-          <div class="checkmark" v-if="backVB == 'correctInput'">
+          <div class="checkmark" v-if="backVB === 'correctInput'">
             <svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
-              <polygon fill="#43A047" points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9"/>
+              <polygon fill="#43A047" points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9" />
             </svg>
           </div>
         </div>
-        <div class="divMargin"/>
+        <div class="divMargin" />
         <div class="solutionInput">
           <p>{{$t('exponentBits')}}</p>
           <input id="propE" :class="backE" v-model="propE">
-          <div class="checkmark" v-if="backE == 'correctInput'">
+          <div class="checkmark" v-if="backE === 'correctInput'">
             <svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
-              <polygon fill="#43A047" points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9"/>
+              <polygon fill="#43A047" points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9" />
             </svg>
           </div>
         </div>
-        <div class="divMargin"/>
+        <div class="divMargin" />
         <div class="solutionInput">
           <p>{{$t('fractionBits')}}</p>
           <input id="propM" :class="backM" v-model="propM">
-          <div class="checkmark" v-if="backM == 'correctInput'">
+          <div class="checkmark" v-if="backM === 'correctInput'">
             <svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
-              <polygon fill="#43A047" points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9"/>
+              <polygon fill="#43A047" points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9" />
             </svg>
           </div>
         </div>
-        <div class="divMargin"/>
+        <div class="divMargin" />
         <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
       </div>
       <h4>{{$t('correctSolution')}}</h4>
       <div style="position: relative">
         <div>
-          <AttentionBanner v-if="denominatorZero === false" :text="$t('attSolve')"/>
-          <AttentionBanner v-if="negativeSummand" :text="$t('negativeSummand')"/>
-          <AttentionBanner v-if="negativeSubtrahend" :text="$t('negativeSubtrahend')"/>
-          <AttentionBanner v-if="denominatorZero" :text="$t('zeroDivision')"/>
+          <AttentionBanner v-if="denominatorZero === false" :text="$t('attSolve')" />
+          <AttentionBanner v-if="negativeSummand" :text="$t('negativeSummand')" />
+          <AttentionBanner v-if="negativeSubtrahend" :text="$t('negativeSubtrahend')" />
+          <AttentionBanner v-if="denominatorZero" :text="$t('zeroDivision')" />
         </div>
         <div>
-          <AttentionBanner v-if="negativeMinuendSubtrahend" :text="$t('negativeMinuendSubtrahend')"/>
+          <AttentionBanner v-if="negativeMinuendSubtrahend" :text="$t('negativeMinuendSubtrahend')" />
         </div>
         <!-- <div class="pdfGen">
           <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
@@ -154,14 +195,14 @@
               {{panel.name}}
             </template>
             <template v-slot:accordion-item-body>
-              <span v-html="panel.text"></span>
+              <span v-html="panel.text" />
               <Accordion v-if="panel.subpanels != null">
                 <AccordionItem v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name">
                   <template v-slot:accordion-item-title>
                     {{subpanel.name}}
                   </template>
                   <template v-slot:accordion-item-body>
-                    <span v-html="subpanel.text"></span>
+                    <span v-html="subpanel.text" />
                   </template>
                 </AccordionItem>
               </Accordion>
@@ -169,7 +210,7 @@
           </AccordionItem>
         </Accordion>
       </div>
-      <div id="jaxHelper"></div>
+      <div id="jaxHelper" />
     </div>
   </div>
 </template>

@@ -50,7 +50,6 @@ export class DescriptionPolyadicConversion {
     }
   }
 
-
   getTableTenToPowerAfterComma() {
     const tabdef = '{ccccccc}';
     const table = [];
@@ -87,7 +86,6 @@ export class DescriptionPolyadicConversion {
       this.tableTenToPowerAfterComma = table.join('');
     }
   }
-
 
   getTablePowerToTen() {
     const power = this.watcher[0].steps.Input.data.number.power;
@@ -137,7 +135,6 @@ export class DescriptionPolyadicConversion {
     const sign = this.watcher.steps.ConstructNumber.data.sign;
     let valueString = this.watcher.steps.Input.data.number.bitString;
 
-
     const tabdef = ['{'];
     if (sign === '-') {
       tabdef.push('c');
@@ -151,9 +148,7 @@ export class DescriptionPolyadicConversion {
         tabdef.push('c|');
       }
     }
-    tabdef[tabdef.length - 1] = tabdef[tabdef.length - 1].substring(
-      0, tabdef[tabdef.length - 1].length - 1,
-    );
+    tabdef[tabdef.length - 1] = tabdef[tabdef.length - 1].substring(0, tabdef[tabdef.length - 1].length - 1);
     tabdef.push('}');
 
     const table = [];
@@ -229,9 +224,7 @@ export class DescriptionPolyadicConversion {
         tabdef.push('c|');
       }
     }
-    tabdef[tabdef.length - 1] = tabdef[tabdef.length - 1].substring(
-      0, tabdef[tabdef.length - 1].length - 1,
-    );
+    tabdef[tabdef.length - 1] = tabdef[tabdef.length - 1].substring(0, tabdef[tabdef.length - 1].length - 1);
     tabdef.push('}');
 
     const table = [];

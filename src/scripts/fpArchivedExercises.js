@@ -1,4 +1,3 @@
-
 // Example use case to load exercise with handle 'ex2': http://localhost:8080/#/cmos?load=ex2
 
 // Note: The exercises are declared in a function,
@@ -51,7 +50,7 @@ function fpArchivedExecises(i18n) {
  * @returns {[string]}
  */
 export function fpGetArchivedExerciseTitles(i18n) {
-  return fpArchivedExecises(i18n).map(ae => ae.title);
+  return fpArchivedExecises(i18n).map((ae) => ae.title);
 }
 
 /**

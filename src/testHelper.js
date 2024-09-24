@@ -23,15 +23,15 @@ export function checkStep(watcher, step, key, value) {
 
   const watcherValue = wachterStep.data[key];
   if (Array.isArray(watcherValue) && Array.isArray(value)) {
-    for (let i = 0; i < value.length; i++) {
+    for (let i = 0; i < value.length; i += 1) {
       expect(
         watcherValue[i],
         `At step ${step}, with key: ${key}, at position ${i}: [expected: ${value[i]}] != [got: ${watcherValue[i]}]`,
       ).toBe(value[i]);
     }
   } else if (
-    (Array.isArray(watcherValue) && !Array.isArray(value)) ||
-    (!Array.isArray(watcherValue) && Array.isArray(value))
+    (Array.isArray(watcherValue) && !Array.isArray(value))
+    || (!Array.isArray(watcherValue) && Array.isArray(value))
   ) {
     console.log(`Error Testing: Addition IEEE step: ${step}, value: ${key}:
     Array-like is not compatible to single value`);

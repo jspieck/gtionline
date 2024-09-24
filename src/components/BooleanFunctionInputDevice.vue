@@ -1,40 +1,46 @@
 <template>
   <div>
     <div>
-      <label>{{$t('numVarInput')}}:</label>
-      <FSelect :sel="this.dropDownMenuSelectedNumVars" @input="onChooseNumVars" :num=0 class="leftMargin10"
-              :options="numVarOptions"/>
+      <label for="numVarSelect">{{ $t('numVarInput') }}:</label>
+      <FSelect
+        id="numVarSelect"
+        :sel="this.dropDownMenuSelectedNumVars"
+        @input="onChooseNumVars"
+        :num=0
+        class="leftMargin10"
+        :options="numVarOptions" />
       <!-- <button @click="setNumVar()" class="leftMargin10">{{$t('confirm')}}</button> -->
     </div>
 
     <div class="mtop">
       <!-- <label>{{$t('varNaming')}}:</label> -->
-      <div class="divMargin"/>
+      <div class="divMargin" />
       <div class="radioCounter">
         <label v-for="radio in radios" :key="radio.value" class="p-default p-round p-smooth p-pulse">
           <input name="varRadio" class="mj" ref="radios" type="radio" v-model="varNamingScheme" :value="radio.value" />
-          <div class="radioSvg" v-html="toSvg(radio.name)"/>
+          <div class="radioSvg" v-html="toSvg(radio.name)" />
         </label>
       </div>
     </div>
     <div class="">
       <table class="customNamingTable" v-if="varNamingScheme === 'custom'">
-        <tr>
-          <td v-html="toSvg('i')"/>
-          <th v-for="index in customIndices" :key="index">{{index}}</th>
-        </tr>
-        <tr>
-          <td v-html="toSvg('\\alpha')"/>
-          <td v-for="index in customIndices" :key="index">
-            <input v-model="customNamingScheme[index]" type="text" :placeholder="'a_' + index"/>
-          </td>
-        </tr>
+        <thead>
+          <tr>
+            <td v-html="toSvg('i')" />
+            <th v-for="index in customIndices" :key="index">{{ index }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td v-html="toSvg('\\alpha')" />
+            <td v-for="index in customIndices" :key="index">
+              <input v-model="customNamingScheme[index]" type="text" :placeholder="`a_${index}`" />
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
 
-    <!-- <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM)">{{$t("kvDiagram")}}</button>
-    <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_FUNCTION_TABLE)">{{ $t("truthtable") }}</button> -->
-    <!-- <span>{{ $t("kvDiagram") }}</span> -->
     <span style="padding-top:3px; padding-right:10px;">{{ $t("kvDiagram") }}</span>
     <ToggleSwitch v-on:toggle="this.toggleMethodOfInputForBooleanFunction" checkedDefault=false />
     <span style="padding-top:3px; padding-left:10px;">{{ $t("truthtable") }}</span>
@@ -43,16 +49,21 @@
       <!--KeepAlive makes the components persist, even if not shown. Removing
       this results in for example losing the KVDiagram state after switching to bftable input mode-->
       <KeepAlive>
-        <KVDiagr v-if="this.methodOfInputForBooleanFunction == this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM"
-                :numVariables="this.numVariables" :varNames="currentVarNames"
-                @kvdiagram-modified="onKVDiagramModified($event, kvdiagram)"
-                @requesting-kvdiagram-data-after-reactivation="notifyChildKVDiagramOfBF()"
-                class="kvdiagram" ref="childKVDiagram" />
-        <TruthTable v-else
-                :numVariables="this.numVariables" :varNames="this.currentVarNames"
-                @truthtable-modified="onTruthTableModified($event, kvdiagram)"
-                @requesting-bf-after-reactivation="notifyChildTruthTableOfBF()"
-                ref="childTruthTable" />
+        <KVDiagr
+          v-if="this.methodOfInputForBooleanFunction === this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM"
+          :numVariables="this.numVariables"
+          :varNames="currentVarNames"
+          @kvdiagram-modified="onKVDiagramModified($event, kvdiagram)"
+          @requesting-kvdiagram-data-after-reactivation="notifyChildKVDiagramOfBF()"
+          class="kvdiagram"
+          ref="childKVDiagram" />
+        <TruthTable
+          v-else
+          :numVariables="this.numVariables"
+          :varNames="this.currentVarNames"
+          @truthtable-modified="onTruthTableModified($event, kvdiagram)"
+          @requesting-bf-after-reactivation="notifyChildTruthTableOfBF()"
+          ref="childTruthTable" />
       </KeepAlive>
       <button class="button-export-png" @click="exportPNG()">PNG</button>
       <!-- <button v-else @click="tmpFunc()">Set smth in KVDiagram</button> -->
@@ -79,13 +90,6 @@ export default {
   data() {
     this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM = 'method_kvdiagram';
     this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_FUNCTION_TABLE = 'method_function_table';
-    this.varNames = {
-      abc: ['a', 'b', 'c', 'd', 'e', 'g', 'h'],
-      xyz: ['x', 'y', 'z', 'u', 'v', 'w', 'q'],
-      x: ['x_0', 'x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6'],
-      x1: ['x_1', 'x_2', 'x_3', 'x_4', 'x_5', 'x_6', 'x_7'],
-    };
-
     this.DEFAULT_NUM_VARIABLES = 4;
 
     return {
@@ -272,10 +276,10 @@ export default {
 </script>
 
 <style lang="scss">
-
 @media screen and (max-width: 750px) {
   .radioCounter {
     flex-direction: column !important;
+
     input {
       margin-top: 0px !important;
       height: 17px !important;
@@ -283,9 +287,11 @@ export default {
       transform: translate(0, -.7em) !important;
     }
   }
+
   .radioSvg {
     margin-top: -1em !important;
   }
+
   .mtop {
     .divMargin {
       display: block;
@@ -295,25 +301,31 @@ export default {
 }
 
 .mtop {
+
   // margin-top: .5em;
   .divMargin {
     display: block;
   }
 }
+
 .radioCounter {
   display: flex;
   flex-direction: row;
 }
+
 .p-default {
   margin-right: 10px;
 }
+
 .customNamingTable {
   margin: 0 auto;
   margin-bottom: 1em;
+
   input {
     width: 40px;
   }
 }
+
 .button-export-png {
   float: right;
   margin-top: -4em;

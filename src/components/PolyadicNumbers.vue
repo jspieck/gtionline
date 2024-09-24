@@ -1,33 +1,33 @@
 <template>
-<div class="polyadic">
-  <tabs v-model="selectedTab">
-    <tab
-      v-for="(tab, i) in tabs"
-      :key="`t${i}`"
-      :val="tab"
-      :label="$t(tab)"
-      :indicator="true"
-    />
-  </tabs>
-  <tab-panels
-    v-model="selectedTab"
-    :animate="false"
-    :swipeable="false"
-  >
-    <tab-panel val="conversionExercise">
-      <h3 class="title">{{$t('conversionExercise')}}</h3>
-      <pce/>
-    </tab-panel>
-    <tab-panel val="conversion">
-      <h3 class="title">{{$t('conversion')}}</h3>
-      <pcf/>
-    </tab-panel>
-    <tab-panel val="arithmeticFree">
-      <h3 class="title">{{$t('arithmetic')}}</h3>
-      <paf/>
-    </tab-panel>
-  </tab-panels>
-</div>
+  <div class="polyadic">
+    <tabs v-model="selectedTab">
+      <tab
+        v-for="(tab, i) in tabs"
+        :key="`t${i}`"
+        :val="tab"
+        :label="$t(tab)"
+        :indicator="true"
+      />
+    </tabs>
+    <tab-panels
+      v-model="selectedTab"
+      :animate="false"
+      :swipeable="false"
+    >
+      <tab-panel val="conversionExercise">
+        <h3 class="title">{{$t('conversionExercise')}}</h3>
+        <pce />
+      </tab-panel>
+      <tab-panel val="conversion">
+        <h3 class="title">{{$t('conversion')}}</h3>
+        <pcf />
+      </tab-panel>
+      <tab-panel val="arithmeticFree">
+        <h3 class="title">{{$t('arithmetic')}}</h3>
+        <paf />
+      </tab-panel>
+    </tab-panels>
+  </div>
 </template>
 
 <script>

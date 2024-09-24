@@ -9,7 +9,9 @@
         <router-link
           to="/fparithmetic"
           custom
-          v-slot="{ href, navigate, isActive, isExactActive }"
+          v-slot="{
+            href, navigate, isActive, isExactActive,
+          }"
         >
           <a
             :href="href"
@@ -17,14 +19,14 @@
             :class="['link', isActive && 'router-link-active', isExactActive && 'router-link-exact-active']"
           >
             <div class="linkLabel">{{$t('startTraining')}}</div>
-            <div class="linkButton"></div>
+            <div class="linkButton" />
           </a>
         </router-link>
       </div>
     </div>
     <div class="imageContainer">
       <div class="startImg">
-        <img src="@/assets/gtionline.png"/>
+        <img alt="Image of a sequential circuit" src="@/assets/gtionline.png" />
         <p class="imgDescription">{{$t('sequentialCircuit')}}</p>
       </div>
     </div>
@@ -33,7 +35,7 @@
 
 <script>
 export default {
-  name: 'home',
+  name: 'homePage',
 };
 </script>
 

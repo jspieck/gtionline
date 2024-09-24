@@ -89,8 +89,14 @@ export class DescriptionSolution {
   }
 
   createExponentShiftDescription(
-    exponentBits1, exponentDecimal1, left, exponentBits2, exponentDecimal2,
-    deltaExponent, preShift, mantissa2,
+    exponentBits1,
+    exponentDecimal1,
+    left,
+    exponentBits2,
+    exponentDecimal2,
+    deltaExponent,
+    preShift,
+    mantissa2,
   ) {
     const maxExponentDecimal = Math.max(exponentDecimal1, exponentDecimal2);
     const minExponentDecimal = Math.min(exponentDecimal1, exponentDecimal2);
@@ -213,9 +219,7 @@ export class DescriptionSolution {
           subpanels: [
             {
               name: `${this.imp.$t('diffExponent')}`,
-              text: this.createExponentShiftDescription(
-                exponentBits1, exponentDecimal1, left, exponentBits2, exponentDecimal2, deltaExponent, deltaExponent, preShift, mantissa2,
-              ),
+              text: this.createExponentShiftDescription(exponentBits1, exponentDecimal1, left, exponentBits2, exponentDecimal2, deltaExponent, deltaExponent, preShift, mantissa2),
             },
           ],
         }));
@@ -787,9 +791,7 @@ export class DescriptionSolution {
           subpanels: [
             {
               name: `${this.imp.$t('diffExponent')}`,
-              text: this.createExponentShiftDescription(
-                exponentBits1, exponentDecimal1, left, exponentBits2, exponentDecimal2, deltaExponent, preShift, mantissa2,
-              ),
+              text: this.createExponentShiftDescription(exponentBits1, exponentDecimal1, left, exponentBits2, exponentDecimal2, deltaExponent, preShift, mantissa2),
             },
           ],
         }));

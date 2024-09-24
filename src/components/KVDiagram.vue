@@ -2,23 +2,44 @@
   <div class="kvDiagram" @click="((a) => $emit('clicked-somewhere', a))">
     <svg id="kvContainer" :width="svgWidth" :height="svgHeight" xmlns="http://www.w3.org/2000/svg" ref="svgdom">
       <g :transform="`translate(${extraWidths[1]}, ${0})`">
-        <g v-for="(d, i) in diagram" v-bind:key="`cell_${i}`"
-        :transform="`translate(${getX(i)}, ${getY(i)})`">
-          <rect fill="transparent" stroke="#898989" :width="blockWidth" :height="blockWidth"
-          @click="this.modifiable ? changeNumber(i) : {}"/>
+        <g
+          v-for="(d, i) in diagram"
+          v-bind:key="`cell_${i}`"
+          :transform="`translate(${getX(i)}, ${getY(i)})`">
+          <rect
+            fill="transparent"
+            stroke="#898989"
+            :width="blockWidth"
+            :height="blockWidth"
+            @click="this.modifiable ? changeNumber(i) : {}" />
           <!-- <text :x="blockWidth / 2" :y="blockWidth / 2" dominant-baseline="middle"
           class="unclickable" text-anchor="middle">{{legitStates[d.number]}}</text> -->
-          <text :x="blockWidth / 2" :y="blockWidth / 2" dominant-baseline="middle"
-          class="unclickable" text-anchor="middle">{{ legitStates[d['number']] }}</text> <!-- Check if this .number does what it should-->
-          <text :x="blockWidth - 3" :y="blockWidth - 7" dominant-baseline="middle"
-          class="unclickable indexNumber" font-size="13" text-anchor="end">{{indices[i].index}}</text>
+          <text
+            :x="blockWidth / 2"
+            :y="blockWidth / 2"
+            dominant-baseline="middle"
+            class="unclickable"
+            text-anchor="middle">{{ legitStates[d.number] }}</text> <!-- Check if this .number does what it should-->
+          <text
+            :x="blockWidth - 3"
+            :y="blockWidth - 7"
+            dominant-baseline="middle"
+            class="unclickable indexNumber"
+            font-size="13"
+            text-anchor="end">{{indices[i].index}}</text>
         </g>
         <g v-for="bar in literalBars" v-bind:key="bar.id">
-          <rect :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height"/>
-          <g :transform="`translate(${bar.textX}, ${bar.textY})`" ref="bars" v-html="getSVG(bar.index)"></g>
+          <rect :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height" />
+          <g :transform="`translate(${bar.textX}, ${bar.textY})`" ref="bars" v-html="getSVG(bar.index)" />
         </g>
-        <rect id="unclickable" class="unclickable" fill="none" stroke="black" :x="paddingHorizontal"
-          :y="paddingVertical" :width="blockWidth * cellsHorizontal"
+        <rect
+          id="unclickable"
+          class="unclickable"
+          fill="none"
+          stroke="black"
+          :x="paddingHorizontal"
+          :y="paddingVertical"
+          :width="blockWidth * cellsHorizontal"
           :height="blockWidth * cellsVertical"
         />
       </g>
@@ -39,8 +60,14 @@ export default {
     'clicked-somewhere',
   ],
   props: {
-    numVariables: Number,
-    varNames: Array, // [String]
+    numVariables: {
+      type: Number,
+      default: 4,
+    },
+    varNames: {
+      type: Array,
+      default: () => [],
+    },
     modifiable: {
       type: Boolean,
       default: true,

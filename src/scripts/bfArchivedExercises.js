@@ -129,7 +129,7 @@ function bfArchivedExecises(i18n) {
  * @returns {[string]}
  */
 export function bfGetArchivedExerciseTitles(i18n) {
-  return bfArchivedExecises(i18n).map(ae => ae.title);
+  return bfArchivedExecises(i18n).map((ae) => ae.title);
 }
 
 /**
@@ -144,7 +144,8 @@ export function bfLoadArchivedExercise(i18n, index) {
 /**
  * @param i18n $i18n-translation object
  * @param {string} handle String used to identify the exercise in the load=X query
- * @returns {number} Index in the exercise array. Can be used with xxLoadArchivedExercise to retrieve the exercise data
+ * @returns {number} Index in the exercise array. Can be used with xxLoadArchivedExercise
+ * to retrieve the exercise data
  */
 export function bfGetExerciseIndexOfHandle(i18n, handle) {
   const exercises = bfArchivedExecises(i18n);

@@ -4,7 +4,7 @@
       <p class="introduction">{{$t('polyConvGenIntro')}}</p>
       <h4>{{$t('generateEx')}}</h4>
       <button v-on:click="generateExercise">{{$t('generate')}}</button>
-      <div id="exerciseField" v-html="exerciseText"></div>
+      <div id="exerciseField" v-html="exerciseText" />
       <!-- <h4>{{$t('ownSolution')}}</h4>
       <div class="solutionArea">
         <div class="solutionInput">
@@ -15,7 +15,7 @@
       </div> -->
       <h4>{{$t('correctSolution')}}</h4>
       <div style="position: relative">
-        <AttentionBanner :text="$t('attSolve')"/>
+        <AttentionBanner :text="$t('attSolve')" />
         <!-- <div class="pdfGen">
           <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
         </div> -->
@@ -27,14 +27,14 @@
               {{panel.name}}
             </template>
             <template v-slot:accordion-item-body>
-              <span v-html="panel.text"></span>
+              <span v-html="panel.text" />
               <Accordion v-if="panel.subpanels != null">
                 <AccordionItem v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name">
                   <template v-slot:accordion-item-title>
                     {{subpanel.name}}
                   </template>
                   <template v-slot:accordion-item-body>
-                    <span v-html="subpanel.text"></span>
+                    <span v-html="subpanel.text" />
                   </template>
                 </AccordionItem>
               </Accordion>

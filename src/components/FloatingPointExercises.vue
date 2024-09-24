@@ -7,43 +7,49 @@
       <div>
         <div class="floatingPointInput">
           <h5>{{$t('randomExercise')}}:</h5>
-          <FSelect :sel="selectedFormat[0]" @input="selectOp" :num=0
-                    :options="operationOptions"/>
-          <div class="divMargin"/>
+          <FSelect
+            :sel="selectedFormat[0]"
+            @input="selectOp"
+            :num=0
+            :options="operationOptions" />
+          <div class="divMargin" />
           <button v-on:click="generateExercise">{{$t('generate')}}</button>
         </div>
         <div class="floatingPointInput">
           <h5>{{ $t('fp_from_archive') }}:</h5>
-          <FSelect :options="archivedExerciseTitles" :sel="0"
-            @input="selectArchivedExercise" ref="archivedExercisesFPDropDownMenu"/>
-          <div class="divMargin"/>
+          <FSelect
+            :options="archivedExerciseTitles"
+            :sel="0"
+            @input="selectArchivedExercise"
+            ref="archivedExercisesFPDropDownMenu" />
+          <div class="divMargin" />
           <button @click="loadArchivedExercise">{{$t('load')}}</button>
         </div>
       </div>
-      <div id="exerciseField" v-html="exerciseText"></div>
+      <div id="exerciseField" v-html="exerciseText" />
       <h4>{{$t('ownSolution')}}</h4>
-      <AttentionBanner :text="$t('attRound')"/>
+      <AttentionBanner :text="$t('attRound')" />
       <div class="solutionArea">
         <div class="solutionInput">
           <p>{{$t('signBit')}}</p>
           <input id="propVB" :class="backVB" v-model="propVB">
         </div>
-        <div class="divMargin"/>
+        <div class="divMargin" />
         <div class="solutionInput">
           <p>{{$t('exponentBits')}}</p>
           <input id="propE" :class="backE" v-model="propE">
         </div>
-        <div class="divMargin"/>
+        <div class="divMargin" />
         <div class="solutionInput">
           <p>{{$t('fractionBits')}}</p>
           <input id="propM" :class="backM" v-model="propM">
         </div>
-        <div class="divMargin"/>
+        <div class="divMargin" />
         <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
       </div>
       <h4>{{$t('correctSolution')}}</h4>
       <div style="position: relative">
-        <AttentionBanner :text="$t('attSolve')"/>
+        <AttentionBanner :text="$t('attSolve')" />
         <!-- <div class="pdfGen">
           <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
         </div> -->
@@ -55,14 +61,14 @@
               {{panel.name}}
             </template>
             <template v-slot:accordion-item-body>
-              <span v-html="panel.text"></span>
+              <span v-html="panel.text" />
               <Accordion v-if="panel.subpanels != null">
                 <AccordionItem v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name">
                   <template v-slot:accordion-item-title>
                     {{subpanel.name}}
                   </template>
                   <template v-slot:accordion-item-body>
-                    <span v-html="subpanel.text"></span>
+                    <span v-html="subpanel.text" />
                   </template>
                 </AccordionItem>
               </Accordion>

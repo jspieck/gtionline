@@ -2,7 +2,7 @@
   <div class="cmosContainer">
     <div class="pageContainer">
       <h3>CMOS<InfoBlob>
-        <span v-html="$t('cmos_infoblob_description')"></span>
+        <span v-html="$t('cmos_infoblob_description')" />
       </InfoBlob></h3>
       <div class="bodyContainer">
         <p>{{$t('enter_cmos')}}</p>
@@ -13,30 +13,35 @@
             <div class="exercise-selection-container-tooltip">
               <span class="infoblob-wrapper" style="float:right">
                 <InfoBlob>
-                  <span v-html="$t('bf_infoblob_load_exercise')"></span>
+                  <span v-html="$t('bf_infoblob_load_exercise')" />
                 </InfoBlob>
               </span>
-              <span style="padding-left:10px; padding-right:10px; padding-top:3px;"
-              v-html="$t('bf_load_exercise_from_archive')"/>
+              <span
+                style="padding-left:10px; padding-right:10px; padding-top:3px;"
+                v-html="$t('bf_load_exercise_from_archive')" />
               <ToggleSwitch v-on:toggle="toggleLoadFromArchiveOrFormula" checkedDefault=false />
-              <span style="padding-left:10px; padding-right:10px; padding-top:3px;"
-              v-html="$t('formula')"/>
+              <span
+                style="padding-left:10px; padding-right:10px; padding-top:3px;"
+                v-html="$t('formula')" />
             </div>
             <!-- Lade Aufgabe aus Archiv -->
             <div v-if="loadFromArchiveOrFormula === true" class="exercise-selection-container-subsection">
-              <FSelect :options="archivedExerciseTitles" :sel="0"
-                @input="selectArchivedExercise" ref="archivedExercisesCMOSDropDownMenu"/>
-              <button @click="loadArchivedExercise">{{$t('load')}}</button>
+              <FSelect
+                :options="archivedExerciseTitles"
+                :sel="0"
+                @input="selectArchivedExercise"
+                ref="archivedExercisesCMOSDropDownMenu" />
+              <button @click="loadArchivedExercise" type="button">{{$t('load')}}</button>
             </div>
             <!-- Lade Aufgabe aus Formel -->
             <div v-if="loadFromArchiveOrFormula === false" class="exercise-selection-container-subsection">
-              <input v-model="cmosFormula" size="25"/>
+              <input v-model="cmosFormula" size="25" />
               <button @click="generateCmos(cmosFormula)">{{$t('translate_big')}}</button>
               <div v-if="cmosError != null" class="exercise-selection-container-subsection">
                 <span class="errormessage">
-                  <span v-html="$t('cmos_error_at_symbol') + ' '"/>
+                  <span v-html="`${$t('cmos_error_at_symbol')} `" />
                   <span> '{{cmosError.found}}' </span>
-                  <span v-html="$t('at_position') + ' '"/>
+                  <span v-html="`${$t('at_position')} `" />
                   <span> {{ cmosError.location.start.column }}</span>
                 </span>
               </div>
@@ -55,34 +60,37 @@
             </div>
             <div>
               <span>{{$t('difficultyUC')}}:</span>
-              <FSelect :options="randomExercisesDifficulties" :sel="0" class="leftMargin10"
-                @input="selectRandomExerciseDifficulty"/>
+              <FSelect
+                :options="randomExercisesDifficulties"
+                :sel="0"
+                class="leftMargin10"
+                @input="selectRandomExerciseDifficulty" />
               <button @click="generateRandomExercise">{{$t('load')}}</button>
             </div>
           </div>
-          <h4 id="displayedFormula" v-if="renderedFormula" v-html="$t('formula') + ': ' + renderedFormula"/>
+          <h4 id="displayedFormula" v-if="renderedFormula" v-html="`${$t('formula')}: ${renderedFormula}`" />
         </div>
       </div>
     </div>
-    <div id="cmosOutput" v-html="cmosOutput" class="blurred" @mousedown="unblurDOM" ref="cmosOutput"></div>
+    <div id="cmosOutput" v-html="cmosOutput" class="blurred" @mousedown="unblurDOM" ref="cmosOutput" />
     <h3 v-if="latex">Tikz Code</h3>
     <div class="codeContainer">
       <div class="copyButton">
-        <button @click="copyToClipboard"><font-awesome-icon icon="copy"/></button>
+        <button @click="copyToClipboard"><font-awesome-icon icon="copy" /></button>
         <span class="tooltip" ref="tooltip">Copied</span>
       </div>
       <!-- <highlightjs lang="tex" :code="latex"/> -->
-      <pre><code><span v-for="(line, lineNumber) in latex" v-bind:key="lineNumber" v-html="line" class="codeLine"/></code></pre>
+      <pre><code><span v-for="(line, lineNumber) in latex" v-bind:key="lineNumber" v-html="line" class="codeLine" /></code></pre>
     </div>
   </div>
 </template>
 
 <script>
+import hljs from 'highlight.js/lib/common';
 import {
   CMOSBuilder, parseBooleanFunction, SVGGenerator, CMOSVisualBuilder, toLaTeX, LatexGenerator,
 } from '@/scripts/gti-tools';
 import { cmosLoadArchivedExercise, cmosGetArchivedExerciseTitles, cmosGetExerciseIndexOfHandle } from '@/scripts/cmosArchivedExercises';
-import hljs from 'highlight.js/lib/common';
 import InfoBlob from './InfoBlob.vue';
 import FormatSelect from './FormatSelect.vue';
 import ToggleSwitch from './ToggleSwitch.vue';
@@ -273,7 +281,7 @@ export default {
               // console.log(cmosOutputDom);
               const viewbox = cmosOutputDom.getAttribute('viewBox');
               // eslint-disable-next-line no-unused-vars
-              const dimensions = viewbox.split(' ').map(s => Number(s));
+              const dimensions = viewbox.split(' ').map((s) => Number(s));
               const padding = 50;
               cmosOutputDom.setAttribute('viewBox', `${-padding} ${-padding} ${maxX + padding} ${maxY + padding}`);
               if (this.lastCmosFormula !== cmosFormula) {
@@ -307,7 +315,8 @@ export default {
           baseElement.classList.remove('blurred');
           return;
         }
-      } while ((baseElement = baseElement.parentNode) != null && baseElement.classList);
+        baseElement = baseElement.parentNode;
+      } while (baseElement != null && baseElement.classList);
     },
     reblurCMOS() {
       const cmosOutput = this.$refs.cmosOutput;
@@ -360,9 +369,6 @@ export default {
       let candidates = [];
       switch (this.randomExerciseDifficultySelectedIndex) {
         case '0':
-        default:
-          candidates = [`a${op0}${b}`];
-          break;
         case '1':
           candidates = [
             a + op0 + b + op1 + c,
@@ -379,6 +385,9 @@ export default {
             `${Math.random() < 0.5 ? '~' : ''}((${a}+${b})*${c}+~(${a}+${b}))`,
             `${Math.random() < 0.5 ? '~' : ''}(${a}*${b}+${c}+~(${a}*${b}))`,
           ];
+          break;
+        default:
+          candidates = [`a${op0}${b}`];
           break;
       }
       return candidates[Math.floor(Math.random() * candidates.length)];

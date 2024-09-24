@@ -2,8 +2,8 @@
   <div class="navbar">
     <!--<div class="hamburger" @click="responsive = !responsive"><font-awesome-icon class="bars" icon="bars"/></div> -->
     <input class="menu-btn" type="checkbox" id="menu-btn" />
-    <label id="checkBoxLabel"  class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
-    <router-link class="logoContainer" to="/" ><img id="logo" src="@/assets/logo.png"></router-link>
+    <label id="checkBoxLabel" class="menu-icon" for="menu-btn"><span class="navicon" /></label>
+    <router-link class="logoContainer" to="/"><img id="logo" alt="logo" src="@/assets/logo.png"></router-link>
     <!-- <ul class="menu" :class="responsive ? 'responsive' : ''">
       <li v-for="submenu in menu" v-bind:key="submenu.id">
         <router-link active-class="selectedNav" :to="`${submenu.link}`">{{submenu.label}}</router-link>
@@ -20,7 +20,7 @@
       </router-link>
     </div>
     <div id="languageDropdown">
-      <LSelect @input="chooseLang"/>
+      <LSelect @input="chooseLang" />
     </div>
   </div>
 </template>
@@ -229,7 +229,6 @@ export default {
     top: 20px;
   }
 }
-
 
 @media (max-width: 768px) {
   .hamburger {

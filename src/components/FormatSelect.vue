@@ -1,10 +1,13 @@
 <template>
   <div class="selectBox" :disabled="isDisabled">
-    <select class="fpfSelect" v-model="selectedOption" :disabled="isDisabled"
+    <select
+      class="fpfSelect"
+      v-model="selectedOption"
+      :disabled="isDisabled"
       @input="event => { $emit('input', num, event.target.value) }">
       <option v-for="(name, option) in options" :value="option" :key="option">{{name}}</option>
     </select>
-    <font-awesome-icon class="angleDown" icon="angle-down"/>
+    <font-awesome-icon class="angleDown" icon="angle-down" />
   </div>
 </template>
 

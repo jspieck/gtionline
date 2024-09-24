@@ -293,8 +293,8 @@ export class DescriptionPolyadicSolution {
       && addWatcher.steps.AddMantissa.data.sign2 === 1) {
       row1.push('&');
       row2.push('-&');
-    } else if (addWatcher.steps.AddMantissa.data.sign1 === 0
-      && addWatcher.steps.AddMantissa.data.sign2 === 1) {
+    } else if (addWatcher.steps.AddMantissa.data.sign1 === 1
+      && addWatcher.steps.AddMantissa.data.sign2 === 0) {
       row1.push('-&');
       row2.push('+&');
     } else {

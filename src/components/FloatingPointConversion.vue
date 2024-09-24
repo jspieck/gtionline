@@ -8,21 +8,29 @@
       <div class="floatingPointFormatSelection">
         <div class="formatContainer" v-on:mousemove="sliderMouseMove">
           <div class="sign">VB</div>
-          <div class="exponent" :style="{ width:
-            (60 + this.exponentBits * (this.containerWidth / (this.numBits - 1)))+ 'px' }">
+          <div
+            class="exponent"
+            :style="{
+              width:
+                `${60 + this.exponentBits * (this.containerWidth / (this.numBits - 1))}px`,
+            }">
             <div v-on:click="expandFraction" class="expandExponent">
               <div class="arrowLeft">
-                <div class='arrowMask'></div>
+                <div class='arrowMask' />
               </div>
             </div>
             E({{exponentBits}})
-            <div v-on:mousedown="sliderMouseDown" class="slider"/>
+            <div v-on:mousedown="sliderMouseDown" class="slider" />
           </div>
-          <div class="fraction" :style="{ width: (60 + (this.numBits - this.exponentBits - 1) *
-            (this.containerWidth / (this.numBits - 1))) + 'px' }">
+          <div
+            class="fraction"
+            :style="{
+              width: `${60 + (this.numBits - this.exponentBits - 1)
+                * (this.containerWidth / (this.numBits - 1))}px`,
+            }">
             <div v-on:click="expandExponent" class="expandFraction">
               <div class="arrowRight">
-                <div class="arrowMask"></div>
+                <div class="arrowMask" />
               </div>
             </div>
             M({{(numBits - exponentBits - 1)}})
@@ -39,31 +47,31 @@
         </div>
       </div>
       <h4>{{$t('generateEx')}}</h4>
-      <div class="divMargin"/>
+      <div class="divMargin" />
       <button v-on:click="generateExercise">{{$t('generate')}}</button>
-      <div id="exerciseField" v-html="exerciseText"></div>
+      <div id="exerciseField" v-html="exerciseText" />
       <h4>{{$t('ownSolution')}}</h4>
       <div class="solutionArea">
         <div class="solutionInput">
           <p>{{$t('signBit')}}</p>
           <input id="propVB" :class="backVB" v-model="propVB">
         </div>
-        <div class="divMargin"/>
+        <div class="divMargin" />
         <div class="solutionInput">
           <p>{{$t('exponentBits')}}</p>
           <input id="propE" :class="backE" v-model="propE">
         </div>
-        <div class="divMargin"/>
+        <div class="divMargin" />
         <div class="solutionInput">
           <p>{{$t('fractionBits')}}</p>
           <input id="propM" :class="backM" v-model="propM">
         </div>
-        <div class="divMargin"/>
+        <div class="divMargin" />
         <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
       </div>
       <h4>{{$t('correctSolution')}}</h4>
       <div style="position: relative">
-        <AttentionBanner :text="$t('attSolve')"/>
+        <AttentionBanner :text="$t('attSolve')" />
         <!-- <div class="pdfGen">
           <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
         </div> -->
@@ -74,14 +82,14 @@
               {{panel.name}}
             </template>
             <template v-slot:accordion-item-body>
-              <span v-html="panel.text"></span>
+              <span v-html="panel.text" />
               <Accordion v-if="panel.subpanels != null">
                 <AccordionItem v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name">
                   <template v-slot:accordion-item-title>
                     {{subpanel.name}}
                   </template>
                   <template v-slot:accordion-item-body>
-                    <span v-html="subpanel.text"></span>
+                    <span v-html="subpanel.text" />
                   </template>
                 </AccordionItem>
               </Accordion>

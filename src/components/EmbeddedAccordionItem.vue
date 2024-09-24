@@ -2,17 +2,19 @@
   <div class="accordion-item">
     <!-- Item title -->
     <div class="accordion-item-header" @click="doclick">
-      <slot name="accordion-item-title"></slot>
-      <font-awesome-icon class="angleDown" icon="angle-down"/>
+      <slot name="accordion-item-title" />
+      <font-awesome-icon class="angleDown" icon="angle-down" />
     </div>
     <!-- Item body -->
     <div class="accordion-item-body" v-if="this.expanded === true" ref="accordion_item_body">
       <!-- NOTE: 'expanding sideways' is now more like a fullscreen mode -->
-      <button v-if="this.expandableSideways" class="accordion-item-expand-sideways-toggle ion-md-expand"
-          @click="toggleExpandSideways">
-          >
+      <button
+        v-if="this.expandableSideways"
+        class="accordion-item-expand-sideways-toggle ion-md-expand"
+        @click="toggleExpandSideways">
+        >
       </button>
-      <slot name="accordion-item-body" ></slot>
+      <slot name="accordion-item-body" />
     </div>
 
   </div>
@@ -170,7 +172,6 @@ export default {
       border-bottom-style: solid;
     }
   }
-
 
   // .accordion-item-header.active {
   //   background-color: red;

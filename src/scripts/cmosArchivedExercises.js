@@ -1,6 +1,4 @@
-
 // Example use case to load exercise with handle 'ex2': http://localhost:8080/#/cmos?load=ex2
-
 // Note: The exercises are declared in a function,
 // to allow for automatic retranslation thru vue upon
 // switches display languages.
@@ -35,7 +33,7 @@ function cmosArchivedExecises(i18n) {
  * @returns {[string]}
  */
 export function cmosGetArchivedExerciseTitles(i18n) {
-  return cmosArchivedExecises(i18n).map(ae => ae.title);
+  return cmosArchivedExecises(i18n).map((ae) => ae.title);
 }
 
 /**

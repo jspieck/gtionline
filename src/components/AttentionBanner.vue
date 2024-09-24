@@ -1,6 +1,6 @@
 <template>
   <div class="attention">
-    <font-awesome-icon class="infoCircle" icon="info-circle"/>
+    <font-awesome-icon class="infoCircle" icon="info-circle" />
     <label>{{this.text}}</label>
   </div>
 </template>

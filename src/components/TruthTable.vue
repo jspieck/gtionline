@@ -6,53 +6,85 @@
       <!-- Header -->
       <g>
         <!-- Input Variable Names -->
-        <g v-for="i in numVariables" v-bind:key="`inputvariablename_cell_${i}`"
-            :transform="`translate(${getInputCellSVGX(i-1)}, ${0})`">
+        <g
+          v-for="i in numVariables"
+          v-bind:key="`inputvariablename_cell_${i}`"
+          :transform="`translate(${getInputCellSVGX(i - 1)}, ${0})`">
           <!-- This is very eklig but I did not a way to get    -->
-          <g :transform="`translate(${cell_width * 0.2}, ${cell_height * (isSmallCharacter(varNames[numVariables-i]) ? 0.4 : 0.2)})`" dominant-baseline="bottom"
-            class="unclickable entry header_entry" text-anchor="bottom" v-html="toSvg(varNames[numVariables-i])" />
+          <g
+            :transform="`translate(${cell_width * 0.2}, ${cell_height * (isSmallCharacter(varNames[numVariables - i]) ? 0.4 : 0.2)})`"
+            dominant-baseline="bottom"
+            class="unclickable entry header_entry"
+            text-anchor="bottom"
+            v-html="toSvg(varNames[numVariables - i])" />
         </g>
         <!-- 'f' above the Result Column -->
         <g :transform="`translate(${getResultCellSVGX()}, ${0})`">
-            <g :transform="`translate(${cell_width * 0.2}, ${cell_height * 0.2})`" dominant-baseline="middle"
-            class="unclickable entry header_entry" text-anchor="middle" v-html="toSvg('f')" />
+          <g
+            :transform="`translate(${cell_width * 0.2}, ${cell_height * 0.2})`"
+            dominant-baseline="middle"
+            class="unclickable entry header_entry"
+            text-anchor="middle"
+            v-html="toSvg('f')" />
         </g>
       </g>
 
       <!-- Horizontal divider below the header (of variables) -->
-      <rect :x="getHorizontalBarBelowHeaderSVGX()" :y="getHorizontalBarBelowHeaderSVGY()" :width="svgWidth()" :height="1"/>
+      <rect :x="getHorizontalBarBelowHeaderSVGX()" :y="getHorizontalBarBelowHeaderSVGY()" :width="svgWidth()" :height="1" />
 
       <!-- Row Index Cells left -->
-      <g v-for="r in (inputCellsVertical + 1)" v-bind:key="`indexcell_${r}`"
-        :transform="`translate(${getIndexCellSVGX()}, ${getIndexCellSVGY(r-1)})`">
+      <g
+        v-for="r in (inputCellsVertical + 1)"
+        v-bind:key="`indexcell_${r}`"
+        :transform="`translate(${getIndexCellSVGX()}, ${getIndexCellSVGY(r - 1)})`">
         <!-- <text :x="cell_width / 2" :y="cell_height / 2" dominant-baseline="middle"
         class="unclickable entry" text-anchor="middle">{{r-1}}</text> -->
-        <g :transform="`translate(${cell_width * 0.2}, ${cell_height * 0.15})`" dominant-baseline="middle"
-            class="unclickable entry index_entry" text-anchor="middle" v-html="toSvg(num2indexHexString(r-1))" />
+        <g
+          :transform="`translate(${cell_width * 0.2}, ${cell_height * 0.15})`"
+          dominant-baseline="middle"
+          class="unclickable entry index_entry"
+          text-anchor="middle"
+          v-html="toSvg(num2indexHexString(r - 1))" />
       </g>
 
       <!-- Vertical divider Left (of inputs) -->
-      <rect :x="getVerticalBarLeftSVGX()" :y="getVerticalBarLeftSVGY()" :width="1" :height="svgHeight()"/>
+      <rect :x="getVerticalBarLeftSVGX()" :y="getVerticalBarLeftSVGY()" :width="1" :height="svgHeight()" />
 
       <!-- Input Number table -->
       <g v-for="(rowArray, r) in table_inputs" v-bind:key="`rowArray_${r}`">
-        <g v-for="(state, c) in rowArray" v-bind:key="`cell_${c}`"
+        <g
+          v-for="(state, c) in rowArray"
+          v-bind:key="`cell_${c}`"
           :transform="`translate(${getInputCellSVGX(c)}, ${getInputCellSVGY(r)})`">
-          <text :x="cell_width / 2" :y="cell_height / 2" dominant-baseline="middle"
-          class="unclickable entry" text-anchor="middle">{{state}}</text>
+          <text
+            :x="cell_width / 2"
+            :y="cell_height / 2"
+            dominant-baseline="middle"
+            class="unclickable entry"
+            text-anchor="middle">{{state}}</text>
         </g>
       </g>
 
       <!-- Vertical divider Right (of inputs) -->
-      <rect :x="getVerticalBarRightSVGX()" :y="getVerticalBarRightSVGY()" :width="1" :height="svgHeight()"/>
+      <rect :x="getVerticalBarRightSVGX()" :y="getVerticalBarRightSVGY()" :width="1" :height="svgHeight()" />
 
       <!-- Result Number table -->
-      <g v-for="(output, r) in table_outputs" v-bind:key="`outputcell_${r}`"
+      <g
+        v-for="(output, r) in table_outputs"
+        v-bind:key="`outputcell_${r}`"
         :transform="`translate(${getResultCellSVGX()}, ${getResultCellSVGY(r)})`">
-        <text :x="cell_width / 2" :y="cell_height / 2" dominant-baseline="middle"
-        class="unclickable entry result_entry_number" text-anchor="middle">{{output}}</text>
-        <rect fill="transparent" :width="cell_width" :height="cell_height" class="result_entry_iteractable"
-        @click="this.modifiable ? onClickResult(r) : {}" />
+        <text
+          :x="cell_width / 2"
+          :y="cell_height / 2"
+          dominant-baseline="middle"
+          class="unclickable entry result_entry_number"
+          text-anchor="middle">{{output}}</text>
+        <rect
+          fill="transparent"
+          :width="cell_width"
+          :height="cell_height"
+          class="result_entry_iteractable"
+          @click="this.modifiable ? onClickResult(r) : {}" />
       </g>
 
     </svg>
@@ -70,8 +102,14 @@ export default {
     'clicked-somewhere',
   ],
   props: {
-    numVariables: Number,
-    varNames: Array, // [String]
+    numVariables: {
+      type: Number,
+      default: 4,
+    },
+    varNames: {
+      type: Array,
+      default: () => [],
+    },
     modifiable: {
       type: Boolean,
       default: true,
@@ -185,7 +223,7 @@ export default {
     },
     getIndexColumnWidth() {
       const charsPerIndex = 2 /*= '0x' */ + Math.floor((Math.log(this.inputCellsVertical - 1) - 1) / Math.log(16)) + 1/*= index itself */ + 1;
-      return charsPerIndex * this.cell_width / 2;
+      return charsPerIndex * (this.cell_width / 2);
     },
     getHorizontalBarBelowHeaderSVGX() {
       return 0;
