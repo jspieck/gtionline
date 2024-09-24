@@ -6,9 +6,8 @@
       </InfoBlob>
       </h3>
       <div class="boolean-function-input-container">
-        <div>
+        <!-- <div>
           <div class="exercise-selection-container">
-            <!-- <div class="exercise-selection-container-tooltip">{{$t('exerciseArchive')}}:</div> -->
             <div class="exercise-selection-container-tooltip">
               <span class="infoblob-wrapper" style="float:right">
                 <InfoBlob>
@@ -18,16 +17,11 @@
               <span
                 style="padding-left:10px; padding-right:10px; padding-top:3px;"
                 v-html="$t('bf_load_exercise_from_archive')" />
-              <!-- Lade Aufgabe aus Archiv -->
-              <!-- </span> -->
               <ToggleSwitch v-on:toggle="toggleLoadFromArchiveOrFormula" checkedDefault=false />
               <span style="padding-left:10px; padding-right:10px; padding-top:3px;" v-html="$t('formula')" />
-              <!-- Formel
-              </span> -->
             </div>
             <div v-if="loadFromArchiveOrFormula" class="exercise-selection-container-subsection">
               <span v-html="$t('archive')" />
-              <!-- Archiv:</span> -->
               <FSelect
                 :options="archivedExerciseTitles"
                 :sel="0"
@@ -38,7 +32,6 @@
             </div>
             <div v-if="!loadFromArchiveOrFormula" class="exercise-selection-container-subsection">
               <span style="padding-left:10px" v-html="$t('formula')" />
-              <!-- Formel:</span> -->
               <input v-model="stringInterpreterFormula" class="leftMargin10" size="17" />
               <button class="leftMargin10" @click="loadBFFromString(stringInterpreterFormula)">{{ $t('translate_big')
               }}</button>
@@ -46,16 +39,15 @@
             <div
               v-if="!loadFromArchiveOrFormula && loadFromFormula_formulaError"
               class="exercise-selection-container-subsection">
-              <!-- <span class="errormessage">Fehler in Formel!</span> -->
               <span class="errormessage">
                 <span v-html="`${$t('bf_error_at_symbol')} `" />
                 <span> '{{ loadFromFormula_formulaErrorDetails.found }}' </span>
                 <span v-html="` ${$t('at_position')} `" />
                 <span> {{ loadFromFormula_formulaErrorDetails.location.start.column }}</span>
               </span>
-              <!-- Error at symbol '{{loadFromFormula_formulaErrorDetails.found}}'</span> -->
             </div>
           </div>
+
           <div class="exercise-selection-container">
             <div class="exercise-selection-container-tooltip">
               {{ $t('randomExercise') }}:
@@ -83,27 +75,62 @@
               <button @click="generateRandomExercise">{{ $t('load') }}</button>
             </div>
           </div>
+        </div> -->
+        <div class="exercise-selection-container">
+          <TabComponent :tabs="['archive', 'formula', 'randomExercise']">
+            <template #archive>
+              <div class="exercise-selection-container-subsection">
+                <span v-html="$t('archive')" />
+                <FSelect
+                  :options="archivedExerciseTitles"
+                  :sel="0"
+                  @input="selectArchivedExercise"
+                  class="leftMargin10 fselect_broad"
+                  ref="archivedExercisesDropDownMenu" />
+                <button @click="loadArchivedExercise">{{ $t('load') }}</button>
+              </div>
+            </template>
+            <template #formula>
+              <div class="exercise-selection-container-subsection">
+                <span v-html="$t('formula')" />
+                <input v-model="stringInterpreterFormula" class="leftMargin10" size="17" />
+                <button class="leftMargin10" @click="loadBFFromString(stringInterpreterFormula)">{{ $t('translate_big') }}</button>
+              </div>
+              <div v-if="loadFromFormula_formulaError" class="exercise-selection-container-subsection">
+                <span class="errormessage">
+                  <span v-html="`${$t('bf_error_at_symbol')} `" />
+                  <span> '{{ loadFromFormula_formulaErrorDetails.found }}' </span>
+                  <span v-html="` ${$t('at_position')} `" />
+                  <span> {{ loadFromFormula_formulaErrorDetails.location.start.column }}</span>
+                </span>
+              </div>
+            </template>
+            <template #randomExercise>
+              <div class="exercise-selection-container-subsection">
+                <span>{{ $t('goal') }}:</span>
+                <FSelect
+                  :options="randomExercisesGoalsTitles"
+                  class="leftMargin10"
+                  :sel="0"
+                  @input="selectRandomExerciseGoal" />
+              </div>
+              <div>
+                <span>{{ $t('difficultyUC') }}:</span>
+                <FSelect
+                  :options="randomExercisesDifficulties"
+                  :sel="0"
+                  class="leftMargin10"
+                  @input="selectRandomExerciseDifficulty" />
+                <button @click="generateRandomExercise">{{ $t('load') }}</button>
+              </div>
+            </template>
+          </TabComponent>
         </div>
-
         <p class="boolean-function-input-container-divider">{{ $t('bf_infotext_or_interact_with_kv') }}:</p>
-
         <div>
           <BooleanFunctionInputDevice class='bfInputDevice' ref="childBooleanFunctionInputDevice" />
         </div>
-        <!--
-        <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM)">Use KVDiagram</button>
-        <button @click="this.setMethodOfInputForBooleanFunction(this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_FUNCTION_TABLE)">Use Function Table</button>
-
-        <div>
-          <KVDiagr class="kvdiagram" ref="childKVDiagram" />
-        </div>
-        -->
-
         <button class="boolean-function-button-optimize" @click="optimize()">{{ $t('doCalculation') }}</button>
-
-        <!--<button class="boolean-function-button-optimize" @click="downloadSymSVG()">{{$t('downloadSvg')}}</button>-->
-
-        <!-- <button class="boolean-function-button-optimize" @click="downloadSymPNG()">{{$t('downloadPng')}}</button> -->
       </div>
 
       <div class="horizontalbar" />
@@ -122,35 +149,6 @@
         </span>
 
         <Accordion>
-          <!-- <AccordionItem>
-            <template v-slot:accordion-item-title>
-              {{ $t('kvDiagram') }} / {{ $t('truthtable') }}
-            </template>
-<template v-slot:accordion-item-body>
-              <Accordion class="emptyAccordionParentBody">
-                <AccordionItem>
-                  <template v-slot:accordion-item-title>
-                    {{$t('kvDiagram')}}
-                  </template>
-<template v-slot:accordion-item-body>
-                    <KVDiagr ref="resultKVDiagram" :modifiable="false"
-                    @requesting-kvdiagram-data-after-reactivation="updateResultKVDiagram()"
-                    :numVariables="this.resultNumVars" :varNames="this.$refs['childBooleanFunctionInputDevice'].currentVarNames"/>
-                  </template>
-</AccordionItem>
-<AccordionItem>
-  <template v-slot:accordion-item-title>
-                    {{$t('truthtable')}}
-                  </template>
-  <template v-slot:accordion-item-body>
-                    <TruthTable ref="resultTruthTable" :modifiable="false"
-                    @requesting-bf-after-reactivation="updateResultTruthtable()"
-                    :numVariables="this.resultNumVars" :varNames="this.$refs['childBooleanFunctionInputDevice'].currentVarNames"/>
-                  </template>
-</AccordionItem>
-</Accordion>
-</template>
-</AccordionItem> -->
           <AccordionItem>
             <template v-slot:accordion-item-title>
               {{ $t('kvDiagram') }} / {{ $t('truthtable') }}
@@ -174,31 +172,6 @@
                 @clicked-somewhere="unblurDOM" />
             </template>
           </AccordionItem>
-
-          <!-- <Accordion class="emptyAccordionParentBody">
-                <AccordionItem>
-                  <template v-slot:accordion-item-title>
-                    {{$t('kvDiagram')}}
-                  </template>
-                  <template v-slot:accordion-item-body>
-                    <KVDiagr ref="resultKVDiagram" :modifiable="false"
-                    @requesting-kvdiagram-data-after-reactivation="updateResultKVDiagram()"
-                    :numVariables="this.resultNumVars" :varNames="this.$refs['childBooleanFunctionInputDevice'].currentVarNames"/>
-                  </template>
-                </AccordionItem>
-                <AccordionItem>
-                  <template v-slot:accordion-item-title>
-                    {{$t('truthtable')}}
-                  </template>
-                  <template v-slot:accordion-item-body>
-                    <TruthTable ref="resultTruthTable" :modifiable="false"
-                    @requesting-bf-after-reactivation="updateResultTruthtable()"
-                    :numVariables="this.resultNumVars" :varNames="this.$refs['childBooleanFunctionInputDevice'].currentVarNames"/>
-                  </template>
-                </AccordionItem>
-              </Accordion>
-            </template>
-          </AccordionItem> -->
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
@@ -309,24 +282,6 @@
 
             </template>
           </AccordionItem>
-
-          <!-- <AccordionItem>
-            <template v-slot:accordion-item-title>
-              Primterme
-            </template>
-            <template v-slot:accordion-item-body>
-              <div> Primimplikanten:
-                <div v-for="i in primeTermsMin.length" :key="`primeTermMinID_${i}`">
-                  <div class="svg-text" v-html="toSvg(primeTermsMin[i-1])"/>
-                </div>
-              </div>
-              <div> Primimplikate:
-                <div v-for="i in primeTermsMax.length" :key="`primeTermMaxID_${i}`">
-                  <div class="svg-text" v-html="toSvg(primeTermsMax[i-1])"/>
-                </div>
-              </div>
-            </template>
-          </AccordionItem> -->
 
           <AccordionItem>
             <template v-slot:accordion-item-title>
@@ -462,10 +417,6 @@
               {{ $t('bf_petrickExpression') }}
             </template>
             <template v-slot:accordion-item-body>
-              <!-- <div><span v-html="toSvg(petrickStatementCurrent.expressionDirectStr + '=1')"/><span> | Absorption + Idempotenz</span></div>
-              <div><span v-html="toSvg(petrickStatementCurrent.expressionAbsorbedStr + '=1')"/><span> | {{$t('mathDistribution')}}</span></div>
-              <div><span v-html="toSvg(petrickStatementCurrent.expressionExpandedStr + '=1')"/><span> | Absorption + Idempotenz</span></div>
-              <div><span v-html="toSvg(petrickStatementCurrent.expressionStr + '=1')"/></div> -->
               <div class="bf-petrick-statement-container">
                 <span v-if="petrickStatementCurrent.steps.length > 4" class="infoblob-wrapper">
                   <InfoBlob>
@@ -480,10 +431,6 @@
                   <span v-if="s < petrickStatementCurrent.steps.length - 1">
                     | {{ getTextFromPetrickStatementActionType(petrickStatementCurrent.steps[s + 1].actionType) }}
                   </span>
-
-                  <!-- Math explanations also rendered as svg: -->
-                  <!-- <span v-html="toSvg(step.bf.toLatex('ABCDEFGHIJKLMNOPQRSTUVPXYZ'.split(''), false) + ' = 1')"></span>
-                  <span v-if="s < petrickStatementCurrent.steps.length - 1" v-html="toSvg(' | ' + getTextFromPetrickStatementActionType(petrickStatementCurrent.steps[s+1].actionType) )" /> -->
                 </div>
               </div>
             </template>
@@ -591,6 +538,7 @@ import {
 import { bfLoadArchivedExercise, bfGetArchivedExerciseTitles, bfGetExerciseIndexOfHandle } from '@/scripts/bfArchivedExercises';
 import BooleanFunctionInputDevice from './BooleanFunctionInputDevice.vue';
 // import KVDiagram from './KVDiagram.vue';
+import TabComponent from './TabComponent.vue';
 import Accordion from './EmbeddedAccordion.vue';
 import AccordionItem from './EmbeddedAccordionItem.vue';
 import FormatSelect from './FormatSelect.vue';
@@ -611,6 +559,7 @@ export default {
     BooleanFunctionInputDevice,
     KVDiagr,
     TruthTable,
+    TabComponent,
   },
   data() {
     return {
@@ -1505,6 +1454,7 @@ export default {
     margin-left: .8em;
     margin-right: .8em;
     background: #ffffff47;
+    min-width: 400px;
   }
 
   .exercise-selection-container {

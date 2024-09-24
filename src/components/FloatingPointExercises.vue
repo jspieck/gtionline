@@ -176,6 +176,7 @@ export default {
       };
     },
     solDescr() {
+      console.log('Print', this.exponentBits, this.numBits, this.fp1, this.fp2);
       const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
       console.log(this.selectedFormat[0]);
       ieeeSolution.computeSolution(this.fp1, this.fp2, this.selectedFormat[0]);
@@ -186,7 +187,8 @@ export default {
         this.numBits,
         watcher,
       );
-      descr.makeDescriptionArithmetic(this.fp1, this.fp2, this.solution, this.selectedFormat[0]);
+      console.log('Solution', this.solution);
+      descr.makeDescriptionArithmetic(this.fp1, this.fp2, ieeeSolution.result, this.selectedFormat[0]);
       this.setVariables(watcher, ieeeSolution.result, ieeeSolution.resultObject);
       return descr.result;
     },
@@ -280,14 +282,8 @@ export default {
       });
     },
     prepareExercise() {
-      this.drawExercise();
-      // this.computeSolution();
       this.saveVals();
-      this.$nextTick(() => {
-        if (window.MathJax) {
-          window.MathJax.typeset();
-        }
-      });
+      this.drawExercise();
     },
     generateExercise() {
       const random = new randomIEEE.RandomIEEE(this.exponentBits, this.numBits);

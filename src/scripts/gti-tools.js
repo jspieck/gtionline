@@ -9961,6 +9961,7 @@ function getIEEEFromString(expBitNum, str) {
   var string = str;
 
   if (str.length <= expBitNum + 2) {
+    console.log(str.length, expBitNum);
     console.log('getIEEEFromString(expBitNum, str): Given string is not compatible with the given number of expBitNum.');
     process.exit(1);
   }

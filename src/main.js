@@ -35,7 +35,6 @@ hljs.registerLanguage('tex', latex);
 
 // router, i18n, render: h => h(App),
 const app = createApp(App);
-
 app.use(router);
 
 const options = {

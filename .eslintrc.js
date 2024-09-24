@@ -24,6 +24,7 @@ module.exports = {
     'vuejs-accessibility/form-control-has-label': 'off',
     'vue/no-async-in-computed-properties': 'off',
     'vuejs-accessibility/label-has-for': 'off',
+    'import/no-cycle': 'off',
   },
   parserOptions: {
     parser: '@babel/eslint-parser',

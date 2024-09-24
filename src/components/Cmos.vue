@@ -7,80 +7,72 @@
       <div class="bodyContainer">
         <p>{{$t('enter_cmos')}}</p>
         <p>{{$t('cmos_infoblob_input_description')}}</p>
-        <div>
-          <!-- Box: Load exercise from archive or formula -->
+        <div class="centering">
           <div class="exercise-selection-container">
-            <div class="exercise-selection-container-tooltip">
-              <span class="infoblob-wrapper" style="float:right">
-                <InfoBlob>
-                  <span v-html="$t('bf_infoblob_load_exercise')" />
-                </InfoBlob>
-              </span>
-              <span
-                style="padding-left:10px; padding-right:10px; padding-top:3px;"
-                v-html="$t('bf_load_exercise_from_archive')" />
-              <ToggleSwitch v-on:toggle="toggleLoadFromArchiveOrFormula" checkedDefault=false />
-              <span
-                style="padding-left:10px; padding-right:10px; padding-top:3px;"
-                v-html="$t('formula')" />
-            </div>
-            <!-- Lade Aufgabe aus Archiv -->
-            <div v-if="loadFromArchiveOrFormula === true" class="exercise-selection-container-subsection">
-              <FSelect
-                :options="archivedExerciseTitles"
-                :sel="0"
-                @input="selectArchivedExercise"
-                ref="archivedExercisesCMOSDropDownMenu" />
-              <button @click="loadArchivedExercise" type="button">{{$t('load')}}</button>
-            </div>
-            <!-- Lade Aufgabe aus Formel -->
-            <div v-if="loadFromArchiveOrFormula === false" class="exercise-selection-container-subsection">
-              <input v-model="cmosFormula" size="25" />
-              <button @click="generateCmos(cmosFormula)">{{$t('translate_big')}}</button>
-              <div v-if="cmosError != null" class="exercise-selection-container-subsection">
-                <span class="errormessage">
-                  <span v-html="`${$t('cmos_error_at_symbol')} `" />
-                  <span> '{{cmosError.found}}' </span>
-                  <span v-html="`${$t('at_position')} `" />
-                  <span> {{ cmosError.location.start.column }}</span>
-                </span>
-              </div>
-              <!-- Formel Errormessage -->
-              <div v-if="cmosErrorFormulaTooSimple != null" class="exercise-selection-container-subsection">
-                <span class="errormessage">
-                  <span> {{$t('cmos_enter_more_than_one_variable')}} </span>
-                </span>
-              </div>
-            </div>
+            <TabComponent :tabs="['archive', 'formula', 'randomExercise']">
+              <template #archive>
+                <div class="exercise-selection-container-subsection">
+                  <div class="exercise-selection-container-subsection">
+                    <span v-html="$t('archive')" />
+                    <FSelect
+                      :options="archivedExerciseTitles"
+                      :sel="0"
+                      class="leftMargin10"
+                      @input="selectArchivedExercise"
+                      ref="archivedExercisesCMOSDropDownMenu" />
+                    <button @click="loadArchivedExercise" type="button">{{$t('load')}}</button>
+                  </div>
+                </div>
+              </template>
+              <template #formula>
+                <div class="exercise-selection-container-subsection">
+                  <span style="padding-left:10px" v-html="$t('formula')" />
+                  <input v-model="cmosFormula" class="leftMargin10" size="25" />
+                  <button @click="generateCmos(cmosFormula)">{{$t('translate_big')}}</button>
+                  <div v-if="cmosError != null" class="exercise-selection-container-subsection">
+                    <span class="errormessage">
+                      <span v-html="`${$t('cmos_error_at_symbol')} `" />
+                      <span> '{{cmosError.found}}' </span>
+                      <span v-html="`${$t('at_position')} `" />
+                      <span> {{ cmosError.location.start.column }}</span>
+                    </span>
+                  </div>
+                  <!-- Formel Errormessage -->
+                  <div v-if="cmosErrorFormulaTooSimple != null" class="exercise-selection-container-subsection">
+                    <span class="errormessage">
+                      <span> {{$t('cmos_enter_more_than_one_variable')}} </span>
+                    </span>
+                  </div>
+                </div>
+              </template>
+              <template #randomExercise>
+                <div class="exercise-selection-container-subsection">
+                  <div>
+                    <span>{{$t('difficultyUC')}}:</span>
+                    <FSelect
+                      :options="randomExercisesDifficulties"
+                      :sel="0"
+                      class="leftMargin10"
+                      @input="selectRandomExerciseDifficulty" />
+                    <button @click="generateRandomExercise">{{$t('load')}}</button>
+                  </div>
+                </div>
+              </template>
+            </TabComponent>
           </div>
-          <!-- Box: Generate random exercise -->
-          <div class="exercise-selection-container">
-            <div class="exercise-selection-container-tooltip">
-              {{$t('randomExercise')}}:
-            </div>
-            <div>
-              <span>{{$t('difficultyUC')}}:</span>
-              <FSelect
-                :options="randomExercisesDifficulties"
-                :sel="0"
-                class="leftMargin10"
-                @input="selectRandomExerciseDifficulty" />
-              <button @click="generateRandomExercise">{{$t('load')}}</button>
-            </div>
-          </div>
-          <h4 id="displayedFormula" v-if="renderedFormula" v-html="`${$t('formula')}: ${renderedFormula}`" />
         </div>
+        <h4 id="displayedFormula" v-if="renderedFormula" v-html="`${$t('formula')}: ${renderedFormula}`" />
       </div>
-    </div>
-    <div id="cmosOutput" v-html="cmosOutput" class="blurred" @mousedown="unblurDOM" ref="cmosOutput" />
-    <h3 v-if="latex">Tikz Code</h3>
-    <div class="codeContainer">
-      <div class="copyButton">
-        <button @click="copyToClipboard"><font-awesome-icon icon="copy" /></button>
-        <span class="tooltip" ref="tooltip">Copied</span>
+      <div id="cmosOutput" v-html="cmosOutput" class="blurred" @mousedown="unblurDOM" ref="cmosOutput" />
+      <h3 v-if="latex">Tikz Code</h3>
+      <div class="codeContainer">
+        <div class="copyButton">
+          <button @click="copyToClipboard"><font-awesome-icon icon="copy" /></button>
+          <span class="tooltip" ref="tooltip">Copied</span>
+        </div>
+        <!-- <highlightjs lang="tex" :code="latex"/> -->
+        <pre><code><span v-for="(line, lineNumber) in latex" v-bind:key="lineNumber" v-html="line" class="codeLine" /></code></pre>
       </div>
-      <!-- <highlightjs lang="tex" :code="latex"/> -->
-      <pre><code><span v-for="(line, lineNumber) in latex" v-bind:key="lineNumber" v-html="line" class="codeLine" /></code></pre>
     </div>
   </div>
 </template>
@@ -93,14 +85,14 @@ import {
 import { cmosLoadArchivedExercise, cmosGetArchivedExerciseTitles, cmosGetExerciseIndexOfHandle } from '@/scripts/cmosArchivedExercises';
 import InfoBlob from './InfoBlob.vue';
 import FormatSelect from './FormatSelect.vue';
-import ToggleSwitch from './ToggleSwitch.vue';
+import TabComponent from './TabComponent.vue';
 
 export default {
   name: 'KVDiagram',
   components: {
     InfoBlob,
     FSelect: FormatSelect,
-    ToggleSwitch,
+    TabComponent,
   },
   data() {
     return {
@@ -539,20 +531,22 @@ export default {
     counter-reset: line;
   }
 
-  /* pre span {
-    display: block;
-    counter-increment: line;
+  .centering {
+    text-align: center;
   }
 
-  pre span:before {
-    counter-increment: line;
-    content: counter(line);
+  .exercise-selection-container {
     display: inline-block;
-    border-right: 1px solid #ddd;
-    padding: 0 .5em;
-    margin-right: .5em;
-    color: #888
-  } */
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba($lightBlue, 0.5);
+    border-radius: 1.7em;
+    padding: .8em;
+    margin-left: .8em;
+    margin-right: .8em;
+    background: #ffffff47;
+    min-width: 450px;
+  }
 
   span.codeLine::before {
     content: counter(codeLine);
