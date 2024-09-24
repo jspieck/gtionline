@@ -178,7 +178,6 @@ export default {
     solDescr() {
       console.log('Print', this.exponentBits, this.numBits, this.fp1, this.fp2);
       const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
-      console.log(this.selectedFormat[0]);
       ieeeSolution.computeSolution(this.fp1, this.fp2, this.selectedFormat[0]);
       const watcher = ieeeSolution.watcher;
       const descr = new description.DescriptionSolution(
@@ -187,7 +186,6 @@ export default {
         this.numBits,
         watcher,
       );
-      console.log('Solution', this.solution);
       descr.makeDescriptionArithmetic(this.fp1, this.fp2, ieeeSolution.result, this.selectedFormat[0]);
       this.setVariables(watcher, ieeeSolution.result, ieeeSolution.resultObject);
       return descr.result;
@@ -204,8 +202,10 @@ export default {
         div: [this.$t('division'), '/'],
       };
       console.log(operation);
+      console.log('Info', { op1: opNames[operation][0], op2: opNames[operation][1] });
       // `Es seien die Gleitkommazahlen \\( fp_1 \\) und \\( fp_2 \\) im 16 Bit Gleitkommaformat gegeben. Berechnen Sie die ${opNames[operation][0]} \\( fp_1 ${opNames[operation][1]} fp_2 \\) ohne die Binärdarstellung zu verlassen und geben Sie diese wieder als Gleitkommazahl an:
       const introText = this.$t('fpExerciseText', { op1: opNames[operation][0], op2: opNames[operation][1] });
+      console.log(introText);
       return `${introText} 
 
           \\( fp_1 = \\text{${this.fp1}} \\)\n
