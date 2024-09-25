@@ -1,5 +1,9 @@
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
-import * as tool from './gti-tools';
+import { getIEEEFromString } from './algorithms/arithmetic/IEEE/numberIEEE';
+import { AdditionIEEE } from './algorithms/arithmetic/IEEE/addition';
+import { SubtractionIEEE } from './algorithms/arithmetic/IEEE/subtraction';
+import { MultiplicationIEEE } from './algorithms/arithmetic/IEEE/multiplication';
+import { DivisionIEEE } from './algorithms/arithmetic/IEEE/division';
 
 function classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -25,8 +29,8 @@ export class IEEESolution {
 
   computeSolution(num1, num2, operator) {
     if (num1 !== '' && num2 !== '') {
-      const y1 = tool.getIEEEFromString(this.exponentBits, num1);
-      const y2 = tool.getIEEEFromString(this.exponentBits, num2);
+      const y1 = getIEEEFromString(this.exponentBits, num1);
+      const y2 = getIEEEFromString(this.exponentBits, num2);
       console.log(y1);
       let result = null;
       this.negativeSummand = false;
@@ -36,7 +40,7 @@ export class IEEESolution {
       switch (operator) {
         case 'add':
           if (y1.sign === 0 && y2.sign === 0) {
-            result = new tool.AdditionIEEE(y1, y2);
+            result = new AdditionIEEE(y1, y2);
             this.resultObject = result.watcher.steps.Result.data.result;
           } else if (y2.sign === 1) {
             y2.sign = 0;
@@ -45,20 +49,20 @@ export class IEEESolution {
             if (y1.sign === 1) {
               this.negativeMinuendSubtrahend = true;
             }
-            result = new tool.SubtractionIEEE(y1, y2);
+            result = new SubtractionIEEE(y1, y2);
             // eslint-disable-next-line max-len
             this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
           } else {
             this.negativeSummand = true;
             y1.sign = 0;
             y1.arr[0] = 0;
-            result = new tool.SubtractionIEEE(y2, y1);
+            result = new SubtractionIEEE(y2, y1);
             // eslint-disable-next-line max-len
             this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
           }
           break;
         case 'mul':
-          result = new tool.MultiplicationIEEE(y1, y2);
+          result = new MultiplicationIEEE(y1, y2);
           this.resultObject = result.watcher.steps.Result.data.result;
           break;
         case 'sub':
@@ -69,25 +73,25 @@ export class IEEESolution {
               y1.arr[0] = 0;
               y2.sign = 0;
               y2.arr[0] = 0;
-              result = new tool.AdditionIEEE(y1, y2);
+              result = new AdditionIEEE(y1, y2);
               this.resultObject = result.watcher.steps.Result.data.result;
               this.resultObject.sign = 1;
               this.resultObject.arr[0] = 0;
             } else {
-              result = new tool.SubtractionIEEE(y1, y2);
+              result = new SubtractionIEEE(y1, y2);
               // eslint-disable-next-line max-len
               this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
             }
           } else if (y1.sign === 1 && y2.sign === 1) {
             this.negativeSubtrahend = true;
-            result = new tool.SubtractionIEEE(y1, y2);
+            result = new SubtractionIEEE(y1, y2);
             // eslint-disable-next-line max-len
             this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
           } else {
             this.negativeSubtrahend = true;
             y2.sign = 0;
             y2.arr[0] = 0;
-            result = new tool.AdditionIEEE(y1, y2);
+            result = new AdditionIEEE(y1, y2);
             this.resultObject = result.watcher.steps.Result.data.result;
           }
           break;
@@ -96,7 +100,7 @@ export class IEEESolution {
             this.denominatorZero = true;
             return;
           }
-          result = new tool.DivisionIEEE(y1, y2);
+          result = new DivisionIEEE(y1, y2);
           this.resultObject = result.watcher.steps.Result.data.result;
           break;
         default:

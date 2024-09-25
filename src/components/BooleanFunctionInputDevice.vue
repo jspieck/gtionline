@@ -72,8 +72,8 @@
 </template>
 
 <script>
-import { KVDiagram } from '@/scripts/gti-tools';
 // import { onMounted } from 'vue';
+import { KVDiagram } from '@/scripts/algorithms/booleanFunctions/KVDiagram';
 import KVDiagr from './KVDiagram.vue';
 import TruthTable from './TruthTable.vue';
 import FormatSelect from './FormatSelect.vue';

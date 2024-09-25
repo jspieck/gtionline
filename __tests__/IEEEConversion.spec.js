@@ -1,9 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { describe, test } from '@jest/globals';
 import * as convertFormat from '../src/scripts/formatConversions';
-import {
-  getIEEEFromString as getIEEE,
-} from '../src/scripts/gti-tools';
+import { getIEEEFromString as getIEEE} from './algorithms/arithmetic/IEEE/numberIEEE';
 import {
   checkMantissa,
   checkArray,

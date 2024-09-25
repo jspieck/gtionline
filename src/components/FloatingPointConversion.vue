@@ -103,7 +103,7 @@
 
 <script>
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
-import { getIEEEFromString } from '@/scripts/gti-tools';
+import { getIEEEFromString } from '@/scripts/algorithms/arithmetic/IEEE/numberIEEE';
 import AttentionBanner from './AttentionBanner.vue';
 import * as checker from '../scripts/checkSolution';
 import * as convertFormat from '../scripts/formatConversions';

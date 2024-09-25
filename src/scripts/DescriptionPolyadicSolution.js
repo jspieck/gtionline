@@ -1,5 +1,5 @@
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
-import * as tool from './gti-tools';
+import { NumberPolyadic } from './algorithms/arithmetic/polyadic/numberPolyadic';
 
 function classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -508,8 +508,8 @@ export class DescriptionPolyadicSolution {
   /* eslint-enable */
 
   makeDescription(num1, num2, format, operator) {
-    const y1 = new tool.NumberPolyadic(format, num1);
-    const y2 = new tool.NumberPolyadic(format, num2);
+    const y1 = new NumberPolyadic(format, num1);
+    const y2 = new NumberPolyadic(format, num2);
     switch (operator) {
       case 'add':
         if (y1.sign === '+' && y2.sign === '+') {

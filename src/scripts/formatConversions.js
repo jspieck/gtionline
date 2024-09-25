@@ -1,5 +1,5 @@
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
-import * as tool from './gti-tools';
+import { roundArray } from './algorithms/calcHelper';
 
 function classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -67,7 +67,7 @@ export class FormatConversions {
     }
     // console.log(shiftFactor, mantisse);
     if (mantisse.length > numBitsMantisse) {
-      mantisse = tool.roundArray(mantisse, numBitsMantisse);
+      mantisse = roundArray(mantisse, numBitsMantisse);
     }
     if (mantisse.length < numBitsMantisse) {
       mantisse += '0'.repeat(numBitsMantisse - mantisse.length);

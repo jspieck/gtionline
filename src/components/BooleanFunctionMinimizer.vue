@@ -522,19 +522,29 @@
 </template>
 
 <script>
+import { BooleanFunctionUtil } from '@/scripts/algorithms/booleanFunctions/booleanFunctionUtil';
+import { generateRandomKVDiagram } from '@/scripts/algorithms/booleanFunctions/KVDiagram';
+
 import {
-  optimizeBooleanFunction, generateRandomKVDiagram, BooleanFunctionUtil, // computePrimesFromKV,
+  optimizeBooleanFunction,
+} from '@/scripts/algorithms/booleanFunctions/booleanFunctionOptimizer';
+import {
   BOOLEAN_FUNCTION_PRIME_TABLES_STEP_FOUND_CORE, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_COLUMN_BC_COVERED,
   BOOLEAN_FUNCTION_PRIME_TABLES_STEP_ROW_DOMINATION, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_COLUMN_DOMINATION,
   BOOLEAN_FUNCTION_PRIME_TABLES_STEP_CROSS_ROW_BC_COVERED, BOOLEAN_FUNCTION_PRIME_TABLES_STEP_HAS_CYCLIC_REST,
+} from '@/scripts/algorithms/booleanFunctions/algorithms/booleanFunctionPrimeTables';
+import {
   BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_INITIAL, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_DISTRIBUTION,
   BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_IDEMPOTENCE, BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_ABSORPTION,
   BOOLEAN_FUNCTION_PETRICK_STATEMENT_STEP_SORTING,
-  computeNANDification, BOOLEAN_FUNCTION_NANDIFY_STEP_DOUBLE_NEGATION,
+} from '@/scripts/algorithms/booleanFunctions/algorithms/booleanFunctionPetrickStatement';
+import {
+  BOOLEAN_FUNCTION_NORIFY_STEP_NAND_TO_OR, BOOLEAN_FUNCTION_NORIFY_STEP_DOUBLE_NEGATION, BOOLEAN_FUNCTION_NORIFY_STEP_REDUNDANT_OR,
+  BOOLEAN_FUNCTION_NANDIFY_STEP_DOUBLE_NEGATION,
   BOOLEAN_FUNCTION_NANDIFY_STEP_NOR_TO_AND, BOOLEAN_FUNCTION_NANDIFY_STEP_REDUNDANT_AND,
-  computeNORification, BOOLEAN_FUNCTION_NORIFY_STEP_NAND_TO_OR,
-  BOOLEAN_FUNCTION_NORIFY_STEP_DOUBLE_NEGATION, BOOLEAN_FUNCTION_NORIFY_STEP_REDUNDANT_OR,
-} from '@/scripts/gti-tools';
+  computeNANDification, computeNORification,
+} from '@/scripts/algorithms/booleanFunctions/algorithms/booleanFunctionNANDNORify';
+
 import { bfLoadArchivedExercise, bfGetArchivedExerciseTitles, bfGetExerciseIndexOfHandle } from '@/scripts/bfArchivedExercises';
 import BooleanFunctionInputDevice from './BooleanFunctionInputDevice.vue';
 // import KVDiagram from './KVDiagram.vue';

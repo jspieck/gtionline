@@ -1,7 +1,6 @@
-import { KVDiagram } from './gti-tools';
+import { KVDiagram } from './algorithms/booleanFunctions/KVDiagram';
 
 // Example use case to load exercise with handle 'ex2': http://localhost:8080/#/cmos?load=ex2
-
 // Note: The exercises are declared in a function,
 // to allow for automatic retranslation thru vue upon
 // switches display languages.

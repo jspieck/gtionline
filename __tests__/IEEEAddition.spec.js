@@ -1,9 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { describe, test } from '@jest/globals';
-import {
-  getIEEEFromString,
-  AdditionIEEE,
-} from '../src/scripts/gti-tools';
+import { getIEEEFromString } from '../src/scripts/algorithms/arithmetic/IEEE/numberIEEE';
+import { AdditionIEEE } from '../src/scripts/algorithms/arithmetic/IEEE/addition';
 
 import {
   checkMantissa,

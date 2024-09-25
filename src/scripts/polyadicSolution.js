@@ -1,5 +1,8 @@
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
-import * as tool from './gti-tools';
+import { NumberPolyadic } from './algorithms/arithmetic/polyadic/numberPolyadic';
+import { AdditionPolyadic } from './algorithms/arithmetic/polyadic/addition';
+import { SubtractionPolyadic } from './algorithms/arithmetic/polyadic/subtraction';
+import { ConversionPolyadicNumbers } from './algorithms/arithmetic/polyadic/conversionPolyadicNumbers';
 
 function classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -18,8 +21,8 @@ export class PolyadicSolution {
 
   convertFormat(num1, format1, format2) {
     if (num1 !== '') {
-      const number = new tool.NumberPolyadic(format1, num1.toString(format1));
-      const converter = new tool.ConversionPolyadicNumbers(number, format2);
+      const number = new NumberPolyadic(format1, num1.toString(format1));
+      const converter = new ConversionPolyadicNumbers(number, format2);
       this.modus = converter.modus;
       this.result = converter.solution.bitString;
       this.watcher = converter.watcher;
@@ -36,17 +39,17 @@ export class PolyadicSolution {
   }
 
   calcArithmeticSolution(num1, num2, format, operator) {
-    const number1 = new tool.NumberPolyadic(format, num1.toString(format));
-    const number2 = new tool.NumberPolyadic(format, num2.toString(format));
+    const number1 = new NumberPolyadic(format, num1.toString(format));
+    const number2 = new NumberPolyadic(format, num2.toString(format));
     switch (operator) {
       case 'add':
-        const addition = new tool.AdditionPolyadic(number1, number2);
+        const addition = new AdditionPolyadic(number1, number2);
         this.result = addition.result.bitString;
         this.resultObject = addition.result;
         this.watcher = JSON.parse(JSON.stringify(addition.watcher));
         break;
       case 'sub':
-        const subtraction = new tool.SubtractionPolyadic(number1, number2);
+        const subtraction = new SubtractionPolyadic(number1, number2);
         this.result = subtraction.result.bitString;
         this.resultObject = subtraction.result;
         this.watcher = JSON.parse(JSON.stringify(subtraction.watcher));

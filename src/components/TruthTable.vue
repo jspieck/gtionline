@@ -93,7 +93,7 @@
 
 <script>
 import { reactive } from 'vue';
-import { BooleanFunctionUtil } from '@/scripts/gti-tools';
+import { BooleanFunctionUtil } from '@/scripts/algorithms/booleanFunctions/booleanFunctionUtil';
 
 export default {
   emits: [

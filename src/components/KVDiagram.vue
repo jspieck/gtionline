@@ -49,7 +49,7 @@
 
 <script>
 import { reactive } from 'vue';
-import { KVDiagram } from '@/scripts/gti-tools';
+import { KVDiagram } from '@/scripts/algorithms/booleanFunctions/KVDiagram';
 
 export default {
   name: 'KVDiagram',
@@ -257,7 +257,6 @@ export default {
   methods: {
     /**
      * Returns JS / KVDiagram representation of this filled diagram.
-     * see gti-tools
      */
     getKVDiagram() {
       // compute js representation of KVDiagram from flat diagram

@@ -1,7 +1,7 @@
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
 import { reactive } from 'vue';
-import * as tool from './gti-tools';
 import * as convertFormat from './formatConversions';
+import { getIEEEFromString } from './algorithms/arithmetic/IEEE/numberIEEE';
 
 function classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -1170,9 +1170,9 @@ export class DescriptionSolution {
 
   makeDescriptionArithmetic(num1, num2, solutionString, operator) {
     if (num1 !== '' && num2 !== '' && num1 !== this.imp.$t('falseFormat') && num2 !== this.imp.$t('falseFormat')) {
-      const solution = tool.getIEEEFromString(this.exponentBits, solutionString);
-      const y1 = tool.getIEEEFromString(this.exponentBits, num1);
-      const y2 = tool.getIEEEFromString(this.exponentBits, num2);
+      const solution = getIEEEFromString(this.exponentBits, solutionString);
+      const y1 = getIEEEFromString(this.exponentBits, num1);
+      const y2 = getIEEEFromString(this.exponentBits, num2);
       switch (operator) {
         case 'add':
           if (y1.sign === 0 && y2.sign === 0) {

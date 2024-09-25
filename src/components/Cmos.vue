@@ -79,9 +79,13 @@
 
 <script>
 import hljs from 'highlight.js/lib/common';
-import {
-  CMOSBuilder, parseBooleanFunction, SVGGenerator, CMOSVisualBuilder, toLaTeX, LatexGenerator,
-} from '@/scripts/gti-tools';
+import { CMOSBuilder } from '@/scripts/boolean/cmos/CMOSBuilder';
+import { parseBooleanFunction } from '@/scripts/boolean/expression/parserwrapper';
+import { SVGGenerator } from '@/scripts/boolean/cmos_visuals/SVGGenerator';
+import { CMOSVisualBuilder } from '@/scripts/boolean/cmos_visuals/CMOSVisualBuilder';
+import { LatexGenerator } from '@/scripts/boolean/cmos_visuals/LatexGenerator';
+import { toLaTeX } from '@/scripts/boolean/expression/tolatex';
+
 import { cmosLoadArchivedExercise, cmosGetArchivedExerciseTitles, cmosGetExerciseIndexOfHandle } from '@/scripts/cmosArchivedExercises';
 import InfoBlob from './InfoBlob.vue';
 import FormatSelect from './FormatSelect.vue';
