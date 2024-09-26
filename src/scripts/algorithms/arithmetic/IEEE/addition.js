@@ -7,15 +7,11 @@ import { roundArray } from '../../calcHelper';
 export class AdditionIEEE {
   constructor(n1, n2) {
     if (n1.expBitNum !== n2.expBitNum) {
-      console.log(`AdditionIEEE(Number, Number): expBitNum of n1(${n1.expBitNum})
-        and expBitNum of n2(${n2.expBitNum}) not compatible.`);
-      process.exit(1);
+      throw new Error(`AdditionIEEE: expBitNum of n1(${n1.expBitNum}) and n2(${n2.expBitNum}) not compatible.`);
     }
 
     if (n1.manBitNum !== n2.manBitNum) {
-      console.log(`AdditionIEEE(Number, Number): manBitNum of n1(${n1.manBitNum})
-        and manBitNum of n2(${n2.manBitNum}) not compatible.`);
-      process.exit(1);
+      throw new Error(`AdditionIEEE: manBitNum of n1(${n1.manBitNum}) and n2(${n2.manBitNum}) not compatible.`);
     }
 
     this.producedOverflow = false;

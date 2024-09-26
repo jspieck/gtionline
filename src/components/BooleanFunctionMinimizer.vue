@@ -1169,7 +1169,6 @@ export default {
       const bf = bfObj.bf;
       const variables = bfObj.variables;
       this.bfFromFormulaUnflattened = bfObjUnflattened.bf;
-      console.log('bf', bf, 'variables', variables, 'bfObjUnflattened', this.bfObjUnflattened);
       const kvdiagram = util.generateKVDiagramFromBooleanFunction(bf);
 
       const bfInputDevice = this.$refs.childBooleanFunctionInputDevice;

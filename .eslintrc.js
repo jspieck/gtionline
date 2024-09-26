@@ -33,6 +33,7 @@ module.exports = {
     'max-classes-per-file': 'off',
     'no-useless-constructor': 'off',
     'no-param-reassign': 'off',
+    'no-bitwise': 'off',
   },
   parserOptions: {
     parser: '@babel/eslint-parser',
