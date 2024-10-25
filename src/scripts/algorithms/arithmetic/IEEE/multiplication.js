@@ -141,8 +141,10 @@ export class MultiplicationIEEE {
     }
 
     let finalE = n1.E + n2.E - n1.bias + shift;
+    
+    // Handle denormalized numbers
     if (finalE <= 0) {
-      normalizedMantissa = this._handleSubnormalResult(normalizedMantissa, finalE);
+      normalizedMantissa = this._handleDenormalizedResult(normalizedMantissa, finalE, manBitNum);
       finalE = 0;
     }
 
@@ -159,17 +161,18 @@ export class MultiplicationIEEE {
   }
 
   /**
-   * Handles subnormal results.
+   * Handles denormalized results.
    * @private
    */
-  _handleSubnormalResult(normalizedMantissa, finalE) {
-    normalizedMantissa.unshift(1);
-    normalizedMantissa.pop();
-    for (let i = 0; i < Math.abs(finalE); i++) {
-      normalizedMantissa.unshift(0);
-      normalizedMantissa.pop();
+  _handleDenormalizedResult(mantissa, finalE, manBitNum) {
+    const shiftRight = Math.abs(finalE) + 1;
+    const result = new Array(manBitNum).fill(0);
+    
+    for (let i = 0; i < manBitNum - shiftRight; i++) {
+      result[i + shiftRight] = mantissa[i];
     }
-    return normalizedMantissa;
+    
+    return result;
   }
 
   /**
