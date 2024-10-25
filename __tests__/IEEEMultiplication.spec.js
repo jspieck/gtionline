@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { describe, test } from '@jest/globals';
-import { MultiplicationIEEE } from './algorithms/arithmetic/IEEE/multiplication';
-import { getIEEEFromString } from './algorithms/arithmetic/IEEE/numberIEEE';
+import { describe, test, expect } from '@jest/globals';
+import { MultiplicationIEEE } from '../src/scripts/algorithms/arithmetic/IEEE/multiplication';
+import { getIEEEFromString } from '../src/scripts/algorithms/arithmetic/IEEE/numberIEEE';
 import {
   checkMantissa,
   checkArray,
@@ -252,5 +252,123 @@ describe('Multiplication of two IEEE-Numbers', () => {
     checkStep(watcher, 'MulMantissa', 'unnormalizedMantissa', [1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1]);
     checkStep(watcher, 'MulMantissa', 'normalizedMantissa', [1, 0, 0, 0, 1, 0, 0, 0]);
     checkStep(watcher, 'ResultEdgecase', 'edgecase', 'none');
+  });
+
+  test('MultiplicationIEEE: 1.5 * 2.0 == 3.0', () => {
+    const y1 = getIEEEFromString(5, '0 10000 10000000000');
+    const y2 = getIEEEFromString(5, '0 10000 00000000000');
+    const result = (new MultiplicationIEEE(y1, y2)).getResult();
+    expect(result.manBitNum).toBe(11);
+    expect(result.isZero).toBe(false);
+    expect(result.isInfinity).toBe(false);
+    expect(result.isNaN).toBe(false);
+    expect(result.arr[0]).toBe(0);
+    expect(result.sign).toBe(0);
+    const expectedArray = [0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    checkArray(expectedArray, result);
+    const expectedMantissa = [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    checkMantissa(expectedMantissa, result);
+  });
+
+  test('MultiplicationIEEE: 0.1 * 0.2 ≈ 0.02', () => {
+    const y1 = getIEEEFromString(5, '0 01110 1001100110');
+    const y2 = getIEEEFromString(5, '0 01111 1001100110');
+    const result = (new MultiplicationIEEE(y1, y2)).getResult();
+    expect(result.manBitNum).toBe(10);
+    expect(result.isZero).toBe(false);
+    expect(result.isInfinity).toBe(false);
+    expect(result.isNaN).toBe(false);
+    expect(result.arr[0]).toBe(0);
+    expect(result.sign).toBe(0);
+    const expectedArray = [0, 0,1,1,1,1, 0,1,0,0,0,1,1,1,1,0];
+    checkArray(expectedArray, result);
+    const expectedMantissa = [1, 0,1,0,0,0,1,1,1,1,0];
+    checkMantissa(expectedMantissa, result);
+  });
+
+  test('MultiplicationIEEE: -1.0 * -1.0 == 1.0', () => {
+    const y1 = getIEEEFromString(5, '1 01111 0000000000');
+    const y2 = getIEEEFromString(5, '1 01111 0000000000');
+    const result = (new MultiplicationIEEE(y1, y2)).getResult();
+    expect(result.manBitNum).toBe(10);
+    expect(result.isZero).toBe(false);
+    expect(result.isInfinity).toBe(false);
+    expect(result.isNaN).toBe(false);
+    expect(result.arr[0]).toBe(0);
+    expect(result.sign).toBe(0);
+    const expectedArray = [0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    checkArray(expectedArray, result);
+    const expectedMantissa = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    checkMantissa(expectedMantissa, result);
+  });
+
+  test('MultiplicationIEEE: Smallest Positive * 2.0 == Smallest Positive * 2', () => {
+    const y1 = getIEEEFromString(5, '0 00000 0000000001');
+    const y2 = getIEEEFromString(5, '0 10000 0000000000');
+    const result = (new MultiplicationIEEE(y1, y2)).getResult();
+    console.log('result', result);
+    expect(result.manBitNum).toBe(10);
+    expect(result.isZero).toBe(false);
+    expect(result.isInfinity).toBe(false);
+    expect(result.isNaN).toBe(false);
+    expect(result.arr[0]).toBe(0);
+    expect(result.sign).toBe(0);
+    const expectedArray = [0, 0,0,0,0,0, 0,0,0,0,0,0,0,0,1,0];
+    console.log('result', result);
+    checkArray(expectedArray, result);
+    const expectedMantissa = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
+    checkMantissa(expectedMantissa, result);
+  });
+
+  test('MultiplicationIEEE: Largest Normal * 2.0 == Infinity', () => {
+    const y1 = getIEEEFromString(5, '0 11110 11111111111');
+    const y2 = getIEEEFromString(5, '0 10000 00000000000');
+    const result = (new MultiplicationIEEE(y1, y2)).getResult();
+    expect(result.manBitNum).toBe(11);
+    expect(result.isZero).toBe(false);
+    expect(result.isInfinity).toBe(true);
+    expect(result.isNaN).toBe(false);
+    expect(result.arr[0]).toBe(0);
+    expect(result.sign).toBe(0);
+    const expectedArray = [0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    checkArray(expectedArray, result);
+  });
+
+  test('MultiplicationIEEE: NaN * 1.0 == NaN', () => {
+    const y1 = getIEEEFromString(5, '0 11111 10000000000');
+    const y2 = getIEEEFromString(5, '0 01111 00000000000');
+    const result = (new MultiplicationIEEE(y1, y2)).getResult();
+    expect(result.manBitNum).toBe(11);
+    expect(result.isZero).toBe(false);
+    expect(result.isInfinity).toBe(false);
+    expect(result.isNaN).toBe(true);
+    const expectedArray = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+    checkArray(expectedArray, result);
+  });
+
+  test('MultiplicationIEEE: Infinity * 0.0 == NaN', () => {
+    const y1 = getIEEEFromString(5, '0 11111 00000000000');
+    const y2 = getIEEEFromString(5, '0 00000 00000000000');
+    const result = (new MultiplicationIEEE(y1, y2)).getResult();
+    expect(result.manBitNum).toBe(11);
+    expect(result.isZero).toBe(false);
+    expect(result.isInfinity).toBe(false);
+    expect(result.isNaN).toBe(true);
+    const expectedArray = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+    checkArray(expectedArray, result);
+  });
+
+  test('MultiplicationIEEE: Denormalized * Denormalized == 0', () => {
+    const y1 = getIEEEFromString(5, '0 00000 00000000001');
+    const y2 = getIEEEFromString(5, '0 00000 00000000001');
+    const result = (new MultiplicationIEEE(y1, y2)).getResult();
+    expect(result.manBitNum).toBe(11);
+    expect(result.isZero).toBe(true);
+    expect(result.isInfinity).toBe(false);
+    expect(result.isNaN).toBe(false);
+    expect(result.arr[0]).toBe(0);
+    expect(result.sign).toBe(0);
+    const expectedArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    checkArray(expectedArray, result);
   });
 });
