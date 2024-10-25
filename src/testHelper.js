@@ -9,39 +9,29 @@ import { expect } from '@jest/globals';
  * @param value: expected value (single value or array like)
  */
 export function checkStep(watcher, step, key, value) {
-  const wachterStep = watcher.steps[step];
-  if (!wachterStep) {
-    console.log(`Calculation of Addition IEEE ended before step: ${step}`);
-    process.exit(1);
+  const watcherStep = watcher.steps[step];
+  if (!watcherStep) {
+    throw new Error(`Calculation of Addition IEEE ended before step: ${step}`);
   }
 
-  const keys = Object.keys(wachterStep.data);
+  const keys = Object.keys(watcherStep.data);
   if (keys.indexOf(key) === -1) {
-    console.log(`Calculation of Addition IEEE ended before step: ${step}, value: ${key}`);
-    process.exit(1);
+    throw new Error(`Calculation of Addition IEEE ended before step: ${step}, value: ${key}`);
   }
 
-  const watcherValue = wachterStep.data[key];
+  const watcherValue = watcherStep.data[key];
   if (Array.isArray(watcherValue) && Array.isArray(value)) {
+    expect(watcherValue.length).toBe(value.length);
     for (let i = 0; i < value.length; i += 1) {
-      expect(
-        watcherValue[i],
-        `At step ${step}, with key: ${key}, at position ${i}: [expected: ${value[i]}] != [got: ${watcherValue[i]}]`,
-      ).toBe(value[i]);
+      expect(watcherValue[i]).toBe(value[i]);
     }
   } else if (
     (Array.isArray(watcherValue) && !Array.isArray(value))
     || (!Array.isArray(watcherValue) && Array.isArray(value))
   ) {
-    console.log(`Error Testing: Addition IEEE step: ${step}, value: ${key}:
-    Array-like is not compatible to single value`);
-    process.exit(1);
+    throw new Error(`Error Testing: Addition IEEE step: ${step}, value: ${key}: Array-like is not compatible to single value`);
   } else {
-    expect(
-      watcherValue,
-      `At step ${step}, with key: ${key}: [expected: ${value}] != [got: ${watcherValue}]`,
-    )
-      .toBe(value);
+    expect(watcherValue).toBe(value);
   }
 }
 
@@ -51,32 +41,27 @@ export function checkStep(watcher, step, key, value) {
  * @param object: IEEENumber to check
  */
 export function checkArray(expected, object) {
-  expect(
-    object.arr.length,
-    `Array length: [expected: ${expected.length}] != [got: ${object.arr.length}]`,
-  ).toBe(expected.length);
+  expect(object.arr.length).toBe(expected.length);
+
   for (let i = 0; i < expected.length; i += 1) {
-    expect(
-      object.arr[i],
-      `Array at position ${i}, [expected: ${expected[i]}] != [got: ${object.arr[i]}]`,
-    ).toBe(expected[i]);
+    expect(object.arr[i]).toBe(expected[i]);
   }
 }
 
 /**
- * Checks a IEEE mantissa agains an expected mantissa
+ * Checks a IEEE mantissa against an expected mantissa
  * @param expected: expected mantissa
  * @param object: IEEENumber to check
  */
 export function checkMantissa(expected, object) {
-  expect(
-    object.mantissaBits.length,
-    `Mantissa length: [expected: ${expected.length}] != [got: ${object.mantissaBits.length}]`,
-  ).toBe(expected.length);
+  expect(object.mantissaBits.length).toBe(expected.length);
+
+  console.log('object.mantissaBits', object.mantissaBits);
+  console.log('expected', expected);
   for (let i = 0; i < expected.length; i += 1) {
-    expect(
-      object.mantissaBits[i],
-      `Mantissa at position ${i}, [expected: ${expected[i]}] != [got: ${object.mantissaBits[i]}]`,
-    ).toBe(expected[i]);
+    expect(object.mantissaBits[i]).toBe(
+      expected[i],
+      `Mantissa at position ${i}, [expected: ${expected[i]}] != [got: ${object.mantissaBits[i]}]`
+    );
   }
 }
