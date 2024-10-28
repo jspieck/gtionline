@@ -101,6 +101,7 @@ export class MultiplicationIEEE {
     this.watcher = this.watcher.step('MulMantissa')
       .saveVariable('unnormalizedMantissa', unnormalizedMantissa);
 
+    console.log('Debug: n1:', n1);
     let shift = this._calculateShift(multiplicationResult, op1.arr.length); // n1.manBitNum
 
     return { unnormalizedMantissa, shift };
@@ -132,22 +133,26 @@ export class MultiplicationIEEE {
     let normalizedMantissa = [];
     const toRound = unnormalizedMantissa.length <= manBitNum ? false : unnormalizedMantissa[manBitNum + 1] === 1;
 
-    for (let i = 0; i < manBitNum; i++) {
-      const access = i + Math.max(-shift, 0) + 1;
+    for (let i = 0; i <= manBitNum; i++) {
+      const access = i + Math.max(-shift, 0);
       const num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
       normalizedMantissa.push(num);
     }
-
-    if (toRound) {
-      normalizedMantissa = roundArray(normalizedMantissa, manBitNum, toRound, n1.base);
-    }
-
+    console.log('Final E:', n1.E, n2.E, n1.bias, shift);
     let finalE = n1.E + n2.E - n1.bias + shift;
-    
     // Handle denormalized numbers
     if (finalE <= 0) {
+      console.log('Debug: Denormalized result', normalizedMantissa, finalE, manBitNum);
       normalizedMantissa = this._handleDenormalizedResult(normalizedMantissa, finalE, manBitNum);
       finalE = 0;
+    }
+    // Normalized mantissa without implicit 1/0
+    normalizedMantissa.splice(0, 1);
+
+    console.log('Debug: unnormalizedMantissa (before rounding):', unnormalizedMantissa, shift, manBitNum);
+    console.log('Debug: normalizedMantissa (before rounding):', normalizedMantissa);
+    if (toRound) {
+      normalizedMantissa = roundArray(normalizedMantissa, manBitNum, toRound, n1.base);
     }
 
     this.watcher = this.watcher.step('CalculateExp')
@@ -167,13 +172,13 @@ export class MultiplicationIEEE {
    * @private
    */
   _handleDenormalizedResult(mantissa, finalE, manBitNum) {
-    const shiftRight = Math.abs(finalE) + 1;
+    const shiftRight = Math.abs(finalE);
     const result = new Array(manBitNum).fill(0);
     
-    for (let i = 0; i < manBitNum - shiftRight; i++) {
+    for (let i = 0; i <= manBitNum - shiftRight; i++) {
       result[i + shiftRight] = mantissa[i];
     }
-    
+    console.log('Debug: Denormalized result:', mantissa, finalE, manBitNum, shiftRight, result);
     return result;
   }
 
@@ -182,6 +187,9 @@ export class MultiplicationIEEE {
    * @private
    */
   _createResult(sign, finalE, normalizedMantissa, expBitNum, manBitNum, bitNum) {
+    if (normalizedMantissa.every(bit => bit === 0) && finalE === 0) {
+      return this._createZeroResult(sign, expBitNum, manBitNum);
+    }
     if (finalE >= (2 ** expBitNum) - 1) {
       return this._createInfinityResult(sign, expBitNum, manBitNum);
     }

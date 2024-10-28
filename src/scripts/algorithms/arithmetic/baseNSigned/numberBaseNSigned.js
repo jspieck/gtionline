@@ -54,9 +54,9 @@ export class NumberBaseNSigned {
   }
 
   _normalizeArray() {
-    while (this.arr.length > this.offset + 1 && this.arr[0] === 0) {
+    /* while (this.arr.length > this.offset + 1 && this.arr[0] === 0) {
       this.arr.splice(0, 1);
-    }
+    } */
 
     while (this.offset > 0 && this.arr[this.arr.length - 1] === 0) {
       this.arr.splice(this.arr.length - 1, 1);
