@@ -5,30 +5,28 @@ import { Algorithm } from '../../algorithm';
 export class MultiplicationBaseNSingleDigit {
   constructor(n, d) {
     if (d < 0 || d >= n.base) {
-      throw new Error(`MultiplicationBaseNSigned.constructor(n1, n2): d(${d}) is not a part of base of n1(${n.base}).`);
+      throw new Error(`MultiplicationBaseNSingleDigit: d(${d}) is not valid for base ${n.base}`);
     }
-
     this.result = this._multiply(n, d);
   }
 
   _multiply(n, d) {
-    const offset = n.offset;
-    const base = n.base;
-
-    const isNegative = n.isNegative;
-
-    const overflow = [0];
+    // Quick return for multiplication by 0 or 1
+    if (d === 0) return new NumberBaseNSigned(n.base, [0], 0, false);
+    if (d === 1) return new NumberBaseNSigned(n.base, [...n.arr], n.offset, n.isNegative);
+    
+    let carry = 0;
     const final = [];
 
-    for (let i = n.arr.length - 1; i >= 0; i -= 1) {
-      const m = d * n.arr[i] + overflow[0];
-      final.unshift(m % base);
-      overflow.unshift(Math.floor(m / base));
+    // Multiply each digit and handle carry
+    for (let i = n.arr.length - 1; i >= 0; i--) {
+      const product = d * n.arr[i] + carry;
+      final.unshift(product % n.base);
+      carry = Math.floor(product / n.base);
     }
+    if (carry > 0) final.unshift(carry);
 
-    final.unshift(overflow[0]);
-
-    return new NumberBaseNSigned(base, final, offset, isNegative);
+    return new NumberBaseNSigned(n.base, final, n.offset, n.isNegative);
   }
 
   getResult() {

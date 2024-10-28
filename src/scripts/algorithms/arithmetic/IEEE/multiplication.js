@@ -50,6 +50,8 @@ export class MultiplicationIEEE {
     }
 
     const { unnormalizedMantissa, shift } = this._multiplyMantissas(n1, n2);
+    console.log('Debug: Unnormalized mantissa:', unnormalizedMantissa);
+    console.log('Debug: Shift:', shift);
 
     const { normalizedMantissa, finalE } = this._normalizeMantissa(unnormalizedMantissa, shift, n1, n2, manBitNum);
 
@@ -86,17 +88,20 @@ export class MultiplicationIEEE {
   _multiplyMantissas(n1, n2) {
     const op1 = new NumberBaseNSigned(2, n1.mantissaBits);
     const op2 = new NumberBaseNSigned(2, n2.mantissaBits);
+    console.log('Debug: Op1:', n1.mantissaBits, op1);
+    console.log('Debug: Op2:', n2.mantissaBits, op2);
 
     const multiplication = new MultiplicationBaseNSigned(op1, op2);
     this.watcher = this.watcher.step('Multiplication')
       .saveVariable('multiplication', multiplication.watcher);
     const multiplicationResult = multiplication.getResult();
+    console.log('Debug: Multiplication result:', multiplicationResult);
 
     const unnormalizedMantissa = [...multiplicationResult.arr];
     this.watcher = this.watcher.step('MulMantissa')
       .saveVariable('unnormalizedMantissa', unnormalizedMantissa);
 
-    let shift = this._calculateShift(multiplicationResult, op1.arr.length);
+    let shift = this._calculateShift(multiplicationResult, op1.arr.length); // n1.manBitNum
 
     return { unnormalizedMantissa, shift };
   }
@@ -107,7 +112,10 @@ export class MultiplicationIEEE {
    */
   _calculateShift(multiplicationResult, op1Length) {
     let shift = multiplicationResult.arr.length - multiplicationResult.offset - op1Length;
-    let cDigits = multiplicationResult.digitNum;
+    let cDigits = multiplicationResult.digitNum; //multiplicationResult.arr.length;
+    console.log('Debug: cDigits:', cDigits);
+    console.log('Debug: shift:', shift);
+    console.log('Debug: op1Length:', op1Length);
 
     if (cDigits >= 1) {
       shift = cDigits - 1;
@@ -117,6 +125,8 @@ export class MultiplicationIEEE {
         shift--;
       }
     }
+    console.log('Debug: cDigits:', cDigits);
+    console.log('Debug: shift:', shift);
 
     this.watcher = this.watcher.step('MulMantissa').saveVariable('shift', shift);
     return shift;
