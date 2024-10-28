@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { describe, test } from '@jest/globals';
-import { DivisionIEEE } from './algorithms/arithmetic/IEEE/division';
-import { getIEEEFromString } from './algorithms/arithmetic/IEEE/numberIEEE';
+import { DivisionIEEE } from '../src/scripts/algorithms/arithmetic/IEEE/division';
+import { getIEEEFromString } from '../src/scripts/algorithms/arithmetic/IEEE/numberIEEE';
 import { checkMantissa, checkArray } from '../src/testHelper';
 
 describe('Division of two IEEE-Numbers', () => {

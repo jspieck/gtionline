@@ -5,227 +5,226 @@ import { Algorithm } from '../../algorithm';
 import { roundArray } from '../../calcHelper';
 
 export class DivisionIEEE {
+  /**
+   * @param {NumberIEEE} n1 - Dividend IEEE number
+   * @param {NumberIEEE} n2 - Divisor IEEE number
+   */
   constructor(n1, n2) {
-    if (n1.expBitNum !== n2.expBitNum) {
-      console.log('DivisionIEEE(Number, Number): expBitNum of n1('.concat(n1.expBitNum, ') and expBitNum of n2(')
-        .concat(n2.expBitNum, ') not compatible.'));
-    }
-
-    if (n1.manBitNum !== n2.manBitNum) {
-      console.log('DivisionIEEE(Number, Number): manBitNum of n1('.concat(n1.manBitNum, ') and manBitNum of n2(')
-        .concat(n2.manBitNum, ') not compatible.'));
-    }
-
+    this._validateInputs(n1, n2);
     this.producedOverflow = false;
+    this.watcher = null;
     this.result = this._divide(n1, n2);
   }
 
+  /**
+   * Validates that input numbers are compatible for division.
+   * @private
+   */
+  _validateInputs(n1, n2) {
+    if (n1.expBitNum !== n2.expBitNum) {
+      throw new Error(`DivisionIEEE: expBitNum of n1(${n1.expBitNum}) and n2(${n2.expBitNum}) not compatible.`);
+    }
+    if (n1.manBitNum !== n2.manBitNum) {
+      throw new Error(`DivisionIEEE: manBitNum of n1(${n1.manBitNum}) and n2(${n2.manBitNum}) not compatible.`);
+    }
+  }
+
+  /**
+   * Performs IEEE division.
+   * @private
+   */
   _divide(n1, n2) {
     this.watcher = new Algorithm();
-    const expBitNum = n1.expBitNum;
-    const manBitNum = n1.manBitNum;
-    const bitNum = n1.bitNum;
+  
+    const { expBitNum, manBitNum } = n1;
+    const bitNum = 1 + expBitNum + manBitNum;
     const sign = ((n1.sign && !n2.sign) || (!n1.sign && n2.sign)) + 0;
 
-    // Edgecases:
-    if (n1.isNaN || n2.isNaN || (n1.isInfinity && n2.isZero) || (n1.isZero && n2.isInfinity)) {
-      // Return NaN
-      const result = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
-      this.watcher = this.watcher.step('ResultEdgecase')
-        .saveVariable('edgecase', 'nan');
-      this.watcher = this.watcher.step('Result')
-        .saveVariable('result', result);
-      return result;
+    this.watcher = this.watcher.step('DivMantissa').saveVariable('sign', sign);
+
+    const edgecaseResult = this._handleEdgecases(n1, n2, expBitNum, manBitNum, bitNum, sign);
+    if (edgecaseResult) {
+      this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'handled');
+      return edgecaseResult;
     }
 
-    if ((n1.isInfinity && n2.isInfinity) || (n1.isZero && n2.isZero)) {
-      // Return NaN, the second
-      const result = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
-      this.watcher = this.watcher.step('ResultEdgecase')
-        .saveVariable('edgecase', 'nan');
-      this.watcher = this.watcher.step('Result')
-        .saveVariable('result', result);
-      return result;
+    const { unnormalizedMantissa, shift } = this._divideMantissas(n1, n2);
+    console.log('unnormalizedMantissa', unnormalizedMantissa, shift);
+    const { normalizedMantissa, finalE } = this._normalizeMantissa(unnormalizedMantissa, shift, n1, n2, manBitNum);
+    console.log('normalizedMantissa', normalizedMantissa, finalE);
+    return this._createResult(sign, finalE, normalizedMantissa, expBitNum, manBitNum, bitNum);
+  }
+
+  /**
+   * Handles edge cases for division.
+   * @private
+   */
+  _handleEdgecases(n1, n2, expBitNum, manBitNum, bitNum, sign) {
+    if (n1.isNaN || n2.isNaN || (n1.isInfinity && n2.isInfinity) || (n1.isZero && n2.isZero)) {
+      return this._createNaNResult(expBitNum, manBitNum, bitNum);
     }
 
     if ((n1.isInfinity && !n2.isInfinity) || (!n1.isZero && n2.isZero)) {
-      // Return Infinty
-      const infArray = [sign];
-      infArray.push(...Array(expBitNum).fill(1));
-      infArray.push(...Array(manBitNum).fill(0));
-      const result = new NumberIEEE(expBitNum, manBitNum, infArray);
-      this.watcher = this.watcher.step('ResultEdgecase')
-        .saveVariable('edgecase', 'inf');
-      this.watcher = this.watcher.step('Result')
-        .saveVariable('result', result);
-      return result;
+      return this._createInfinityResult(sign, expBitNum, manBitNum);
     }
 
     if ((!n1.isInfinity && n2.isInfinity) || n1.isZero) {
-      // Return Zero
-      const infArray = [sign];
-      infArray.push(...Array(expBitNum).fill(0));
-      infArray.push(...Array(manBitNum).fill(0));
-      const result = new NumberIEEE(expBitNum, manBitNum, infArray);
-      this.watcher = this.watcher.step('ResultEdgecase')
-        .saveVariable('edgecase', 'zero');
-      this.watcher = this.watcher.step('Result')
-        .saveVariable('result', result);
-      return result;
+      return this._createZeroResult(sign, expBitNum, manBitNum);
     }
 
-    // check if mantissas are equal
-    let k = 0;
-    let similar = true;
-    while (k < n1.mantissaBits.length && similar === true) {
-      if (n1.mantissaBits[k] !== n2.mantissaBits[k]) {
-        similar = false;
-      }
-      k += 1;
-    }
+    return null;
+  }
 
-    let unnormalizedMantissa = [];
-    const normalizedMantissa = [];
-    let shift = 0;
+  /**
+   * Divides the mantissas of two IEEE numbers.
+   * @private
+   */
+  _divideMantissas(n1, n2) {
+    const op1 = new NumberBaseNSigned(2, n1.mantissaBits, n1.offset, false);
+    const op2 = new NumberBaseNSigned(2, n2.mantissaBits, n2.offset, false);
+
+    const division = new DivisionBaseNSigned(
+      op1,
+      op2,
+      Math.max(n1.manBitNum, n2.manBitNum) + 1
+    );
 
     this.watcher = this.watcher.step('Division')
-      .saveVariable('equalMantissa', similar);
+      .saveVariable('division', division.watcher);
 
-    if (similar === false) {
-      // case mantissa not equal
-      const op1 = new NumberBaseNSigned(2, n1.mantissaBits, n1.offset, false);
-      const op2 = new NumberBaseNSigned(2, n2.mantissaBits, n2.offset, false);
-      const operation = new DivisionBaseNSigned(
-        op1,
-        op2,
-        Math.max(n1.manBitNum + 1, n2.manBitNum + 1),
-      );
-      this.watcher = this.watcher.step('Division')
-        .saveVariable('division', operation.watcher);
-      const divisionResult = operation.getResult();
-      unnormalizedMantissa = [...divisionResult.arr];
+    const divisionResult = division.getResult();
+    const unnormalizedMantissa = [...divisionResult.arr];
 
-      // cut unnormalized matissa if to long
-      const digitNum = operation.manBitNum;
-
-      this.watcher = this.watcher.step('Division')
-        .saveVariable('divMantissa', [...unnormalizedMantissa]);
-      unnormalizedMantissa = roundArray(unnormalizedMantissa, digitNum);
-
-      // Calculate shift
-      // Positive: Rightshift | Negative: Leftshift
-      let i = 0;
-      while (i < unnormalizedMantissa.length) {
-        if (unnormalizedMantissa[i] === 1) {
-          break;
-        }
-        i += 1;
-        shift -= 1;
-      }
-
-      if (operation.firstNegativeStep) {
-        shift -= 1;
-      }
-      if (shift === unnormalizedMantissa.length - 1 && unnormalizedMantissa[0] === 0) {
-        // Return zero
-        const result = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(0));
-        this.watcher = this.watcher.step('ResultEdgecase')
-          .saveVariable('edgecase', 'zero');
-        this.watcher = this.watcher.step('Result')
-          .saveVariable('result', result);
-        return result;
-      }
-      for (let j = 1; j <= manBitNum; j += 1) {
-        const num = j < unnormalizedMantissa.length ? unnormalizedMantissa[j] : 0;
-        normalizedMantissa.push(num);
-      }
-    } else {
-      // equal mantissas => mantissa = 1.0
-      for (let i = 0; i < manBitNum; i += 1) {
-        normalizedMantissa.push(0);
-      }
+    // Calculate shift
+    let shift = 0;
+    for (let i = 0; i < unnormalizedMantissa.length; i++) {
+      if (unnormalizedMantissa[i] === 1) break;
+      shift--;
     }
 
+    this.watcher = this.watcher.step('DivMantissa')
+      .saveVariable('unnormalizedMantissa', unnormalizedMantissa)
+      .saveVariable('shift', shift);
+
+    return { unnormalizedMantissa, shift };
+  }
+
+  /**
+   * Normalizes the mantissa after division.
+   * @private
+   */
+  _normalizeMantissa(unnormalizedMantissa, shift, n1, n2, manBitNum) {
+    let normalizedMantissa = [];
+    const toRound = unnormalizedMantissa.length <= manBitNum+2 ? false : unnormalizedMantissa[manBitNum + 2] === 1;
+
+    for (let i = 0; i <= manBitNum+1; i++) {
+      const access = i + Math.max(-shift, 0);
+      const num = access < unnormalizedMantissa.length ? unnormalizedMantissa[access] : 0;
+      normalizedMantissa.push(num);
+    }
+    console.log('Final E:', n1.E, n2.E, n1.bias, shift);
     let finalE = n1.E - n2.E + n1.bias + shift;
+    // Handle denormalized numbers
     if (finalE <= 0) {
-      // Shift the leading 1 into the mantissa
-      normalizedMantissa.unshift(1);
-      normalizedMantissa.pop();
-      // shift the 1 to express the finalE
-      for (let i = 0; i < Math.abs(finalE); i += 1) {
-        normalizedMantissa.unshift(0);
-        normalizedMantissa.pop();
-      }
+      console.log('Debug: Denormalized result', normalizedMantissa, finalE, manBitNum);
+      normalizedMantissa = this._handleDenormalizedResult(normalizedMantissa, finalE, manBitNum);
       finalE = 0;
     }
-    let curE = finalE;
-    const exponentBits = [];
-    for (let i = 0; i < expBitNum; i += 1) {
-      exponentBits.unshift(curE % 2);
-      curE = Math.floor(curE / 2);
-    }
+    // Normalized mantissa without implicit 1/0
+    normalizedMantissa.splice(0, 1);
 
-    this.watcher = this.watcher.step('Exponent')
+    console.log('Debug: unnormalizedMantissa (before rounding):', unnormalizedMantissa, shift, manBitNum);
+    console.log('Debug: normalizedMantissa (before rounding):', normalizedMantissa);
+    if (toRound) {
+      normalizedMantissa = roundArray(normalizedMantissa, manBitNum+1, toRound, n1.base);
+    }
+    // remove the last bit, necessary for IEEE rounding
+    normalizedMantissa.pop();
+
+    this.watcher = this.watcher.step('CalculateExp')
       .saveVariable('E1', n1.E)
       .saveVariable('E2', n2.E)
       .saveVariable('Bias', n1.bias)
       .saveVariable('Shift', shift)
       .saveVariable('EUnshifted', n1.E - n2.E + n1.bias)
       .saveVariable('FinalE', finalE);
-
+    
     this.watcher = this.watcher.step('Mantissa')
-      .saveVariable('unnormalizedMantissa', [...unnormalizedMantissa])
-      .saveVariable('normalizedMantissa', [...normalizedMantissa]);
+    .saveVariable('unnormalizedMantissa', [...unnormalizedMantissa])
+    .saveVariable('normalizedMantissa', [...normalizedMantissa]);
 
-    /* Check if denormalization has to take place
-    if (finalE < 0) {
-      const denormArray = [sign];
-      // Exponent of ZERO indicates the denormalized representation
-      denormArray.push(...Array(expBitNum).fill(0));
-      // Unshift the leading 1 into the mantissa
-      normalizedMantissa.unshift(1);
-      // Now shift the mantissa by the extra amount
-      for (let i = 0; i < Math.abs(finalE); i += 1)  {
-        normalizedMantissa.unshift(0);
-      }
-      normalizedMantissa.splice(manBitNum, (normalizedMantissa.length - manBitNum));
-      denormArray.push(...normalizedMantissa);
-      const result = new NumberIEEE(expBitNum, manBitNum, denormArray);
+    return { normalizedMantissa, finalE };
+  }
 
-      this.watcher = this.watcher.step('ResultEdgecase')
-        .saveVariable('edgecase', 'denormalized');
-      this.watcher = this.watcher.step('Result')
-        .saveVariable('result', result);
-      return result;
-    } */
-
-    // Check if newly calculated ieee is equal to inf
-    if (finalE >= (2 ** expBitNum) - 1) {
-      const infArray = [sign];
-      infArray.push(...Array(expBitNum).fill(1));
-      infArray.push(...Array(manBitNum).fill(0));
-      const result = new NumberIEEE(expBitNum, manBitNum, infArray);
-      this.watcher = this.watcher.step('ResultEdgecase')
-        .saveVariable('edgecase', 'inf');
-      this.watcher = this.watcher.step('Result')
-        .saveVariable('result', result);
-      return result;
+  /**
+   * Creates the final result of the division.
+   * @private
+   */
+  _createResult(sign, finalE, normalizedMantissa, expBitNum, manBitNum, bitNum) {
+    if (normalizedMantissa.every(bit => bit === 0) && finalE === 0) {
+      return this._createZeroResult(sign, expBitNum, manBitNum);
     }
 
-    // normal case result
-    this.watcher = this.watcher.step('ResultEdgecase')
-      .saveVariable('edgecase', 'none');
-    const resultArray = [sign];
-    resultArray.push(...exponentBits);
-    resultArray.push(...normalizedMantissa);
+    if (finalE >= (2 ** expBitNum) - 1) {
+      return this._createInfinityResult(sign, expBitNum, manBitNum);
+    }
 
-    const result = new NumberIEEE(expBitNum, manBitNum, resultArray);
-    this.watcher = this.watcher.step('Result')
-      .saveVariable('edgecase', 'none')
-      .saveVariable('result', result);
+    const exponentBits = this._getExponentBits(expBitNum, finalE);
+    const resultArr = [sign, ...exponentBits, ...normalizedMantissa];
+    const result = new NumberIEEE(expBitNum, manBitNum, resultArr);
+
+    this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'none');
+    this.watcher = this.watcher.step('Result').saveVariable('result', result);
     return result;
   }
 
+  /**
+   * Creates a NaN result.
+   * @private
+   */
+  _createNaNResult(expBitNum, manBitNum, bitNum) {
+    const result = new NumberIEEE(expBitNum, manBitNum, Array(bitNum).fill(1));
+    this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'nan');
+    this.watcher = this.watcher.step('Result').saveVariable('result', result);
+    return result;
+  }
+
+  /**
+   * Creates an Infinity result.
+   * @private
+   */
+  _createInfinityResult(sign, expBitNum, manBitNum) {
+    const infArray = [sign, ...Array(expBitNum).fill(1), ...Array(manBitNum).fill(0)];
+    const result = new NumberIEEE(expBitNum, manBitNum, infArray);
+    this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'inf');
+    this.watcher = this.watcher.step('Result').saveVariable('result', result);
+    return result;
+  }
+
+  /**
+   * Creates a Zero result.
+   * @private
+   */
+  _createZeroResult(sign, expBitNum, manBitNum) {
+    const zeroArray = [sign, ...Array(expBitNum).fill(0), ...Array(manBitNum).fill(0)];
+    const result = new NumberIEEE(expBitNum, manBitNum, zeroArray);
+    this.watcher = this.watcher.step('ResultEdgecase').saveVariable('edgecase', 'zero');
+    this.watcher = this.watcher.step('Result').saveVariable('result', result);
+    return result;
+  }
+
+  /**
+   * Converts an exponent to its binary representation.
+   * @private
+   */
+  _getExponentBits(expBitNum, exponent) {
+    return exponent.toString(2).padStart(expBitNum, '0').split('').map(Number);
+  }
+
+  /**
+   * Returns the result of the division.
+   * @returns {NumberIEEE} The result of the IEEE division
+   */
   getResult() {
     return this.result;
   }
