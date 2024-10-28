@@ -112,22 +112,14 @@ export class MultiplicationIEEE {
    */
   _calculateShift(multiplicationResult, op1Length) {
     let shift = multiplicationResult.arr.length - multiplicationResult.offset - op1Length;
-    let cDigits = multiplicationResult.digitNum; //multiplicationResult.arr.length;
-    console.log('Debug: cDigits:', cDigits);
     console.log('Debug: shift:', shift);
     console.log('Debug: op1Length:', op1Length);
 
-    if (cDigits >= 1) {
-      shift = cDigits - 1;
-    } else {
-      for (let i = 0; i < multiplicationResult.arr.length; i++) {
-        if (multiplicationResult.arr[i] === 1) break;
-        shift--;
-      }
+    for (let i = 0; i < multiplicationResult.arr.length; i++) {
+      if (multiplicationResult.arr[i] === 1) break;
+      shift--;
     }
-    console.log('Debug: cDigits:', cDigits);
     console.log('Debug: shift:', shift);
-
     this.watcher = this.watcher.step('MulMantissa').saveVariable('shift', shift);
     return shift;
   }
