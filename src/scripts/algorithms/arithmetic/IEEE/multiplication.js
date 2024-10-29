@@ -131,7 +131,7 @@ export class MultiplicationIEEE {
    */
   _normalizeMantissa(unnormalizedMantissa, shift, n1, n2, manBitNum) {
     let normalizedMantissa = [];
-    const toRound = unnormalizedMantissa.length <= manBitNum ? false : unnormalizedMantissa[manBitNum + 1] === 1;
+    const toRound = unnormalizedMantissa.length <= manBitNum + 1 ? false : unnormalizedMantissa[manBitNum + 1] === 1;
 
     for (let i = 0; i <= manBitNum; i++) {
       const access = i + Math.max(-shift, 0);

@@ -82,6 +82,8 @@ export class DivisionIEEE {
   _divideMantissas(n1, n2) {
     const op1 = new NumberBaseNSigned(2, n1.mantissaBits, n1.offset, false);
     const op2 = new NumberBaseNSigned(2, n2.mantissaBits, n2.offset, false);
+    console.log('Debug: Op1:', op1);
+    console.log('Debug: Op2:', op2);
 
     const division = new DivisionBaseNSigned(
       op1,
@@ -94,12 +96,13 @@ export class DivisionIEEE {
 
     const divisionResult = division.getResult();
     const unnormalizedMantissa = [...divisionResult.arr];
+    console.log('Debug: Division result:', divisionResult);
 
     // Calculate shift
-    let shift = 0;
-    for (let i = 0; i < unnormalizedMantissa.length; i++) {
-      if (unnormalizedMantissa[i] === 1) break;
-      shift--;
+    let shift = -unnormalizedMantissa.findIndex(bit => bit === 1); // + 1 to get the overflow bit
+    if (division.firstNegativeStep) { // that means that a/b, after the alignment b < a, that means the comma is one position later
+      console.log('Debug: First negative step, shift is increased by 1');
+      shift += 1;
     }
 
     this.watcher = this.watcher.step('DivMantissa')
@@ -154,6 +157,21 @@ export class DivisionIEEE {
     .saveVariable('normalizedMantissa', [...normalizedMantissa]);
 
     return { normalizedMantissa, finalE };
+  }
+
+   /**
+   * Handles denormalized results.
+   * @private
+   */
+   _handleDenormalizedResult(mantissa, finalE, manBitNum) {
+    const shiftRight = Math.abs(finalE);
+    const result = new Array(manBitNum).fill(0);
+    
+    for (let i = 0; i <= manBitNum - shiftRight; i++) {
+      result[i + shiftRight] = mantissa[i];
+    }
+    console.log('Debug: Denormalized result:', mantissa, finalE, manBitNum, shiftRight, result);
+    return result;
   }
 
   /**

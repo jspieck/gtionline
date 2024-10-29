@@ -45,47 +45,62 @@ export class DivisionBaseNSigned {
       .saveVariable('offset', offset)
       .saveVariable('digitsToTake', digitsToTake);
 
+    // Find first 1 in both numbers
+    const firstOne1 = n1.arr.findIndex(bit => bit === 1);
+    const firstOne2 = n2.arr.findIndex(bit => bit === 1);
+    
+    // Prepare arrays for division
     const n1copy = [...n1.arr];
     let op2arr = [...n2.arr];
-    // fill left op with 0 if smaller than right op
-    for (let k = 0; k < n2.arr.length - n1.arr.length; k += 1) {
-      n1copy.push(0);
-    }
-    // drop if both ops have 0 on the right
-    while ((n1copy[n1copy.length - 1] === 0) && (op2arr[op2arr.length - 1] === 0)) {
-      n1copy.splice(-1, 1);
-      op2arr.splice(-1, 1);
+
+    // Align divisor with dividend based on first 1s
+    if (firstOne1 !== -1 && firstOne2 !== -1) {
+        // TODO: what happens if firstOne1 is greater than firstOne2?
+        const alignShift = firstOne2 - firstOne1;
+        console.log('Debug: Align shift:', alignShift);
+        if (alignShift > 0) {
+            op2arr = [...op2arr, ...Array(alignShift).fill(0)];
+            op2arr.splice(0, alignShift);
+        }
     }
 
     let op1arr = [...n1copy];
-
+    
     const arr = []; // unnormalised result
     let remain = true;
-    let i = op2arr.length - 1; // iterator while loop, until mantice length
-    let posOp1arr = op2arr.length; // position in left op
+    let i = 0;
+    let posOp1arr = op2arr.length;
     let countSteps = 0;
-
-    // binary division related to long division in binary
-    while ((i <= this.manBitNum * 2) && remain) {
+ 
+    // Changed loop condition to match required precision
+    let maxIterations = this.manBitNum !== null ? this.manBitNum + 1 : Math.max(0, firstOne2 - firstOne1); // + 1 to get the overflow bit
+    while (i < maxIterations && remain) {
       if (op1arr.length > op2arr.length) {
-        op2arr = op2arr.concat(Array(op1arr.length - op2arr.length)
-          .fill(0, 0)); // Pad right
+        op2arr = op2arr.concat(Array(op1arr.length - op2arr.length).fill(0));
       }
       const op1 = new NumberBaseNComplement(n1.base, op1arr.length, op1arr, offset, false);
       const op2 = new NumberBaseNComplement(n2.base, op2arr.length, op2arr, offset, true);
       const operation = new AdditionBaseNComplement(op1, op2);
       const subtractionResult = operation.getResult();
+      console.log('Debug: Op1arr:', op1.arr, "/", op2.arr, "=", subtractionResult.arr);
       if (countSteps === 0 && operation.negativeResult) {
+        console.log('Debug: First negative step, do one more subtraction');
+        // First negative step means, that the comma is one position further, do one more subtraction
         this.firstNegativeStep = true;
+        if (this.manBitNum !== null) {
+          maxIterations += 1;
+        }
       }
+
       this.watcher.step('DivisionSteps')
         .saveVariable(`Step${countSteps}_Sub1`, [...op1arr])
         .saveVariable(`Step${countSteps}_Sub2`, [...op2arr])
         .saveVariable(`Step${countSteps}_SubRes`, [...subtractionResult.arr])
         .saveVariable(`Step${countSteps}_SubRes_isNegative`, operation.negativeResult);
+
       const subarray = [...subtractionResult.arr];
-      if (!(subarray.every((a) => a === 0))) { // subt. not zero
-        if (operation.negativeResult === false) { // subt. positive result
+      if (!(subarray.every((a) => a === 0))) {
+        if (operation.negativeResult === false) {
           this.watcher.step('DivisionSteps')
             .saveVariable(`Step${countSteps}_SubRes_isZero`, false);
           arr.push(1);
@@ -93,26 +108,34 @@ export class DivisionBaseNSigned {
         } else {
           arr.push(0);
         }
-        if (posOp1arr >= n1copy.length) { // add 0 to op1arr
+
+        if (posOp1arr >= n1copy.length) {
           op1arr.push(0);
-        } else { // add the value at the actual position of the dividend
+        } else {
           op1arr.push(n1copy[posOp1arr - 1]);
           posOp1arr += 1;
         }
+
         if (op1arr.length > op2arr.length) { // corrects array length
           op2arr.unshift(0);
         }
       } else {
+        if (countSteps === 0) {
+          this.firstNegativeStep = true;
+        }
         arr.push(1);
+        op1arr = [...subtractionResult.arr];
         this.watcher.step('DivisionSteps')
           .saveVariable(`Step${countSteps}_SubRes_isZero`, true);
-        remain = false; // subt. result is zero => no remain
       }
+
       this.watcher.step('DivisionSteps')
         .saveVariable(`Step${countSteps}_ActRes`, [...arr]);
       i += 1;
       countSteps += 1;
     }
+    // expand to mantissa length
+    // arr.unshift(...Array(this.manBitNum - arr.length).fill(0));
 
     this.watcher.step('DivisionSteps')
       .saveVariable('countSteps', countSteps);
@@ -123,10 +146,12 @@ export class DivisionBaseNSigned {
       offset,
       n1.isNegative !== n2.isNegative,
     );
+
     this.watcher.step('Result')
       .saveVariable('digitsToTake', digitsToTake)
       .saveVariable('result', finalResult)
       .saveVariable('resultArr', [...arr]);
+
     return finalResult;
   }
 
