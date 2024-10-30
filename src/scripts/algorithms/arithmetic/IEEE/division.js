@@ -88,7 +88,7 @@ export class DivisionIEEE {
     const division = new DivisionBaseNSigned(
       op1,
       op2,
-      Math.max(n1.manBitNum, n2.manBitNum) + 1
+      Math.max(n1.manBitNum, n2.manBitNum) + 2
     );
 
     this.watcher = this.watcher.step('Division')
@@ -99,9 +99,12 @@ export class DivisionIEEE {
     console.log('Debug: Division result:', divisionResult);
 
     // Calculate shift
-    let shift = -unnormalizedMantissa.findIndex(bit => bit === 1); // + 1 to get the overflow bit
-    if (division.firstNegativeStep) { // that means that a/b, after the alignment b < a, that means the comma is one position later
-      console.log('Debug: First negative step, shift is increased by 1');
+    const firstOne1 = op1.arr.findIndex(bit => bit === 1);
+    const firstOne2 = op2.arr.findIndex(bit => bit === 1);
+    console.log('firstOne1', firstOne1, 'firstOne2', firstOne2, n1.arr, n2.arr);
+    let shift = (firstOne2 - firstOne1) - 1; // + 1 to get the overflow bit
+    if (division.firstPositiveStep) { // that means that a/b, after the alignment b < a, that means the comma is one position later
+      console.log('Debug: First positive step, shift is increased by 1');
       shift += 1;
     }
 

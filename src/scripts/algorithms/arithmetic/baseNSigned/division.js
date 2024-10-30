@@ -25,7 +25,7 @@ export class DivisionBaseNSigned {
 
     this.watcher = null;
     this.producedOverflow = false;
-    this.firstNegativeStep = false;
+    this.firstPositiveStep = false;
     this.result = this._divide(n1, n2);
   }
 
@@ -83,10 +83,10 @@ export class DivisionBaseNSigned {
       const operation = new AdditionBaseNComplement(op1, op2);
       const subtractionResult = operation.getResult();
       console.log('Debug: Op1arr:', op1.arr, "/", op2.arr, "=", subtractionResult.arr);
-      if (countSteps === 0 && operation.negativeResult) {
-        console.log('Debug: First negative step, do one more subtraction');
+      if (countSteps === 0 && !operation.negativeResult) {
+        console.log('Debug: First step positive, do one more subtraction');
         // First negative step means, that the comma is one position further, do one more subtraction
-        this.firstNegativeStep = true;
+        this.firstPositiveStep = true;
         if (this.manBitNum !== null) {
           maxIterations += 1;
         }
@@ -98,35 +98,24 @@ export class DivisionBaseNSigned {
         .saveVariable(`Step${countSteps}_SubRes`, [...subtractionResult.arr])
         .saveVariable(`Step${countSteps}_SubRes_isNegative`, operation.negativeResult);
 
-      const subarray = [...subtractionResult.arr];
-      if (!(subarray.every((a) => a === 0))) {
-        if (operation.negativeResult === false) {
-          this.watcher.step('DivisionSteps')
-            .saveVariable(`Step${countSteps}_SubRes_isZero`, false);
-          arr.push(1);
-          op1arr = [...subtractionResult.arr];
-        } else {
-          arr.push(0);
-        }
-
-        if (posOp1arr >= n1copy.length) {
-          op1arr.push(0);
-        } else {
-          op1arr.push(n1copy[posOp1arr - 1]);
-          posOp1arr += 1;
-        }
-
-        if (op1arr.length > op2arr.length) { // corrects array length
-          op2arr.unshift(0);
-        }
-      } else {
-        if (countSteps === 0) {
-          this.firstNegativeStep = true;
-        }
+      if (operation.negativeResult === false) {
+        this.watcher.step('DivisionSteps')
+          .saveVariable(`Step${countSteps}_SubRes_isZero`, false);
         arr.push(1);
         op1arr = [...subtractionResult.arr];
-        this.watcher.step('DivisionSteps')
-          .saveVariable(`Step${countSteps}_SubRes_isZero`, true);
+      } else {
+        arr.push(0);
+      }
+
+      if (posOp1arr >= n1copy.length) {
+        op1arr.push(0);
+      } else {
+        op1arr.push(n1copy[posOp1arr - 1]);
+        posOp1arr += 1;
+      }
+
+      if (op1arr.length > op2arr.length) { // corrects array length
+        op2arr.unshift(0);
       }
 
       this.watcher.step('DivisionSteps')
