@@ -1,9 +1,10 @@
 <template>
   <div>
     <div class="mainarea">
-      <h3>{{ $t('functionMin') }}<InfoBlob>
-        <span v-html="$t('bf_infoblob_functionMin')" />
-      </InfoBlob>
+      <h3>
+        {{ $t('functionMin') }}<InfoBlob>
+          <span v-html="$t('bf_infoblob_functionMin')" />
+        </InfoBlob>
       </h3>
       <div class="boolean-function-input-container">
         <!-- <div>
@@ -82,21 +83,36 @@
               <div class="exercise-selection-container-subsection">
                 <span v-html="$t('archive')" />
                 <FSelect
+                  ref="archivedExercisesDropDownMenu"
                   :options="archivedExerciseTitles"
                   :sel="0"
-                  @input="selectArchivedExercise"
                   class="leftMargin10 fselect_broad"
-                  ref="archivedExercisesDropDownMenu" />
-                <button @click="loadArchivedExercise">{{ $t('load') }}</button>
+                  @input="selectArchivedExercise"
+                />
+                <button @click="loadArchivedExercise">
+                  {{ $t('load') }}
+                </button>
               </div>
             </template>
             <template #formula>
               <div class="exercise-selection-container-subsection">
                 <span v-html="$t('formula')" />
-                <input v-model="stringInterpreterFormula" class="leftMargin10" size="17" />
-                <button class="leftMargin10" @click="loadBFFromString(stringInterpreterFormula)">{{ $t('translate_big') }}</button>
+                <input
+                  v-model="stringInterpreterFormula"
+                  class="leftMargin10"
+                  size="17"
+                >
+                <button
+                  class="leftMargin10"
+                  @click="loadBFFromString(stringInterpreterFormula)"
+                >
+                  {{ $t('translate_big') }}
+                </button>
               </div>
-              <div v-if="loadFromFormula_formulaError" class="exercise-selection-container-subsection">
+              <div
+                v-if="loadFromFormula_formulaError"
+                class="exercise-selection-container-subsection"
+              >
                 <span class="errormessage">
                   <span v-html="`${$t('bf_error_at_symbol')} `" />
                   <span> '{{ loadFromFormula_formulaErrorDetails.found }}' </span>
@@ -112,7 +128,8 @@
                   :options="randomExercisesGoalsTitles"
                   class="leftMargin10"
                   :sel="0"
-                  @input="selectRandomExerciseGoal" />
+                  @input="selectRandomExerciseGoal"
+                />
               </div>
               <div>
                 <span>{{ $t('difficultyUC') }}:</span>
@@ -120,84 +137,114 @@
                   :options="randomExercisesDifficulties"
                   :sel="0"
                   class="leftMargin10"
-                  @input="selectRandomExerciseDifficulty" />
-                <button @click="generateRandomExercise">{{ $t('load') }}</button>
+                  @input="selectRandomExerciseDifficulty"
+                />
+                <button @click="generateRandomExercise">
+                  {{ $t('load') }}
+                </button>
               </div>
             </template>
           </TabComponent>
         </div>
-        <p class="boolean-function-input-container-divider">{{ $t('bf_infotext_or_interact_with_kv') }}:</p>
+        <p class="boolean-function-input-container-divider">
+          {{ $t('bf_infotext_or_interact_with_kv') }}:
+        </p>
         <div>
-          <BooleanFunctionInputDevice class='bfInputDevice' ref="childBooleanFunctionInputDevice" />
+          <BooleanFunctionInputDevice
+            ref="childBooleanFunctionInputDevice"
+            class="bfInputDevice"
+          />
         </div>
-        <button class="boolean-function-button-optimize" @click="optimize()">{{ $t('doCalculation') }}</button>
+        <button
+          class="boolean-function-button-optimize"
+          @click="optimize()"
+        >
+          {{ $t('doCalculation') }}
+        </button>
       </div>
 
       <div class="horizontalbar" />
 
-      <span v-if="this.showMsgKVDiagramMustNotBeEmptyOrFull === true" v-html="$t('bf_infotext_kv_must_not_be_empty')" />
-      <span v-else-if="this.someOptimizationsFinished === false">
+      <span
+        v-if="showMsgKVDiagramMustNotBeEmptyOrFull === true"
+        v-html="$t('bf_infotext_kv_must_not_be_empty')"
+      />
+      <span v-else-if="someOptimizationsFinished === false">
         {{ $t("bf_infotext_what_to_do") }}
       </span>
-      <div v-else class="bf-main-accordion-container">
+      <div
+        v-else
+        class="bf-main-accordion-container"
+      >
         <span style="padding-top:3px; padding-right:10px;">
           {{ $t('minterms') }}
         </span>
-        <ToggleSwitch v-on:toggle="toggleMinMaxTerms" checkedDefault=false />
+        <ToggleSwitch
+          checked-default="false"
+          @toggle="toggleMinMaxTerms"
+        />
         <span style="padding-top:3px; padding-left:10px;">
           {{ $t('maxterms') }}
         </span>
 
         <Accordion>
           <AccordionItem>
-            <template v-slot:accordion-item-title>
+            <template #accordion-item-title>
               {{ $t('kvDiagram') }} / {{ $t('truthtable') }}
             </template>
-            <template v-slot:accordion-item-body>
+            <template #accordion-item-body>
               <KVDiagr
                 ref="resultKVDiagram"
                 :modifiable="false"
-                @requesting-kvdiagram-data-after-reactivation="updateResultKVDiagram()"
-                :numVariables="this.resultNumVars"
-                :varNames="this.$refs.childBooleanFunctionInputDevice.currentVarNames"
+                :num-variables="resultNumVars"
+                :var-names="$refs.childBooleanFunctionInputDevice.currentVarNames"
                 class="accordion-body-element-halfer blurred"
-                @clicked-somewhere="unblurDOM" />
+                @requesting-kvdiagram-data-after-reactivation="updateResultKVDiagram()"
+                @clicked-somewhere="unblurDOM"
+              />
               <TruthTable
                 ref="resultTruthTable"
                 :modifiable="false"
-                @requesting-bf-after-reactivation="updateResultTruthtable()"
-                :numVariables="this.resultNumVars"
-                :varNames="this.$refs.childBooleanFunctionInputDevice.currentVarNames"
+                :num-variables="resultNumVars"
+                :var-names="$refs.childBooleanFunctionInputDevice.currentVarNames"
                 class="accordion-body-element-halfer blurred"
-                @clicked-somewhere="unblurDOM" />
+                @requesting-bf-after-reactivation="updateResultTruthtable()"
+                @clicked-somewhere="unblurDOM"
+              />
             </template>
           </AccordionItem>
 
           <AccordionItem>
-            <template v-slot:accordion-item-title>
+            <template #accordion-item-title>
               {{ $t('bf_normal_forms') }}
             </template>
-            <template v-slot:accordion-item-body>
+            <template #accordion-item-body>
               <Accordion class="emptyAccordionParentBody">
                 <AccordionItem>
-                  <template v-slot:accordion-item-title>
+                  <template #accordion-item-title>
                     {{ $t('bf_disjunctiveNormalForm') }} (DNF)
                   </template>
-                  <template v-slot:accordion-item-body>
+                  <template #accordion-item-body>
                     <span>{{ $t('bf_disjunctiveNormalForm_explanation') }}</span>
                     <div class="overflowXContainer">
-                      <span class="svg-text" v-html="toSvg(dnf)" />
+                      <span
+                        class="svg-text"
+                        v-html="toSvg(dnf)"
+                      />
                     </div>
                   </template>
                 </AccordionItem>
                 <AccordionItem>
-                  <template v-slot:accordion-item-title>
+                  <template #accordion-item-title>
                     {{ $t('bf_conjunctiveNormalForm') }} (KNF)
                   </template>
-                  <template v-slot:accordion-item-body>
+                  <template #accordion-item-body>
                     <span>{{ $t('bf_conjunctiveNormalForm_explanation') }}</span>
                     <div class="overflowXContainer">
-                      <span class="svg-text" v-html="toSvg(knf)" />
+                      <span
+                        class="svg-text"
+                        v-html="toSvg(knf)"
+                      />
                     </div>
                   </template>
                 </AccordionItem>
@@ -206,14 +253,17 @@
           </AccordionItem>
 
           <AccordionItem>
-            <template v-slot:accordion-item-title>
+            <template #accordion-item-title>
               {{ $t('bf_quineMCCluskeyClasses') }}
             </template>
-            <template v-slot:accordion-item-body>
+            <template #accordion-item-body>
               <span style="text-align: left">{{ $t('bf_quineMCCluskeyClasses_explanation') }}</span>
               <div class="quine-classes-toggle-switch-container">
                 <div>
-                  <ToggleSwitch v-on:toggle="changeQuineClassesDisplayStyle" checkedDefault=true />
+                  <ToggleSwitch
+                    checked-default="true"
+                    @toggle="changeQuineClassesDisplayStyle"
+                  />
                   <span>{{ $t('colorCoding') }}
                     <InfoBlob>
                       <span v-html="$t('bf_infoblob_quineMCCluskeyClasses_colorCoding')" />
@@ -222,7 +272,10 @@
                 </div>
 
                 <div>
-                  <ToggleSwitch v-on:toggle="changeQuineClassesBinaryDisplayStyle" checkedDefault=false />
+                  <ToggleSwitch
+                    checked-default="false"
+                    @toggle="changeQuineClassesBinaryDisplayStyle"
+                  />
                   <span>01-0
                     <InfoBlob>
                       <span v-html="$t('bf_infoblob_quineMCCluskeyClasses_01')" />
@@ -230,94 +283,127 @@
                   </span>
                 </div>
               </div>
-              <div class="smallTopBottomMargin">{{ $t('bf_infotest_click_on_hidden_areas_to_make_visible') }}:</div>
+              <div class="smallTopBottomMargin">
+                {{ $t('bf_infotest_click_on_hidden_areas_to_make_visible') }}:
+              </div>
               <!-- Quine Cluskey classes have been reversed in script section for easy access here -->
               <!-- loop through Q_X -->
-              <div v-for="(qlayer, qi) in quineClassesCurrent" :key="`quineClassLayerMin_${qi}`">
+              <div
+                v-for="(qlayer, qi) in quineClassesCurrent"
+                :key="`quineClassLayerMin_${qi}`"
+              >
                 <!-- loop through Q_._X -->
-                <div v-if="qi < quineClassesCurrent.length - 1" class="blurred" @mousedown="unblurDOM">
+                <div
+                  v-if="qi < quineClassesCurrent.length - 1"
+                  class="blurred"
+                  @mousedown="unblurDOM"
+                >
                   <!-- @mouseenter="unblurDOM" -->
                   <div
                     v-for="(qlayerInner, qqi) in quineClassesCurrent[qi]"
                     :key="`quineClassLayerInnerMin_${qqi}`"
-                    class="quine-class-single-class-container">
+                    class="quine-class-single-class-container"
+                  >
                     <!-- Q{{quineClassesCurrent.length-qi-1}}_{{quineClassesCurrent[qi].length-qqi-1}}: { -->
                     <span
                       class="svg-text"
-                      v-html="toSvg(`Q _{${quineClassesCurrent.length - qi - 1},\\ ${quineClassesCurrent[qi].length - qqi - 1}}:\\{`)" />
+                      v-html="toSvg(`Q _{${quineClassesCurrent.length - qi - 1},\\ ${quineClassesCurrent[qi].length - qqi - 1}}:\\{`)"
+                    />
 
                     <span class="termcollection">
                       <!-- loop through all terms in Q_x_y -->
-                      <span v-for="(qterm, ti) in quineClassesCurrent[qi][qqi]" :key="`quineClassTermMin_${ti}`">
+                      <span
+                        v-for="(qterm, ti) in quineClassesCurrent[qi][qqi]"
+                        :key="`quineClassTermMin_${ti}`"
+                      >
                         <!-- non-reduced term -->
                         <template v-if="!quineClassesCurrent[qi][qqi][ti][1]">
                           <span
                             class="svg-text term"
                             v-html="toSvg(quineClassesCurrent[qi][qqi][ti][
                               quineClassesBinaryDisplayStyle ? 2 : 0
-                            ])" />
+                            ])"
+                          />
                         </template>
                         <!-- reduced term -->
                         <template v-else>
                           <span
                             v-if="!quineClassesColorfulDisplayStyle"
                             class="svg-text term .quine-classes-reduced-term-crossed"
-                            v-html="toSvg(`\\cancel{${quineClassesCurrent[qi][qqi][ti][quineClassesBinaryDisplayStyle ? 2 : 0]}}`)" />
+                            v-html="toSvg(`\\cancel{${quineClassesCurrent[qi][qqi][ti][quineClassesBinaryDisplayStyle ? 2 : 0]}}`)"
+                          />
                           <!-- <span v-if="!quineClassesColorfulDisplayStyle" class="svg-text term quine-classes-reduced-term-crossed" v-html="toSvg(quineClassesCurrent[qi][qqi][ti][0])"/> -->
                           <span
                             v-else
                             class="svg-text term quine-classes-reduced-term-colored"
-                            v-html="toSvg(quineClassesCurrent[qi][qqi][ti][quineClassesBinaryDisplayStyle ? 2 : 0])" />
+                            v-html="toSvg(quineClassesCurrent[qi][qqi][ti][quineClassesBinaryDisplayStyle ? 2 : 0])"
+                          />
                         </template>
 
-                        <span v-if="ti < quineClassesCurrent[qi][qqi].length - 1" v-html="toSvg(',')" />
+                        <span
+                          v-if="ti < quineClassesCurrent[qi][qqi].length - 1"
+                          v-html="toSvg(',')"
+                        />
                       </span>
                     </span>
 
-                    <span class="svg-text" v-html="toSvg('\\}')" />
+                    <span
+                      class="svg-text"
+                      v-html="toSvg('\\}')"
+                    />
                   </div>
                 </div>
-                <div class="horizontalbarfull" v-if="qi < quineClassesCurrent.length - 2" />
+                <div
+                  v-if="qi < quineClassesCurrent.length - 2"
+                  class="horizontalbarfull"
+                />
               </div>
-
             </template>
           </AccordionItem>
 
           <AccordionItem>
-            <template v-slot:accordion-item-title>
+            <template #accordion-item-title>
               {{ $t('bf_primeTerms') }}
             </template>
-            <template v-slot:accordion-item-body>
+            <template #accordion-item-body>
               {{ $t('bf_primeTerms_explanation') }}
               <Accordion>
                 <AccordionItem>
-                  <template v-slot:accordion-item-title>
+                  <template #accordion-item-title>
                     {{ $t('bf_primeImplicants') }}
                   </template>
-                  <template v-slot:accordion-item-body>
+                  <template #accordion-item-body>
                     {{ $t('bf_bf_primeImplicants_explanation') }} <br>
                     <div class="overflowXContainer">
-                      <span v-for="i in primeTermsMin.length" :key="`primeTermMinID_${i}`">
+                      <span
+                        v-for="i in primeTermsMin.length"
+                        :key="`primeTermMinID_${i}`"
+                      >
                         <!-- Term + potential comma -->
                         <span
                           class="svg-text term"
-                          v-html="toSvg(`${primeTermsMin[i - 1]}${i - 1 < primeTermsMin.length - 1 ? ',' : ''}`)" />
+                          v-html="toSvg(`${primeTermsMin[i - 1]}${i - 1 < primeTermsMin.length - 1 ? ',' : ''}`)"
+                        />
                       </span>
                     </div>
                   </template>
                 </AccordionItem>
                 <AccordionItem>
-                  <template v-slot:accordion-item-title>
+                  <template #accordion-item-title>
                     {{ $t('bf_primeImplicates') }}
                   </template>
-                  <template v-slot:accordion-item-body>
+                  <template #accordion-item-body>
                     {{ $t('bf_primeImplicates_explanation') }} <br>
                     <div class="overflowXContainer">
-                      <span v-for="i in primeTermsMax.length" :key="`primeTermMaxID_${i}`">
+                      <span
+                        v-for="i in primeTermsMax.length"
+                        :key="`primeTermMaxID_${i}`"
+                      >
                         <!-- Term + potential comma -->
                         <span
                           class="svg-text term"
-                          v-html="toSvg(`${primeTermsMax[i - 1]}${i - 1 < primeTermsMax.length - 1 ? ',' : ''}`)" />
+                          v-html="toSvg(`${primeTermsMax[i - 1]}${i - 1 < primeTermsMax.length - 1 ? ',' : ''}`)"
+                        />
                       </span>
                     </div>
                   </template>
@@ -327,17 +413,19 @@
           </AccordionItem>
 
           <AccordionItem>
-            <template v-slot:accordion-item-title>
+            <template #accordion-item-title>
               {{ $t('bf_primeCoverTable') }}
             </template>
-            <template v-slot:accordion-item-body>
+            <template #accordion-item-body>
               <div class="primeTableContainer">
                 <table class="bf-primetable">
                   <thead>
                     <tr>
                       <!-- Empty cells in top left -->
                       <td />
-                      <td :class="primeTableColorMatrixObj.matrix[0][0]"> PI </td>
+                      <td :class="primeTableColorMatrixObj.matrix[0][0]">
+                        PI
+                      </td>
                       <!-- Base terms -->
                       <th
                         v-for="(bt, col) in primeTableCurrent.baseTerms"
@@ -347,35 +435,45 @@
                           (primeTableColorMatrixObj.highlightedCellRow === 0
                             && primeTableColorMatrixObj.highlightedCellColumn === col + 1)
                             ? 'primetable-highlighted-cell' : '',
-                        ]">
+                        ]"
+                      >
                         {{ primeTableBaseTermIndices[col] }}
                       </th>
 
                       <!-- Cost column -->
-                      <th v-html="toSvg('c_{i}')" class="svg-text" />
+                      <th
+                        class="svg-text"
+                        v-html="toSvg('c_{i}')"
+                      />
                     </tr>
                   </thead>
                   <tbody>
                     <!-- body of table -->
-                    <tr v-for="(pt, row) in primeTableCurrent.primeTerms" :key="`primeTableCurrentRow_${row}`">
+                    <tr
+                      v-for="(pt, row) in primeTableCurrent.primeTerms"
+                      :key="`primeTableCurrentRow_${row}`"
+                    >
                       <!-- prime term on the left -->
                       <td>{{ nthLetter(row + 1) }}</td>
                       <th
                         class="svg-text"
-                        v-html="toSvg(pt.toLatex(literalNames))"
                         :class="[
                           primeTableColorMatrixObj.matrix[0][row + 1],
                           (primeTableColorMatrixObj.highlightedCellRow === row + 1 && primeTableColorMatrixObj.highlightedCellColumn === 0) ? 'primetable-highlighted-cell' : '',
-                        ]" />
+                        ]"
+                        v-html="toSvg(pt.toLatex(literalNames))"
+                      />
 
                       <!-- Crosses -->
                       <td
                         v-for="col in primeTableCurrent.coverTable.length"
                         :key="`primeTableCurrentCell_${row}_${col}`"
-                        :class="primeTableColorMatrixObj.matrix[col][row + 1]">
+                        :class="primeTableColorMatrixObj.matrix[col][row + 1]"
+                      >
                         <span
                           v-if="primeTableCurrent.coverTable[col - 1][row] === true"
-                          :class="(primeTableColorMatrixObj.highlightedCellRow === row + 1 && primeTableColorMatrixObj.highlightedCellColumn === col) ? 'primetable-highlighted-cell' : ''">
+                          :class="(primeTableColorMatrixObj.highlightedCellRow === row + 1 && primeTableColorMatrixObj.highlightedCellColumn === col) ? 'primetable-highlighted-cell' : ''"
+                        >
                           X
                         </span>
                       </td>
@@ -388,45 +486,62 @@
               </div>
 
               <div class="bf-primetable-controls">
-                <button @click='primetableStepBackward' :disabled="primetableCurrentStepIndex === 0">
+                <button
+                  :disabled="primetableCurrentStepIndex === 0"
+                  @click="primetableStepBackward"
+                >
                   &larr;
                 </button>
                 <span class="control-text">{{ $t('step') }}
                   <span>{{ primetableCurrentStepIndex }} / {{ primetableStepsAmount }}</span>
                 </span>
-                <button @click='primetableStepForward' :disabled="primetableCurrentStepIndex === primetableStepsAmount">
+                <button
+                  :disabled="primetableCurrentStepIndex === primetableStepsAmount"
+                  @click="primetableStepForward"
+                >
                   &rarr;
                 </button>
               </div>
               <div class="explanation-text">
                 <div
                   class="hiddenLongText"
-                  v-html="this.$t('bf_covertable_step_description_initial', {
-                    ifMinTermsEinstelleElseNullstelle: this.$t('bf_einstelle'),
-                    ifMinTermsEinstellenElseNullstellen: this.$t('bf_einstelle'),
-                    ifMinTermsNullstelleElseEinstelle: this.$t('bf_einstelle'),
-                    ifMinTermsNullstellenElseEinstellen: this.$t('bf_einstelle'),
-                  })" />
-                <div class="bf-primetable-step-explanation" v-html="primeTableCurrentExplanation" />
+                  v-html="$t('bf_covertable_step_description_initial', {
+                    ifMinTermsEinstelleElseNullstelle: $t('bf_einstelle'),
+                    ifMinTermsEinstellenElseNullstellen: $t('bf_einstelle'),
+                    ifMinTermsNullstelleElseEinstelle: $t('bf_einstelle'),
+                    ifMinTermsNullstellenElseEinstellen: $t('bf_einstelle'),
+                  })"
+                />
+                <div
+                  class="bf-primetable-step-explanation"
+                  v-html="primeTableCurrentExplanation"
+                />
               </div>
             </template>
           </AccordionItem>
 
-          <AccordionItem :expandableSideways="true">
-            <template v-slot:accordion-item-title>
+          <AccordionItem :expandable-sideways="true">
+            <template #accordion-item-title>
               {{ $t('bf_petrickExpression') }}
             </template>
-            <template v-slot:accordion-item-body>
+            <template #accordion-item-body>
               <div class="bf-petrick-statement-container">
-                <span v-if="petrickStatementCurrent.steps.length > 4" class="infoblob-wrapper">
+                <span
+                  v-if="petrickStatementCurrent.steps.length > 4"
+                  class="infoblob-wrapper"
+                >
                   <InfoBlob>
-                    <span v-html="$t('bf_infoblob_petrick_statement')" class="petrick-statement-infoblob-ol" />
+                    <span
+                      class="petrick-statement-infoblob-ol"
+                      v-html="$t('bf_infoblob_petrick_statement')"
+                    />
                   </InfoBlob>
                 </span>
                 <div
                   v-for="(step, s) in petrickStatementCurrent.steps"
                   :key="s"
-                  class="bf-petrick-statement-subcontainer">
+                  class="bf-petrick-statement-subcontainer"
+                >
                   <span v-html="toSvg(`${step.bf.toLatex('ABCDEFGHIJKLMNOPQRSTUVPXYZ'.split(''), false)} = 1`)" />
                   <span v-if="s < petrickStatementCurrent.steps.length - 1">
                     | {{ getTextFromPetrickStatementActionType(petrickStatementCurrent.steps[s + 1].actionType) }}
@@ -437,30 +552,36 @@
           </AccordionItem>
 
           <AccordionItem>
-            <template v-slot:accordion-item-title>
+            <template #accordion-item-title>
               {{ $t('bf_minimalForms') }}
             </template>
-            <template v-slot:accordion-item-body>
+            <template #accordion-item-body>
               <Accordion class="emptyAccordionParentBody">
                 <AccordionItem>
-                  <template v-slot:accordion-item-title>
+                  <template #accordion-item-title>
                     {{ $t('bf_disjunctiveMinimalForm') }} (DMF)
                   </template>
-                  <template v-slot:accordion-item-body>
+                  <template #accordion-item-body>
                     {{ $t('bf_disjunctiveMinimalForm_explanation') }} <br>
                     <div class="overflowXContainer">
-                      <span class="svg-text" v-html="toSvg(dmf)" />
+                      <span
+                        class="svg-text"
+                        v-html="toSvg(dmf)"
+                      />
                     </div>
                   </template>
                 </AccordionItem>
                 <AccordionItem>
-                  <template v-slot:accordion-item-title>
+                  <template #accordion-item-title>
                     {{ $t('bf_conjunctiveMinimalForm') }} (KMF)
                   </template>
-                  <template v-slot:accordion-item-body>
+                  <template #accordion-item-body>
                     {{ $t('bf_conjunctiveMinimalForm_explanation') }} <br>
                     <div class="overflowXContainer">
-                      <span class="svg-text" v-html="toSvg(kmf)" />
+                      <span
+                        class="svg-text"
+                        v-html="toSvg(kmf)"
+                      />
                     </div>
                   </template>
                 </AccordionItem>
@@ -469,43 +590,63 @@
           </AccordionItem>
 
           <AccordionItem>
-            <template v-slot:accordion-item-title>
+            <template #accordion-item-title>
               {{ $t('bf_nandnorification') }}
             </template>
-            <template v-slot:accordion-item-body>
+            <template #accordion-item-body>
               <Accordion class="emptyAccordionParentBody">
-                <AccordionItem :expandableSideways="true">
-                  <template v-slot:accordion-item-title>
+                <AccordionItem :expandable-sideways="true">
+                  <template #accordion-item-title>
                     {{ $t('bf_nandification') }}
                   </template>
-                  <template v-slot:accordion-item-body>
+                  <template #accordion-item-body>
                     <div class="bf-petrick-statement-container">
                       <div
-                        v-html="toSvg(nandOriginalBF.toLatex(this.$refs.childBooleanFunctionInputDevice.currentVarNames, false))"
-                        class="nandnor-line" />
-                      <div v-for="(round, r) in optimizationNAND.steps" :key="r" class="">
-                        <div v-for="(step, s) in round" :key="`${r}_${s}`" class="nandnor-line">
+                        class="nandnor-line"
+                        v-html="toSvg(nandOriginalBF.toLatex($refs.childBooleanFunctionInputDevice.currentVarNames, false))"
+                      />
+                      <div
+                        v-for="(round, r) in optimizationNAND.steps"
+                        :key="r"
+                        class=""
+                      >
+                        <div
+                          v-for="(step, s) in round"
+                          :key="`${r}_${s}`"
+                          class="nandnor-line"
+                        >
                           <span
-                            v-html="toSvg(step.bf.toLatex(this.$refs.childBooleanFunctionInputDevice.currentVarNames, false))" />
+                            v-html="toSvg(step.bf.toLatex($refs.childBooleanFunctionInputDevice.currentVarNames, false))"
+                          />
                           <span style="padding-left:1em;"> | {{ getTextFromNANDificationStep(step.actionType) }}</span>
                         </div>
                       </div>
                     </div>
                   </template>
                 </AccordionItem>
-                <AccordionItem :expandableSideways="true">
-                  <template v-slot:accordion-item-title>
+                <AccordionItem :expandable-sideways="true">
+                  <template #accordion-item-title>
                     {{ $t('bf_norification') }}
                   </template>
-                  <template v-slot:accordion-item-body>
+                  <template #accordion-item-body>
                     <div class="bf-petrick-statement-container">
                       <div
-                        v-html="toSvg(norOriginalBF.toLatex(this.$refs.childBooleanFunctionInputDevice.currentVarNames, false))"
-                        class="nandnor-line" />
-                      <div v-for="(round, r) in optimizationNOR.steps" :key="r" class="">
-                        <div v-for="(step, s) in round" :key="`${r}_${s}`" class="nandnor-line">
+                        class="nandnor-line"
+                        v-html="toSvg(norOriginalBF.toLatex($refs.childBooleanFunctionInputDevice.currentVarNames, false))"
+                      />
+                      <div
+                        v-for="(round, r) in optimizationNOR.steps"
+                        :key="r"
+                        class=""
+                      >
+                        <div
+                          v-for="(step, s) in round"
+                          :key="`${r}_${s}`"
+                          class="nandnor-line"
+                        >
                           <span
-                            v-html="toSvg(step.bf.toLatex(this.$refs.childBooleanFunctionInputDevice.currentVarNames, false))" />
+                            v-html="toSvg(step.bf.toLatex($refs.childBooleanFunctionInputDevice.currentVarNames, false))"
+                          />
                           <span style="padding-left:1em;"> | {{ getTextFromNORificationStep(step.actionType) }}</span>
                         </div>
                       </div>
@@ -623,32 +764,6 @@ export default {
       primetableStepsAmount: 0,
       primetableCurrentStepIndex: 0,
     };
-  },
-  created() {
-    this.methodOfInputForBooleanFunction = this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM;
-    if (window.MathJax) {
-      window.MathJax.typeset();
-    }
-    if (window.MathJax) {
-      // console.log('loading library');
-      // Loading a library that is needed only in this component:
-      // Telling Mathjax to load this library before loading the MathJax
-      // script globally did not work, perhaps the current implementation
-      // could also be indeterministic in regards to Vue components executing
-      // MathJax commands, before the MathJax script has been downloaded.
-      // Perhaps adding another library to download at the beginning
-      // made for a too big delay, such only initializing MathJax after vue
-      // had started rendering components.
-      // But honestly this solution is pretty sleek and this lazy loading is cool.
-      try {
-        this.toSvg('(\\require{cancel})');
-      } catch (_) { } // eslint-disable-line no-empty
-    } else {
-      console.error('Upon created() call of BooleanFunctionMinimizer comp. MathJax was not yet initialized.');
-    }
-  },
-  mounted() {
-    this.loadExerciseFromURL();
   },
   computed: {
     randomExercisesDifficulties() {
@@ -968,6 +1083,32 @@ export default {
     archivedExerciseTitles() {
       return bfGetArchivedExerciseTitles(this.$i18n);
     },
+  },
+  created() {
+    this.methodOfInputForBooleanFunction = this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM;
+    if (window.MathJax) {
+      window.MathJax.typeset();
+    }
+    if (window.MathJax) {
+      // console.log('loading library');
+      // Loading a library that is needed only in this component:
+      // Telling Mathjax to load this library before loading the MathJax
+      // script globally did not work, perhaps the current implementation
+      // could also be indeterministic in regards to Vue components executing
+      // MathJax commands, before the MathJax script has been downloaded.
+      // Perhaps adding another library to download at the beginning
+      // made for a too big delay, such only initializing MathJax after vue
+      // had started rendering components.
+      // But honestly this solution is pretty sleek and this lazy loading is cool.
+      try {
+        this.toSvg('(\\require{cancel})');
+      } catch (_) { } // eslint-disable-line no-empty
+    } else {
+      console.error('Upon created() call of BooleanFunctionMinimizer comp. MathJax was not yet initialized.');
+    }
+  },
+  mounted() {
+    this.loadExerciseFromURL();
   },
   methods: {
     // downloadSymSVG() {

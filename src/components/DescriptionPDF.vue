@@ -2,13 +2,25 @@
   <div>
     <div style="display: flex; margin-bottom: 40px; margin-top: 0">
       <div style="flex: 50%; padding: 15px;">
-        <img :src="codesign_logo" alt="CODESIGN_LOGO" style="width: 50%">
+        <img
+          :src="codesign_logo"
+          alt="CODESIGN_LOGO"
+          style="width: 50%"
+        >
       </div>
       <div style="flex: 50%; padding: 15px;">
-        <img :src="fau_logo" alt="FAU_Logo" style="width: 50%">
+        <img
+          :src="fau_logo"
+          alt="FAU_Logo"
+          style="width: 50%"
+        >
       </div>
     </div>
-    <div id="equation" ref="equation" v-html="math" />
+    <div
+      id="equation"
+      ref="equation"
+      v-html="math"
+    />
     <!--<button @click="render">Render</button>-->
   </div>
 </template>

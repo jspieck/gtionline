@@ -1,12 +1,14 @@
 <template>
   <div class="cmosContainer">
     <div class="pageContainer">
-      <h3>CMOS<InfoBlob>
-        <span v-html="$t('cmos_infoblob_description')" />
-      </InfoBlob></h3>
+      <h3>
+        CMOS<InfoBlob>
+          <span v-html="$t('cmos_infoblob_description')" />
+        </InfoBlob>
+      </h3>
       <div class="bodyContainer">
-        <p>{{$t('enter_cmos')}}</p>
-        <p>{{$t('cmos_infoblob_input_description')}}</p>
+        <p>{{ $t('enter_cmos') }}</p>
+        <p>{{ $t('cmos_infoblob_input_description') }}</p>
         <div class="centering">
           <div class="exercise-selection-container">
             <TabComponent :tabs="['archive', 'formula', 'randomExercise']">
@@ -15,32 +17,53 @@
                   <div class="exercise-selection-container-subsection">
                     <span v-html="$t('archive')" />
                     <FSelect
+                      ref="archivedExercisesCMOSDropDownMenu"
                       :options="archivedExerciseTitles"
                       :sel="0"
                       class="leftMargin10"
                       @input="selectArchivedExercise"
-                      ref="archivedExercisesCMOSDropDownMenu" />
-                    <button @click="loadArchivedExercise" type="button">{{$t('load')}}</button>
+                    />
+                    <button
+                      type="button"
+                      @click="loadArchivedExercise"
+                    >
+                      {{ $t('load') }}
+                    </button>
                   </div>
                 </div>
               </template>
               <template #formula>
                 <div class="exercise-selection-container-subsection">
-                  <span style="padding-left:10px" v-html="$t('formula')" />
-                  <input v-model="cmosFormula" class="leftMargin10" size="25" />
-                  <button @click="generateCmos(cmosFormula)">{{$t('translate_big')}}</button>
-                  <div v-if="cmosError != null" class="exercise-selection-container-subsection">
+                  <span
+                    style="padding-left:10px"
+                    v-html="$t('formula')"
+                  />
+                  <input
+                    v-model="cmosFormula"
+                    class="leftMargin10"
+                    size="25"
+                  >
+                  <button @click="generateCmos(cmosFormula)">
+                    {{ $t('translate_big') }}
+                  </button>
+                  <div
+                    v-if="cmosError != null"
+                    class="exercise-selection-container-subsection"
+                  >
                     <span class="errormessage">
                       <span v-html="`${$t('cmos_error_at_symbol')} `" />
-                      <span> '{{cmosError.found}}' </span>
+                      <span> '{{ cmosError.found }}' </span>
                       <span v-html="`${$t('at_position')} `" />
                       <span> {{ cmosError.location.start.column }}</span>
                     </span>
                   </div>
                   <!-- Formel Errormessage -->
-                  <div v-if="cmosErrorFormulaTooSimple != null" class="exercise-selection-container-subsection">
+                  <div
+                    v-if="cmosErrorFormulaTooSimple != null"
+                    class="exercise-selection-container-subsection"
+                  >
                     <span class="errormessage">
-                      <span> {{$t('cmos_enter_more_than_one_variable')}} </span>
+                      <span> {{ $t('cmos_enter_more_than_one_variable') }} </span>
                     </span>
                   </div>
                 </div>
@@ -48,30 +71,55 @@
               <template #randomExercise>
                 <div class="exercise-selection-container-subsection">
                   <div>
-                    <span>{{$t('difficultyUC')}}:</span>
+                    <span>{{ $t('difficultyUC') }}:</span>
                     <FSelect
                       :options="randomExercisesDifficulties"
                       :sel="0"
                       class="leftMargin10"
-                      @input="selectRandomExerciseDifficulty" />
-                    <button @click="generateRandomExercise">{{$t('load')}}</button>
+                      @input="selectRandomExerciseDifficulty"
+                    />
+                    <button @click="generateRandomExercise">
+                      {{ $t('load') }}
+                    </button>
                   </div>
                 </div>
               </template>
             </TabComponent>
           </div>
         </div>
-        <h4 id="displayedFormula" v-if="renderedFormula" v-html="`${$t('formula')}: ${renderedFormula}`" />
+        <h4
+          v-if="renderedFormula"
+          id="displayedFormula"
+          v-html="`${$t('formula')}: ${renderedFormula}`"
+        />
       </div>
-      <div id="cmosOutput" v-html="cmosOutput" class="blurred" @mousedown="unblurDOM" ref="cmosOutput" />
-      <h3 v-if="latex">Tikz Code</h3>
+      <div
+        id="cmosOutput"
+        ref="cmosOutput"
+        class="blurred"
+        @mousedown="unblurDOM"
+        v-html="cmosOutput"
+      />
+      <h3 v-if="latex">
+        Tikz Code
+      </h3>
       <div class="codeContainer">
         <div class="copyButton">
-          <button @click="copyToClipboard"><font-awesome-icon icon="copy" /></button>
-          <span class="tooltip" ref="tooltip">Copied</span>
+          <button @click="copyToClipboard">
+            <font-awesome-icon icon="copy" />
+          </button>
+          <span
+            ref="tooltip"
+            class="tooltip"
+          >Copied</span>
         </div>
         <!-- <highlightjs lang="tex" :code="latex"/> -->
-        <pre><code><span v-for="(line, lineNumber) in latex" v-bind:key="lineNumber" v-html="line" class="codeLine" /></code></pre>
+        <pre><code><span
+          v-for="(line, lineNumber) in latex"
+          :key="lineNumber"
+          class="codeLine"
+          v-html="line"
+        /></code></pre>
       </div>
     </div>
   </div>
@@ -116,11 +164,6 @@ export default {
       examples: ['(~a+c)*~(~b+c*~a)', '(~x+~r*~(~n+a))*(n+r)', 'x0*~x1*(~x2+~x3)', '~(~a*b+a*~b)'],
     };
   },
-  created() {},
-  mounted() {
-    // Load Exercise statet in URL parameters (...?load=)
-    this.loadExerciseFromURL();
-  },
   computed: {
     archivedExerciseTitles() {
       return cmosGetArchivedExerciseTitles(this.$i18n);
@@ -132,6 +175,11 @@ export default {
         this.$t('difficultyHard'),
       ];
     },
+  },
+  created() {},
+  mounted() {
+    // Load Exercise statet in URL parameters (...?load=)
+    this.loadExerciseFromURL();
   },
   methods: {
     copyToClipboard() {

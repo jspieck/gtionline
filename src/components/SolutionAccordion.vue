@@ -2,10 +2,13 @@
   <div class="accordion js-accordion accordionContainer">
     <div
       v-for="panel in solutionDescription"
-      v-bind:key="panel.name"
+      :key="panel.name"
+      class="accordion__item js-accordion-item"
       @click="setActive"
-      class="accordion__item js-accordion-item">
-      <div class="accordion-header js-accordion-header">{{panel.name}}</div>
+    >
+      <div class="accordion-header js-accordion-header">
+        {{ panel.name }}
+      </div>
       <div class="accordion-body js-accordion-body">
         <div class="accordion-body__contents">
           <span v-html="panel.text" />
@@ -14,20 +17,26 @@
         <div class="accordion js-accordion">
           <div
             v-for="subpanel in panel.subpanels"
-            v-bind:key="subpanel.name"
+            :key="subpanel.name"
+            class="accordion__item js-accordion-item"
             @click="setActive"
-            class="accordion__item js-accordion-item">
-            <div class="accordion-header js-accordion-header">{{subpanel.name}}</div>
+          >
+            <div class="accordion-header js-accordion-header">
+              {{ subpanel.name }}
+            </div>
             <div class="accordion-body js-accordion-body">
               <div class="accordion-body__contents">
                 <span v-html="subpanel.text" />
               </div>
               <div
                 v-for="subsubpanel in subpanel.subsubpanels"
-                v-bind:key="subsubpanel.name"
+                :key="subsubpanel.name"
+                class="accordion__item js-accordion-item"
                 @click="setActive"
-                class="accordion__item js-accordion-item">
-                <div class="accordion-header js-accordion-header">{{subsubpanel.name}}</div>
+              >
+                <div class="accordion-header js-accordion-header">
+                  {{ subsubpanel.name }}
+                </div>
                 <div class="accordion-body js-accordion-body">
                   <div class="accordion-body__contents">
                     <span v-html="subsubpanel.text" />

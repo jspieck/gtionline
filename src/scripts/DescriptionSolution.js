@@ -915,6 +915,7 @@ export class DescriptionSolution {
       const n2Arr = divSteps.Step0_Sub2; // dividend
       const n2len = n2Arr.length;
       const divRes = divWatcher.steps.Result.data.resultArr; // result of division
+      const shiftPos = this.watcher.steps.Exponent.data.Shift;
       let arrLen = Math.max(
         divSteps[`Step${countSteps - 1}_SubRes`].length - 2,
         divSteps.Step0_Sub1.length + divSteps.Step0_Sub2.length,
@@ -1002,8 +1003,11 @@ export class DescriptionSolution {
 
       // Last row
       rows.push('\\mathcal\{L\}&&');
-      rows[rows.length - 1] += `${divRes[0]},& ${divRes.slice(1, divRes.length)
-        .join('&')}`;
+      const commaPos = Math.max(0, shiftPos);
+      console.log('commaPos', shiftPos);
+      const beforeComma = divRes.slice(0, commaPos + 1);
+      const afterComma = divRes.slice(commaPos + 1);
+      rows[rows.length - 1] += `${beforeComma.join('&')},& ${afterComma.join('&')}`;
       rows[rows.length - 1] += '&';
       for (let k = divRes.length; k < arrLen - 2; k += 1) {
         rows[rows.length - 1] += '&';
@@ -1038,121 +1042,90 @@ export class DescriptionSolution {
       text: `${this.imp.$t('numerator')}: ${this.imp.$t('sign')}: ${(y1.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString1} ${this.imp.$t('mantissa')}: ${mantissaString1}<br>`
           + `${this.imp.$t('denominator')}: ${this.imp.$t('sign')}: ${(y2.sign === 0 ? '+' : '-')} ${this.imp.$t('exponent')}: ${expString2} ${this.imp.$t('mantissa')}: ${mantissaString2}`,
     }));
-    if (y1.isZero) {
+
+    if (watcher.steps.Exponent != null) { // This can happen when result is NaN
       this.result.push(reactive({
-        name: `${this.imp.$t('step')} 1`,
+        name: `${this.imp.$t('step')} ${this.result.length}`,
         text: [
-          `${this.imp.$t('divWithZero')}`,
+          `${this.imp.$t('subtExponents')} ${this.imp.$t('newExponentDivision', {
+            E1: watcher.steps.Exponent.data.E1,
+            E2: watcher.steps.Exponent.data.E2,
+            Bias: watcher.steps.Exponent.data.Bias,
+            Result: watcher.steps.Exponent.data.EUnshifted,
+          })}`,
         ].join(''),
       }));
-    } else if (y2.isZero) {
-      this.result.push(reactive({
-        name: `${this.imp.$t('step')} 1`,
-        text: [
-          `${this.imp.$t('divByZero')}`,
-        ].join(''),
-      }));
-      return;
+    }
+
+    if (watcher.steps.ResultEdgecase.data.edgecase !== 'none') { // case: edgecase
+      switch (watcher.steps.ResultEdgecase.data.edgecase) {
+        case 'nan':
+          this.result.push(reactive({
+            name: `${this.imp.$t('step')} ${this.result.length}`,
+            text: [
+              `${this.imp.$t('solutionIsNan')}`,
+            ].join(''),
+          }));
+          break;
+        case 'inf':
+          this.result.push(reactive({
+            name: `${this.imp.$t('step')} ${this.result.length}`,
+            text: [
+              `${this.imp.$t('solutionIsInf')}`,
+            ].join(''),
+          }));
+          break;
+        case 'zero':
+          this.result.push(reactive({
+            name: `${this.imp.$t('step')} ${this.result.length}`,
+            text: [
+              `${this.imp.$t('solutionIsZero')}`,
+            ].join(''),
+          }));
+          break;
+        default:
+      }
     } else {
-      console.log(watcher);
-      if (watcher.steps.Exponent != null) { // This can happen when result is NaN
-        this.result.push(reactive({
-          name: `${this.imp.$t('step')} ${this.result.length}`,
-          text: [
-            `${this.imp.$t('subtExponents')} ${this.imp.$t('newExponentDivision', {
-              E1: watcher.steps.Exponent.data.E1,
-              E2: watcher.steps.Exponent.data.E2,
-              Bias: watcher.steps.Exponent.data.Bias,
-              Result: watcher.steps.Exponent.data.EUnshifted,
-            })}`,
-          ].join(''),
-        }));
-      }
-
-      if (watcher.steps.ResultEdgecase.data.edgecase !== 'none') { // case: edgecase
-        switch (watcher.steps.ResultEdgecase.data.edgecase) {
-          case 'nan':
-            this.result.push(reactive({
-              name: `${this.imp.$t('step')} ${this.result.length}`,
-              text: [
-                `${this.imp.$t('solutionIsNan')}`,
-              ].join(''),
-            }));
-            return;
-          case 'inf':
-            this.result.push(reactive({
-              name: `${this.imp.$t('step')} ${this.result.length}`,
-              text: [
-                `${this.imp.$t('solutionIsInf')}`,
-              ].join(''),
-            }));
-            return;
-          case 'zero':
-            this.result.push(reactive({
-              name: `${this.imp.$t('step')} ${this.result.length}`,
-              text: [
-                `${this.imp.$t('solutionIsZero')}`,
-              ].join(''),
-            }));
-            return;
-          default:
-        }
-      }
-
-      if (!watcher.steps.Result.data.result.isNaN) {
-        if (!watcher.steps.Division.data.equalMantissa) { // case not equal mantissa
-          this.getDivisionTable();
-          const mantissaDescriptionParts = [
-            `${this.imp.$t('newMantissaIs')}`,
-            '\<br\> \<br\>',
-            `\\( ${this.table} \\)`,
-            '\<br\> \<br\>',
-          ];
-          if (watcher.steps.ResultEdgecase.data.edgecase === 'denormalized') {
-            mantissaDescriptionParts.push(`${this.imp.$t('mantissaDenormalize')} \<br\>`);
-          } else {
-            if (watcher.steps.Exponent.data.Shift !== 0) {
-              const descriptionText = this.imp.$t('mantissaNormalize', {
-                shift: watcher.steps.Exponent.data.Shift,
-                exponent: watcher.steps.Result.data.result.exponentBits.join(''),
-              });
-              mantissaDescriptionParts.push(`${descriptionText} \<br\>`);
-            }
-            mantissaDescriptionParts.push(`${this.imp.$t('mantissa1float')} ${solution.mantissaBits.join('').substring(1)}`);
+      if (!watcher.steps.Division.data.equalMantissa) { // case not equal mantissa
+        this.getDivisionTable();
+        const mantissaDescriptionParts = [
+          `${this.imp.$t('newMantissaIs')}`,
+          '\<br\> \<br\>',
+          `\\( ${this.table} \\)`,
+          '\<br\> \<br\>',
+        ];
+        if (watcher.steps.ResultEdgecase.data.edgecase === 'denormalized') {
+          mantissaDescriptionParts.push(`${this.imp.$t('mantissaDenormalize')} \<br\>`);
+        } else {
+          if (watcher.steps.Exponent.data.Shift !== 0) {
+            const descriptionText = this.imp.$t('mantissaNormalize', {
+              shift: watcher.steps.Exponent.data.Shift,
+              exponent: watcher.steps.Result.data.result.exponentBits.join(''),
+            });
+            mantissaDescriptionParts.push(`${descriptionText} \<br\>`);
           }
-          const mantissaDescription = mantissaDescriptionParts.join('');
-
-          this.result.push(reactive({
-            name: `${this.imp.$t('step')} 2`,
-            text: `${this.imp.$t('divMantissa')}`,
-            subpanels: [
-              {
-                name: `${this.imp.$t('doDivision')}`,
-                text: mantissaDescription,
-              },
-            ],
-          }));
-        } else { // case equal mantissa
-          this.result.push(reactive({
-            name: `${this.imp.$t('step')} 2`,
-            text: `${this.imp.$t('divMantissa')}`,
-            subpanels: [
-              {
-                name: `${this.imp.$t('doDivision')}`,
-                text: `${this.imp.$t('equalMantissaDiv', { Mantissa: solution.mantissaBits.join('').substring(1) })}`,
-              },
-            ],
-          }));
+          mantissaDescriptionParts.push(`${this.imp.$t('mantissa1float')} ${solution.mantissaBits.join('').substring(1)}`);
         }
-      } else {
-        // Result is NaN
+        const mantissaDescription = mantissaDescriptionParts.join('');
+
         this.result.push(reactive({
-          name: `${this.imp.$t('step')} ${this.result.length}`,
+          name: `${this.imp.$t('step')} 2`,
           text: `${this.imp.$t('divMantissa')}`,
           subpanels: [
             {
               name: `${this.imp.$t('doDivision')}`,
-              text: `${this.imp.$t('solutionIsNan')} ${this.imp.$t('newMantissaIs')}: ${solution.mantissaBits.join('').substring(1)}`,
+              text: mantissaDescription,
+            },
+          ],
+        }));
+      } else { // case equal mantissa
+        this.result.push(reactive({
+          name: `${this.imp.$t('step')} 2`,
+          text: `${this.imp.$t('divMantissa')}`,
+          subpanels: [
+            {
+              name: `${this.imp.$t('doDivision')}`,
+              text: `${this.imp.$t('equalMantissaDiv', { Mantissa: solution.mantissaBits.join('').substring(1) })}`,
             },
           ],
         }));

@@ -1,13 +1,15 @@
 <template>
   <div class="about pageContainer">
-    <h3 class="title">{{$t("contact")}}</h3>
+    <h3 class="title">
+      {{ $t("contact") }}
+    </h3>
     <div class="bodyContainer">
-      <h2>{{$t('contactPersonHeader')}}</h2>
+      <h2>{{ $t('contactPersonHeader') }}</h2>
       <p><span class="icon"><font-awesome-icon icon="envelope" /></span> <span class="info"><a>cs12-gti@fau.de</a></span></p>
 
-      <h2>{{$t('Danksagung')}}</h2>
-      <p>{{$t('thankProfessorTeich')}}</p>
-      <p>{{$t('weThank')}}</p><p>Daniel Seidel, Timo Teufel{{$t('and')}} Martin Zeus</p>
+      <h2>{{ $t('Danksagung') }}</h2>
+      <p>{{ $t('thankProfessorTeich') }}</p>
+      <p>{{ $t('weThank') }}</p><p>Daniel Seidel, Timo Teufel{{ $t('and') }} Martin Zeus</p>
 
       <!--<h2>{{$t('impressum')}}</h2>
       <p>{{$t('impressumText')}}</p><a href="https://www.cs12.tf.fau.de/impressum/">https://www.cs12.tf.fau.de/impressum/</a>
@@ -28,7 +30,7 @@
 
 <script>
 export default {
-  name: 'contactForm',
+  name: 'ContactForm',
 };
 </script>
 

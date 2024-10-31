@@ -1,4 +1,4 @@
-import { AdditionBaseNComplementToLatex } from '../../BaseNComplement/ToLatex/AdditionToLatex';
+import { AdditionBaseNComplementToLatex } from '../../baseNComplement/toLatex/additionToLatex';
 
 export class AdditionIEEEToObject {
   constructor(watcher) {

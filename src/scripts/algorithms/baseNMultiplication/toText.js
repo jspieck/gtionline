@@ -29,7 +29,7 @@ export class BaseNMultiplicationToText {
       step = step.next;
     }
 
-    widthNeeded++;
+    widthNeeded += 1;
     step = algorithm.start;
 
     const line = '-'.repeat(widthNeeded);

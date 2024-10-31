@@ -29,7 +29,7 @@ export class SubtractionBaseNComplementToLatex {
       op2Arr.unshift(...Array(carryArr.length - op2Arr.length).fill(''));
     }
     let secondline = [];
-    for (let i = 0; i < op2Arr.length; i++) {
+    for (let i = 0; i < op2Arr.length; i += 1) {
       if (carryArr[i] !== 0) {
         secondline.push([op2Arr[i], carryArr[i]]);
       } else {

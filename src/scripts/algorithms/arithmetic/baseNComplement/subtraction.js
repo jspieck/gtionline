@@ -1,5 +1,5 @@
 import { NumberBaseNComplement } from './numberBaseNComplement';
-import { Algorithm } from '../../Algorithm';
+import { Algorithm } from '../../algorithm';
 
 export class SubtractionBaseNComplement {
   constructor(n1, n2) {
@@ -39,7 +39,7 @@ export class SubtractionBaseNComplement {
     const overflow = [1];
     const final = [];
     // subtraction by addition with twos complement
-    for (let i = n1Arr.length - 1; i >= 0; i--) {
+    for (let i = n1Arr.length - 1; i >= 0; i -= 1) {
       const m = n1Arr[i] + n2Arr[i] + overflow[0];
 
       final.unshift(m % base);

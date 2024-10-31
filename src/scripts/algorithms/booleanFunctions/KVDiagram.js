@@ -172,11 +172,15 @@ export function generateRandomKVDiagram(amountLiterals, notPracticallyEmptyOrFul
   const diagramWidth = (2 ** Math.floor((amountLiterals + 1) / 2));
   const diagramHeight = (2 ** Math.floor((amountLiterals) / 2));
 
-  while (true) {
-    let amountOnes = 0;
-    let amountZeros = 0;
+  let amountOnes;
+  let amountZeros;
+  let values;
 
-    const values = [];
+  do {
+    amountOnes = 0;
+    amountZeros = 0;
+
+    values = [];
     for (let y = 0; y < diagramHeight; y += 1) {
       values[y] = [];
       for (let x = 0; x < diagramWidth; x += 1) {
@@ -192,9 +196,7 @@ export function generateRandomKVDiagram(amountLiterals, notPracticallyEmptyOrFul
         }
       }
     }
+  } while (notPracticallyEmptyOrFull && (amountZeros === 0 || amountOnes === 0));
 
-    if (!(notPracticallyEmptyOrFull && (amountZeros === 0 || amountOnes === 0))) {
-      return new KVDiagram(values, amountLiterals);
-    }
-  }
+  return new KVDiagram(values, amountLiterals);
 }

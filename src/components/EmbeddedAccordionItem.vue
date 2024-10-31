@@ -1,22 +1,32 @@
 <template>
   <div class="accordion-item">
     <!-- Item title -->
-    <div class="accordion-item-header" @click="doclick">
+    <div
+      class="accordion-item-header"
+      @click="doclick"
+    >
       <slot name="accordion-item-title" />
-      <font-awesome-icon class="angleDown" icon="angle-down" />
+      <font-awesome-icon
+        class="angleDown"
+        icon="angle-down"
+      />
     </div>
     <!-- Item body -->
-    <div class="accordion-item-body" v-if="this.expanded === true" ref="accordion_item_body">
+    <div
+      v-if="expanded === true"
+      ref="accordion_item_body"
+      class="accordion-item-body"
+    >
       <!-- NOTE: 'expanding sideways' is now more like a fullscreen mode -->
       <button
-        v-if="this.expandableSideways"
+        v-if="expandableSideways"
         class="accordion-item-expand-sideways-toggle ion-md-expand"
-        @click="toggleExpandSideways">
+        @click="toggleExpandSideways"
+      >
         >
       </button>
       <slot name="accordion-item-body" />
     </div>
-
   </div>
 </template>
 

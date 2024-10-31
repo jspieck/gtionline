@@ -1,53 +1,82 @@
 <template>
   <div class="fp-exercise pageContainer">
-    <h3 class="title">{{$t('exercises')}}</h3>
+    <h3 class="title">
+      {{ $t('exercises') }}
+    </h3>
     <div class="bodyContainer">
-      <p class="introduction">{{$t('fpExerciseIntro')}}</p>
-      <h4>{{$t('generateEx')}}</h4>
+      <p class="introduction">
+        {{ $t('fpExerciseIntro') }}
+      </p>
+      <h4>{{ $t('generateEx') }}</h4>
       <div>
         <div class="floatingPointInput">
-          <h5>{{$t('randomExercise')}}:</h5>
+          <h5>{{ $t('randomExercise') }}:</h5>
           <FSelect
             :sel="selectedFormat[0]"
+            :num="0"
+            :options="operationOptions"
             @input="selectOp"
-            :num=0
-            :options="operationOptions" />
+          />
           <div class="divMargin" />
-          <button v-on:click="generateExercise">{{$t('generate')}}</button>
+          <button @click="generateExercise">
+            {{ $t('generate') }}
+          </button>
         </div>
         <div class="floatingPointInput">
           <h5>{{ $t('fp_from_archive') }}:</h5>
           <FSelect
+            ref="archivedExercisesFPDropDownMenu"
             :options="archivedExerciseTitles"
             :sel="0"
             @input="selectArchivedExercise"
-            ref="archivedExercisesFPDropDownMenu" />
+          />
           <div class="divMargin" />
-          <button @click="loadArchivedExercise">{{$t('load')}}</button>
+          <button @click="loadArchivedExercise">
+            {{ $t('load') }}
+          </button>
         </div>
       </div>
-      <div id="exerciseField" v-html="exerciseText" />
-      <h4>{{$t('ownSolution')}}</h4>
+      <div id="exerciseField">
+        <MathJax :formula="exerciseText" />
+      </div>
+      <h4>{{ $t('ownSolution') }}</h4>
       <AttentionBanner :text="$t('attRound')" />
       <div class="solutionArea">
         <div class="solutionInput">
-          <p>{{$t('signBit')}}</p>
-          <input id="propVB" :class="backVB" v-model="propVB">
+          <p>{{ $t('signBit') }}</p>
+          <input
+            id="propVB"
+            v-model="propVB"
+            :class="backVB"
+          >
         </div>
         <div class="divMargin" />
         <div class="solutionInput">
-          <p>{{$t('exponentBits')}}</p>
-          <input id="propE" :class="backE" v-model="propE">
+          <p>{{ $t('exponentBits') }}</p>
+          <input
+            id="propE"
+            v-model="propE"
+            :class="backE"
+          >
         </div>
         <div class="divMargin" />
         <div class="solutionInput">
-          <p>{{$t('fractionBits')}}</p>
-          <input id="propM" :class="backM" v-model="propM">
+          <p>{{ $t('fractionBits') }}</p>
+          <input
+            id="propM"
+            v-model="propM"
+            :class="backM"
+          >
         </div>
         <div class="divMargin" />
-        <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
+        <button
+          id="checkSolution"
+          @click="checkSolution"
+        >
+          {{ $t('check') }}
+        </button>
       </div>
-      <h4>{{$t('correctSolution')}}</h4>
+      <h4>{{ $t('correctSolution') }}</h4>
       <div style="position: relative">
         <AttentionBanner :text="$t('attSolve')" />
         <!-- <div class="pdfGen">
@@ -55,19 +84,25 @@
         </div> -->
       </div>
       <div id="solution">
-        <Accordion :solutionDescription="solDescr">
-          <AccordionItem v-for="panel in solDescr" v-bind:key="panel.name">
-            <template v-slot:accordion-item-title>
-              {{panel.name}}
+        <Accordion :solution-description="solDescr">
+          <AccordionItem
+            v-for="panel in solDescr"
+            :key="panel.name"
+          >
+            <template #accordion-item-title>
+              {{ panel.name }}
             </template>
-            <template v-slot:accordion-item-body>
+            <template #accordion-item-body>
               <span v-html="panel.text" />
               <Accordion v-if="panel.subpanels != null">
-                <AccordionItem v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name">
-                  <template v-slot:accordion-item-title>
-                    {{subpanel.name}}
+                <AccordionItem
+                  v-for="subpanel in panel.subpanels"
+                  :key="subpanel.name"
+                >
+                  <template #accordion-item-title>
+                    {{ subpanel.name }}
                   </template>
-                  <template v-slot:accordion-item-body>
+                  <template #accordion-item-body>
                     <span v-html="subpanel.text" />
                   </template>
                 </AccordionItem>
@@ -88,6 +123,7 @@ import FormatSelect from './FormatSelect.vue';
 // import SolutionAccordion from './SolutionAccordion.vue';
 import Accordion from './EmbeddedAccordion.vue';
 import AccordionItem from './EmbeddedAccordionItem.vue';
+import MathJax from './MathJax.vue';
 import * as solution from '../scripts/ieeeSolution';
 import * as checker from '../scripts/checkSolution';
 import * as description from '../scripts/DescriptionSolution';
@@ -101,6 +137,7 @@ export default {
     Accordion,
     AccordionItem,
     AttentionBanner,
+    MathJax
   },
   data() {
     const useCookies = false;
@@ -153,16 +190,6 @@ export default {
       archivedExerciseSelectedIndex: 0,
     };
   },
-  mounted() {
-    this.loadExerciseFromURL();
-
-    this.$nextTick(() => {
-      if (this.default) {
-        this.drawExercise();
-        // this.computeSolution();
-      }
-    });
-  },
   computed: {
     archivedExerciseTitles() {
       return fpGetArchivedExerciseTitles(this.$i18n);
@@ -180,6 +207,7 @@ export default {
       const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
       ieeeSolution.computeSolution(this.fp1, this.fp2, this.selectedFormat[0]);
       const watcher = ieeeSolution.watcher;
+      console.log(watcher);
       const descr = new description.DescriptionSolution(
         this,
         this.exponentBits,
@@ -211,6 +239,16 @@ export default {
           \\( fp_1 = \\text{${this.fp1}} \\)\n
           \\( fp_2 = \\text{${this.fp2}} \\)`;
     },
+  },
+  mounted() {
+    this.loadExerciseFromURL();
+
+    this.$nextTick(() => {
+      if (this.default) {
+        this.drawExercise();
+        // this.computeSolution();
+      }
+    });
   },
   updated() {
     this.$nextTick(() => {
@@ -270,9 +308,9 @@ export default {
     checkSolution() {
       const checkSolution = new checker.CheckSolution(this.exponentBits);
       checkSolution.checkSolution(this.solutionObject, this.propVB, this.propE, this.propM);
-      this.backVB = checkSolution.backVB;
-      this.backE = checkSolution.backE;
-      this.backM = checkSolution.backM;
+      this.backVB = checkSolution.getVBStatus();
+      this.backE = checkSolution.getEStatus();
+      this.backM = checkSolution.getMStatus();
     },
     drawExercise() {
       this.$nextTick(() => {

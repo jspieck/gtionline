@@ -1,10 +1,17 @@
 <template>
   <div class="fp-exercise pageContainer">
     <div class="bodyContainer">
-      <p class="introduction">{{$t('polyConvGenIntro')}}</p>
-      <h4>{{$t('generateEx')}}</h4>
-      <button v-on:click="generateExercise">{{$t('generate')}}</button>
-      <div id="exerciseField" v-html="exerciseText" />
+      <p class="introduction">
+        {{ $t('polyConvGenIntro') }}
+      </p>
+      <h4>{{ $t('generateEx') }}</h4>
+      <button @click="generateExercise">
+        {{ $t('generate') }}
+      </button>
+      <div
+        id="exerciseField"
+        v-html="exerciseText"
+      />
       <!-- <h4>{{$t('ownSolution')}}</h4>
       <div class="solutionArea">
         <div class="solutionInput">
@@ -13,7 +20,7 @@
         </div>
         <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
       </div> -->
-      <h4>{{$t('correctSolution')}}</h4>
+      <h4>{{ $t('correctSolution') }}</h4>
       <div style="position: relative">
         <AttentionBanner :text="$t('attSolve')" />
         <!-- <div class="pdfGen">
@@ -21,19 +28,25 @@
         </div> -->
       </div>
       <div id="solution">
-        <Accordion :solutionDescription="solDescr">
-          <AccordionItem v-for="panel in solDescr" v-bind:key="panel.name">
-            <template v-slot:accordion-item-title>
-              {{panel.name}}
+        <Accordion :solution-description="solDescr">
+          <AccordionItem
+            v-for="panel in solDescr"
+            :key="panel.name"
+          >
+            <template #accordion-item-title>
+              {{ panel.name }}
             </template>
-            <template v-slot:accordion-item-body>
+            <template #accordion-item-body>
               <span v-html="panel.text" />
               <Accordion v-if="panel.subpanels != null">
-                <AccordionItem v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name">
-                  <template v-slot:accordion-item-title>
-                    {{subpanel.name}}
+                <AccordionItem
+                  v-for="subpanel in panel.subpanels"
+                  :key="subpanel.name"
+                >
+                  <template #accordion-item-title>
+                    {{ subpanel.name }}
                   </template>
-                  <template v-slot:accordion-item-body>
+                  <template #accordion-item-body>
                     <span v-html="subpanel.text" />
                   </template>
                 </AccordionItem>

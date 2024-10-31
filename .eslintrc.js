@@ -6,8 +6,11 @@ module.exports = {
     es6: true,
   },
   extends: [
-    'plugin:vue/essential',
-    '@vue/airbnb',
+    "plugin:vue/vue3-essential",
+    "plugin:vue/vue3-strongly-recommended",
+    "plugin:vue/vue3-recommended",
+    "eslint:recommended",
+    '@vue/eslint-config-typescript',
   ],
   rules: {
     // 'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
@@ -27,7 +30,7 @@ module.exports = {
     'import/no-cycle': 'off',
     'no-underscore-dangle': 'off',
     'class-methods-use-this': 'off',
-    'camelcase': 'off',
+    camelcase: 'off',
     'default-param-last': 'off',
     'no-continue': 'off',
     'max-classes-per-file': 'off',
@@ -36,18 +39,21 @@ module.exports = {
     'no-bitwise': 'off',
   },
   parserOptions: {
-    parser: '@babel/eslint-parser',
+    parser: '@typescript-eslint/parser',
     requireConfigFile: false,
     ecmaVersion: 2018,
     sourceType: 'module',
   },
   settings: {
     'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue', '.json'],
+      },
       alias: {
         map: [
           ['@', './src'],
         ],
-        extensions: ['.js', '.vue', '.json'],
+        extensions: ['.js', '.vue', '.json', '.ts'],
       },
     },
   },

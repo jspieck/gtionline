@@ -1,4 +1,4 @@
-import { Algorithm } from '../Algorithm';
+import { Algorithm } from '../algorithm';
 
 // Implements a base N multiplication.
 export class BaseNMultiplication {
@@ -33,7 +33,7 @@ export class BaseNMultiplication {
   }
 
   _checkArray(num) {
-    for (let i = 0; i < num.length; i++) {
+    for (let i = 0; i < num.length; i += 1) {
       if (num[i] < 0 || this.base <= num[i]) {
         return false;
       }
@@ -44,7 +44,7 @@ export class BaseNMultiplication {
   _toArray(numIn) {
     const num = numIn.toUpperCase();
     const numArr = [];
-    for (let i = 0; i < num.length; i++) {
+    for (let i = 0; i < num.length; i += 1) {
       const c = num[i];
       if ('0'.charCodeAt() <= c.charCodeAt() && c.charCodeAt() <= '9'.charCodeAt()) {
         numArr.push(c.charCodeAt() - '0'.charCodeAt());
@@ -63,7 +63,7 @@ export class BaseNMultiplication {
 
   _toString(num) {
     const numArr = [];
-    for (let i = 0; i < num.length; i++) {
+    for (let i = 0; i < num.length; i += 1) {
       const c = num[i];
       if (c >= 0 && c <= 9) {
         numArr.push(String.fromCharCode(c + '0'.charCodeAt()));
@@ -82,7 +82,7 @@ export class BaseNMultiplication {
 
   _multiply() {
     let total = [0];
-    for (let i = this.n2.length - 1; i >= 0; i--) {
+    for (let i = this.n2.length - 1; i >= 0; i -= 1) {
       const toAdd = this._multiplySingleDigit(this.n1, this.n2[i]);
 
       this.watcher.step(`Step${this.n2.length - 1 - i}`)
@@ -106,7 +106,7 @@ export class BaseNMultiplication {
 
       total.push(m % this.base);
       overFlow = Math.floor(m / this.base);
-      i--;
+      i -= 1;
     }
 
     return total.reverse();
@@ -127,7 +127,7 @@ export class BaseNMultiplication {
       const m = m1 + m2 + overFlow;
       total.push(m % this.base);
       overFlow = Math.floor(m / this.base);
-      i++;
+      i += 1;
     }
     num1.reverse();
     num2.reverse();

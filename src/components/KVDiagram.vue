@@ -1,17 +1,28 @@
 <template>
-  <div class="kvDiagram" @click="((a) => $emit('clicked-somewhere', a))">
-    <svg id="kvContainer" :width="svgWidth" :height="svgHeight" xmlns="http://www.w3.org/2000/svg" ref="svgdom">
+  <div
+    class="kvDiagram"
+    @click="((a) => $emit('clicked-somewhere', a))"
+  >
+    <svg
+      id="kvContainer"
+      ref="svgdom"
+      :width="svgWidth"
+      :height="svgHeight"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <g :transform="`translate(${extraWidths[1]}, ${0})`">
         <g
           v-for="(d, i) in diagram"
-          v-bind:key="`cell_${i}`"
-          :transform="`translate(${getX(i)}, ${getY(i)})`">
+          :key="`cell_${i}`"
+          :transform="`translate(${getX(i)}, ${getY(i)})`"
+        >
           <rect
             fill="transparent"
             stroke="#898989"
             :width="blockWidth"
             :height="blockWidth"
-            @click="this.modifiable ? changeNumber(i) : {}" />
+            @click="modifiable ? changeNumber(i) : {}"
+          />
           <!-- <text :x="blockWidth / 2" :y="blockWidth / 2" dominant-baseline="middle"
           class="unclickable" text-anchor="middle">{{legitStates[d.number]}}</text> -->
           <text
@@ -19,18 +30,32 @@
             :y="blockWidth / 2"
             dominant-baseline="middle"
             class="unclickable"
-            text-anchor="middle">{{ legitStates[d.number] }}</text> <!-- Check if this .number does what it should-->
+            text-anchor="middle"
+          >{{ legitStates[d.number] }}</text> <!-- Check if this .number does what it should-->
           <text
             :x="blockWidth - 3"
             :y="blockWidth - 7"
             dominant-baseline="middle"
             class="unclickable indexNumber"
             font-size="13"
-            text-anchor="end">{{indices[i].index}}</text>
+            text-anchor="end"
+          >{{ indices[i].index }}</text>
         </g>
-        <g v-for="bar in literalBars" v-bind:key="bar.id">
-          <rect :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height" />
-          <g :transform="`translate(${bar.textX}, ${bar.textY})`" ref="bars" v-html="getSVG(bar.index)" />
+        <g
+          v-for="bar in literalBars"
+          :key="bar.id"
+        >
+          <rect
+            :x="bar.x"
+            :y="bar.y"
+            :width="bar.width"
+            :height="bar.height"
+          />
+          <g
+            ref="bars"
+            :transform="`translate(${bar.textX}, ${bar.textY})`"
+            v-html="getSVG(bar.index)"
+          />
         </g>
         <rect
           id="unclickable"
@@ -54,11 +79,6 @@ import { KVDiagram } from '@/scripts/algorithms/booleanFunctions/KVDiagram';
 export default {
   name: 'KVDiagram',
   components: {},
-  emits: [
-    'kvdiagram-modified',
-    'requesting-kvdiagram-data-after-reactivation',
-    'clicked-somewhere',
-  ],
   props: {
     numVariables: {
       type: Number,
@@ -73,15 +93,11 @@ export default {
       default: true,
     },
   },
-  watch: {
-    numVariables(newAmount, oldAmount) {
-      if (newAmount === oldAmount || newAmount < 1) {
-        return;
-      }
-      this.reconstruct();
-      // console.log('KVDiagrams internal watch function registered a change in numVariables! Set to ', newAmount);
-    },
-  },
+  emits: [
+    'kvdiagram-modified',
+    'requesting-kvdiagram-data-after-reactivation',
+    'clicked-somewhere',
+  ],
   data() {
     return {
       indexBaseSystem: 8,
@@ -97,16 +113,6 @@ export default {
         0: 0, 1: 0, 2: 0, 3: 0, 4: 0,
       },
     };
-  },
-  created() {
-    // console.log('modifiable: ');
-    // console.log(this.modifiable);
-    for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
-      this.diagram.push({ number: 0 });
-    }
-    if (window.MathJax) {
-      window.MathJax.typeset();
-    }
   },
   computed: {
     cellsHorizontal() {
@@ -239,6 +245,25 @@ export default {
       }
       return bars;
     },
+  },
+  watch: {
+    numVariables(newAmount, oldAmount) {
+      if (newAmount === oldAmount || newAmount < 1) {
+        return;
+      }
+      this.reconstruct();
+      // console.log('KVDiagrams internal watch function registered a change in numVariables! Set to ', newAmount);
+    },
+  },
+  created() {
+    // console.log('modifiable: ');
+    // console.log(this.modifiable);
+    for (let i = 0; i < this.cellsHorizontal * this.cellsVertical; i += 1) {
+      this.diagram.push({ number: 0 });
+    }
+    if (window.MathJax) {
+      window.MathJax.typeset();
+    }
   },
   activated() {
     // console.log('Request!');

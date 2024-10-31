@@ -1,136 +1,203 @@
 <template>
   <div class="fp-arithmetic pageContainer">
-    <h3 class="title">{{`${$t('floatingPoint')} ${$t('arithmetic')}`}}</h3>
+    <h3 class="title">
+      {{ `${$t('floatingPoint')} ${$t('arithmetic')}` }}
+    </h3>
     <div class="bodyContainer">
-      <p class="introduction">{{$t('fpArithIntro')}}</p>
-      <h4>{{$t('fpformat')}}</h4>
-      <p class="introduction">{{$t('fpFormatSelection')}}</p>
+      <p class="introduction">
+        {{ $t('fpArithIntro') }}
+      </p>
+      <h4>{{ $t('fpformat') }}</h4>
+      <p class="introduction">
+        {{ $t('fpFormatSelection') }}
+      </p>
       <div class="floatingPointFormatSelection">
         <FSelect
           class="bits"
           :num="5"
           :sel="selectedFormat[5]"
+          :options="bitrangeOptions"
           @input="selectBitRange"
-          :options="bitrangeOptions" />
+        />
         <FSelect
           class="mobile_bits"
           :num="5"
           :sel="selectedFormat[5]"
+          :options="bitrangeOptions"
           @input="selectBitRange"
-          :options="bitrangeOptions" />
-        <div class="formatContainer" v-on:mousemove="sliderMouseMove">
-          <div class="sign">VB</div>
+        />
+        <div
+          class="formatContainer"
+          @mousemove="sliderMouseMove"
+        >
+          <div class="sign">
+            VB
+          </div>
           <div
             class="exponent"
             :style="{
               width:
-                `${60 + this.exponentBits * (this.containerWidth / (this.numBits - 1))}px`,
-            }">
-            <div v-on:click="expandFraction" class="expandExponent">
+                `${60 + exponentBits * (containerWidth / (numBits - 1))}px`,
+            }"
+          >
+            <div
+              class="expandExponent"
+              @click="expandFraction"
+            >
               <div class="arrowLeft">
-                <div class='arrowMask' />
+                <div class="arrowMask" />
               </div>
             </div>
-            E({{exponentBits}})
-            <div v-on:mousedown="sliderMouseDown" class="slider" />
+            E({{ exponentBits }})
+            <div
+              class="slider"
+              @mousedown="sliderMouseDown"
+            />
           </div>
           <div
             class="fraction"
             :style="{
-              width: `${60 + (this.numBits - this.exponentBits - 1)
-                * (this.containerWidth / (this.numBits - 1))}px`,
-            }">
-            <div v-on:click="expandExponent" class="expandFraction">
+              width: `${60 + (numBits - exponentBits - 1)
+                * (containerWidth / (numBits - 1))}px`,
+            }"
+          >
+            <div
+              class="expandFraction"
+              @click="expandExponent"
+            >
               <div class="arrowRight">
                 <div class="arrowMask" />
               </div>
             </div>
-            M({{(numBits - exponentBits - 1)}})
+            M({{ (numBits - exponentBits - 1) }})
           </div>
         </div>
-        <div class="mobile_formatContainer" v-on:mousemove="sliderMouseMove">
-          <div class="mobile_sign">Sign(1)</div>
-          <div v-on:click="expandExponent" class="mobile_exponent">
-            Exponent({{exponentBits}}) &uarr;
+        <div
+          class="mobile_formatContainer"
+          @mousemove="sliderMouseMove"
+        >
+          <div class="mobile_sign">
+            Sign(1)
           </div>
-          <div v-on:click="expandFraction" class="mobile_fraction">
-            Mantisse({{(numBits - exponentBits - 1)}}) &darr;
+          <div
+            class="mobile_exponent"
+            @click="expandExponent"
+          >
+            Exponent({{ exponentBits }}) &uarr;
+          </div>
+          <div
+            class="mobile_fraction"
+            @click="expandFraction"
+          >
+            Mantisse({{ (numBits - exponentBits - 1) }}) &darr;
           </div>
         </div>
       </div>
-      <h4>{{$t('operationSelect')}}</h4>
+      <h4>{{ $t('operationSelect') }}</h4>
       <div class="fpOperationContainer">
-        <div id="fpOperationTable" class="fpOperationTable">
+        <div
+          id="fpOperationTable"
+          class="fpOperationTable"
+        >
           <div class="container">
-            <div>{{$t('firstFloatingPoint')}}</div>
-            <table id="fpfTable1" class="floatingPointInput">
+            <div>{{ $t('firstFloatingPoint') }}</div>
+            <table
+              id="fpfTable1"
+              class="floatingPointInput"
+            >
               <tbody>
                 <tr>
                   <td>
                     <input
                       id="fpfInput0"
                       v-model="inputNums[0]"
-                      :placeholder="this.$t('inputNumber') "
-                      @input="checkAndConvertFormat(0)" />
+                      :placeholder="$t('inputNumber') "
+                      @input="checkAndConvertFormat(0)"
+                    >
                   </td>
                   <td>
                     <FSelect
                       :num="0"
                       :sel="selectedFormat[0]"
+                      :options="formatOptions"
                       @input="selectVal"
-                      :options="formatOptions" />
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    <input id="fpfInput1" v-model="numLeft" disabled>
+                    <input
+                      id="fpfInput1"
+                      v-model="numLeft"
+                      disabled
+                    >
                   </td>
                   <td>
                     <FSelect
                       :num="1"
                       :sel="selectedFormat[1]"
+                      :is-disabled="true"
+                      :options="formatOptions"
                       @input="selectVal"
-                      :isDisabled="true"
-                      :options="formatOptions" />
+                    />
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
           <div class="container">
-            <div>{{$t('operand')}}</div>
+            <div>{{ $t('operand') }}</div>
             <div class="operand">
               <FSelect
                 :num="2"
                 :sel="selectedFormat[2]"
+                :options="operationOptions"
                 @input="selectOp"
-                :options="operationOptions" />
+              />
             </div>
           </div>
           <div class="container">
-            <div>{{$t('secondFloatingPoint')}}</div>
-            <table id="fpfTable2" class="floatingPointInput">
+            <div>{{ $t('secondFloatingPoint') }}</div>
+            <table
+              id="fpfTable2"
+              class="floatingPointInput"
+            >
               <tbody>
                 <tr>
-                  <td><input
-                    id="fpfInput2"
-                    v-model="inputNums[1]"
-                    :placeholder="this.$t('inputNumber')"
-                    @input="checkAndConvertFormat(1)"></td>
-                  <td><FSelect
-                    :num="3"
-                    :sel="selectedFormat[3]"
-                    @input="selectVal"
-                    :options="formatOptions" /></td>
+                  <td>
+                    <input
+                      id="fpfInput2"
+                      v-model="inputNums[1]"
+                      :placeholder="$t('inputNumber')"
+                      @input="checkAndConvertFormat(1)"
+                    >
+                  </td>
+                  <td>
+                    <FSelect
+                      :num="3"
+                      :sel="selectedFormat[3]"
+                      :options="formatOptions"
+                      @input="selectVal"
+                    />
+                  </td>
                 </tr>
                 <tr>
-                  <td><input id="fpfInput3" v-model="numRight" disabled></td>
-                  <td><FSelect
-                    :num="4"
-                    :sel="selectedFormat[4]"
-                    @input="selectVal"
-                    :isDisabled="true"
-                    :options="formatOptions" /></td>
+                  <td>
+                    <input
+                      id="fpfInput3"
+                      v-model="numRight"
+                      disabled
+                    >
+                  </td>
+                  <td>
+                    <FSelect
+                      :num="4"
+                      :sel="selectedFormat[4]"
+                      :is-disabled="true"
+                      :options="formatOptions"
+                      @input="selectVal"
+                    />
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -139,47 +206,112 @@
       </div>
       <div class="solutionArea">
         <div class="solutionInput">
-          <p>{{$t('signBit')}}</p>
-          <input id="propVB" :class="backVB" v-model="propVB">
-          <div class="checkmark" v-if="backVB === 'correctInput'">
-            <svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
-              <polygon fill="#43A047" points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9" />
+          <p>{{ $t('signBit') }}</p>
+          <input
+            id="propVB"
+            v-model="propVB"
+            :class="backVB"
+          >
+          <div
+            v-if="backVB === 'correctInput'"
+            class="checkmark"
+          >
+            <svg
+              version="1"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 48 48"
+              enable-background="new 0 0 48 48"
+            >
+              <polygon
+                fill="#43A047"
+                points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9"
+              />
             </svg>
           </div>
         </div>
         <div class="divMargin" />
         <div class="solutionInput">
-          <p>{{$t('exponentBits')}}</p>
-          <input id="propE" :class="backE" v-model="propE">
-          <div class="checkmark" v-if="backE === 'correctInput'">
-            <svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
-              <polygon fill="#43A047" points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9" />
+          <p>{{ $t('exponentBits') }}</p>
+          <input
+            id="propE"
+            v-model="propE"
+            :class="backE"
+          >
+          <div
+            v-if="backE === 'correctInput'"
+            class="checkmark"
+          >
+            <svg
+              version="1"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 48 48"
+              enable-background="new 0 0 48 48"
+            >
+              <polygon
+                fill="#43A047"
+                points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9"
+              />
             </svg>
           </div>
         </div>
         <div class="divMargin" />
         <div class="solutionInput">
-          <p>{{$t('fractionBits')}}</p>
-          <input id="propM" :class="backM" v-model="propM">
-          <div class="checkmark" v-if="backM === 'correctInput'">
-            <svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
-              <polygon fill="#43A047" points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9" />
+          <p>{{ $t('fractionBits') }}</p>
+          <input
+            id="propM"
+            v-model="propM"
+            :class="backM"
+          >
+          <div
+            v-if="backM === 'correctInput'"
+            class="checkmark"
+          >
+            <svg
+              version="1"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 48 48"
+              enable-background="new 0 0 48 48"
+            >
+              <polygon
+                fill="#43A047"
+                points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9"
+              />
             </svg>
           </div>
         </div>
         <div class="divMargin" />
-        <button id="checkSolution" @click="checkSolution">{{$t('check')}}</button>
+        <button
+          id="checkSolution"
+          @click="checkSolution"
+        >
+          {{ $t('check') }}
+        </button>
       </div>
-      <h4>{{$t('correctSolution')}}</h4>
+      <h4>{{ $t('correctSolution') }}</h4>
       <div style="position: relative">
         <div>
-          <AttentionBanner v-if="denominatorZero === false" :text="$t('attSolve')" />
-          <AttentionBanner v-if="negativeSummand" :text="$t('negativeSummand')" />
-          <AttentionBanner v-if="negativeSubtrahend" :text="$t('negativeSubtrahend')" />
-          <AttentionBanner v-if="denominatorZero" :text="$t('zeroDivision')" />
+          <AttentionBanner
+            v-if="denominatorZero === false"
+            :text="$t('attSolve')"
+          />
+          <AttentionBanner
+            v-if="negativeSummand"
+            :text="$t('negativeSummand')"
+          />
+          <AttentionBanner
+            v-if="negativeSubtrahend"
+            :text="$t('negativeSubtrahend')"
+          />
+          <AttentionBanner
+            v-if="denominatorZero"
+            :text="$t('zeroDivision')"
+          />
         </div>
         <div>
-          <AttentionBanner v-if="negativeMinuendSubtrahend" :text="$t('negativeMinuendSubtrahend')" />
+          <AttentionBanner
+            v-if="negativeMinuendSubtrahend"
+            :text="$t('negativeMinuendSubtrahend')"
+          />
         </div>
         <!-- <div class="pdfGen">
           <button v-on:click="downloadPdf" v-if="this.solution">{{$t('getDescription')}}</button>
@@ -189,19 +321,25 @@
         </div> -->
       </div>
       <div id="solution">
-        <Accordion :solutionDescription="solDescr">
-          <AccordionItem v-for="panel in solDescr" v-bind:key="panel.name">
-            <template v-slot:accordion-item-title>
-              {{panel.name}}
+        <Accordion :solution-description="solDescr">
+          <AccordionItem
+            v-for="panel in solDescr"
+            :key="panel.name"
+          >
+            <template #accordion-item-title>
+              {{ panel.name }}
             </template>
-            <template v-slot:accordion-item-body>
+            <template #accordion-item-body>
               <span v-html="panel.text" />
               <Accordion v-if="panel.subpanels != null">
-                <AccordionItem v-for="subpanel in panel.subpanels" v-bind:key="subpanel.name">
-                  <template v-slot:accordion-item-title>
-                    {{subpanel.name}}
+                <AccordionItem
+                  v-for="subpanel in panel.subpanels"
+                  :key="subpanel.name"
+                >
+                  <template #accordion-item-title>
+                    {{ subpanel.name }}
                   </template>
-                  <template v-slot:accordion-item-body>
+                  <template #accordion-item-body>
                     <span v-html="subpanel.text" />
                   </template>
                 </AccordionItem>
@@ -369,6 +507,11 @@ export default {
       };
     },
   },
+  watch: {
+    input() {
+      this.saveVals();
+    },
+  },
   mounted() {
     this.$nextTick(() => {
       window.addEventListener('resize', () => {
@@ -383,11 +526,6 @@ export default {
       this.checkAndConvertFormat(1);
       this.recalculate();
     }
-  },
-  watch: {
-    input() {
-      this.saveVals();
-    },
   },
   methods: {
     setVariables(watcher, negativeMinuendSubtrahend, negativeSubtrahend, negativeSummand, denominatorZero, solutionIEEE, solutionObject) {
@@ -568,9 +706,9 @@ export default {
     checkSolution() {
       const checkSolution = new checker.CheckSolution(this.exponentBits);
       checkSolution.checkSolution(this.solutionObject, this.propVB, this.propE, this.propM);
-      this.backVB = checkSolution.backVB;
-      this.backE = checkSolution.backE;
-      this.backM = checkSolution.backM;
+      this.backVB = checkSolution.getVBStatus();
+      this.backE = checkSolution.getEStatus();
+      this.backM = checkSolution.getMStatus();
     },
     preventGlobalMouseEvents() {
       document.body.style['pointer-events'] = 'none';

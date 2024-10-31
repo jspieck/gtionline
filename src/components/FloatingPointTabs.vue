@@ -49,11 +49,6 @@ export default defineComponent({
     TabPanels,
     TabPanel,
   },
-  data() {
-    return {
-      selectedTab: 'arithmetic',
-    };
-  },
   setup() {
     const state = reactive({
       selectedTab: tabs[1],
@@ -61,6 +56,11 @@ export default defineComponent({
     return {
       tabs,
       ...toRefs(state),
+    };
+  },
+  data() {
+    return {
+      selectedTab: 'arithmetic',
     };
   },
 });

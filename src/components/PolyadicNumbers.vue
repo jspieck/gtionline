@@ -15,15 +15,21 @@
       :swipeable="false"
     >
       <tab-panel val="conversionExercise">
-        <h3 class="title">{{$t('conversionExercise')}}</h3>
+        <h3 class="title">
+          {{ $t('conversionExercise') }}
+        </h3>
         <pce />
       </tab-panel>
       <tab-panel val="conversion">
-        <h3 class="title">{{$t('conversion')}}</h3>
+        <h3 class="title">
+          {{ $t('conversion') }}
+        </h3>
         <pcf />
       </tab-panel>
       <tab-panel val="arithmeticFree">
-        <h3 class="title">{{$t('arithmetic')}}</h3>
+        <h3 class="title">
+          {{ $t('arithmetic') }}
+        </h3>
         <paf />
       </tab-panel>
     </tab-panels>
@@ -52,11 +58,6 @@ export default defineComponent({
     TabPanels,
     TabPanel,
   },
-  data() {
-    return {
-      selectedTab: 'conversionExercise',
-    };
-  },
   setup() {
     const state = reactive({
       selectedTab: tabs[1],
@@ -64,6 +65,11 @@ export default defineComponent({
     return {
       tabs,
       ...toRefs(state),
+    };
+  },
+  data() {
+    return {
+      selectedTab: 'conversionExercise',
     };
   },
 });

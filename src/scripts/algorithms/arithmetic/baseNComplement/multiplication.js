@@ -1,7 +1,7 @@
 import { NumberBaseNComplement } from './numberBaseNComplement';
 import { NumberBaseNSigned } from '../baseNSigned/numberBaseNSigned';
 import { MultiplicationBaseNSigned } from '../baseNSigned/multiplication';
-import { Algorithm } from '../../Algorithm';
+import { Algorithm } from '../../algorithm';
 
 export class MultiplicationBaseNComplement {
   constructor(n1, n2) {
@@ -16,7 +16,6 @@ export class MultiplicationBaseNComplement {
     }
 
     this.watcher = null;
-    this.producedOverflow = false;
     this.result = this._multiply(n1, n2);
   }
 

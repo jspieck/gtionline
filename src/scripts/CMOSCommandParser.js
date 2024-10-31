@@ -167,9 +167,9 @@ const booleansTrues = ['true', '1'];
 
 function checkIfNumber(str) {
   let points = 0;
-  for (let i = 0; i < str.length; i++) {
+  for (let i = 0; i < str.length; i += 1) {
     if (i === 0 && str[i] === '-') continue;
-    if (str[i] === '.') points++;
+    if (str[i] === '.') points += 1;
     else if (str[i] < '0' || str[i] > '9') return false;
   }
   return points <= 1;
@@ -238,7 +238,7 @@ export class CMOSCommandParser {
 
     let expressionFound = false;
 
-    for (let i = 0; i < args.length; i++) {
+    for (let i = 0; i < args.length; i += 1) {
       let option = args[i];
       if (option[0] !== '-') {
         if (!expressionFound) {
@@ -321,8 +321,8 @@ export class CMOSCommandParser {
 
   _count(str, char) {
     let sum = 0;
-    for (let i = 0; i < str.length; i++) {
-      if (str[i] === char) sum++;
+    for (let i = 0; i < str.length; i += 1) {
+      if (str[i] === char) sum += 1;
     }
     return sum;
   }

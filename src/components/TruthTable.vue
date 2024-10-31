@@ -1,22 +1,33 @@
 <template>
-  <div class="truthTable" @click="((a) => $emit('clicked-somewhere', a))">
+  <div
+    class="truthTable"
+    @click="((a) => $emit('clicked-somewhere', a))"
+  >
     <!-- <button @click="$emit('truthtable-modified', getKVDiagram())">Throw modified event</button> -->
-    <svg class="truthtableContainer" :width="svgWidth()" :height="svgHeight()" xmlns="http://www.w3.org/2000/svg" ref="svgdom">
+    <svg
+      ref="svgdom"
+      class="truthtableContainer"
+      :width="svgWidth()"
+      :height="svgHeight()"
+      xmlns="http://www.w3.org/2000/svg"
+    >
 
       <!-- Header -->
       <g>
         <!-- Input Variable Names -->
         <g
           v-for="i in numVariables"
-          v-bind:key="`inputvariablename_cell_${i}`"
-          :transform="`translate(${getInputCellSVGX(i - 1)}, ${0})`">
+          :key="`inputvariablename_cell_${i}`"
+          :transform="`translate(${getInputCellSVGX(i - 1)}, ${0})`"
+        >
           <!-- This is very eklig but I did not a way to get    -->
           <g
             :transform="`translate(${cell_width * 0.2}, ${cell_height * (isSmallCharacter(varNames[numVariables - i]) ? 0.4 : 0.2)})`"
             dominant-baseline="bottom"
             class="unclickable entry header_entry"
             text-anchor="bottom"
-            v-html="toSvg(varNames[numVariables - i])" />
+            v-html="toSvg(varNames[numVariables - i])"
+          />
         </g>
         <!-- 'f' above the Result Column -->
         <g :transform="`translate(${getResultCellSVGX()}, ${0})`">
@@ -25,18 +36,25 @@
             dominant-baseline="middle"
             class="unclickable entry header_entry"
             text-anchor="middle"
-            v-html="toSvg('f')" />
+            v-html="toSvg('f')"
+          />
         </g>
       </g>
 
       <!-- Horizontal divider below the header (of variables) -->
-      <rect :x="getHorizontalBarBelowHeaderSVGX()" :y="getHorizontalBarBelowHeaderSVGY()" :width="svgWidth()" :height="1" />
+      <rect
+        :x="getHorizontalBarBelowHeaderSVGX()"
+        :y="getHorizontalBarBelowHeaderSVGY()"
+        :width="svgWidth()"
+        :height="1"
+      />
 
       <!-- Row Index Cells left -->
       <g
         v-for="r in (inputCellsVertical + 1)"
-        v-bind:key="`indexcell_${r}`"
-        :transform="`translate(${getIndexCellSVGX()}, ${getIndexCellSVGY(r - 1)})`">
+        :key="`indexcell_${r}`"
+        :transform="`translate(${getIndexCellSVGX()}, ${getIndexCellSVGY(r - 1)})`"
+      >
         <!-- <text :x="cell_width / 2" :y="cell_height / 2" dominant-baseline="middle"
         class="unclickable entry" text-anchor="middle">{{r-1}}</text> -->
         <g
@@ -44,47 +62,66 @@
           dominant-baseline="middle"
           class="unclickable entry index_entry"
           text-anchor="middle"
-          v-html="toSvg(num2indexHexString(r - 1))" />
+          v-html="toSvg(num2indexHexString(r - 1))"
+        />
       </g>
 
       <!-- Vertical divider Left (of inputs) -->
-      <rect :x="getVerticalBarLeftSVGX()" :y="getVerticalBarLeftSVGY()" :width="1" :height="svgHeight()" />
+      <rect
+        :x="getVerticalBarLeftSVGX()"
+        :y="getVerticalBarLeftSVGY()"
+        :width="1"
+        :height="svgHeight()"
+      />
 
       <!-- Input Number table -->
-      <g v-for="(rowArray, r) in table_inputs" v-bind:key="`rowArray_${r}`">
+      <g
+        v-for="(rowArray, r) in table_inputs"
+        :key="`rowArray_${r}`"
+      >
         <g
           v-for="(state, c) in rowArray"
-          v-bind:key="`cell_${c}`"
-          :transform="`translate(${getInputCellSVGX(c)}, ${getInputCellSVGY(r)})`">
+          :key="`cell_${c}`"
+          :transform="`translate(${getInputCellSVGX(c)}, ${getInputCellSVGY(r)})`"
+        >
           <text
             :x="cell_width / 2"
             :y="cell_height / 2"
             dominant-baseline="middle"
             class="unclickable entry"
-            text-anchor="middle">{{state}}</text>
+            text-anchor="middle"
+          >{{ state }}</text>
         </g>
       </g>
 
       <!-- Vertical divider Right (of inputs) -->
-      <rect :x="getVerticalBarRightSVGX()" :y="getVerticalBarRightSVGY()" :width="1" :height="svgHeight()" />
+      <rect
+        :x="getVerticalBarRightSVGX()"
+        :y="getVerticalBarRightSVGY()"
+        :width="1"
+        :height="svgHeight()"
+      />
 
       <!-- Result Number table -->
       <g
         v-for="(output, r) in table_outputs"
-        v-bind:key="`outputcell_${r}`"
-        :transform="`translate(${getResultCellSVGX()}, ${getResultCellSVGY(r)})`">
+        :key="`outputcell_${r}`"
+        :transform="`translate(${getResultCellSVGX()}, ${getResultCellSVGY(r)})`"
+      >
         <text
           :x="cell_width / 2"
           :y="cell_height / 2"
           dominant-baseline="middle"
           class="unclickable entry result_entry_number"
-          text-anchor="middle">{{output}}</text>
+          text-anchor="middle"
+        >{{ output }}</text>
         <rect
           fill="transparent"
           :width="cell_width"
           :height="cell_height"
           class="result_entry_iteractable"
-          @click="this.modifiable ? onClickResult(r) : {}" />
+          @click="modifiable ? onClickResult(r) : {}"
+        />
       </g>
 
     </svg>
@@ -96,11 +133,6 @@ import { reactive } from 'vue';
 import { BooleanFunctionUtil } from '@/scripts/algorithms/booleanFunctions/booleanFunctionUtil';
 
 export default {
-  emits: [
-    'truthtable-modified',
-    'requesting-bf-after-reactivation',
-    'clicked-somewhere',
-  ],
   props: {
     numVariables: {
       type: Number,
@@ -115,14 +147,11 @@ export default {
       default: true,
     },
   },
-  watch: {
-    numVariables(newAmount, oldAmount) {
-      if (newAmount === oldAmount || newAmount < 1) {
-        return;
-      }
-      this.reconstruct();
-    },
-  },
+  emits: [
+    'truthtable-modified',
+    'requesting-bf-after-reactivation',
+    'clicked-somewhere',
+  ],
   data() {
     return {
       table_inputs: reactive([]),
@@ -133,12 +162,6 @@ export default {
       header_height: 37,
     };
   },
-  created() {
-    this.clearTable();
-    if (window.MathJax) {
-      window.MathJax.typeset();
-    }
-  },
   computed: {
     inputCellsHorizontal() {
       return this.numVariables;
@@ -146,6 +169,20 @@ export default {
     inputCellsVertical() {
       return 2 ** this.numVariables;
     },
+  },
+  watch: {
+    numVariables(newAmount, oldAmount) {
+      if (newAmount === oldAmount || newAmount < 1) {
+        return;
+      }
+      this.reconstruct();
+    },
+  },
+  created() {
+    this.clearTable();
+    if (window.MathJax) {
+      window.MathJax.typeset();
+    }
   },
   activated() {
     // tell parent that this wants to have new KVDiagram after it has been activated,

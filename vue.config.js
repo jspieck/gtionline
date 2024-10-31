@@ -14,13 +14,19 @@ module.exports = {
     loaderOptions: {
       sass: {
         additionalData: `
-          @import "@/styles/_variables.scss";
-          @import "@/styles/_main.scss";
+          @use "@/styles/_variables" as *;
+          @use "@/styles/_main" as *;
         `,
       },
     },
   },
   configureWebpack: {
+    resolve: {
+      extensions: ['.js', '.ts', '.vue', '.json'],
+      alias: {
+        '@': require('path').resolve(__dirname, 'src'),
+      },
+    },
     devServer: {
       client: {
         logging: 'warn',

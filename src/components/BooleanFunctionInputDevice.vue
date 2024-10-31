@@ -4,11 +4,12 @@
       <label for="numVarSelect">{{ $t('numVarInput') }}:</label>
       <FSelect
         id="numVarSelect"
-        :sel="this.dropDownMenuSelectedNumVars"
-        @input="onChooseNumVars"
-        :num=0
+        :sel="dropDownMenuSelectedNumVars"
+        :num="0"
         class="leftMargin10"
-        :options="numVarOptions" />
+        :options="numVarOptions"
+        @input="onChooseNumVars"
+      />
       <!-- <button @click="setNumVar()" class="leftMargin10">{{$t('confirm')}}</button> -->
     </div>
 
@@ -16,25 +17,54 @@
       <!-- <label>{{$t('varNaming')}}:</label> -->
       <div class="divMargin" />
       <div class="radioCounter">
-        <label v-for="radio in radios" :key="radio.value" class="p-default p-round p-smooth p-pulse">
-          <input name="varRadio" class="mj" ref="radios" type="radio" v-model="varNamingScheme" :value="radio.value" />
-          <div class="radioSvg" v-html="toSvg(radio.name)" />
+        <label
+          v-for="radio in radios"
+          :key="radio.value"
+          class="p-default p-round p-smooth p-pulse"
+        >
+          <input
+            ref="radios"
+            v-model="varNamingScheme"
+            name="varRadio"
+            class="mj"
+            type="radio"
+            :value="radio.value"
+          >
+          <div
+            class="radioSvg"
+            v-html="toSvg(radio.name)"
+          />
         </label>
       </div>
     </div>
     <div class="">
-      <table class="customNamingTable" v-if="varNamingScheme === 'custom'">
+      <table
+        v-if="varNamingScheme === 'custom'"
+        class="customNamingTable"
+      >
         <thead>
           <tr>
             <td v-html="toSvg('i')" />
-            <th v-for="index in customIndices" :key="index">{{ index }}</th>
+            <th
+              v-for="index in customIndices"
+              :key="index"
+            >
+              {{ index }}
+            </th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td v-html="toSvg('\\alpha')" />
-            <td v-for="index in customIndices" :key="index">
-              <input v-model="customNamingScheme[index]" type="text" :placeholder="`a_${index}`" />
+            <td
+              v-for="index in customIndices"
+              :key="index"
+            >
+              <input
+                v-model="customNamingScheme[index]"
+                type="text"
+                :placeholder="`a_${index}`"
+              >
             </td>
           </tr>
         </tbody>
@@ -42,7 +72,10 @@
     </div>
 
     <span style="padding-top:3px; padding-right:10px;">{{ $t("kvDiagram") }}</span>
-    <ToggleSwitch v-on:toggle="this.toggleMethodOfInputForBooleanFunction" checkedDefault=false />
+    <ToggleSwitch
+      checked-default="false"
+      @toggle="toggleMethodOfInputForBooleanFunction"
+    />
     <span style="padding-top:3px; padding-left:10px;">{{ $t("truthtable") }}</span>
     <!-- </div> -->
     <div>
@@ -50,22 +83,29 @@
       this results in for example losing the KVDiagram state after switching to bftable input mode-->
       <KeepAlive>
         <KVDiagr
-          v-if="this.methodOfInputForBooleanFunction === this.METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM"
-          :numVariables="this.numVariables"
-          :varNames="currentVarNames"
+          v-if="methodOfInputForBooleanFunction === METHOD_OF_INPUT_FOR_BOOLEAN_FUNCTION_KVDIAGRAM"
+          ref="childKVDiagram"
+          :num-variables="numVariables"
+          :var-names="currentVarNames"
+          class="kvdiagram"
           @kvdiagram-modified="onKVDiagramModified($event, kvdiagram)"
           @requesting-kvdiagram-data-after-reactivation="notifyChildKVDiagramOfBF()"
-          class="kvdiagram"
-          ref="childKVDiagram" />
+        />
         <TruthTable
           v-else
-          :numVariables="this.numVariables"
-          :varNames="this.currentVarNames"
+          ref="childTruthTable"
+          :num-variables="numVariables"
+          :var-names="currentVarNames"
           @truthtable-modified="onTruthTableModified($event, kvdiagram)"
           @requesting-bf-after-reactivation="notifyChildTruthTableOfBF()"
-          ref="childTruthTable" />
+        />
       </KeepAlive>
-      <button class="button-export-png" @click="exportPNG()">PNG</button>
+      <button
+        class="button-export-png"
+        @click="exportPNG()"
+      >
+        PNG
+      </button>
       <!-- <button v-else @click="tmpFunc()">Set smth in KVDiagram</button> -->
     </div>
   </div>
@@ -119,21 +159,6 @@ export default {
       },
     };
   },
-  created() {
-    if (window.MathJax) {
-      window.MathJax.typeset();
-    }
-  },
-  watch: {
-    numVariables(newAmount, oldAmount) {
-      if (newAmount === oldAmount || newAmount < 1) {
-        return;
-      }
-      // set to empty bf in new size
-      this.booleanFunctionAsKVDiagram = new KVDiagram(null, newAmount);
-      // console.log('BFInputDevices internal watch function registered a change in numVariables! Set to bf ', this.booleanFunctionAsKVDiagram);
-    },
-  },
   computed: {
     varNames() {
       return {
@@ -147,6 +172,21 @@ export default {
     currentVarNames() {
       return this.varNames[this.varNamingScheme];
     },
+  },
+  watch: {
+    numVariables(newAmount, oldAmount) {
+      if (newAmount === oldAmount || newAmount < 1) {
+        return;
+      }
+      // set to empty bf in new size
+      this.booleanFunctionAsKVDiagram = new KVDiagram(null, newAmount);
+      // console.log('BFInputDevices internal watch function registered a change in numVariables! Set to bf ', this.booleanFunctionAsKVDiagram);
+    },
+  },
+  created() {
+    if (window.MathJax) {
+      window.MathJax.typeset();
+    }
   },
   methods: {
     setMethodOfInputForBooleanFunction(method) {
