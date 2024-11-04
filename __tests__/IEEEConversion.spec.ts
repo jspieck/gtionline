@@ -268,6 +268,7 @@ describe('Conversion to IEEE', () => {
     const numBits = 16;
     const converter = new convertFormat.FormatConversions(exponentBits, numBits);
     converter.decToBin('0.1');
+    console.log("Dec To Bin", converter.result);
     converter.binToIEEE(converter.result);
     const result = converter.result;
     const expectedArray = [
@@ -276,6 +277,7 @@ describe('Conversion to IEEE', () => {
       1, 0, 0, 1, 1, 0, 0, 1, 1, 0, // man
     ];
     const floatRepresentation = createIEEE(exponentBits, result);
+    console.log("We expected", expectedArray, "We got", floatRepresentation.arr);
     checkArray(expectedArray, floatRepresentation);
   });
 });

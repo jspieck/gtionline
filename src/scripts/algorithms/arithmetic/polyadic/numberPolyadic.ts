@@ -1,8 +1,17 @@
 import { Algorithm } from '../../algorithm';
 
-// Representation of a number respective a given power
 export class NumberPolyadic {
-  constructor(power, representation) {
+  power: number;
+  comma: number;
+  arr: string[];
+  value!: number;
+  bitString: string;
+  valueString!: string;
+  isNegative: boolean;
+  sign!: string;
+  watcher: Algorithm;
+
+  constructor(power: number, representation: string | string[]) {
     if (power <= 1) {
       throw new TypeError('Polyadic Number: Invalid power given, has to be greater 1.');
     }
@@ -13,29 +22,33 @@ export class NumberPolyadic {
       this.power = power;
     }
 
-    this.comma = representation.length;
-    if (!this._checkArray(representation)) {
+    const rep = Array.isArray(representation) ? representation : representation.split('');
+    this.comma = rep.length;
+    if (!this._checkArray(rep)) {
       throw new TypeError('Polyadic Number: Invalid representation given.');
     }
 
-    this.arr = [...representation];
+    this.arr = [...rep];
+    this.bitString = this.arr.join('');
     this._actualizeValues();
     this.isNegative = false; // for subtraction
     this.watcher = new Algorithm();
   }
 
-  _actualizeValues() {
+  private _actualizeValues(): void {
     this._checkArray(this.arr);
     this.value = this._getValue();
     this.bitString = this.arr.join('');
     this.valueString = this._constructValString();
   }
 
-  _checkArray(arr) {
+  private _checkArray(arr: string[]): boolean {
     this.comma = arr.length;
     let commas = 0;
     for (let i = 0; i < arr.length; i += 1) {
-      if (arr[i] < 0 || arr[i] >= this.power) {
+      const val = parseInt(arr[i], this.power);
+      if ((isNaN(val) && arr[i] !== ',' && arr[i] !== '.' && arr[i] !== '-' && arr[i] !== '+') || 
+          (!isNaN(val) && (val < 0 || val >= this.power))) {
         return false;
       }
       if ((arr[i] === ',') || (arr[i] === '.')) {
@@ -49,7 +62,7 @@ export class NumberPolyadic {
     return true;
   }
 
-  _getValue() {
+  private _getValue(): number {
     let firstNum = 0;
     if (this.arr[0] === '-') {
       this.sign = '-';
@@ -80,22 +93,20 @@ export class NumberPolyadic {
     return val;
   }
 
-  _constructValString() {
+  private _constructValString(): string {
     return `${this.value}`;
   }
 
-  // arithmetical methods for direct conversion and polyadic arithmetic
-
   /** !!Internal method!!
    * Add a single digit to the actual number.
-   * @param {*} digit : Int, single digit number.
-   * @param {*} exp : Int, optional position in the array.
+   * @param digit - single digit number
+   * @param exp - optional position in the array
    */
-  _additionOneDigit(digit, exp = 0) {
-    // pepare working arrays
+  _additionOneDigit(digit: string | number, exp = 0): void {
+    // prepare working arrays
     const splitted = this.arr.join('').split('.');
-    let numBeforeComma = [];
-    let numAfterComma = [];
+    let numBeforeComma: string[] = [];
+    let numAfterComma: string[] = [];
     if ((Array.isArray(splitted)) && (splitted.length === 2)) {
       numBeforeComma = splitted[0].split('');
       numAfterComma = splitted[1].split('');
@@ -114,9 +125,9 @@ export class NumberPolyadic {
       for (let i = Math.abs(exp) - 1; i >= 0; i -= 1) {
         let res = 0;
         if (this.power === 16) {
-          res = parseInt(numAfterComma[i], 16) + parseInt(act, 16);
+          res = parseInt(numAfterComma[i], 16) + parseInt(act.toString(), 16);
         } else {
-          res = parseInt(numAfterComma[i], 10) + parseInt(act, 10);
+          res = parseInt(numAfterComma[i], 10) + parseInt(act.toString(), 10);
         }
         if (res >= this.power) {
           overflow = res - this.power;
@@ -127,8 +138,6 @@ export class NumberPolyadic {
         } else {
           numAfterComma[i] = res.toString(this.power).toUpperCase();
           breakAfterComma = true;
-          // this.watcher = this.watcher.step('constructResult')
-          //   .saveVariable(`overflowAfterComma${i}`, 0);
           break;
         }
       }
@@ -146,9 +155,9 @@ export class NumberPolyadic {
       for (let i = start; i >= 0; i -= 1) {
         let res = 0;
         if (this.power === 16) {
-          res = parseInt(numBeforeComma[i], 16) + parseInt(act, 16);
+          res = parseInt(numBeforeComma[i], 16) + parseInt(act.toString(), 16);
         } else {
-          res = parseInt(numBeforeComma[i], 10) + parseInt(act, 10);
+          res = parseInt(numBeforeComma[i], 10) + parseInt(act.toString(), 10);
         }
         if (res >= this.power) {
           overflow = res - this.power;
@@ -161,32 +170,30 @@ export class NumberPolyadic {
           }
         } else {
           numBeforeComma[i] = res.toString(this.power).toUpperCase();
-          // this.watcher = this.watcher.step('constructResult')
-          //   .saveVariable(`overflowBeforeComma${i}`, 1);
           break;
         }
       }
     }
 
-    const resultArray = [];
-    numBeforeComma.map((a) => resultArray.push(a));
+    const resultArray: string[] = [];
+    numBeforeComma.forEach((a) => resultArray.push(a));
     if ((Array.isArray(splitted)) && (splitted.length === 2)) {
       resultArray.push('.');
-      numAfterComma.map((a) => resultArray.push(a));
+      numAfterComma.forEach((a) => resultArray.push(a));
     }
     this.arr = resultArray;
   }
 
   /** !!Internal method!!
-   * Subtract a single digit to the actual number.
-   * @param {*} digit : Int, single digit number.
-   * @param {*} exp : Int, optional position in the array.
+   * Subtract a single digit from the actual number.
+   * @param digit - single digit number
+   * @param exp - optional position in the array
    */
-  _subtractOneDigit(digit, exp = 0) {
-    // pepare working arrays
+  _subtractOneDigit(digit: string | number, exp = 0): void {
+    // prepare working arrays
     const splitted = this.arr.join('').split('.');
-    let numBeforeComma = [];
-    let numAfterComma = [];
+    let numBeforeComma: string[] = [];
+    let numAfterComma: string[] = [];
     if ((Array.isArray(splitted)) && (splitted.length === 2)) { // have comma?
       numBeforeComma = splitted[0].split('');
       numAfterComma = splitted[1].split('');
@@ -208,12 +215,12 @@ export class NumberPolyadic {
       // but subtrahend has the higher digit at highest exponent
       (exp >= 0)
       && (numBeforeComma.length === exp + 1)
-      && (parseInt(numBeforeComma[exp], this.power) - parseInt(act, this.power) < 0)
+      && (parseInt(numBeforeComma[exp], this.power) - parseInt(act.toString(), this.power) < 0)
     ) {
       this.isNegative = true;
     } else if (
       // case no number before comma
-      // exponenten subtrahend after comma is greater the exponent of the minuend
+      // exponents subtrahend after comma is greater than the exponent of the minuend
       (exp < 0)
       && (numBeforeComma.length === 0)
       && (numAfterComma.length + exp < 0)) {
@@ -233,9 +240,9 @@ export class NumberPolyadic {
       for (let i = Math.abs(exp) - 1; i >= 0; i -= 1) {
         let res = 0;
         if (this.power === 16) {
-          res = parseInt(numAfterComma[i], 16) - parseInt(act, 16);
+          res = parseInt(numAfterComma[i], 16) - parseInt(act.toString(), 16);
         } else {
-          res = parseInt(numAfterComma[i], 10) - parseInt(act, 10);
+          res = parseInt(numAfterComma[i], 10) - parseInt(act.toString(), 10);
         }
         if (res < 0) {
           underflow = Math.abs(res);
@@ -269,9 +276,9 @@ export class NumberPolyadic {
       for (let i = start; i >= 0; i -= 1) {
         let res = 0;
         if (this.power === 16) {
-          res = parseInt(numBeforeComma[i], 16) - parseInt(act, 16);
+          res = parseInt(numBeforeComma[i], 16) - parseInt(act.toString(), 16);
         } else {
-          res = parseInt(numBeforeComma[i], 10) - parseInt(act, 10);
+          res = parseInt(numBeforeComma[i], 10) - parseInt(act.toString(), 10);
         }
         if (res < 0) {
           underflow = Math.abs(res);
@@ -292,20 +299,20 @@ export class NumberPolyadic {
       }
     }
 
-    const resultArray = [];
-    numBeforeComma.map((a) => resultArray.push(a));
+    const resultArray: string[] = [];
+    numBeforeComma.forEach((a) => resultArray.push(a));
     if ((Array.isArray(splitted)) && (splitted.length === 2)) {
       resultArray.push('.');
-      numAfterComma.map((a) => resultArray.push(a));
+      numAfterComma.forEach((a) => resultArray.push(a));
     }
     this.arr = resultArray;
   }
 
   /**
    * Add a float to the actual polyadic
-   * @param {*} input : String, Float to add
+   * @param input - Float to add
    */
-  _additionFloat(input) {
+  _additionFloat(input: string): void {
     this.watcher = this.watcher.step('Input')
       .saveVariable('operator', '+')
       .saveVariable('bitString1', this.bitString)
@@ -343,10 +350,10 @@ export class NumberPolyadic {
   }
 
   /**
-   * Subtract a float to the actual polydic
-   * @param {*} input : String, Float to subtract
+   * Subtract a float from the actual polyadic
+   * @param input - Float to subtract
    */
-  _subtractionFloat(input) {
+  _subtractionFloat(input: string): void {
     this.watcher = this.watcher.step('Input')
       .saveVariable('operator', '-')
       .saveVariable('bitString1', this.bitString)

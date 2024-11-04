@@ -7,21 +7,13 @@
  * @returns rounded array in the given base or string
  */
 export function roundArray(
-  inArr: number[] | string, 
+  arr: number[], 
   count: number, 
   roundup: boolean = false, 
   base: number = 2
-): number[] | string {
-  let arr: number[] = Array.isArray(inArr) ? inArr : [];
-
+): number[] {
   if (arr.length < count) {
     return arr;
-  }
-
-  let isString = false;
-  if (typeof inArr === 'string') {
-    arr = inArr.split('').map((num) => parseInt(num, 10));
-    isString = true;
   }
 
   let toRound = roundup;
@@ -49,14 +41,7 @@ export function roundArray(
       final.pop();
     }
 
-    if (isString) {
-      return final.join('');
-    }
     return final;
-  }
-
-  if (isString) {
-    return arr.join('');
   }
   return arr;
 }

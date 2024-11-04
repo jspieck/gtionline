@@ -1,50 +1,59 @@
-import { NumberPolyadic } from './numberPolyadic';
 import { Algorithm } from '../../algorithm';
+import { NumberPolyadic } from './numberPolyadic';
+
+type ConversionModus = 'ShortcutHexToBin' | 'ShortcutBinToHex' | 'PowerToTen' | 'TenToPower' | 'PowerToPower';
 
 export class ConversionPolyadicNumbers {
-  constructor(n, power) {
-    this.modus = '';
-    if (n.power === power) {
-      console.log('ConversionPolyadicNumbers(Number, Int): Source and destination power is equal.');
-    }
-    if ((n.power === 16) && (power === 2)) { // Applying Shortcut Methods
-      this.watcher = new Algorithm();
-      this.watcher = this.watcher.step('Modus')
+  private modus: ConversionModus;
+  private solution: NumberPolyadic;
+  private watcher: Algorithm;
+  private sign: '+' | '-';
+
+  constructor(n: NumberPolyadic, power: number) {
+    this.sign = '+';
+    this.watcher = new Algorithm();
+
+    if ((n.power === 16) && (power === 2)) {
+      this.watcher.step('Modus')
         .saveVariable('modus', 'ShortcutHexToBin');
       this.modus = 'ShortcutHexToBin';
       this.solution = this._shortcutHexToBin(n);
     } else if ((n.power === 2) && (power === 16)) {
-      this.watcher = new Algorithm();
-      this.watcher = this.watcher.step('Modus')
+      this.watcher.step('Modus')
         .saveVariable('modus', 'ShortcutBinToHex');
       this.modus = 'ShortcutBinToHex';
       this.solution = this._shortcutBinToHex(n);
     } else {
-      this.watcher = [new Algorithm(), new Algorithm()];
+      const watcher1 = new Algorithm();
+      const watcher2 = new Algorithm();
+
       if (power === 10) {
-        this.watcher[0] = this.watcher[0].step('Modus')
-          .saveVariable('modus', 'PowerToTen');
         this.modus = 'PowerToTen';
-        this.solution = this._convertPowerToTen(n);
+        watcher1.step('Modus')
+          .saveVariable('modus', this.modus);
+        this.solution = this._convertPowerToTen(n, watcher1);
+        this.watcher = watcher1;
       } else if (n.power === 10) {
-        this.watcher[1] = this.watcher[1].step('Modus')
-          .saveVariable('modus', 'TenToPower');
         this.modus = 'TenToPower';
-        this.solution = this._convertTenToPower(n, power);
+        watcher2.step('Modus')
+          .saveVariable('modus', this.modus);
+        this.solution = this._convertTenToPower(n, power, watcher2);
+        this.watcher = watcher2;
       } else {
-        this.watcher[0] = this.watcher[0].step('Modus')
-          .saveVariable('modus', 'PowerToPower');
         this.modus = 'PowerToPower';
-        this.watcher[1] = this.watcher[1].step('Modus')
-          .saveVariable('modus', 'PowerToPower');
-        const PowerToTen = this._convertPowerToTen(n);
-        this.solution = this._convertTenToPower(PowerToTen, power);
+        const powerToTen = this._convertPowerToTen(n, watcher1);
+        watcher1.step('Modus')
+          .saveVariable('modus', this.modus);
+        this.solution = this._convertTenToPower(powerToTen, power, watcher2);
+        // Combine the watchers by copying steps from watcher2 to watcher1
+        Object.assign(watcher1.steps, watcher2.steps);
+        this.watcher = watcher1;
       }
     }
   }
 
-  _convertPowerToTen(n) {
-    this.watcher[0] = this.watcher[0].step('Input')
+  private _convertPowerToTen(n: NumberPolyadic, watcher: Algorithm): NumberPolyadic {
+    watcher.step('Input')
       .saveVariable('number', n);
     let firstNum = 0;
 
@@ -58,7 +67,7 @@ export class ConversionPolyadicNumbers {
     } else {
       this.sign = '+';
     }
-    this.watcher[0] = this.watcher[0].step('ConstructNumber')
+    watcher.step('ConstructNumber')
       .saveVariable('sign', this.sign);
     let val = 0;
     let count = 0;
@@ -66,67 +75,67 @@ export class ConversionPolyadicNumbers {
     for (let i = n.comma - 1; i >= firstNum; i -= 1) {
       const act = parseInt(n.arr[i], n.power) * (n.power ** count);
       val += act;
-      this.watcher[0] = this.watcher[0].step('ConstructNumber')
+      watcher.step('ConstructNumber')
         .saveVariable(`beforeComma${count}In`, n.arr[i])
         .saveVariable(`beforeComma${count}Res`, act);
       count += 1;
     }
-    this.watcher[0] = this.watcher[0].step('ConstructNumber')
+    watcher.step('ConstructNumber')
       .saveVariable('stepsBeforeComma', count);
     count = 1;
 
     for (let i = n.comma + 1; i < n.arr.length; i += 1) {
       const act = parseInt(n.arr[i], n.power) * ((1 / n.power) ** count);
       val += act;
-      this.watcher[0] = this.watcher[0].step('ConstructNumber')
+      watcher.step('ConstructNumber')
         .saveVariable(`afterComma${count - 1}In`, n.arr[i])
         .saveVariable(`afterComma${count - 1}Res`, act);
       count += 1;
     }
-    this.watcher[0] = this.watcher[0].step('ConstructNumber')
+    watcher.step('ConstructNumber')
       .saveVariable('stepsAfterComma', count - 1);
 
     // Make result
     if (this.sign === '-') {
       const result = new NumberPolyadic(10, (-val).toString());
-      this.watcher[0] = this.watcher[0].step('Result')
+      watcher.step('Result')
         .saveVariable('resultValue', -val)
         .saveVariable('resultNumber', result);
       return result;
     }
     const result = new NumberPolyadic(10, val.toString());
-    this.watcher[0] = this.watcher[0].step('Result')
+    watcher.step('Result')
       .saveVariable('resultValue', val)
       .saveVariable('resultNumber', result);
     return result;
   }
 
-  _convertTenToPower(n, power) {
-    this.watcher[1] = this.watcher[1].step('Input')
+  private _convertTenToPower(n: NumberPolyadic, power: number, watcher: Algorithm): NumberPolyadic {
+    watcher.step('Input')
       .saveVariable('number', n)
       .saveVariable('power', power);
-    this.watcher[1] = this.watcher[1].step('ConstructNumber')
+    watcher.step('ConstructNumber')
       .saveVariable('sign', n.sign);
     const nbc = Math.floor(Math.abs(n.value)); // separate |nbc.xxx|
 
     // Division Algorithm before Comma
     let val = ''; // result string before comma
     let count = 0;
-    let act = [nbc, 1]; // [divisor, remain]
-    this.watcher[1] = this.watcher[1].step('ConstructNumber')
+    let act: [number, number] = [nbc, 1]; // [divisor, remain]
+    watcher.step('ConstructNumber')
       .saveVariable('beforeCommaVal', nbc);
     while (act[0] > 0) {
       act = this._divisionWithRemain(act[0], power, 10);
-      this.watcher[1] = this.watcher[1].step('ConstructNumber')
+      watcher.step('ConstructNumber')
         .saveVariable(`beforeComma${count}Div`, act[0])
         .saveVariable(`beforeComma${count}Remain`, act[1]);
       count += 1;
       if (power === 16) {
-        act[1] = act[1].toString(16).toUpperCase();
+        act[1] = parseInt(act[1].toString(16).toUpperCase(), 16);
       }
       val = act[1] + val;
     }
-    this.watcher[1] = this.watcher[1].step('ConstructNumber')
+    watcher.step('ConstructNumber')
       .saveVariable('stepsBeforeComma', count);
     if (count === 0) {
       val = '0';
@@ -137,10 +146,10 @@ export class ConversionPolyadicNumbers {
     count = 0;
     if (n.value.toString().indexOf('.') >= 0) {
       const limitAfterComma = (n.value.toString().split('.'))[1].length; // crop value after comma by ignoring floating point arithmetic
-      act = [(Math.abs(n.value) - nbc).toFixed(limitAfterComma), 1];
+      act = [Number((Math.abs(n.value) - nbc).toFixed(limitAfterComma)), 1];
       const vals = [act[0]]; // list of calculated values for periodicity
 
-      this.watcher[1] = this.watcher[1].step('ConstructNumber')
+      watcher.step('ConstructNumber')
         .saveVariable('isPeriodic', false)
         .saveVariable('periodicStart', 0)
         .saveVariable('periodicEnd', 9)
@@ -148,35 +157,35 @@ export class ConversionPolyadicNumbers {
 
       while ((act[0] > 0) && (count < 9)) {
         act = this._multiplicationStepFrom10(act[0], power, limitAfterComma);
-        this.watcher[1] = this.watcher[1].step('ConstructNumber')
+        watcher.step('ConstructNumber')
           .saveVariable(`afterComma${count}Mul`, act[0])
           .saveVariable(`afterComma${count}Remain`, act[1]);
 
         if (power === 16) {
-          act[1] = act[1].toString(16).toUpperCase();
+          act[1] = parseInt(act[1].toString(16).toUpperCase(), 16);
         }
         val2 += act[1];
 
-        const indexVal = vals.indexOf(act[0].toString());
-        if (indexVal >= 0) { // perodicity found, no further calculation
-          this.watcher[1] = this.watcher[1].step('ConstructNumber')
+        const indexVal = vals.indexOf(act[0]);
+        if (indexVal >= 0) { // periodicity found, no further calculation
+          watcher.step('ConstructNumber')
             .saveVariable('isPeriodic', true)
             .saveVariable('periodicStart', indexVal)
             .saveVariable('periodicEnd', count);
           count += 1;
           break;
         } else {
-          vals.push(act[0].toString());
+          vals.push(act[0]);
         }
 
         count += 1;
       }
     }
-    this.watcher[1] = this.watcher[1].step('ConstructNumber')
+    watcher.step('ConstructNumber')
       .saveVariable('stepsAfterComma', count);
 
     // Make result
-    let resVal;
+    let resVal: string;
     if (val2 !== '') {
       resVal = `${val}.${val2}`;
     } else {
@@ -188,14 +197,13 @@ export class ConversionPolyadicNumbers {
     }
 
     const result = new NumberPolyadic(power, resVal);
-    this.watcher[1] = this.watcher[1].step('Result')
+    watcher.step('Result')
       .saveVariable('resultValue', resVal)
       .saveVariable('resultNumber', result);
     return result;
   }
 
-  // Division with Remain to an arbitrary power
-  _divisionWithRemain(n1, n2, power) {
+  private _divisionWithRemain(n1: number, n2: number, power: number): [number, number] {
     let i = 0;
     let r = 0;
     while (parseInt((i * n2).toString(10), power) <= n1) {
@@ -205,17 +213,15 @@ export class ConversionPolyadicNumbers {
     return [i - 1, r]; // Divisor, Remain
   }
 
-  // Computes one multiplication step for multiplication algorithm
-  _multiplicationStepFrom10(n1, n2, limit) {
-    const res = parseFloat((parseFloat(n1) * parseFloat(n2)).toFixed(limit));
+  private _multiplicationStepFrom10(n1: string | number, n2: number, limit: number): [number, number] {
+    const res = parseFloat((parseFloat(n1.toString()) * parseFloat(n2.toString())).toFixed(limit));
     if (res >= 1) {
       return [parseFloat((res - Math.floor(res)).toFixed(limit)), Math.floor(res)];
     }
     return [res, 0]; // Result, Remain
   }
 
-  // Shortcut methods
-  _shortcutHexToBin(n) {
+  private _shortcutHexToBin(n: NumberPolyadic): NumberPolyadic {
     this.watcher = this.watcher.step('Input')
       .saveVariable('number', n);
 
@@ -231,7 +237,7 @@ export class ConversionPolyadicNumbers {
       .saveVariable('sign', this.sign);
 
     // shift out -/+ sign
-    const hexArray = n.arr;
+    const hexArray = [...n.arr];
     if ((n.arr[0] === '-') || (n.arr[0] === '+')) {
       hexArray.shift();
     }
@@ -281,7 +287,7 @@ export class ConversionPolyadicNumbers {
     return result;
   }
 
-  _shortcutBinToHex(n) {
+  private _shortcutBinToHex(n: NumberPolyadic): NumberPolyadic {
     this.watcher = this.watcher.step('Input')
       .saveVariable('number', n);
 
@@ -293,6 +299,7 @@ export class ConversionPolyadicNumbers {
     } else {
       this.sign = '+';
     }
+
     // shift out -/+ sign
     let posComma = n.comma;
     let binArray = n.arr.join('');
@@ -382,5 +389,17 @@ export class ConversionPolyadicNumbers {
       .saveVariable('resultValue', resultVal)
       .saveVariable('resultNumber', result);
     return result;
+  }
+
+  getModus(): string {
+    return this.modus;
+  }
+
+  getResult(): NumberPolyadic {
+    return this.solution;
+  }
+
+  getWatcher(): Algorithm {
+    return this.watcher;
   }
 }

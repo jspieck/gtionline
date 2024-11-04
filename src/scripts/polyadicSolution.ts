@@ -35,17 +35,10 @@ export class PolyadicSolution {
     const number = new NumberPolyadic(format1, num1.toString(format1));
     const converter = new ConversionPolyadicNumbers(number, format2);
     
-    this.modus = converter.modus;
-    this.result = converter.solution.bitString;
-    this.watcher = converter.watcher;
-
-    if (Array.isArray(this.watcher)) {
-      this.resultObject = this.modus === 'PowerToTen'
-        ? this.watcher[0].steps.Result.data.resultNumber
-        : this.watcher[1].steps.Result.data.resultNumber;
-    } else {
-      this.resultObject = this.watcher.steps.Result.data.resultNumber;
-    }
+    this.modus = converter.getModus();
+    this.result = converter.getResult().bitString;
+    this.watcher = converter.getWatcher();
+    this.resultObject = this.watcher.steps.Result.data.resultNumber;
   }
 
   public calcArithmeticSolution(
@@ -60,16 +53,16 @@ export class PolyadicSolution {
     switch (operator) {
       case 'add': {
         const addition = new AdditionPolyadic(number1, number2);
-        this.result = addition.result.bitString;
-        this.resultObject = addition.result;
-        this.watcher = this.deepClone(addition.watcher);
+        this.resultObject = addition.getResult();
+        this.result = this.resultObject.bitString;
+        this.watcher = this.deepClone(addition.getWatcher());
         break;
       }
       case 'sub': {
         const subtraction = new SubtractionPolyadic(number1, number2);
-        this.result = subtraction.result.bitString;
-        this.resultObject = subtraction.result;
-        this.watcher = this.deepClone(subtraction.watcher);
+        this.resultObject = subtraction.getResult();
+        this.result = this.resultObject.bitString;
+        this.watcher = this.deepClone(subtraction.getWatcher());
         break;
       }
     }

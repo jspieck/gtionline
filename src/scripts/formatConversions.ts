@@ -59,7 +59,6 @@ export class FormatConversions implements FormatConversionsInterface {
     
     // trim leading zeroes
     const preDecimal = preCommaStr.replace(/^0+/, '');
-    console.log(preDecimal);
     
     // transform to 1,xxx format
     let mantisse = preDecimal.substring(1);
@@ -70,7 +69,6 @@ export class FormatConversions implements FormatConversionsInterface {
     if (afterCommaStr != null) {
       mantisse += afterCommaStr;
     }
-    
     let shiftFactor = 0;
     if (preDecimal === '') {
       shiftFactor = mantisse.indexOf('1') + 1;
@@ -78,12 +76,13 @@ export class FormatConversions implements FormatConversionsInterface {
     }
 
     if (mantisse.length > numBitsMantisse) {
-      mantisse = roundArray(mantisse, numBitsMantisse);
+      let mantisseArr = mantisse.split('').map((num) => parseInt(num, 10));
+      mantisseArr = roundArray(mantisseArr, numBitsMantisse);
+      mantisse = mantisseArr.join('');
     }
     if (mantisse.length < numBitsMantisse) {
       mantisse += '0'.repeat(numBitsMantisse - mantisse.length);
     }
-
     let exponent = (expBasis + bias - shiftFactor).toString(2);
     
     // fill with leading zeroes

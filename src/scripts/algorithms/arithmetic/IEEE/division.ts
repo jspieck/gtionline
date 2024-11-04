@@ -215,4 +215,8 @@ export class DivisionIEEE {
   public getResult(): NumberIEEE {
     return this.result;
   }
+
+  public getWatcher(): Algorithm {
+    return this.watcher;
+  }
 }

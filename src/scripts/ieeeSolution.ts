@@ -63,7 +63,7 @@ export class IEEESolution {
         case 'add': {
           if (y1.sign === 0 && y2.sign === 0) {
             result = new AdditionIEEE(y1, y2);
-            this.resultObject = result.watcher.steps.Result.data.result;
+            this.resultObject = result.getWatcher().steps.Result.data.result;
           } else if (y2.sign === 1) {
             y2.sign = 0;
             y2.arr[0] = 0;
@@ -73,14 +73,14 @@ export class IEEESolution {
             }
             result = new SubtractionIEEE(y1, y2);
             // eslint-disable-next-line max-len
-            this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
+            this.resultObject = result.getWatcher().steps.Addition.data.addition.steps.Result.data.result;
           } else {
             this.negativeSummand = true;
             y1.sign = 0;
             y1.arr[0] = 0;
             result = new SubtractionIEEE(y2, y1);
             // eslint-disable-next-line max-len
-            this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
+            this.resultObject = result.getWatcher().steps.Addition.data.addition.steps.Result.data.result;
           }
           break;
         }
@@ -98,7 +98,7 @@ export class IEEESolution {
               y2.sign = 0;
               y2.arr[0] = 0;
               result = new AdditionIEEE(y1, y2);
-              this.resultObject = result.watcher.steps.Result.data.result;
+              this.resultObject = result.getWatcher().steps.Result.data.result;
               if (this.resultObject) {
                 this.resultObject.sign = 1;
                 this.resultObject.arr[0] = 0;
@@ -106,25 +106,25 @@ export class IEEESolution {
             } else {
               result = new SubtractionIEEE(y1, y2);
               // eslint-disable-next-line max-len
-              this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
+              this.resultObject = result.getWatcher().steps.Addition.data.addition.steps.Result.data.result;
             }
           } else if (y1.sign === 1 && y2.sign === 1) {
             this.negativeSubtrahend = true;
             result = new SubtractionIEEE(y1, y2);
             // eslint-disable-next-line max-len
-            this.resultObject = result.watcher.steps.Addition.data.addition.steps.Result.data.result;
+            this.resultObject = result.getWatcher().steps.Addition.data.addition.steps.Result.data.result;
           } else {
             this.negativeSubtrahend = true;
             y2.sign = 0;
             y2.arr[0] = 0;
             result = new AdditionIEEE(y1, y2);
-            this.resultObject = result.watcher.steps.Result.data.result;
+            this.resultObject = result.getWatcher().steps.Result.data.result;
           }
           break;
         }
         case 'div': {
           result = new DivisionIEEE(y1, y2);
-          this.resultObject = result.watcher.steps.Result.data.result;
+          this.resultObject = result.getWatcher().steps.Result.data.result;
           break;
         }
         default:
@@ -132,7 +132,7 @@ export class IEEESolution {
       }
 
       if (result) {
-        this.watcher = result.watcher;
+        this.watcher = result.getWatcher();
         let solution = '';
         solution = result.getResult().bitString;
         if (result.getResult().isNaN) solution += ' is Nan';
