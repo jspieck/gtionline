@@ -73,16 +73,13 @@ export class DescriptionPolyadicConversion {
     if (this.watcher.steps.TenToPower_ConstructNumber.data.stepsAfterComma === 0) {
       this.tableTenToPowerAfterComma = `\\text{${this.imp.$t('noValuesAfterComma')}}`;
     } else {
-      const steps = Math.min(
-        this.watcher.steps.TenToPower_ConstructNumber.data.stepsAfterComma - 1,
-        periodicEnd,
-      );
+      const steps = this.watcher.steps.TenToPower_ConstructNumber.data.stepsAfterComma - 1;
 
       table.push(`\\begin{array} ${tabdef}`);
       table.push(`${this.imp.$t('factor')}&*&${this.imp.$t('newBasis')}`);
       table.push(`&=&${this.imp.$t('quotient')}&+&${this.imp.$t('remainder')}\\\\ \\hline `); // header
 
-      let number = this.watcher.steps.TenToPower_ConstructNumber.data.afterCommaVal;
+      let number = this.watcher.steps.TenToPower_ConstructNumber.data.afterCommaValBefore;
       const power = this.watcher.steps.TenToPower_Input.data.power;
       for (let i = 0; i <= steps; i += 1) {
         const mul = this.watcher.steps.TenToPower_ConstructNumber.data[`afterComma${i}Mul`];

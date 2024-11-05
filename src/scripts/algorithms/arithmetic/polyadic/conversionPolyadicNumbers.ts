@@ -211,6 +211,9 @@ export class ConversionPolyadicNumbers {
 
       // Convert decimal fraction to target base
       let fraction = numerator / denominator;
+      watcher.step('TenToPower_ConstructNumber')
+        .saveVariable(`afterCommaValBefore`, fraction);
+      
       let result = '';
       const seenStates = new Map<string, number>();
       let position = 0;
@@ -219,6 +222,10 @@ export class ConversionPolyadicNumbers {
         fraction *= power;
         const digit = Math.floor(fraction);
         fraction -= digit;
+
+        watcher.step('TenToPower_ConstructNumber')
+          .saveVariable(`afterComma${position}Remain`, digit)
+          .saveVariable(`afterComma${position}Mul`, fraction);
 
         // Create a unique state key using both the digit and remaining fraction
         const stateKey = `${digit},${fraction.toFixed(10)}`;
@@ -233,6 +240,8 @@ export class ConversionPolyadicNumbers {
         result += digit.toString(power);
         position++;
       }
+      watcher.step('TenToPower_ConstructNumber')
+        .saveVariable('stepsAfterComma', position);
 
       watcher.step('TenToPower_ConstructNumber')
         .saveVariable('afterCommaVal', result);
