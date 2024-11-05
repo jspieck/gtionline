@@ -44,7 +44,7 @@ export class ConversionPolyadicNumbers {
         const powerToTen = this._convertPowerToTen(n, watcher1);
         watcher1.step('Modus')
           .saveVariable('modus', this.modus);
-        this.solution = this._convertTenToPower(powerToTen, power, watcher2);
+        this.solution = this._convertTenToPower(powerToTen, power, watcher1);
         console.log('Watcher 1', watcher1);
         console.log('Watcher 2', watcher2);
         // Combine the watchers by copying steps from watcher2 to watcher1
@@ -55,7 +55,7 @@ export class ConversionPolyadicNumbers {
   }
 
   private _convertPowerToTen(n: NumberPolyadic, watcher: Algorithm): NumberPolyadic {
-    watcher.step('Input')
+    watcher.step('PowerToTen_Input')
       .saveVariable('number', n);
     let firstNum = 0;
 
@@ -69,7 +69,7 @@ export class ConversionPolyadicNumbers {
     } else {
       this.sign = '+';
     }
-    watcher.step('ConstructNumber')
+    watcher.step('PowerToTen_ConstructNumber')
       .saveVariable('sign', this.sign);
     let val = 0;
     let count = 0;
@@ -77,13 +77,13 @@ export class ConversionPolyadicNumbers {
     for (let i = n.comma - 1; i >= firstNum; i -= 1) {
       const act = parseInt(n.arr[i], n.power) * (n.power ** count);
       val += act;
-      watcher.step('ConstructNumber')
+      watcher.step('PowerToTen_ConstructNumber')
         .saveVariable(`beforeComma${count}In`, n.arr[i])
         .saveVariable(`beforeComma${count}Res`, act);
       console.log(`beforeComma${count}In`, n.arr[i]);
       count += 1;
     }
-    watcher.step('ConstructNumber')
+    watcher.step('PowerToTen_ConstructNumber')
       .saveVariable('stepsBeforeComma', count);
     count = 1;
 
@@ -97,14 +97,17 @@ export class ConversionPolyadicNumbers {
         numerator = numerator * n.power + digit;
         denominator *= n.power;
         console.log(`afterComma${count}In`, n.arr[i]);
-        watcher = watcher.step('ConstructNumber')
-          .saveVariable(`afterComma${count}In`, Number(n.arr[i]));
+        watcher = watcher.step('PowerToTen_ConstructNumber')
+          .saveVariable(`afterComma${count}In`, digit)
+          .saveVariable(`afterComma${count}Res`, digit * 1/(n.power ** (count+1)));
         count += 1;
     }
+    watcher.step('PowerToTen_ConstructNumber')
+      .saveVariable('stepsAfterComma', count);
 
     // Combine whole and fractional parts
     const wholeNumber = val.toString();
-    const fractionalPart = this._findPeriodic(numerator, denominator, watcher);
+    const fractionalPart = this._findPeriodic(numerator, denominator, watcher, 'PowerToTen');
     // Create the complete number string
     let resultString = wholeNumber;
     if (fractionalPart.digits.length > 0) {
@@ -119,7 +122,7 @@ export class ConversionPolyadicNumbers {
         );
     }
 
-    watcher.step('Result')
+    watcher.step('PowerToTen_Result')
         .saveVariable('resultValue', result.toString())
         .saveVariable('resultNumber', result)
         .saveVariable('isPeriodic', result.isPeriodic)
@@ -129,7 +132,7 @@ export class ConversionPolyadicNumbers {
     return result;
   }
 
-  private _findPeriodic(numerator: number, denominator: number, watcher: Algorithm): { 
+  private _findPeriodic(numerator: number, denominator: number, watcher: Algorithm, stepName: string): { 
     digits: string[], 
     start?: number, 
     end?: number 
@@ -152,8 +155,8 @@ export class ConversionPolyadicNumbers {
         remainder *= 10;
         const digit = Math.floor(remainder / denominator);
         digits.push(digit.toString());
-        watcher.step('ConstructNumber')
-          .saveVariable(`afterComma${position}Res`, digit);
+        // watcher.step(`${stepName}_ConstructNumber`)
+        //   .saveVariable(`afterComma${position}Res`, digit);
         remainder %= denominator;
         position++;
     }
@@ -162,10 +165,10 @@ export class ConversionPolyadicNumbers {
   }
 
   private _convertTenToPower(n: NumberPolyadic, power: number, watcher: Algorithm): NumberPolyadic {
-    watcher.step('Input')
+    watcher.step('TenToPower_Input')
       .saveVariable('number', n)
       .saveVariable('power', power);
-    watcher.step('ConstructNumber')
+    watcher.step('TenToPower_ConstructNumber')
       .saveVariable('sign', n.sign);
     const nbc = Math.floor(Math.abs(n.value)); // separate |nbc.xxx|
 
@@ -173,11 +176,11 @@ export class ConversionPolyadicNumbers {
     let val = ''; // result string before comma
     let count = 0;
     let act: [number, number] = [nbc, 1]; // [divisor, remain]
-    watcher.step('ConstructNumber')
+    watcher.step('TenToPower_ConstructNumber')
       .saveVariable('beforeCommaVal', nbc);
     while (act[0] > 0) {
       act = this._divisionWithRemain(act[0], power, 10);
-      watcher.step('ConstructNumber')
+      watcher.step('TenToPower_ConstructNumber')
         .saveVariable(`beforeComma${count}Div`, act[0])
         .saveVariable(`beforeComma${count}Remain`, act[1]);
       count += 1;
@@ -187,7 +190,7 @@ export class ConversionPolyadicNumbers {
         val = act[1] + val;
       }
     }
-    watcher.step('ConstructNumber')
+    watcher.step('TenToPower_ConstructNumber')
       .saveVariable('stepsBeforeComma', count);
     if (count === 0) {
       val = '0';
@@ -231,14 +234,14 @@ export class ConversionPolyadicNumbers {
         position++;
       }
 
-      watcher.step('ConstructNumber')
+      watcher.step('TenToPower_ConstructNumber')
         .saveVariable('afterCommaVal', result);
 
       // Check for periodicity
       if (result.includes('(')) {
         const periodicStart = result.indexOf('(');
         const periodicEnd = result.indexOf(')') - 1;  // -1 because the end index should be before the ')'
-        watcher.step('ConstructNumber')
+        watcher.step('TenToPower_ConstructNumber')
           .saveVariable('isPeriodic', true)
           .saveVariable('periodicStart', periodicStart)
           .saveVariable('periodicEnd', periodicEnd);
@@ -247,7 +250,7 @@ export class ConversionPolyadicNumbers {
         const finalResult = new NumberPolyadic(power, result.replace(/[()]/g, ''));
         finalResult.setPeriodicInfo(periodicStart, periodicEnd);
       } else {
-        watcher.step('ConstructNumber')
+        watcher.step('TenToPower_ConstructNumber')
           .saveVariable('isPeriodic', false);
       }
 
@@ -290,8 +293,7 @@ export class ConversionPolyadicNumbers {
         if (afterDecimal) {
             const periodicInfo = this._findPeriodic(
                 parseInt(afterDecimal, power),
-                Math.pow(10, afterDecimal.length),
-                watcher
+                Math.pow(10, afterDecimal.length), watcher, 'TenToPower'
             );
             if (periodicInfo.start !== undefined) {
                 result.setPeriodicInfo(periodicInfo.start, periodicInfo.end);
@@ -299,7 +301,7 @@ export class ConversionPolyadicNumbers {
         }
     }
 
-    watcher.step('Result')
+    watcher.step('TenToPower_Result')
         .saveVariable('resultValue', resVal)
         .saveVariable('resultNumber', result);
     return result;

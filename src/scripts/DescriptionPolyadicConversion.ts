@@ -36,7 +36,7 @@ export class DescriptionPolyadicConversion {
   getTableTenToPowerBeforeComma() {
     const tabdef = '{ccccccc}';
     const table = [];
-    const steps = this.watcher.steps.ConstructNumber.data.stepsBeforeComma;
+    const steps = this.watcher.steps.TenToPower_ConstructNumber.data.stepsBeforeComma;
 
     if (steps === 0) {
       this.tableTenToPowerBeforeComma = `\\text{${this.imp.$t('noValuesBeforeComma')}}`;
@@ -45,15 +45,15 @@ export class DescriptionPolyadicConversion {
       table.push(`${this.imp.$t('numerator')}&:&${this.imp.$t('newBasis')}`);
       table.push(`&=&${this.imp.$t('quotient')}&+&${this.imp.$t('remainder')}\\\\ \\hline `); // header
 
-      let number = this.watcher.steps.ConstructNumber.data.beforeCommaVal;
-      const power = this.watcher.steps.Input.data.power;
-      let div = this.watcher.steps.ConstructNumber.data.beforeComma0Div;
-      let remain = this.watcher.steps.ConstructNumber.data.beforeComma0Remain;
+      let number = this.watcher.steps.TenToPower_ConstructNumber.data.beforeCommaVal;
+      const power = this.watcher.steps.TenToPower_Input.data.power;
+      let div = this.watcher.steps.TenToPower_ConstructNumber.data.beforeComma0Div;
+      let remain = this.watcher.steps.TenToPower_ConstructNumber.data.beforeComma0Remain;
       table.push(`${number}&:&${power}&=&${div}&+&${remain}\\\\`);
       number = div;
       for (let i = 1; i < steps; i += 1) {
-        div = this.watcher.steps.ConstructNumber.data[`beforeComma${i}Div`];
-        remain = this.watcher.steps.ConstructNumber.data[`beforeComma${i}Remain`];
+        div = this.watcher.steps.TenToPower_ConstructNumber.data[`beforeComma${i}Div`];
+        remain = this.watcher.steps.TenToPower_ConstructNumber.data[`beforeComma${i}Remain`];
         table.push(`${number}&:&${power}&=&${div}&+&${remain}\\\\`);
         number = div;
       }
@@ -66,15 +66,15 @@ export class DescriptionPolyadicConversion {
   getTableTenToPowerAfterComma() {
     const tabdef = '{ccccccc}';
     const table = [];
-    const isPeriodic = this.watcher.steps.ConstructNumber.data.isPeriodic;
-    const periodicStart = this.watcher.steps.ConstructNumber.data.periodicStart;
-    const periodicEnd = this.watcher.steps.ConstructNumber.data.periodicEnd;
+    const isPeriodic = this.watcher.steps.TenToPower_ConstructNumber.data.isPeriodic;
+    const periodicStart = this.watcher.steps.TenToPower_ConstructNumber.data.periodicStart;
+    const periodicEnd = this.watcher.steps.TenToPower_ConstructNumber.data.periodicEnd;
 
-    if (this.watcher.steps.ConstructNumber.data.stepsAfterComma === 0) {
+    if (this.watcher.steps.TenToPower_ConstructNumber.data.stepsAfterComma === 0) {
       this.tableTenToPowerAfterComma = `\\text{${this.imp.$t('noValuesAfterComma')}}`;
     } else {
       const steps = Math.min(
-        this.watcher.steps.ConstructNumber.data.stepsAfterComma - 1,
+        this.watcher.steps.TenToPower_ConstructNumber.data.stepsAfterComma - 1,
         periodicEnd,
       );
 
@@ -82,11 +82,11 @@ export class DescriptionPolyadicConversion {
       table.push(`${this.imp.$t('factor')}&*&${this.imp.$t('newBasis')}`);
       table.push(`&=&${this.imp.$t('quotient')}&+&${this.imp.$t('remainder')}\\\\ \\hline `); // header
 
-      let number = this.watcher.steps.ConstructNumber.data.afterCommaVal;
-      const power = this.watcher.steps.Input.data.power;
+      let number = this.watcher.steps.TenToPower_ConstructNumber.data.afterCommaVal;
+      const power = this.watcher.steps.TenToPower_Input.data.power;
       for (let i = 0; i <= steps; i += 1) {
-        const mul = this.watcher.steps.ConstructNumber.data[`afterComma${i}Mul`];
-        const remain = this.watcher.steps.ConstructNumber.data[`afterComma${i}Remain`];
+        const mul = this.watcher.steps.TenToPower_ConstructNumber.data[`afterComma${i}Mul`];
+        const remain = this.watcher.steps.TenToPower_ConstructNumber.data[`afterComma${i}Remain`];
         if (isPeriodic && (i >= periodicStart)) {
           table.push(`${number}&*&${power}&=&${mul}&+&\\overline{${remain}}\\\\`);
         } else {
@@ -101,10 +101,10 @@ export class DescriptionPolyadicConversion {
   }
 
   getTablePowerToTen() {
-    const power = this.watcher.steps.Input.data.number.power;
-    const stepsBeforeComma = this.watcher.steps.ConstructNumber.data.stepsBeforeComma;
-    const stepsAfterComma = this.watcher.steps.ConstructNumber.data.stepsAfterComma;
-    const resultVal = this.watcher.steps.Result.data.resultValue;
+    const power = this.watcher.steps.PowerToTen_Input.data.number.power;
+    const stepsBeforeComma = this.watcher.steps.PowerToTen_ConstructNumber.data.stepsBeforeComma;
+    const stepsAfterComma = this.watcher.steps.PowerToTen_ConstructNumber.data.stepsAfterComma;
+    const resultVal = this.watcher.steps.PowerToTen_Result.data.resultValue;
     const tabdef = '{c|cc}';
     const table = [];
 
@@ -113,10 +113,10 @@ export class DescriptionPolyadicConversion {
 
     for (let i = stepsBeforeComma - 1; i >= 0; i -= 1) {
       const calc = [
-        this.watcher.steps.ConstructNumber.data[`beforeComma${i}In`],
+        this.watcher.steps.PowerToTen_ConstructNumber.data[`beforeComma${i}In`],
         `* ${power}^${i}`,
       ].join('');
-      const res = `${this.watcher.steps.ConstructNumber.data[`beforeComma${i}Res`]}`;
+      const res = `${this.watcher.steps.PowerToTen_ConstructNumber.data[`beforeComma${i}Res`]}`;
       if ((i === 0) && (stepsAfterComma === 0)) {
         table.push(`${calc}&+&${res}\\\\`);
       } else {
@@ -126,10 +126,10 @@ export class DescriptionPolyadicConversion {
     console.log(this.watcher);
     for (let i = 0; i < stepsAfterComma; i += 1) {
       const calc = [
-        this.watcher.steps.ConstructNumber.data[`afterComma${i}In`],
+        this.watcher.steps.PowerToTen_ConstructNumber.data[`afterComma${i}In`],
         `* \\frac{1}{${power}^${i + 1}}`,
       ].join('');
-      const res = `${this.watcher.steps.ConstructNumber.data[`afterComma${i}Res`]}`;
+      const res = `${this.watcher.steps.PowerToTen_ConstructNumber.data[`afterComma${i}Res`]}`;
       if (i !== stepsAfterComma - 1) {
         table.push(`${calc}&&${res}\\\\`);
       } else {
@@ -304,13 +304,11 @@ export class DescriptionPolyadicConversion {
   // eslint-disable-next-line no-unused-vars
   makeDescription(modus: string, format: string[]): void {
     let solution;
-    
-    if (Array.isArray(this.watcher)) {
-      if (modus === 'PowerToTen') {
-        solution = this.watcher.steps.Result.data.resultNumber;
-      } else {
-        solution = this.watcher.steps.Result.data.resultNumber;
-      }
+  
+    if (modus === 'PowerToTen') {
+        solution = this.watcher.steps.PowerToTen_Result.data.resultNumber;
+    } else if (modus === 'TenToPower' || modus === 'PowerToPower') {
+        solution = this.watcher.steps.TenToPower_Result.data.resultNumber;
     } else {
       solution = this.watcher.steps.Result.data.resultNumber;
     }
@@ -397,10 +395,10 @@ export class DescriptionPolyadicConversion {
     }
     let solutionString = solution.bitString;
     if ((modus === 'PowerToPower') || (modus === 'TenToPower')) {
-      const isPeriodic = this.watcher.steps.ConstructNumber.data.isPeriodic;
+      const isPeriodic = this.watcher.steps.TenToPower_ConstructNumber.data.isPeriodic;
       if (isPeriodic) {
-        const periodicStart = this.watcher.steps.ConstructNumber.data.periodicStart;
-        const periodicEnd = this.watcher.steps.ConstructNumber.data.periodicEnd;
+        const periodicStart = this.watcher.steps.TenToPower_ConstructNumber.data.periodicStart;
+        const periodicEnd = this.watcher.steps.TenToPower_ConstructNumber.data.periodicEnd;
         const splitted = solutionString.split('.');
         let newSolution = `${splitted[0]}.`;
         for (let i = 0; i < periodicStart; i += 1) {
