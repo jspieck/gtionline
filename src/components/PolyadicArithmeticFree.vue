@@ -128,6 +128,7 @@ import * as description from '../scripts/DescriptionPolyadicSolution';
 import * as pdf from '../scripts/generatePdfPolyadicConversion';
 import * as solution from '../scripts/polyadicSolution';
 import { formatToPower } from '../scripts/polyadicUtil';
+import NumberPolyadic from '../scripts/algorithms/arithmetic/polyadic/numberPolyadic';
 
 export default {
   name: 'PolyadicConversionFree',

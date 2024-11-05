@@ -30,7 +30,7 @@ export class DescriptionPolyadicSolution {
     // set up tabular for visual the addition
     let bitString1 = this.watcher.steps.Input.data.bitString1;
     const beforeComma = this.watcher.steps.Input.data.beforeComma;
-    let afterComma = this.watcher.steps.Input.data.afterComma || [];
+    const afterComma = this.watcher.steps.Input.data.afterComma || [];
     const resultString = this.watcher.steps.Result.data.bitString;
 
     const splittedResultString = resultString.split('.');
@@ -123,7 +123,7 @@ export class DescriptionPolyadicSolution {
     rowCarry.push(' \\\\ ');
     row3.pop();
 
-    let table = [
+    const table = [
       `\\begin{array} ${tabdef}`,
       row1.join(''),
       row2.join(''),
@@ -168,7 +168,7 @@ export class DescriptionPolyadicSolution {
       const countSteps = Math.min(mulSteps.countSteps, n2len); // count of steps until result
       const mulRes = watcher.steps.Result.data.resultArr; // result of multiplication
       const stepLength = mulSteps.Step0_toAdd.arr.length;
-      let arrLen = Math.max(n1len + countSteps, n1len + n2len, n2len + countSteps) + 3; // columns
+      const arrLen = Math.max(n1len + countSteps, n1len + n2len, n2len + countSteps) + 3; // columns
 
       // table definition
       tabdef.push('{');

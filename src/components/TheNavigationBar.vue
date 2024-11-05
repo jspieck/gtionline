@@ -68,11 +68,11 @@ export default {
   computed: {
     menu() {
       return [
-        /* {
+        {
           id: 0,
           label: this.$t('polyadic'),
           link: 'polyadic',
-        }, */
+        },
         {
           id: 1,
           label: this.$t('floatingPoint'),

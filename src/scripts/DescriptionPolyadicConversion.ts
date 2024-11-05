@@ -8,10 +8,10 @@ interface ImportData {
 export class DescriptionPolyadicConversion {
   private imp: ImportData;
   private watcher: Algorithm;
-  private tableTenToPowerBeforeComma: string;
-  private tableTenToPowerAfterComma: string;
-  private tablePowerToTen: string;
-  private tableShortcut: string;
+  public tableTenToPowerBeforeComma: string;
+  public tableTenToPowerAfterComma: string;
+  public tablePowerToTen: string;
+  public tableShortcut: string;
   private result: Array<{
     name: string;
     text: string;
@@ -123,6 +123,7 @@ export class DescriptionPolyadicConversion {
         table.push(`${calc}&&${res}\\\\`);
       }
     }
+    console.log(this.watcher);
     for (let i = 0; i < stepsAfterComma; i += 1) {
       const calc = [
         this.watcher.steps.ConstructNumber.data[`afterComma${i}In`],

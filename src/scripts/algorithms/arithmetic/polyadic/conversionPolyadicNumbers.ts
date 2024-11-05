@@ -45,8 +45,10 @@ export class ConversionPolyadicNumbers {
         watcher1.step('Modus')
           .saveVariable('modus', this.modus);
         this.solution = this._convertTenToPower(powerToTen, power, watcher2);
+        console.log('Watcher 1', watcher1);
+        console.log('Watcher 2', watcher2);
         // Combine the watchers by copying steps from watcher2 to watcher1
-        Object.assign(watcher1.steps, watcher2.steps);
+        // Object.assign(watcher1.steps, watcher2.steps);
         this.watcher = watcher1;
       }
     }
@@ -78,6 +80,7 @@ export class ConversionPolyadicNumbers {
       watcher.step('ConstructNumber')
         .saveVariable(`beforeComma${count}In`, n.arr[i])
         .saveVariable(`beforeComma${count}Res`, act);
+      console.log(`beforeComma${count}In`, n.arr[i]);
       count += 1;
     }
     watcher.step('ConstructNumber')
@@ -85,19 +88,23 @@ export class ConversionPolyadicNumbers {
     count = 1;
 
     // For after-comma part
+    console.log('For after-comma part');
     let numerator = 0;
     let denominator = 1;
-    
+    count = 0;
     for (let i = n.comma + 1; i < n.arr.length; i += 1) {
         const digit = parseInt(n.arr[i], n.power);
         numerator = numerator * n.power + digit;
         denominator *= n.power;
+        console.log(`afterComma${count}In`, n.arr[i]);
+        watcher = watcher.step('ConstructNumber')
+          .saveVariable(`afterComma${count}In`, Number(n.arr[i]));
+        count += 1;
     }
 
     // Combine whole and fractional parts
     const wholeNumber = val.toString();
-    const fractionalPart = this._findPeriodic(numerator, denominator);
-    
+    const fractionalPart = this._findPeriodic(numerator, denominator, watcher);
     // Create the complete number string
     let resultString = wholeNumber;
     if (fractionalPart.digits.length > 0) {
@@ -122,7 +129,7 @@ export class ConversionPolyadicNumbers {
     return result;
   }
 
-  private _findPeriodic(numerator: number, denominator: number): { 
+  private _findPeriodic(numerator: number, denominator: number, watcher: Algorithm): { 
     digits: string[], 
     start?: number, 
     end?: number 
@@ -143,39 +150,15 @@ export class ConversionPolyadicNumbers {
         
         remainders.set(remainder, position);
         remainder *= 10;
-        digits.push(Math.floor(remainder / denominator).toString());
+        const digit = Math.floor(remainder / denominator);
+        digits.push(digit.toString());
+        watcher.step('ConstructNumber')
+          .saveVariable(`afterComma${position}Res`, digit);
         remainder %= denominator;
         position++;
     }
     
     return { digits };
-  }
-
-  private _longDivision(numerator: number, denominator: number, precision: number = 15): string {
-    let result = Math.floor(numerator / denominator).toString();
-    let remainder = numerator % denominator;
-    
-    if (remainder === 0) return result;
-    
-    result += '.';
-    const seen = new Map<number, number>();
-    let position = result.length;
-    
-    while (remainder !== 0 && result.length < position + precision) {
-        if (seen.has(remainder)) {
-            // We found a repeating decimal
-            const start = seen.get(remainder)!;
-            return result.slice(0, start) + '(' + result.slice(start) + ')';
-        }
-        
-        seen.set(remainder, position);
-        remainder *= 10;
-        result += Math.floor(remainder / denominator);
-        remainder %= denominator;
-        position++;
-    }
-    
-    return result;
   }
 
   private _convertTenToPower(n: NumberPolyadic, power: number, watcher: Algorithm): NumberPolyadic {
@@ -285,6 +268,7 @@ export class ConversionPolyadicNumbers {
     }
 
     // Remove periodic notation before validation
+    // eslint-disable-next-line no-useless-escape
     const validationString = resVal.replace(/[\(\)]/g, '');
     
     // Ensure the result is valid for the target base
@@ -306,7 +290,8 @@ export class ConversionPolyadicNumbers {
         if (afterDecimal) {
             const periodicInfo = this._findPeriodic(
                 parseInt(afterDecimal, power),
-                Math.pow(10, afterDecimal.length)
+                Math.pow(10, afterDecimal.length),
+                watcher
             );
             if (periodicInfo.start !== undefined) {
                 result.setPeriodicInfo(periodicInfo.start, periodicInfo.end);
