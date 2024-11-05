@@ -5,61 +5,67 @@ export class NumberPolyadic {
   comma: number;
   arr: string[];
   value!: number;
-  bitString: string;
+  bitString!: string;
   valueString!: string;
   isNegative: boolean;
   sign!: string;
   watcher: Algorithm;
+  isPeriodic: boolean;
+  periodicStart?: number;
+  periodicEnd?: number;
 
   constructor(power: number, representation: string | string[]) {
-    if (power <= 1) {
-      throw new TypeError('Polyadic Number: Invalid power given, has to be greater 1.');
-    }
+    this.power = power;
+    this.isPeriodic = false;
+    this.periodicStart = undefined;
+    this.periodicEnd = undefined;
+    this.isNegative = false;
+    this.watcher = new Algorithm();
 
-    if (power === 16) {
-      this.power = 0x10;
+    let rep: string[];
+    if (typeof representation === 'string') {
+      // Handle periodic notation in the input string
+      const match = representation.match(/^(.*?)\((.*?)\)(.*)$/);
+      if (match) {
+        const [, before, periodic, after] = match;
+        rep = [...before, ...periodic, ...after];
+        this.isPeriodic = true;
+        this.periodicStart = before.length;
+        this.periodicEnd = before.length + periodic.length - 1;
+      } else {
+        rep = representation.split('');
+      }
     } else {
-      this.power = power;
+      rep = representation;
     }
 
-    const rep = Array.isArray(representation) ? representation : representation.split('');
-    this.comma = rep.length;
+    this.comma = rep.indexOf('.');
+    if (this.comma === -1) {
+      this.comma = rep.length;
+    }
+
     if (!this._checkArray(rep)) {
       throw new TypeError('Polyadic Number: Invalid representation given.');
     }
 
-    this.arr = [...rep];
-    this.bitString = this.arr.join('');
+    this.arr = rep;
     this._actualizeValues();
-    this.isNegative = false; // for subtraction
-    this.watcher = new Algorithm();
   }
 
   private _actualizeValues(): void {
     this._checkArray(this.arr);
     this.value = this._getValue();
-    this.bitString = this.arr.join('');
+    this.bitString = this.isPeriodic ? this.toString() : this.arr.join('');
     this.valueString = this._constructValString();
   }
 
   private _checkArray(arr: string[]): boolean {
-    this.comma = arr.length;
-    let commas = 0;
-    for (let i = 0; i < arr.length; i += 1) {
-      const val = parseInt(arr[i], this.power);
-      if ((isNaN(val) && arr[i] !== ',' && arr[i] !== '.' && arr[i] !== '-' && arr[i] !== '+') || 
-          (!isNaN(val) && (val < 0 || val >= this.power))) {
-        return false;
-      }
-      if ((arr[i] === ',') || (arr[i] === '.')) {
-        this.comma = i;
-        commas += 1;
-        if (commas > 1) {
-          return false;
-        }
-      }
-    }
-    return true;
+    const validChars = ['.', '-', '+', '(', ')'];
+    return arr.every(char => {
+      if (validChars.includes(char)) return true;
+      const num = parseInt(char, this.power);
+      return !isNaN(num) && num < this.power;
+    });
   }
 
   private _getValue(): number {
@@ -184,12 +190,12 @@ export class NumberPolyadic {
     this.arr = resultArray;
   }
 
-  /** !!Internal method!!
+  /**
    * Subtract a single digit from the actual number.
    * @param digit - single digit number
    * @param exp - optional position in the array
    */
-  _subtractOneDigit(digit: string | number, exp = 0): void {
+  private _subtractOneDigit(digit: string | number, exp = 0): void {
     // prepare working arrays
     const splitted = this.arr.join('').split('.');
     let numBeforeComma: string[] = [];
@@ -355,49 +361,128 @@ export class NumberPolyadic {
    */
   _subtractionFloat(input: string): void {
     this.watcher = this.watcher.step('Input')
-      .saveVariable('operator', '-')
-      .saveVariable('bitString1', this.bitString)
-      .saveVariable('bitString2', input);
+        .saveVariable('operator', '-')
+        .saveVariable('bitString1', this.bitString)
+        .saveVariable('bitString2', input);
+
     const inputSplitted = input.toString().split('.');
-    if ((Array.isArray(inputSplitted)) && (inputSplitted.length === 2)) {
-      const afterComma = inputSplitted[1].split('');
-      this.watcher = this.watcher.step('Input')
-        .saveVariable('afterComma', [...afterComma]);
-      for (let i = afterComma.length - 1; i >= 0; i -= 1) {
-        this._subtractOneDigit(afterComma[i], -i - 1);
-      }
+    
+    // If minuend has no decimal point but subtrahend does, add decimal point and zeros
+    if (!this.arr.includes('.') && inputSplitted.length === 2) {
+        this.arr.push('.');
+        this.arr.push('0');  // Add at least one zero after decimal
     }
+
+    if (inputSplitted.length === 2) {
+        const afterComma = inputSplitted[1].split('');
+        this.watcher = this.watcher.step('Input')
+            .saveVariable('afterComma', [...afterComma]);
+        
+        // Ensure minuend has enough decimal places
+        const currentDecimalPlaces = this.arr.indexOf('.') >= 0 ? 
+            this.arr.length - this.arr.indexOf('.') - 1 : 0;
+        
+        while (currentDecimalPlaces < afterComma.length) {
+            this.arr.push('0');
+        }
+
+        for (let i = afterComma.length - 1; i >= 0; i -= 1) {
+            this._subtractOneDigit(afterComma[i], -i - 1);
+        }
+    }
+
     const beforeComma = inputSplitted[0].split('').reverse();
     this.watcher = this.watcher.step('Input')
-      .saveVariable('beforeComma', [...beforeComma].reverse());
+        .saveVariable('beforeComma', [...beforeComma].reverse());
+    
     const lenPadding = Math.max(beforeComma.length - this.comma, 0);
     this.arr = Array(lenPadding).fill('0').concat(this.arr);
 
     for (let i = 0; i < beforeComma.length; i += 1) {
-      this._subtractOneDigit(beforeComma[i], i);
+        this._subtractOneDigit(beforeComma[i], i);
     }
 
-    // invert digit if the result is negative
-    if (this.isNegative) {
-      this.arr[this.arr.length - 1] = (
-        parseInt(this.arr[this.arr.length - 1], this.power) - 1
-      ).toString(this.power).toUpperCase();
-      for (let i = 0; i < this.arr.length; i += 1) {
-        const a = this.arr[i];
-        if ((a !== '-') && (a !== '.') && (a !== ',')) {
-          this.arr[i] = (this.power - parseInt(a, this.power) - 1).toString(this.power).toUpperCase();
-        }
-      }
-      this.arr.unshift('-');
-      this.isNegative = false;
+    // Clean up leading zeros
+    while (this.arr.length > 1 && this.arr[0] === '0' && 
+           (this.arr.length === 1 || this.arr[1] !== '.')) {
+        this.arr.shift();
     }
+
+    // Handle negative results
+    if (this.isNegative) {
+        this.arr[this.arr.length - 1] = (
+            parseInt(this.arr[this.arr.length - 1], this.power) - 1
+        ).toString(this.power).toUpperCase();
+        
+        for (let i = 0; i < this.arr.length; i += 1) {
+            const a = this.arr[i];
+            if ((a !== '-') && (a !== '.') && (a !== ',')) {
+                this.arr[i] = (this.power - parseInt(a, this.power) - 1)
+                    .toString(this.power).toUpperCase();
+            }
+        }
+        this.arr.unshift('-');
+        this.isNegative = false;
+    }
+
     this._actualizeValues();
     this.watcher = this.watcher.step('Result')
-      .saveVariable('array', [...this.arr])
-      .saveVariable('bitString', this.bitString)
-      .saveVariable('value', this.value)
-      .saveVariable('valueString', this.valueString)
-      .saveVariable('sign', this.sign)
-      .saveVariable('comma', this.comma);
+        .saveVariable('array', [...this.arr])
+        .saveVariable('bitString', this.bitString)
+        .saveVariable('value', this.value)
+        .saveVariable('valueString', this.valueString)
+        .saveVariable('sign', this.sign)
+        .saveVariable('comma', this.comma);
+  }
+
+  setPeriodicInfo(start?: number, end?: number): void {
+    if (start !== undefined && end !== undefined) {
+      this.isPeriodic = true;
+      this.periodicStart = start;
+      this.periodicEnd = end;
+    } else {
+      this.isPeriodic = false;
+      this.periodicStart = undefined;
+      this.periodicEnd = undefined;
+    }
+  }
+
+  toString(): string {
+    if (!this.isPeriodic) {
+      // Join the array and remove trailing zeros after decimal point
+      let str = this.arr.join('');
+      if (str.includes('.')) {
+        str = str.replace(/\.?0+$/, '');  // Remove trailing zeros and optional decimal point
+      }
+      return str;
+    }
+
+    const parts = this.arr.join('').split('.');
+    let wholePart = parts[0] || '0';
+    wholePart = wholePart.replace(/^0+$/, '');
+    let decimalPart = parts[1] || '';
+
+    if (this.periodicStart === undefined || this.periodicEnd === undefined) {
+      // Remove trailing zeros for non-periodic decimal part
+      decimalPart = decimalPart.replace(/^0+$/, '');
+      return decimalPart ? `${wholePart}.${decimalPart}` : wholePart;
+    }
+
+    // Handle periodic numbers
+    const periodicStartInDecimal = this.periodicStart - (wholePart.length + 1);
+    const periodicEndInDecimal = this.periodicEnd - (wholePart.length + 1);
+
+    if (periodicStartInDecimal >= 0) {
+      const beforePeriodic = decimalPart.slice(0, periodicStartInDecimal);
+      const periodicPart = decimalPart.slice(periodicStartInDecimal, periodicEndInDecimal + 1);
+      const afterPeriodic = decimalPart.slice(periodicEndInDecimal + 1);
+      
+      // Remove trailing zeros from non-periodic parts
+      const cleanAfterPeriodic = afterPeriodic.replace(/0+$/, '');
+      
+      decimalPart = `${beforePeriodic}(${periodicPart})${cleanAfterPeriodic}`;
+    }
+
+    return decimalPart ? `${wholePart}.${decimalPart}` : wholePart;
   }
 }

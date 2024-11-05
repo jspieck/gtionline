@@ -1,41 +1,48 @@
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
+import { Algorithm } from './algorithms/algorithm';
 import { NumberPolyadic } from './algorithms/arithmetic/polyadic/numberPolyadic';
+import { FormatConversions } from './formatConversions';
 
-function classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError('Cannot call a class as a function');
-  }
+interface ResultPanel {
+  name: string;
+  text: string;
+  subpanels?: ResultPanel[];
 }
 
 export class DescriptionPolyadicSolution {
-  constructor(imp, watcher) {
-    classCallCheck(this, DescriptionPolyadicSolution);
+  private imp: any; // Translation service interface
+  private watcher: Algorithm;
+  private table: string;
+  private result: ResultPanel[];
+  public negativeMinuendSubtrahend: boolean;
+
+  constructor(imp: any, watcher: Algorithm) {
     this.imp = imp;
-    this.table = '';
-    this.result = [];
     this.watcher = watcher;
+    this.table = '';
+      this.result = [];
+    this.negativeMinuendSubtrahend = false;
   }
 
   // =========================================================================================
   // Addition
-  getAdditionTable() {
+  private getAdditionTable(): void {
     // set up tabular for visual the addition
     let bitString1 = this.watcher.steps.Input.data.bitString1;
     const beforeComma = this.watcher.steps.Input.data.beforeComma;
-    let afterComma = this.watcher.steps.Input.data.afterComma;
-    if (afterComma == null) {
-      afterComma = [];
-    }
+    let afterComma = this.watcher.steps.Input.data.afterComma || [];
     const resultString = this.watcher.steps.Result.data.bitString;
 
     const splittedResultString = resultString.split('.');
     const splittedBitString1 = bitString1.split('.');
     bitString1 = `${'0'.repeat(splittedResultString[0].length - splittedBitString1[0].length)}${bitString1}`;
+    
     for (let i = beforeComma.length; i < splittedResultString[0].length; i += 1) {
       beforeComma.unshift('0');
     }
-    if (Array.isArray(splittedResultString) && (splittedResultString[1] != null)) {
-      if (Array.isArray(splittedBitString1) && (splittedBitString1[1] != null)) {
+    
+    if (splittedResultString[1] != null) {
+      if (splittedBitString1[1] != null) {
         bitString1 = `${bitString1}${'0'.repeat(splittedResultString[1].length - splittedBitString1[1].length)}`;
       }
       for (let i = afterComma.length; i < splittedResultString[1].length; i += 1) {
@@ -43,27 +50,24 @@ export class DescriptionPolyadicSolution {
       }
     }
 
-    const row1 = ['&'];
-    const row2 = ['+&'];
-    const rowCarry = ['&'];
-    const row3 = ['&'];
+    const row1: string[] = ['&'];
+    const row2: string[] = ['+&'];
+    const rowCarry: string[] = ['&'];
+    const row3: string[] = ['&'];
     const tabdef = `{${'c'.repeat(resultString.length)}}`;
 
     for (let i = 0; i < bitString1.length; i += 1) {
       row1.push(` ${bitString1[i]}`);
       row1.push('&');
     }
-    console.log(this.watcher.steps);
+
     let carrySet = false;
     for (let i = 0; i < beforeComma.length; i += 1) {
       row2.push(` ${beforeComma[i]}`);
       if (i !== beforeComma.length - 1) {
-        let carryBit = 0;
-        if (this.watcher.steps.constructResult.data[`overflowBeforeComma${0}`] != null) {
-          carryBit = this.watcher.steps.constructResult.data[`overflowBeforeComma${i}`];
-        } else {
-          carryBit = this.watcher.steps.constructResult.data[`overflowBeforeComma${i + 1}`];
-        }
+        let carryBit = this.watcher.steps.constructResult.data[`overflowBeforeComma${i}`] ?? 
+                      this.watcher.steps.constructResult.data[`overflowBeforeComma${i + 1}`];
+        
         if (carryBit == null) {
           carryBit = ' ';
         } else {
@@ -71,7 +75,6 @@ export class DescriptionPolyadicSolution {
         }
         rowCarry.push(`\\scriptsize{${carryBit}} &`);
       } else {
-        /* eslint-disable */
         if (this.watcher.steps.constructResult.data[`overflowAfterComma${0}`] != null) {
           const carryBit = this.watcher.steps.constructResult.data[`overflowAfterComma${0}`];
           rowCarry.push(`\\scriptsize{${carryBit}} &`);
@@ -79,14 +82,15 @@ export class DescriptionPolyadicSolution {
         } else {
           rowCarry.push('&');
         }
-        /* eslint-enable */
       }
       row2.push('&');
     }
+
     if (afterComma.length > 0) {
       row2.push(' .&');
       rowCarry.push(' &');
     }
+
     for (let i = 0; i < afterComma.length - 1; i += 1) {
       row2.push(` ${afterComma[i]}`);
       if (i !== beforeComma.length - 1) {
@@ -102,6 +106,7 @@ export class DescriptionPolyadicSolution {
       }
       row2.push('&');
     }
+    
     row2.push(` ${afterComma[afterComma.length - 1]}`);
     rowCarry.push(' ');
 
@@ -109,6 +114,7 @@ export class DescriptionPolyadicSolution {
       row3.push(` ${resultString[i]}`);
       row3.push('&');
     }
+
     row1.pop();
     row1.push(' \\\\ ');
     row2.pop();
@@ -116,44 +122,41 @@ export class DescriptionPolyadicSolution {
     rowCarry.pop();
     rowCarry.push(' \\\\ ');
     row3.pop();
-    this.table = [
+
+    let table = [
       `\\begin{array} ${tabdef}`,
-      `${row1.join('')}`,
-      `${row2.join('')}`,
+      row1.join(''),
+      row2.join(''),
     ];
+
     if (carrySet) {
-      this.table.push(`${rowCarry.join('')}`);
+      table.push(rowCarry.join(''));
     }
-    this.table.push('\\hline');
-    this.table.push(`${row3.join('')}`);
-    this.table.push('\\end{array}');
-    this.table = this.table.join('');
+
+    table.push('\\hline');
+    table.push(row3.join(''));
+    table.push('\\end{array}');
+    this.table = table.join('');
   }
 
-  /* eslint-disable */
-  additionDescription(y1, y2, format) {
+  additionDescription(y1: NumberPolyadic, y2: NumberPolyadic): void {
     this.getAdditionTable();
-    // console.log(this.table);
-    // console.log(this.watcher);
     this.result.push({
       name: `${this.imp.$t('addition')}`,
       text: `\\(${this.table}\\)`,
     });
   }
-  /* eslint-enable */
 
   // =========================================================================================
   // Multiplication
-  /* eslint-disable */
-  getMultiplicationTable() {
+  private getMultiplicationTable(): void {
     // the calculation is set up in a table
-    // information, steps
-    const tabdef = [];
+    const tabdef: string[] = [];
     const watcher = this.watcher;
     if (!watcher.steps.Result.data.result.isNaN) {
-      const mulSteps = mulWatcher.steps.MultiplicationSteps.data; // steps
-      const n1Arr = mulWatcher.steps.MultiplicationInput.data.leftArr; // first factor
-      const n2Arr = mulWatcher.steps.MultiplicationInput.data.rightArr; // second factor
+      const mulSteps = watcher.steps.MultiplicationSteps.data; // steps
+      const n1Arr = watcher.steps.MultiplicationInput.data.leftArr; // first factor
+      const n2Arr = watcher.steps.MultiplicationInput.data.rightArr; // second factor
       while (n1Arr[n1Arr.length - 1] === 0) {
         n1Arr.pop();
       }
@@ -163,9 +166,10 @@ export class DescriptionPolyadicSolution {
       }
       const n2len = n2Arr.length;
       const countSteps = Math.min(mulSteps.countSteps, n2len); // count of steps until result
-      const mulRes = mulWatcher.steps.Result.data.resultArr; // result of multiplication
+      const mulRes = watcher.steps.Result.data.resultArr; // result of multiplication
       const stepLength = mulSteps.Step0_toAdd.arr.length;
       let arrLen = Math.max(n1len + countSteps, n1len + n2len, n2len + countSteps) + 3; // columns
+
       // table definition
       tabdef.push('{');
       tabdef.push('c|');
@@ -174,8 +178,9 @@ export class DescriptionPolyadicSolution {
       }
       tabdef.push('c');
       tabdef.push('}');
+
       // build top row
-      const rows = [ // rows of the result table
+      const rows: string[] = [ // rows of the result table
         `&&${n1Arr.join('&')}`,
       ];
       rows[0] += '&\\times&';
@@ -183,10 +188,7 @@ export class DescriptionPolyadicSolution {
       for (let i = n1Arr.length + n2Arr.length + 1; i < arrLen; i += 1) {
         rows[0] += '&';
       }
-      let converter = new convertFormat.FormatConversions(
-        this.exponentBits,
-        this.numBits,
-      );
+      const converter = new FormatConversions(0,0); // 0, 0 since we do not consider a floating point
       converter.binToDec(n1Arr.join(''));
       const leftVal = converter.result;
       converter.binToDec(n2Arr.join(''));
@@ -198,7 +200,7 @@ export class DescriptionPolyadicSolution {
       for (let i = 0; i < countSteps; i += 1) {
         rows.push(`${i}&+`);
         let stepsToAdd = mulSteps[`Step${i}_toAdd`].arr;
-        const isZero = stepsToAdd.every(a => a === 0);
+        const isZero = stepsToAdd.every((a: number) => a === 0);
         if (!isZero) {
           stepsToAdd = n1Arr;
         }
@@ -222,16 +224,11 @@ export class DescriptionPolyadicSolution {
           stepsToAdd = stepsToAdd.concat(Array(padding)
             .fill(0, 0)); // Pad right
         }
-        converter = new convertFormat.FormatConversions(
-          this.exponentBits,
-          this.numBits,
-        );
         converter.binToDec(stepsToAdd.join(''));
-        const add = converter.result * 2 ** -i;
+        const add = Number(converter.result) * Math.pow(2, -i);
         rows[rows.length - 1] += `\\ (${add}_\{10\})`;
-
         rows[rows.length - 1] += '\\\\ ';
-      } // end for
+      }
 
       // Last row
       rows.push('\\hline');
@@ -246,10 +243,6 @@ export class DescriptionPolyadicSolution {
       for (let k = actCols; k <= arrLen; k += 1) {
         rows[rows.length - 1] += '&';
       }
-      converter = new convertFormat.FormatConversions(
-        this.exponentBits,
-        this.numBits,
-      );
       converter.binToDec(mulRes.join(''));
       const add = converter.result;
       rows[rows.length - 1] += `&\\ (${add}_\{10\})`;
@@ -263,18 +256,18 @@ export class DescriptionPolyadicSolution {
       this.table = `\\text{${this.imp.$t('solutionIsNan')}}`;
     }
   }
-  /* eslint-enable */
 
-  /* eslint-disable */
-  multiplicationDescription(solution, y1, y2) {
-    
+  multiplicationDescription(y1: NumberPolyadic, y2: NumberPolyadic): void {
+    this.getMultiplicationTable();
+    this.result.push({
+      name: `${this.imp.$t('multiplication')}`,
+      text: `\\(${this.table}\\)`,
+    });
   }
-  /* eslint-enable */
 
   // =========================================================================================
   // Subtraction
-  getSubtractionTable() {
-    // set up tabular for visual the addition
+  private getSubtractionTable(): void {
     const addWatcher = this.watcher.steps.Addition.data.addition;
     const originalMantissa1 = addWatcher.steps.AddMantissa.data.mantissa1;
     const originalMantissa2 = addWatcher.steps.AddMantissa.data.mantissa2;
@@ -283,12 +276,13 @@ export class DescriptionPolyadicSolution {
     const carryBits = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.carryArr;
     const result = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.resultArr;
     const cols = addWatcher.steps.AddMantissa.data.binNum;
-    const row1 = [];
-    const row2 = [];
-    const row3 = [];
-    const row4 = [];
-    const row5 = [];
-    const tabdef = [];
+    const row1: string[] = [];
+    const row2: string[] = [];
+    const row3: string[] = [];
+    const row4: string[] = [];
+    const row5: string[] = [];
+    const tabdef: string[] = [];
+
     if (addWatcher.steps.AddMantissa.data.sign1 === 0
       && addWatcher.steps.AddMantissa.data.sign2 === 1) {
       row1.push('&');
@@ -305,6 +299,7 @@ export class DescriptionPolyadicSolution {
     row4.push('+&');
     row5.push('=&');
     tabdef.push('{');
+
     for (let i = originalMantissa1.length; i <= cols; i += 1) {
       originalMantissa1.unshift(0);
     }
@@ -320,6 +315,7 @@ export class DescriptionPolyadicSolution {
     for (let i = carryBits.length; i <= cols; i += 1) {
       carryBits.unshift(0);
     }
+
     for (let i = 0; i < cols; i += 1) {
       tabdef.push('c');
       row1.push(` ${originalMantissa1[i]}`);
@@ -333,6 +329,7 @@ export class DescriptionPolyadicSolution {
       row5.push(` ${result[i]}`);
       row5.push('&');
     }
+
     tabdef.push('}');
     row1.pop();
     row1.push('\\\\ ');
@@ -357,32 +354,18 @@ export class DescriptionPolyadicSolution {
     ].join('');
   }
 
-  /* eslint-disable */
-  subtractionDescription(y1, y2, format) {
+  subtractionDescription(y1: NumberPolyadic, y2: NumberPolyadic): void {
     this.getSubtractionTable();
     this.result.push({
       name: `${this.imp.$t('subtraction')}`,
       text: `\\(${this.table}\\)`,
     });
-    /* this.result.push({
-      name: `${this.imp.$t('subtraction')}`,
-      text: `${this.imp.$t('shortcutHexToBin')}`,
-      subpanels: [
-        {
-          name: `${this.imp.$t('doConversion')}`,
-          text: `\\(${this.table}\\)`,
-        },
-      ],
-    }); */
   }
-  /* eslint-enable */
 
   // =========================================================================================
   // Division
-  getDivisionTable() {
-    // the calculation is set up in a table
-    // information, steps
-    const tabdef = [];
+  private getDivisionTable(): void {
+    const tabdef: string[] = [];
     if (!this.watcher.steps.Result.data.result.isNaN) {
       const divWatcher = this.watcher.steps.Division.data.division;
       const divSteps = divWatcher.steps.DivisionSteps.data; // steps
@@ -396,6 +379,7 @@ export class DescriptionPolyadicSolution {
         divSteps.Step0_Sub1.length + divSteps.Step0_Sub2.length,
       ); // columns
       arrLen = arrLen + n2len + 2;
+
       // table definition
       tabdef.push('{');
       tabdef.push('c|');
@@ -404,8 +388,9 @@ export class DescriptionPolyadicSolution {
       }
       tabdef.push('|c');
       tabdef.push('}');
+
       // build top row
-      const rows = [ // rows of the result table
+      const rows: string[] = [ // rows of the result table
         `&&${divSteps.Step0_Sub1.join('&')}`,
       ];
       rows[0] += '&:&';
@@ -474,7 +459,7 @@ export class DescriptionPolyadicSolution {
         } else {
           wasNeg = 0;
         }
-      } // end for
+      }
 
       // Last row
       rows.push('\\mathcal\{L\}&&');
@@ -501,30 +486,32 @@ export class DescriptionPolyadicSolution {
     }
   }
 
-  /* eslint-disable */
-  divisionDescription(solution, y1, y2) {
-  
+  divisionDescription(y1: NumberPolyadic, y2: NumberPolyadic): void {
+    this.getDivisionTable();
+    this.result.push({
+      name: `${this.imp.$t('division')}`,
+      text: `\\(${this.table}\\)`,
+    });
   }
-  /* eslint-enable */
 
-  makeDescription(num1, num2, format, operator) {
+  makeDescription(num1: string, num2: string, format: number, operator: string): void {
     const y1 = new NumberPolyadic(format, num1);
     const y2 = new NumberPolyadic(format, num2);
     switch (operator) {
       case 'add':
         if (y1.sign === '+' && y2.sign === '+') {
-          this.additionDescription(y1, y2, format);
+          this.additionDescription(y1, y2);
         } else if (y2.sign === '-') {
           y2.sign = '+';
           y2.arr.shift();
-          this.subtractionDescription(y1, y2, format);
+          this.subtractionDescription(y1, y2);
         } else {
-          this.subtractionDescription(y1, y2, format);
+          this.subtractionDescription(y1, y2);
         }
         break;
 
       case 'mul':
-        this.multiplicationDescription(y1, y2, format);
+        this.multiplicationDescription(y1, y2);
         break;
 
       case 'sub':
@@ -532,18 +519,18 @@ export class DescriptionPolyadicSolution {
           this.negativeMinuendSubtrahend = true;
           y1.sign = '+';
           y1.arr.shift();
-          this.additionDescription(y1, y2, format);
+          this.additionDescription(y1, y2);
         } else if (y1.sign === '+' && y2.sign === '+') {
-          this.subtractionDescription(y1, y2, format);
+          this.subtractionDescription(y1, y2);
         } else {
           y2.sign = '+';
           y2.arr.shift();
-          this.additionDescription(y1, y2, format);
+          this.additionDescription(y1, y2);
         }
         break;
 
       case 'div':
-        this.divisionDescription(y1, y2, format);
+        this.divisionDescription(y1, y2);
         break;
       default:
     }
@@ -558,5 +545,9 @@ export class DescriptionPolyadicSolution {
         `\\(\\hspace{2cm} \\)${this.imp.$t('value')} (${this.imp.$t('decimal')}): \\(${resultValue}\\)`,
       ].join(''),
     });
+  }
+
+  getResult(): ResultPanel[] {
+    return this.result;
   }
 }

@@ -1,19 +1,36 @@
 /* eslint no-useless-escape: 0  no-case-declarations: 0 */
 import * as description from './DescriptionPolyadicConversion';
 import router from '../router/index';
+import { Algorithm } from './algorithms/algorithm';
 
-function classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError('Cannot call a class as a function');
-  }
+interface ImportData {
+  modus: string;
+  selectedFormat: string[];
+  inputNum: string;
+  $t: (key: string) => string;
+  watcher: Algorithm;
 }
 
 export class PdfDescription {
-  constructor(imp, watcher) {
-    classCallCheck(this, PdfDescription);
+  private imp: ImportData;
+  private watcher: Algorithm;
+  private modus: string;
+  private description: description.DescriptionPolyadicConversion;
+  private style: string;
+  private header: string;
+  private disclaimer: string;
+  private values: string;
+  private string: string;
+
+  constructor(imp: ImportData, watcher: Algorithm) {
     this.imp = imp;
     this.watcher = watcher;
     this.modus = this.imp.modus;
+    this.style = '';
+    this.header = '';
+    this.disclaimer = '';
+    this.values = '';
+    this.string = '';
     this.description = new description.DescriptionPolyadicConversion(this.imp, this.watcher);
     this.description.makeDescription(this.modus, this.imp.selectedFormat);
   }
@@ -192,10 +209,10 @@ export class PdfDescription {
     // Solution
     let solutionString = solution.bitString;
     if ((this.modus === 'PowerToPower') || (this.modus === 'TenToPower')) {
-      const isPeriodic = this.imp.watcher[1].steps.ConstructNumber.data.isPeriodic;
+      const isPeriodic = this.imp.watcher.steps.ConstructNumber.data.isPeriodic;
       if (isPeriodic) {
-        const periodicStart = this.imp.watcher[1].steps.ConstructNumber.data.periodicStart;
-        const periodicEnd = this.imp.watcher[1].steps.ConstructNumber.data.periodicEnd;
+        const periodicStart = this.imp.watcher.steps.ConstructNumber.data.periodicStart;
+        const periodicEnd = this.imp.watcher.steps.ConstructNumber.data.periodicEnd;
         const splitted = solutionString.split('.');
         let newSolution = `${splitted[0]}.`;
         for (let i = 0; i < periodicStart; i += 1) {
@@ -219,7 +236,7 @@ export class PdfDescription {
     // call print view
     this.string = latex;
     const html = this.string;
-    const returnRoute = router.resolve({ name: returnSite });
-    router.replace({ name: 'DescriptionPDF', params: { math: html, returnRoute: returnRoute.href } });
+    // const returnRoute = router.resolve({ name: returnSite });
+    // router.replace({ name: 'DescriptionPDF', params: { math: html, returnRoute: returnRoute.href } });
   }
 }

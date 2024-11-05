@@ -84,29 +84,97 @@ export class ConversionPolyadicNumbers {
       .saveVariable('stepsBeforeComma', count);
     count = 1;
 
+    // For after-comma part
+    let numerator = 0;
+    let denominator = 1;
+    
     for (let i = n.comma + 1; i < n.arr.length; i += 1) {
-      const act = parseInt(n.arr[i], n.power) * ((1 / n.power) ** count);
-      val += act;
-      watcher.step('ConstructNumber')
-        .saveVariable(`afterComma${count - 1}In`, n.arr[i])
-        .saveVariable(`afterComma${count - 1}Res`, act);
-      count += 1;
+        const digit = parseInt(n.arr[i], n.power);
+        numerator = numerator * n.power + digit;
+        denominator *= n.power;
     }
-    watcher.step('ConstructNumber')
-      .saveVariable('stepsAfterComma', count - 1);
 
-    // Make result
-    if (this.sign === '-') {
-      const result = new NumberPolyadic(10, (-val).toString());
-      watcher.step('Result')
-        .saveVariable('resultValue', -val)
-        .saveVariable('resultNumber', result);
-      return result;
+    // Combine whole and fractional parts
+    const wholeNumber = val.toString();
+    const fractionalPart = this._findPeriodic(numerator, denominator);
+    
+    // Create the complete number string
+    let resultString = wholeNumber;
+    if (fractionalPart.digits.length > 0) {
+        resultString += '.' + fractionalPart.digits.join('');
     }
-    const result = new NumberPolyadic(10, val.toString());
+    
+    const result = new NumberPolyadic(10, resultString);
+    if (fractionalPart.start !== undefined) {
+        result.setPeriodicInfo(
+            wholeNumber.length + 1 + fractionalPart.start,
+            wholeNumber.length + 1 + fractionalPart.end!
+        );
+    }
+
     watcher.step('Result')
-      .saveVariable('resultValue', val)
-      .saveVariable('resultNumber', result);
+        .saveVariable('resultValue', result.toString())
+        .saveVariable('resultNumber', result)
+        .saveVariable('isPeriodic', result.isPeriodic)
+        .saveVariable('periodicStart', result.periodicStart)
+        .saveVariable('periodicEnd', result.periodicEnd);
+    
+    return result;
+  }
+
+  private _findPeriodic(numerator: number, denominator: number): { 
+    digits: string[], 
+    start?: number, 
+    end?: number 
+  } {
+    const digits: string[] = [];
+    const remainders = new Map<number, number>();
+    let remainder = numerator % denominator;
+    let position = 0;
+    
+    while (remainder !== 0) {
+        if (remainders.has(remainder)) {
+            return {
+                digits,
+                start: remainders.get(remainder)!,
+                end: position - 1
+            };
+        }
+        
+        remainders.set(remainder, position);
+        remainder *= 10;
+        digits.push(Math.floor(remainder / denominator).toString());
+        remainder %= denominator;
+        position++;
+    }
+    
+    return { digits };
+  }
+
+  private _longDivision(numerator: number, denominator: number, precision: number = 15): string {
+    let result = Math.floor(numerator / denominator).toString();
+    let remainder = numerator % denominator;
+    
+    if (remainder === 0) return result;
+    
+    result += '.';
+    const seen = new Map<number, number>();
+    let position = result.length;
+    
+    while (remainder !== 0 && result.length < position + precision) {
+        if (seen.has(remainder)) {
+            // We found a repeating decimal
+            const start = seen.get(remainder)!;
+            return result.slice(0, start) + '(' + result.slice(start) + ')';
+        }
+        
+        seen.set(remainder, position);
+        remainder *= 10;
+        result += Math.floor(remainder / denominator);
+        remainder %= denominator;
+        position++;
+    }
+    
     return result;
   }
 
@@ -131,9 +199,10 @@ export class ConversionPolyadicNumbers {
         .saveVariable(`beforeComma${count}Remain`, act[1]);
       count += 1;
       if (power === 16) {
-        act[1] = parseInt(act[1].toString(16).toUpperCase(), 16);
+        val = act[1].toString(16).toUpperCase() + val;
+      } else {
+        val = act[1] + val;
       }
-      val = act[1] + val;
     }
     watcher.step('ConstructNumber')
       .saveVariable('stepsBeforeComma', count);
@@ -145,61 +214,109 @@ export class ConversionPolyadicNumbers {
     let val2 = ''; // result string after comma
     count = 0;
     if (n.value.toString().indexOf('.') >= 0) {
-      const limitAfterComma = (n.value.toString().split('.'))[1].length; // crop value after comma by ignoring floating point arithmetic
-      act = [Number((Math.abs(n.value) - nbc).toFixed(limitAfterComma)), 1];
-      const vals = [act[0]]; // list of calculated values for periodicity
+      let numerator = 0;
+      let denominator = 1;
+      const afterCommaStr = (n.value.toString().split('.'))[1];
+      
+      for (let i = 0; i < afterCommaStr.length; i++) {
+        numerator = numerator * 10 + parseInt(afterCommaStr[i], 10);
+        denominator *= 10;
+      }
+
+      // Convert decimal fraction to target base
+      let fraction = numerator / denominator;
+      let result = '';
+      const seenStates = new Map<string, number>();
+      let position = 0;
+
+      while (fraction !== 0 && position < 15) {  // increased max length for better period detection
+        fraction *= power;
+        const digit = Math.floor(fraction);
+        fraction -= digit;
+
+        // Create a unique state key using both the digit and remaining fraction
+        const stateKey = `${digit},${fraction.toFixed(10)}`;
+        if (seenStates.has(stateKey)) {
+          const start = seenStates.get(stateKey)!;
+          const periodicPart = result.slice(start);
+          result = result.slice(0, start) + '(' + periodicPart + ')';
+          break;
+        }
+        seenStates.set(stateKey, position);
+        
+        result += digit.toString(power);
+        position++;
+      }
 
       watcher.step('ConstructNumber')
-        .saveVariable('isPeriodic', false)
-        .saveVariable('periodicStart', 0)
-        .saveVariable('periodicEnd', 9)
-        .saveVariable('afterCommaVal', act[0]);
+        .saveVariable('afterCommaVal', result);
 
-      while ((act[0] > 0) && (count < 9)) {
-        act = this._multiplicationStepFrom10(act[0], power, limitAfterComma);
+      // Check for periodicity
+      if (result.includes('(')) {
+        const periodicStart = result.indexOf('(');
+        const periodicEnd = result.indexOf(')') - 1;  // -1 because the end index should be before the ')'
         watcher.step('ConstructNumber')
-          .saveVariable(`afterComma${count}Mul`, act[0])
-          .saveVariable(`afterComma${count}Remain`, act[1]);
-
-        if (power === 16) {
-          act[1] = parseInt(act[1].toString(16).toUpperCase(), 16);
-        }
-        val2 += act[1];
-
-        const indexVal = vals.indexOf(act[0]);
-        if (indexVal >= 0) { // periodicity found, no further calculation
-          watcher.step('ConstructNumber')
-            .saveVariable('isPeriodic', true)
-            .saveVariable('periodicStart', indexVal)
-            .saveVariable('periodicEnd', count);
-          count += 1;
-          break;
-        } else {
-          vals.push(act[0]);
-        }
-
-        count += 1;
+          .saveVariable('isPeriodic', true)
+          .saveVariable('periodicStart', periodicStart)
+          .saveVariable('periodicEnd', periodicEnd);
+        
+        // Set periodic info on the final result
+        const finalResult = new NumberPolyadic(power, result.replace(/[()]/g, ''));
+        finalResult.setPeriodicInfo(periodicStart, periodicEnd);
+      } else {
+        watcher.step('ConstructNumber')
+          .saveVariable('isPeriodic', false);
       }
+
+      val2 = result.replace(/[()]/g, '');
     }
-    watcher.step('ConstructNumber')
-      .saveVariable('stepsAfterComma', count);
+    console.log('After Comma', val2);
 
     // Make result
     let resVal: string;
     if (val2 !== '') {
-      resVal = `${val}.${val2}`;
+        resVal = `${val}.${val2}`;
     } else {
-      resVal = val;
+        resVal = val;
     }
 
     if (n.sign === '-') {
-      resVal = `-${resVal}`;
+        resVal = `-${resVal}`;
+    }
+
+    // Remove periodic notation before validation
+    const validationString = resVal.replace(/[\(\)]/g, '');
+    
+    // Ensure the result is valid for the target base
+    const validDigits = Array.from(validationString).every(char => 
+        char === '.' || char === '-' || 
+        parseInt(char, power) < power
+    );
+
+    if (!validDigits) {
+        console.log(validationString);
+        throw new Error(`Invalid digits for base ${power}`);
     }
 
     const result = new NumberPolyadic(power, resVal);
+    
+    // If the input was periodic, try to find periodicity in the result
+    if (n.isPeriodic) {
+        const afterDecimal = resVal.split('.')[1];
+        if (afterDecimal) {
+            const periodicInfo = this._findPeriodic(
+                parseInt(afterDecimal, power),
+                Math.pow(10, afterDecimal.length)
+            );
+            if (periodicInfo.start !== undefined) {
+                result.setPeriodicInfo(periodicInfo.start, periodicInfo.end);
+            }
+        }
+    }
+
     watcher.step('Result')
-      .saveVariable('resultValue', resVal)
-      .saveVariable('resultNumber', result);
+        .saveVariable('resultValue', resVal)
+        .saveVariable('resultNumber', result);
     return result;
   }
 

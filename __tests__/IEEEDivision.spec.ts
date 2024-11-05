@@ -335,4 +335,21 @@ describe('Division of two IEEE-Numbers', () => {
     const expectedMantissa = [1, 0,1,0,1,0,1,0,1,0,1];
     checkMantissa(expectedMantissa, result);
   });
+
+  test('DivisionIEEE: 1.0 / 3.0 (Recurring Result)', () => {
+    const y1 = createIEEE(5, '1 11111 1001000010');  // 1.0
+    const y2 = createIEEE(5, '1 10010 0111101011');  // 3.0
+    const result = (new DivisionIEEE(y1, y2)).getResult();
+    expect(result.manBitNum).toBe(10);
+    expect(result.isZero).toBe(false);
+    expect(result.isInfinity).toBe(false);
+    expect(result.isNaN).toBe(true);
+    expect(result.arr[0]).toBe(0);
+    expect(result.sign).toBe(0);
+    // 0.333... in binary is 0.01010101...
+    const expectedArray = [1, 1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1];
+    checkArray(expectedArray, result);
+    const expectedMantissa = [1, 1,1,1,1,1,1,1,1,1,1];
+    checkMantissa(expectedMantissa, result);
+  });
 });

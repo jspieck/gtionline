@@ -5,82 +5,64 @@ import { SubtractionPolyadic } from './algorithms/arithmetic/polyadic/subtractio
 import { ConversionPolyadicNumbers } from './algorithms/arithmetic/polyadic/conversionPolyadicNumbers';
 import { Algorithm } from './algorithms/algorithm';
 
-interface IPolyadicResult {
-  bitString: string;
-}
-
-type OperatorType = 'add' | 'sub';
-type ModusType = 'PowerToTen' | string;
-
 export class PolyadicSolution {
-  private result: string;
-  private resultObject: IPolyadicResult | string;
+  private result: NumberPolyadic;
   private watcher: Algorithm['watcher'];
-  private modus: ModusType;
+  private modus: string;
 
   constructor() {
-    this.result = '';
-    this.resultObject = '';
+    this.result = new NumberPolyadic(0, '');
     this.watcher = {} as Algorithm['watcher'];
     this.modus = '';
+  }
+
+  public add(number1: NumberPolyadic, number2: NumberPolyadic): NumberPolyadic {
+    if (number1.power !== number2.power) {
+      throw new Error('Numbers must have the same base for addition');
+    }
+
+    const addition = new AdditionPolyadic(number1, number2);
+    this.result = addition.getResult();
+    this.watcher = this.deepClone(addition.getWatcher());
+    return this.result;
+  }
+
+  public subtract(number1: NumberPolyadic, number2: NumberPolyadic): NumberPolyadic {
+    if (number1.power !== number2.power) {
+      throw new Error('Numbers must have the same base for subtraction');
+    }
+
+    const subtraction = new SubtractionPolyadic(number1, number2);
+    this.result = subtraction.getResult();
+    this.watcher = this.deepClone(subtraction.getWatcher());
+    return this.result;
   }
 
   public convertFormat(
     num1: number | string,
     format1: number,
     format2: number
-  ): void {
-    if (num1 === '') return;
+  ): NumberPolyadic {
+    if (num1 === '') return new NumberPolyadic(0, '');
 
-    const number = new NumberPolyadic(format1, num1.toString(format1));
+    const number = new NumberPolyadic(format1, num1.toString());
     const converter = new ConversionPolyadicNumbers(number, format2);
     
     this.modus = converter.getModus();
-    this.result = converter.getResult().bitString;
+    this.result = converter.getResult();
     this.watcher = converter.getWatcher();
-    this.resultObject = this.watcher.steps.Result.data.resultNumber;
-  }
-
-  public calcArithmeticSolution(
-    num1: number | string,
-    num2: number | string,
-    format: number,
-    operator: OperatorType
-  ): void {
-    const number1 = new NumberPolyadic(format, num1.toString(format));
-    const number2 = new NumberPolyadic(format, num2.toString(format));
-
-    switch (operator) {
-      case 'add': {
-        const addition = new AdditionPolyadic(number1, number2);
-        this.resultObject = addition.getResult();
-        this.result = this.resultObject.bitString;
-        this.watcher = this.deepClone(addition.getWatcher());
-        break;
-      }
-      case 'sub': {
-        const subtraction = new SubtractionPolyadic(number1, number2);
-        this.resultObject = subtraction.getResult();
-        this.result = this.resultObject.bitString;
-        this.watcher = this.deepClone(subtraction.getWatcher());
-        break;
-      }
-    }
-  }
-
-  public getResult(): string {
     return this.result;
   }
 
-  public getResultObject(): IPolyadicResult | string {
-    return this.resultObject;
+  public getResult(): NumberPolyadic {
+    return this.result;
   }
 
   public getWatcher(): Algorithm['watcher'] {
     return this.watcher;
   }
 
-  public getModus(): ModusType {
+  public getModus(): string {
     return this.modus;
   }
 

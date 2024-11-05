@@ -360,12 +360,16 @@ export default {
     computeSolution() {
       // calc solution
       const polyadicSolution = new solution.PolyadicSolution();
-      polyadicSolution.calcArithmeticSolution(
-        this.inputNums[0].replace(',', '.'),
-        this.inputNums[1].replace(',', '.'),
-        this.power,
-        this.operator,
-      );
+      const number1 = new NumberPolyadic(this.power, this.inputNums[0].replace(',', '.'));
+      const number2 = new NumberPolyadic(this.power, this.inputNums[1].replace(',', '.'));
+      switch (this.operator) {
+        case 'add':
+          polyadicSolution.add(number1, number2);
+          break;
+        case 'sub':
+          polyadicSolution.subtract(number1, number2);
+          break;
+      }
       this.watcher = JSON.parse(JSON.stringify(polyadicSolution.watcher));
       this.solution = polyadicSolution.result;
       // construct description

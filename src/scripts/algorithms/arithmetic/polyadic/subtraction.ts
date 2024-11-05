@@ -20,6 +20,7 @@ export class SubtractionPolyadic {
 
     if ((n1.sign === '+') && (n2.sign === '+')) { // (+) - (+)
       result = new NumberPolyadic(n1.power, n1.bitString);
+      console.log('result', result);
       result._subtractionFloat(n2.bitString);
     } else if ((n1.sign === '+') && (n2.sign === '-')) { // (+) - (-) => (+) + (+)
       result = new NumberPolyadic(n1.power, n1.bitString);
