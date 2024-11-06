@@ -128,7 +128,7 @@ import * as description from '../scripts/DescriptionPolyadicSolution';
 import * as pdf from '../scripts/generatePdfPolyadicConversion';
 import * as solution from '../scripts/polyadicSolution';
 import { formatToPower } from '../scripts/polyadicUtil';
-import NumberPolyadic from '../scripts/algorithms/arithmetic/polyadic/numberPolyadic';
+import { NumberPolyadic } from '../scripts/algorithms/arithmetic/polyadic/numberPolyadic';
 
 export default {
   name: 'PolyadicConversionFree',
@@ -359,6 +359,9 @@ export default {
       descr.generatePdf();
     },
     computeSolution() {
+      if (this.inputNums[0] === '' || this.inputNums[1] === '') {
+        return;
+      }
       // calc solution
       const polyadicSolution = new solution.PolyadicSolution();
       const number1 = new NumberPolyadic(this.power, this.inputNums[0].replace(',', '.'));
