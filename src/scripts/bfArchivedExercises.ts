@@ -1,10 +1,22 @@
 import { KVDiagram } from './algorithms/booleanFunctions/KVDiagram';
 
+// Add interface for exercise structure
+interface Exercise {
+  title: string;
+  handle: string;
+  data: KVDiagram;
+}
+
+// Add type for i18n parameter
+interface I18n {
+  t: (key: string) => string;
+}
+
 // Example use case to load exercise with handle 'ex2': http://localhost:8080/#/cmos?load=ex2
 // Note: The exercises are declared in a function,
 // to allow for automatic retranslation thru vue upon
 // switches display languages.
-function bfArchivedExecises(i18n) {
+function bfArchivedExecises(i18n: I18n): Exercise[] {
   const sheetStr = i18n.t('sheet');
   return [
     {
@@ -127,7 +139,7 @@ function bfArchivedExecises(i18n) {
  * @param i18n $i18n-translation object
  * @returns {[string]}
  */
-export function bfGetArchivedExerciseTitles(i18n) {
+export function bfGetArchivedExerciseTitles(i18n: I18n): string[] {
   return bfArchivedExecises(i18n).map((ae) => ae.title);
 }
 
@@ -136,7 +148,7 @@ export function bfGetArchivedExerciseTitles(i18n) {
  * @param {number} index
  * @returns {{title: string, handle: string, data: KVDiagram}}
  */
-export function bfLoadArchivedExercise(i18n, index) {
+export function bfLoadArchivedExercise(i18n: I18n, index: number): Exercise {
   return bfArchivedExecises(i18n)[index];
 }
 
@@ -146,7 +158,7 @@ export function bfLoadArchivedExercise(i18n, index) {
  * @returns {number} Index in the exercise array. Can be used with xxLoadArchivedExercise
  * to retrieve the exercise data
  */
-export function bfGetExerciseIndexOfHandle(i18n, handle) {
+export function bfGetExerciseIndexOfHandle(i18n: I18n, handle: string): number {
   const exercises = bfArchivedExecises(i18n);
   for (let i = 0; i < exercises.length; i += 1) {
     if (exercises[i].handle === handle) {

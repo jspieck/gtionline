@@ -302,10 +302,6 @@
             v-if="negativeSubtrahend"
             :text="$t('negativeSubtrahend')"
           />
-          <AttentionBanner
-            v-if="denominatorZero"
-            :text="$t('zeroDivision')"
-          />
         </div>
         <div>
           <AttentionBanner
@@ -449,39 +445,38 @@ export default {
       return this.checkAndConvertFormat(1);
     },
     solDescr() {
-      const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
-      if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
-        ieeeSolution.computeSolution(this.nums[0], this.nums[1], this.selectedFormat[2]);
+      if (this.nums[0] == this.falseFormatOutput && this.nums[1] == this.falseFormatOutput) {
+        return [];
       }
+      console.log('solDescr', this.nums[0], this.nums[1], this.exponentBits, this.numBits);
+      const ieeeSolution = new solution.IEEESolution(this.exponentBits, this.numBits);
+      ieeeSolution.computeSolution(this.nums[0], this.nums[1], this.selectedFormat[2]);
+      console.log('ieeeSolution', ieeeSolution);
       const watcher = JSON.parse(JSON.stringify(ieeeSolution.watcher));
       const negativeMinuendSubtrahend = ieeeSolution.negativeMinuendSubtrahend;
       const negativeSubtrahend = ieeeSolution.negativeSubtrahend;
       const negativeSummand = ieeeSolution.negativeSummand;
-      const denominatorZero = ieeeSolution.denominatorZero;
       let solutionIEEE = [];
       let solutionObject = [];
-      let result = [];
-      if (!denominatorZero) {
-        solutionIEEE = ieeeSolution.result;
-        const descr = new description.DescriptionSolution(
-          this,
-          this.exponentBits,
-          this.numBits,
-          ieeeSolution.watcher,
-        );
-        if (this.nums[0] !== this.falseFormatOutput && this.nums[1] !== this.falseFormatOutput) {
-          descr.makeDescriptionArithmetic(
-            this.nums[0],
-            this.nums[1],
-            solutionIEEE,
-            this.selectedFormat[2],
-          );
-        }
-        result = descr.result;
-        solutionObject = ieeeSolution.resultObject;
-      }
-      this.setVariables(watcher, negativeMinuendSubtrahend, negativeSubtrahend, negativeSummand, denominatorZero, solutionIEEE, solutionObject);
-      return result;
+      solutionIEEE = ieeeSolution.result;
+      const descr = new description.DescriptionSolution(
+        this,
+        this.exponentBits,
+        this.numBits,
+        ieeeSolution.watcher,
+      );
+      console.log('descr', descr, this.exponentBits, this.numBits, ieeeSolution.watcher);
+      console.log('SelFormat', this.selectedFormat[2]);
+      descr.makeDescriptionArithmetic(
+        this.nums[0],
+        this.nums[1],
+        solutionIEEE,
+        this.selectedFormat[2],
+      );
+      solutionObject = ieeeSolution.resultObject;
+      this.setVariables(watcher, negativeMinuendSubtrahend, negativeSubtrahend, negativeSummand, solutionIEEE, solutionObject);
+      console.log('descr.result', descr.result);
+      return descr.result;
     },
     operationOptions() {
       return {
@@ -528,12 +523,11 @@ export default {
     }
   },
   methods: {
-    setVariables(watcher, negativeMinuendSubtrahend, negativeSubtrahend, negativeSummand, denominatorZero, solutionIEEE, solutionObject) {
+    setVariables(watcher, negativeMinuendSubtrahend, negativeSubtrahend, negativeSummand, solutionIEEE, solutionObject) {
       this.watcher = watcher;
       this.negativeMinuendSubtrahend = negativeMinuendSubtrahend;
       this.negativeSubtrahend = negativeSubtrahend;
       this.negativeSummand = negativeSummand;
-      this.denominatorZero = denominatorZero;
       this.solution = solutionIEEE;
       this.solutionObject = solutionObject;
     },

@@ -302,7 +302,9 @@ export class AdditionIEEE {
   ): AdditionData {
     if (sign1 === sign2) {
       // x + x = 2x
-      const normalizedMantissa = [...mantissa.slice(1), 0];
+      console.log('mantissa', mantissa);
+      const normalizedMantissa = [...mantissa.slice(1)];
+      console.log('normalizedMantissa', normalizedMantissa);
       this.watcher = this.watcher.step('AddMantissa')
         .saveVariable('addition', 'none')
         .saveVariable('shift', 1)

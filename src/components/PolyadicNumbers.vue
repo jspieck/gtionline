@@ -60,7 +60,7 @@ export default defineComponent({
   },
   setup() {
     const state = reactive({
-      selectedTab: tabs[1],
+      selectedTab: tabs[0],
     });
     return {
       tabs,

@@ -268,90 +268,121 @@ export class DescriptionPolyadicSolution {
   // =========================================================================================
   // Subtraction
   private getSubtractionTable(): void {
-    const addWatcher = this.watcher.steps.Addition.data.addition;
-    const originalMantissa1 = addWatcher.steps.AddMantissa.data.mantissa1;
-    const originalMantissa2 = addWatcher.steps.AddMantissa.data.mantissa2;
-    const mantissa1 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op1Arr;
-    const mantissa2 = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.op2Arr;
-    const carryBits = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.carryArr;
-    const result = addWatcher.steps.AddMantissa.data.addition.steps.Addition.data.resultArr;
-    const cols = addWatcher.steps.AddMantissa.data.binNum;
-    const row1: string[] = [];
-    const row2: string[] = [];
-    const row3: string[] = [];
-    const row4: string[] = [];
-    const row5: string[] = [];
-    const tabdef: string[] = [];
+    // set up tabular for visual the subtraction
+    let bitString1 = this.watcher.steps.Input.data.bitString1;
+    const beforeComma = this.watcher.steps.Input.data.beforeComma;
+    const afterComma = this.watcher.steps.Input.data.afterComma || [];
+    const resultString = this.watcher.steps.Result.data.bitString;
 
-    if (addWatcher.steps.AddMantissa.data.sign1 === 0
-      && addWatcher.steps.AddMantissa.data.sign2 === 1) {
+    const splittedResultString = resultString.split('.');
+    const splittedBitString1 = bitString1.split('.');
+    
+    // Add safety check for padding calculation
+    const paddingLength = Math.max(0, splittedResultString[0].length - splittedBitString1[0].length);
+    bitString1 = `${'0'.repeat(paddingLength)}${bitString1}`;
+    
+    // Ensure beforeComma array has enough space
+    while (beforeComma.length < splittedResultString[0].length) {
+      beforeComma.unshift('0');
+    }
+    
+    if (splittedResultString[1] != null) {
+      if (splittedBitString1[1] != null) {
+        const decimalPadding = Math.max(0, splittedResultString[1].length - splittedBitString1[1].length);
+        bitString1 = `${bitString1}${'0'.repeat(decimalPadding)}`;
+      }
+      while (afterComma.length < splittedResultString[1].length) {
+        afterComma.push('0');
+      }
+    }
+
+    const row1: string[] = ['&'];
+    const row2: string[] = ['-&'];
+    const rowBorrow: string[] = ['&'];
+    const row3: string[] = ['&'];
+    const tabdef = `{${'c'.repeat(resultString.length + 1)}}`;  // +1 for the sign column
+
+    for (let i = 0; i < bitString1.length; i += 1) {
+      row1.push(` ${bitString1[i]}`);
       row1.push('&');
-      row2.push('-&');
-    } else if (addWatcher.steps.AddMantissa.data.sign1 === 1
-      && addWatcher.steps.AddMantissa.data.sign2 === 0) {
-      row1.push('-&');
-      row2.push('+&');
-    } else {
-      row1.push('-&');
-      row2.push('-&');
-    }
-    row3.push('&');
-    row4.push('+&');
-    row5.push('=&');
-    tabdef.push('{');
-
-    for (let i = originalMantissa1.length; i <= cols; i += 1) {
-      originalMantissa1.unshift(0);
-    }
-    for (let i = originalMantissa2.length; i <= cols; i += 1) {
-      originalMantissa2.unshift(0);
-    }
-    for (let i = mantissa1.length; i <= cols; i += 1) {
-      mantissa1.unshift(0);
-    }
-    for (let i = mantissa2.length; i <= cols; i += 1) {
-      mantissa2.unshift(0);
-    }
-    for (let i = carryBits.length; i <= cols; i += 1) {
-      carryBits.unshift(0);
     }
 
-    for (let i = 0; i < cols; i += 1) {
-      tabdef.push('c');
-      row1.push(` ${originalMantissa1[i]}`);
-      row1.push('&');
-      row2.push(` ${originalMantissa2[i]}`);
+    let borrowSet = false;
+    for (let i = 0; i < beforeComma.length; i += 1) {
+      row2.push(` ${beforeComma[i]}`);
+      if (i !== beforeComma.length - 1) {
+        let borrowBit = this.watcher.steps.constructResult.data[`borrowBeforeComma${i}`] ?? 
+                      this.watcher.steps.constructResult.data[`borrowBeforeComma${i + 1}`];
+        
+        if (borrowBit == null) {
+          borrowBit = ' ';
+        } else {
+          borrowSet = true;
+        }
+        rowBorrow.push(`\\scriptsize{${borrowBit}} &`);
+      } else {
+        if (this.watcher.steps.constructResult.data[`borrowAfterComma${0}`] != null) {
+          const borrowBit = this.watcher.steps.constructResult.data[`borrowAfterComma${0}`];
+          rowBorrow.push(`\\scriptsize{${borrowBit}} &`);
+          borrowSet = true;
+        } else {
+          rowBorrow.push('&');
+        }
+      }
       row2.push('&');
-      row3.push(` ${mantissa1[i]}`);
-      row3.push('&');
-      row4.push(` ${mantissa2[i]}_{${carryBits[i]}}`);
-      row4.push('&');
-      row5.push(` ${result[i]}`);
-      row5.push('&');
     }
 
-    tabdef.push('}');
-    row1.pop();
-    row1.push('\\\\ ');
-    row2.pop();
-    row2.push('\\\\ ');
-    row3.pop();
-    row3.push('\\\\ ');
-    row4.pop();
-    row4.push('\\\\ ');
-    row5.pop();
+    if (afterComma.length > 0) {
+      row2.push(' .&');
+      rowBorrow.push(' &');
+    }
 
-    this.table = [
-      `\\begin{array} ${tabdef.join('')}`,
-      `${row1.join('')}`,
-      `${row2.join('')}`,
-      '\\hline_\{Complement\}',
-      `${row3.join('')}`,
-      `${row4.join('')}`,
-      '\\hline',
-      `${row5.join('')}`,
-      '\\end{array}',
-    ].join('');
+    for (let i = 0; i < afterComma.length - 1; i += 1) {
+      row2.push(` ${afterComma[i]}`);
+      if (i !== beforeComma.length - 1) {
+        let borrowBit = this.watcher.steps.constructResult.data[`borrowAfterComma${i + 1}`];
+        if (borrowBit == null) {
+          borrowBit = ' ';
+        } else {
+          borrowSet = true;
+        }
+        rowBorrow.push(`\\scriptsize{${borrowBit}} &`);
+      } else {
+        rowBorrow.push('&');
+      }
+      row2.push('&');
+    }
+    
+    row2.push(` ${afterComma[afterComma.length - 1]}`);
+    rowBorrow.push(' ');
+
+    for (let i = 0; i < resultString.length; i += 1) {
+      row3.push(` ${resultString[i]}`);
+      row3.push('&');
+    }
+
+    row1.pop();
+    row1.push(' \\\\ ');
+    row2.pop();
+    row2.push(' \\\\ ');
+    rowBorrow.pop();
+    rowBorrow.push(' \\\\ ');
+    row3.pop();
+
+    const table = [
+      `\\begin{array} ${tabdef}`,
+      row1.join(''),
+      row2.join(''),
+    ];
+
+    if (borrowSet) {
+      table.push(rowBorrow.join(''));
+    }
+
+    table.push('\\hline');
+    table.push(row3.join(''));
+    table.push('\\end{array}');
+    this.table = table.join('');
   }
 
   subtractionDescription(y1: NumberPolyadic, y2: NumberPolyadic): void {

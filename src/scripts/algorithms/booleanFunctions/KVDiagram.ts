@@ -1,20 +1,32 @@
 /**
- *  Class encapsulating a KVDiagram / Symmetriediagramm
+ * Type for the KV diagram values
+ * 0 = False, 1 = True, 2 = Don't Care, '-' = Don't Care (string version)
+ */
+type KVValue = 0 | 1 | 2 | '0' | '1' | '-';
+type KVMatrix = KVValue[][];
+
+/**
+ * Class encapsulating a KVDiagram / Symmetriediagramm
  */
 export class KVDiagram {
+  private _amountLiterals: number;
+  private _values: KVMatrix;
+  private _literalToKVMapping: [number, number[]][];
+
   /**
-     * @param {number[][]} values values[y][x] (also [row, row, ...])\
-     * 0 / 1 / 2=DontCare
-     * pass null for a KVDiagram with only Zeros
-     */
-  constructor(values, amountLiterals) {
+   * @param values values[y][x] (also [row, row, ...])
+   * 0 / 1 / 2=DontCare
+   * pass null for a KVDiagram with only Zeros
+   */
+  constructor(values: KVMatrix | null, amountLiterals: number) {
     this._amountLiterals = amountLiterals;
+    this._literalToKVMapping = [];
     if (values != null) {
       this._values = values;
     } else {
       const diagramWidth = (2 ** Math.floor((amountLiterals + 1) / 2));
-      const diagramHeight = (2 ** Math.floor((amountLiterals) / 2));
-      const vals = [];
+      const diagramHeight = (2 ** Math.floor(amountLiterals / 2));
+      const vals: KVMatrix = [];
       for (let y = 0; y < diagramHeight; y += 1) {
         vals[y] = [];
         for (let x = 0; x < diagramWidth; x += 1) {
@@ -27,11 +39,11 @@ export class KVDiagram {
     this._generateLiteralToKVMapping();
   }
 
-  getAmountLiterals() {
+  getAmountLiterals(): number {
     return this._amountLiterals;
   }
 
-  getValues() {
+  getValues(): KVMatrix {
     return this._values;
   }
 
@@ -44,7 +56,7 @@ export class KVDiagram {
      * (1, 1) -> 3 \
      * ...
      */
-  computeKVIndex(y, x) {
+  computeKVIndex(y: number, x: number) {
     let index = 0;
     for (let i = 0; i < this._amountLiterals; i += 1) {
       if (this._literalToKVMapping[i][0] === 0 || this._literalToKVMapping[i][0] === 2) {
@@ -72,7 +84,7 @@ export class KVDiagram {
      * NOTE: not tested yet
      * @param {KVDiagram} other
      */
-  equals(other) {
+  equals(other: KVDiagram): boolean {
     if (this._amountLiterals !== other._amountLiterals) {
       return false;
     }
@@ -109,7 +121,7 @@ export class KVDiagram {
      *  -array[INDEX_OF_LITERAL][1] --> list of columns/rows it's positive on (e.g.
      *      [1, 2]);
      */
-  _generateLiteralToKVMapping() {
+  private _generateLiteralToKVMapping(): void {
     this._literalToKVMapping = [];
 
     // const width = this._values[0].length;
@@ -117,10 +129,8 @@ export class KVDiagram {
     const width = 2 ** Math.floor((this._amountLiterals + 1) / 2);
     const height = 2 ** Math.floor(this._amountLiterals / 2);
     for (let i = 0; i < this._amountLiterals; i += 1) {
-      this._literalToKVMapping[i] = [];
-      this._literalToKVMapping[i][0] = i % 4;
+      this._literalToKVMapping[i] = [i % 4, []];
       // now get overlayed
-      this._literalToKVMapping[i][1] = [];
       if (this._literalToKVMapping[i][0] === 0 || this._literalToKVMapping[i][0] === 2) {
         // spaltenüberwachung
         // wie oft gespiegelt
@@ -168,13 +178,13 @@ export class KVDiagram {
   }
 }
 
-export function generateRandomKVDiagram(amountLiterals, notPracticallyEmptyOrFull = false) {
+export function generateRandomKVDiagram(amountLiterals: number, notPracticallyEmptyOrFull: boolean = false): KVDiagram {
   const diagramWidth = (2 ** Math.floor((amountLiterals + 1) / 2));
-  const diagramHeight = (2 ** Math.floor((amountLiterals) / 2));
+  const diagramHeight = (2 ** Math.floor(amountLiterals / 2));
 
-  let amountOnes;
-  let amountZeros;
-  let values;
+  let amountOnes: number;
+  let amountZeros: number;
+  let values: KVMatrix;
 
   do {
     amountOnes = 0;
