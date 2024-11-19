@@ -402,13 +402,14 @@ export class DescriptionPolyadicConversion {
           newSolution += splitted[1][i];
         }
         newSolution += '\\overline{';
-        for (let i = periodicStart; i <= periodicEnd; i += 1) {
+        for (let i = periodicStart; i < periodicEnd; i += 1) {
           newSolution += splitted[1][i];
         }
         newSolution += '}';
         solutionString = newSolution;
       }
     }
+    console.log('Solution string', solutionString);
     this.result.push({
       name: this.imp.$t('solution'),
       text: [

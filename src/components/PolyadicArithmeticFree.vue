@@ -128,7 +128,7 @@ import * as description from '../scripts/DescriptionPolyadicSolution';
 import * as pdf from '../scripts/generatePdfPolyadicConversion';
 import * as solution from '../scripts/polyadicSolution';
 import { formatToPower } from '../scripts/polyadicUtil';
-import NumberPolyadic from '../scripts/algorithms/arithmetic/polyadic/numberPolyadic';
+import { NumberPolyadic } from '../scripts/algorithms/arithmetic/polyadic/numberPolyadic';
 
 export default {
   name: 'PolyadicConversionFree',
@@ -359,16 +359,21 @@ export default {
       descr.generatePdf();
     },
     computeSolution() {
+      if (this.inputNums[0] === '' || this.inputNums[1] === '') {
+        return;
+      }
+      const number1 = this.inputNums[0].replace(',', '.');
+      const number2 = this.inputNums[1].replace(',', '.');
       // calc solution
       const polyadicSolution = new solution.PolyadicSolution();
-      const number1 = new NumberPolyadic(this.power, this.inputNums[0].replace(',', '.'));
-      const number2 = new NumberPolyadic(this.power, this.inputNums[1].replace(',', '.'));
+      const numPoly1 = new NumberPolyadic(this.power, number1);
+      const numPoly2 = new NumberPolyadic(this.power, number2);
       switch (this.operator) {
         case 'add':
-          polyadicSolution.add(number1, number2);
+          polyadicSolution.add(numPoly1, numPoly2);
           break;
         case 'sub':
-          polyadicSolution.subtract(number1, number2);
+          polyadicSolution.subtract(numPoly1, numPoly2);
           break;
       }
       this.watcher = JSON.parse(JSON.stringify(polyadicSolution.watcher));
@@ -376,8 +381,8 @@ export default {
       // construct description
       const descr = new description.DescriptionPolyadicSolution(this, this.watcher);
       descr.makeDescription(
-        this.inputNums[0].replace(',', '.'),
-        this.inputNums[1].replace(',', '.'),
+        number1,
+        number2,
         this.power,
         this.operator,
       );

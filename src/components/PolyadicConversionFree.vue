@@ -313,6 +313,9 @@ export default {
       descr.generatePdf();
     },
     computeSolution() {
+      if (this.inputNum === '') {
+        return;
+      }
       // calc solution
       const polyadicSolution = new solution.PolyadicSolution();
       console.log(this.power, this.selectedFormat);
